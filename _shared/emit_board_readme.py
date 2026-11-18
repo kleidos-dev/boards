@@ -70,7 +70,7 @@ FOLDER = [
                       "for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); "
                       "written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py)"),
     ("model/{b}.mtl", "the OBJ's materials: each part's colour, transparency, roughness and metalness"),
-    ("model/spec.json", "the recipe both are built from"),
+    ("model/spec.json", "the recipe the master and its web level are built from"),
     ("model/source.json", "the master's provenance"),
     ("model/web.json", "the web level's record"),
     ("schematic/{b}.pdf", "the connectivity schematic, made to be followed by clicking"),

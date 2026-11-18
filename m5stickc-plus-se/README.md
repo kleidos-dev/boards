@@ -193,7 +193,7 @@ Nets and their sources: VESP_3V3 is the AXP192's DCDC1 output and supplies the S
 - [`model/m5stickc-plus-se-web.glb`](model/m5stickc-plus-se-web.glb): its web level of detail.
 - [`model/m5stickc-plus-se.obj`](model/m5stickc-plus-se.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
 - [`model/m5stickc-plus-se.mtl`](model/m5stickc-plus-se.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/m5stickc-plus-se.pdf`](schematic/m5stickc-plus-se.pdf): the connectivity schematic, made to be followed by clicking.

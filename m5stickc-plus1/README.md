@@ -200,7 +200,7 @@ Wiring and passive values come from the vendor's K016-P schematic (one Altium pa
 - [`model/m5stickc-plus1-web.glb`](model/m5stickc-plus1-web.glb): its web level of detail.
 - [`model/m5stickc-plus1.obj`](model/m5stickc-plus1.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
 - [`model/m5stickc-plus1.mtl`](model/m5stickc-plus1.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/m5stickc-plus1.pdf`](schematic/m5stickc-plus1.pdf): the connectivity schematic, made to be followed by clicking.

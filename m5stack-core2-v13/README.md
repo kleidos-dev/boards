@@ -209,7 +209,7 @@ The board is two PCBs: the core (ESP32, AXP192, LCD, touch, RTC, speaker amplifi
 - [`model/m5stack-core2-v13-web.glb`](model/m5stack-core2-v13-web.glb): its web level of detail.
 - [`model/m5stack-core2-v13.obj`](model/m5stack-core2-v13.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
 - [`model/m5stack-core2-v13.mtl`](model/m5stack-core2-v13.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/m5stack-core2-v13.pdf`](schematic/m5stack-core2-v13.pdf): the connectivity schematic, made to be followed by clicking.

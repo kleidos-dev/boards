@@ -213,7 +213,7 @@ Every wiring fact comes from the vendor's schematic Sch_M5_CoreS3_SE_v1.0 (Altiu
 - [`model/cores3-se-web.glb`](model/cores3-se-web.glb): its web level of detail.
 - [`model/cores3-se.obj`](model/cores3-se.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
 - [`model/cores3-se.mtl`](model/cores3-se.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/cores3-se.pdf`](schematic/cores3-se.pdf): the connectivity schematic, made to be followed by clicking.

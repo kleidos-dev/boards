@@ -208,7 +208,7 @@ LilyGO publishes one mainboard schematic for the T-Deck family (dated 2023-06-01
 - [`model/tdeck-plus-web.glb`](model/tdeck-plus-web.glb): its web level of detail.
 - [`model/tdeck-plus.obj`](model/tdeck-plus.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
 - [`model/tdeck-plus.mtl`](model/tdeck-plus.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/tdeck-plus.pdf`](schematic/tdeck-plus.pdf): the connectivity schematic, made to be followed by clicking.

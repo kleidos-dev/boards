@@ -221,7 +221,7 @@ Power rails, by the schematic's names: VUSBIN_L0 (USB VBUS) -> U7 OVP -> 5VIN_L0
 - [`model/sticks3-web.glb`](model/sticks3-web.glb): its web level of detail.
 - [`model/sticks3.obj`](model/sticks3.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
 - [`model/sticks3.mtl`](model/sticks3.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/sticks3.pdf`](schematic/sticks3.pdf): the connectivity schematic, made to be followed by clicking.
