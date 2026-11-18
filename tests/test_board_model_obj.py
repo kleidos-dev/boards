@@ -114,10 +114,20 @@ def test_one_object_per_mesh_and_every_material_in_the_mtl(board: str) -> None:
     declared = lines(mtl_path, "newmtl")
     assert declared == [m["name"] for m in js["materials"]]
     assert set(lines(obj_path, "usemtl")) <= set(declared)
-    # a blended material keeps its alpha, the unlit screen its constant colour
+    # each material's colour is the GLB's base colour in sRGB, with its roughness
+    # and metalness; a blended material keeps its alpha, the unlit screen its
+    # constant colour
+    to_srgb = exporter().model_raster.linear_to_srgb
     for index, mat in enumerate(js["materials"]):
         block = mtl_path.read_text(encoding="utf-8").split(f"newmtl {mat['name']}\n")[1]
         block = block.split("\n\n")[0].splitlines()
+        values = {x.split(" ", 1)[0]: x.split(" ", 1)[1] for x in block}
+        pbr = mat["pbrMetallicRoughness"]
+        kd = [float(v) for v in values["Kd"].split()]
+        assert kd == pytest.approx(list(to_srgb(pbr["baseColorFactor"][:3])), abs=1e-4), (
+            board, mat["name"])
+        assert float(values["Pr"]) == pytest.approx(pbr.get("roughnessFactor", 1.0), abs=1e-4)
+        assert float(values["Pm"]) == pytest.approx(pbr.get("metallicFactor", 1.0), abs=1e-4)
         alpha = mat["pbrMetallicRoughness"]["baseColorFactor"][3]
         expected = alpha if mat.get("alphaMode") == "BLEND" else 1.0
         assert float(next(x for x in block if x.startswith("d "))[2:]) == pytest.approx(
@@ -134,6 +144,21 @@ def test_numbers_are_fixed_decimals_with_no_negative_zero() -> None:
     assert export_obj.num(-7.39, 4) == "-7.39"
     assert export_obj.num(0.123456, 5) == "0.12346"
     assert export_obj.name_of("ink black") == "ink_black"
+
+
+def test_an_unnamed_material_has_one_name_in_both_files() -> None:
+    """``usemtl`` names what ``newmtl`` declares, never ``#<index>`` (a comment in OBJ)."""
+    export_obj = exporter()
+    js = {"materials": [{"name": "case"}, {}]}
+
+    class Mesh:
+        name, material = "part", "#1"
+
+    assert export_obj.material_names(js) == ["case", "material_1"]
+    assert export_obj.material_of(Mesh, js) == "material_1"
+    Mesh.material = "#"
+    with pytest.raises(ValueError):
+        export_obj.material_of(Mesh, js)
 
 
 def test_only_a_board_master_gets_an_obj() -> None:

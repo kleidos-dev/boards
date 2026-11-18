@@ -85,6 +85,22 @@ def name_of(text: str) -> str:
     return '_'.join(text.split()) or 'unnamed'
 
 
+def material_names(js: dict) -> list[str]:
+    """The name each material of the GLB takes in the MTL, in its order (``material_<i>`` unnamed)."""
+    return [name_of(mat.get('name') or f'material_{index}')
+            for index, mat in enumerate(js.get('materials', []))]
+
+
+def material_of(mesh, js: dict) -> str:
+    """The MTL name of *mesh*'s material (``model_raster`` names an unnamed one ``#<index>``)."""
+    names = material_names(js)
+    if mesh.material.startswith('#') and mesh.material[1:].isdigit():
+        return names[int(mesh.material[1:])]
+    if mesh.material.startswith('#'):
+        raise ValueError(f'{mesh.name}: a primitive with no material')
+    return name_of(mesh.material)
+
+
 def glb_json(data: bytes) -> dict:
     if struct.unpack_from('<I', data, 0)[0] != 0x46546C67:
         raise ValueError('not a GLB')
@@ -99,7 +115,7 @@ def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict) -> str:
            f'# Source: {glb_name}, sha256 {glb_sha}',
            '# Kd: base colour in sRGB; d: alpha (1 opaque); Pr, Pm: roughness and metalness '
            '(PBR); Ns, Ks: their classic approximation; illum 0 unlit, 2 lit. No textures.']
-    for index, mat in enumerate(js.get('materials', [])):
+    for name, mat in zip(material_names(js), js.get('materials', [])):
         pbr = mat.get('pbrMetallicRoughness', {})
         factor = pbr.get('baseColorFactor', [1.0, 1.0, 1.0, 1.0])
         kd = model_raster.linear_to_srgb(factor[:3])
@@ -108,7 +124,7 @@ def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict) -> str:
         rough = float(pbr.get('roughnessFactor', 1.0))
         ks = (1 - metal) * np.array([0.5, 0.5, 0.5]) + metal * kd
         unlit = 'KHR_materials_unlit' in mat.get('extensions', {})
-        out += ['', f'newmtl {name_of(mat.get("name", f"material_{index}"))}',
+        out += ['', f'newmtl {name}',
                 f'Kd {row(kd, COLOR_PLACES)}',
                 f'Ks {row(ks, COLOR_PLACES)}',
                 f'Ns {num(1000 * (1 - rough) ** 2, COLOR_PLACES - 2)}',
@@ -151,7 +167,7 @@ def export(glb_path: Path, board: str) -> tuple[bytes, bytes, dict]:
         if name != previous:
             lines += [f'o {name}', f'g {name}']
             previous = name
-        lines.append(f'usemtl {name_of(mesh.material)}')
+        lines.append(f'usemtl {material_of(mesh, js)}')
         lines.extend(f'v {row(p, POSITION_PLACES)}' for p in mesh.positions)
         if mesh.uv is not None:
             # glTF puts (0, 0) at the image's top left, OBJ at its bottom left
