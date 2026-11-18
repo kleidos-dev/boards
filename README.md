@@ -42,7 +42,7 @@ The firmware repository is to mount this repository as a git submodule, and the 
 
 ## Build and check
 
-Python 3.14 and the pinned `requirements.txt`; the schematic export also needs KiCad 10.0.7 (`kicad-cli`; no KiCad library is read), which pip does not install.
+Python 3.15 and the pinned `requirements.txt`; the schematic export also needs KiCad 10.0.8 (`kicad-cli`; no KiCad library is read), which pip does not install.
 
 ```bash
 python3 -m venv .venv
@@ -59,7 +59,7 @@ python3 -m venv .venv
 .venv/bin/python _shared/export_obj.py --check                 # every OBJ and MTL is what its GLB gives
 ```
 
-[`.github/workflows/check.yml`](.github/workflows/check.yml) runs the first four on every push and pull request: the licenses, the tree, the specifications and the contracts always; the board models' tests when a model's inputs changed; the checkers' slower planted-defect selftests when a checker or its fixtures changed, weekly and on demand. A fourth job, in KiCad 10.0.7's container, holds every schematic to its `netlist.yaml` (the ERC, the netlist pin for pin, every Kleidos entry marked and listed, the generator giving back the committed files) and every link of its PDF to the place it names. Not in CI: regenerating the drawings, and rebuilding a model from its vendor's CAD file, which downloads that file.
+[`.github/workflows/check.yml`](.github/workflows/check.yml) runs the first four on every push and pull request: the licenses, the tree, the specifications and the contracts always; the board models' tests when a model's inputs changed; the checkers' slower planted-defect selftests when a checker or its fixtures changed, weekly and on demand. A fourth job, in KiCad 10.0.8's container, holds every schematic to its `netlist.yaml` (the ERC, the netlist pin for pin, every Kleidos entry marked and listed, the generator giving back the committed files) and every link of its PDF to the place it names. Not in CI: regenerating the drawings, and rebuilding a model from its vendor's CAD file, which downloads that file.
 
 Agents working here read [`AGENTS.md`](AGENTS.md) and the two skills under [`.claude/skills/`](.claude/skills/).
 

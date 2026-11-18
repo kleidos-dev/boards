@@ -116,7 +116,7 @@ GPIO and I2C facts are marked on their row of the nets page, not on a pin, becau
 .venv/bin/python -m pytest tests/test_schematic.py
 ```
 
-The generator reads no KiCad library and writes the same files byte for byte from the same inputs. The export needs `kicad-cli` (KiCad 9 or later; drawn with 10.0.7) and runs it with English settings, so the report and the PDF read the same on every machine. It fails unless:
+The generator reads no KiCad library and writes the same files byte for byte from the same inputs. The export needs `kicad-cli` (KiCad 9 or later; drawn with 10.0.8) and runs it with English settings, so the report and the PDF read the same on every machine. It fails unless:
 
 - the ERC reports nothing: 0 errors, 0 warnings. Two checks are switched off in `sticks3.kicad_pro` because the drawing does not depend on them: whether a library is configured for each symbol, and whether a library's symbol differs from the copy the files embed. The drawing carries its own copy of every symbol;
 - `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names, no pin missing, no net split or joined, and nothing drawn that the netlist lacks;

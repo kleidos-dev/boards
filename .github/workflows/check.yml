@@ -67,7 +67,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           cache: pip
       - name: Install the pinned stack
         run: pip install -r requirements.txt
@@ -97,7 +97,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           cache: pip
       - name: Install the pinned stack
         run: pip install -r requirements.txt
@@ -120,7 +120,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
-          python-version: "3.14"
+          python-version: "3.15"
           cache: pip
       - name: Install the pinned stack
         run: pip install -r requirements.txt
@@ -130,7 +130,7 @@ jobs:
   # Every schematic against its netlist.yaml: KiCad's ERC, the drawn netlist
   # pin for pin, the generator giving back the committed files, and every link
   # of the PDF (the committed one and a fresh export) leading where it should.
-  # The image pins the KiCad the files were written with (10.0.7) and its
+  # The image pins the KiCad the files were written with (10.0.8) and its
   # kicad-cli (no KiCad library is read); root, so the job can write the
   # checked-out tree. It brings its own Python and PyYAML (Debian's, not the versions
   # requirements.txt pins); pytest and pypdf are installed at the pinned ones.
@@ -138,7 +138,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     container:
-      image: kicad/kicad:10.0.7
+      image: kicad/kicad:10.0.8
       options: --user root
     defaults:
       run:

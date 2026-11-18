@@ -235,7 +235,7 @@ The output is byte-for-byte reproducible with these libraries (cascadio only
 for a STEP, fast-simplification only for ``decimate``, fonttools only for
 ``legends``), which are not in the QA environment::
 
-    pip install numpy==2.5.4 shapely==2.2.0 trimesh==5.2.0 mapbox_earcut==2.1.0 \\
+    pip install numpy==2.5.5 shapely==2.2.0 trimesh==5.2.1 mapbox_earcut==2.1.0 \\
         scipy==1.18.1 networkx==3.7 rtree==1.4.1 cascadio==0.1.1 \\
         fast-simplification==0.2.0 fonttools==4.68.0
 
@@ -326,7 +326,7 @@ from paths import ROOT as REPO  # noqa: E402  (the repository root)
 MM = 0.001
 DEFAULT_CACHE = Path(os.environ.get('KLEIDOS_CAD_CACHE', Path.home() / '.cache' / 'kleidos-cad'))
 PINNED = {
-    'numpy': '2.5.4', 'shapely': '2.2.0', 'trimesh': '5.2.0', 'mapbox_earcut': '2.1.0',
+    'numpy': '2.5.5', 'shapely': '2.2.0', 'trimesh': '5.2.1', 'mapbox_earcut': '2.1.0',
     'scipy': '1.18.1', 'networkx': '3.7', 'rtree': '1.4.1', 'cascadio': '0.1.1',
     'fast-simplification': '0.2.0', 'fonttools': '4.68.0',
 }
