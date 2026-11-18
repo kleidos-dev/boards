@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="StickS3 icon">
+<img src="icon.svg" width="96" height="96" alt="StickS3 icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="226" height="320" alt="StickS3 front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # StickS3
 
@@ -217,9 +217,11 @@ Power rails, by the schematic's names: VUSBIN_L0 (USB VBUS) -> U7 OVP -> 5VIN_L0
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
 - [`svg/left.svg`](svg/left.svg): the left face and what it prints.
-- [`model/sticks3.glb`](model/sticks3.glb): the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept.
+- [`model/sticks3.glb`](model/sticks3.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/sticks3-web.glb`](model/sticks3-web.glb): its web level of detail.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/sticks3.obj`](model/sticks3.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/sticks3.mtl`](model/sticks3.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/sticks3.pdf`](schematic/sticks3.pdf): the connectivity schematic, made to be followed by clicking.

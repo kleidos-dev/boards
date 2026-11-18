@@ -10,10 +10,13 @@ every file under the root) and fails on:
 - a raster image other than ``models-contact-sheet.png`` (ours, rendered from
   our models), a PDF other than a board's own schematic export
   (``<board>/schematic/<board>.pdf`` beside its ``<board>.kicad_sch``), or a
-  CAD file (``.stl``, ``.step``, ``.stp``, ``.obj``,
+  CAD file (``.stl``, ``.step``, ``.stp``, ``.obj``, ``.mtl``,
   ``.3mf``, ``.f3d``, ``.zip``) other than the two boxes of the checks' own
   test board (``_shared/fixtures/faces/vendor/*.stl``), admitted only while
-  their bytes are the ones ``_shared/face_fixture.py`` writes;
+  their bytes are the ones ``_shared/face_fixture.py`` writes, and a board's
+  own OBJ and MTL (``<board>/model/<board>.obj`` and ``.mtl``, beside the
+  ``<board>.glb`` and ``spec.json`` ``_shared/export_obj.py`` writes them
+  from; ``tests/test_board_model_obj.py`` holds their bytes to that GLB);
 - a path under a ``reference/``, ``reference_candidates/``, ``raw/`` or
   ``photos/`` folder, a ``*_reference.svg`` or a ``*-silhouette.svg``;
 - an SVG that embeds an image (``<image``, ``data:image``) or draws a vendor
@@ -39,7 +42,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 ALLOWED_RASTERS = {"models-contact-sheet.png"}
 RASTER = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".bmp", ".tif", ".tiff", ".heic"}
-VENDOR = {".pdf", ".stl", ".step", ".stp", ".obj", ".3mf", ".f3d", ".zip", ".dxf", ".dwg"}
+VENDOR = {".pdf", ".stl", ".step", ".stp", ".obj", ".mtl", ".3mf", ".f3d", ".zip", ".dxf", ".dwg"}
 FOLDERS = {"reference", "reference_candidates", "raw", "photos"}
 SVG_MARKERS = (re.compile(r"<image\b"), re.compile(r"data:image"),
                re.compile(r"""id=["']screen-demo["']"""))
@@ -77,6 +80,20 @@ def own_schematic_pdf(root: Path, rel: Path) -> bool:
     parts = rel.parts
     return (len(parts) == 3 and parts[1] == "schematic" and rel.name == f"{parts[0]}.pdf"
             and (root / parts[0] / "schematic" / f"{parts[0]}.kicad_sch").is_file())
+
+
+def own_model_export(root: Path, rel: Path) -> bool:
+    """True for ``<board>/model/<board>.obj`` or ``.mtl`` beside that board's own GLB and spec.
+
+    The two files are written from the board's master model by
+    ``_shared/export_obj.py``; anywhere else an OBJ or an MTL is a CAD file
+    from somewhere else, and is refused.
+    """
+    parts = rel.parts
+    return (len(parts) == 3 and parts[1] == "model" and rel.suffix.lower() in {".obj", ".mtl"}
+            and rel.stem == parts[0]
+            and (root / parts[0] / "model" / f"{parts[0]}.glb").is_file()
+            and (root / parts[0] / "model" / "spec.json").is_file())
 
 
 def own_fixture_stl(root: Path, rel: Path) -> bool:
@@ -129,7 +146,7 @@ def findings(root: Path) -> list[str]:
         elif suffix in RASTER and name not in ALLOWED_RASTERS:
             found.append(f"{rel}: a raster image")
         elif (suffix in VENDOR and not own_schematic_pdf(root, rel)
-              and not own_fixture_stl(root, rel)):
+              and not own_fixture_stl(root, rel) and not own_model_export(root, rel)):
             found.append(f"{rel}: a vendor file type ({suffix})")
         elif name.endswith("_reference.svg") or name.endswith("-silhouette.svg"):
             found.append(f"{rel}: a reference overlay or a traced silhouette")

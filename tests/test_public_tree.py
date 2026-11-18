@@ -80,3 +80,26 @@ def test_root_license_is_the_mit_text():
     """``LICENSE``, the file GitHub reads a repository's license from, is the
     MIT text ``REUSE.toml`` points at, byte for byte."""
     assert (ROOT / "LICENSE").read_bytes() == (ROOT / "LICENSES" / "MIT.txt").read_bytes()
+
+
+def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
+    """``<board>/model/<board>.obj`` and ``.mtl`` beside its GLB and spec: ours; any other OBJ: not."""
+    model = tmp_path / "board" / "model"
+    model.mkdir(parents=True)
+    for name in ("board.obj", "board.mtl"):
+        (model / name).write_text("# exported\n", encoding="utf-8")
+    # no GLB and no spec beside them yet: a CAD file from somewhere else
+    assert sorted(check_public_tree.findings(tmp_path)) == [
+        "board/model/board.mtl: a vendor file type (.mtl)",
+        "board/model/board.obj: a vendor file type (.obj)"]
+    (model / "board.glb").write_bytes(b"glTF")
+    (model / "spec.json").write_text("{}\n", encoding="utf-8")
+    assert check_public_tree.findings(tmp_path) == []
+    # another name, another folder, or a vendor folder are still refused
+    (model / "case.obj").write_text("# vendor\n", encoding="utf-8")
+    (tmp_path / "board" / "case.mtl").write_text("# vendor\n", encoding="utf-8")
+    (tmp_path / "board" / "board.obj").write_text("# vendor\n", encoding="utf-8")
+    assert sorted(check_public_tree.findings(tmp_path)) == [
+        "board/board.obj: a vendor file type (.obj)",
+        "board/case.mtl: a vendor file type (.mtl)",
+        "board/model/case.obj: a vendor file type (.obj)"]

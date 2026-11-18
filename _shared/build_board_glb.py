@@ -225,6 +225,12 @@ every face over it (the glass), sits at least one quantization step
 draws the two at one depth: the builder reads the written model back and
 refuses it otherwise (``model_raster.screen_clearance``).
 
+A board's master (a spec whose ``output`` is ``<board>/model/<board>.glb``)
+is also written as Wavefront OBJ and MTL beside it, in millimetres, by
+``export_obj.py`` from the GLB just written and from nothing else, and
+``source.json`` records the two files under ``obj``; the GLB's bytes do not
+change for it. The checks' fixture gets no OBJ.
+
 The output is byte-for-byte reproducible with these libraries (cascadio only
 for a STEP, fast-simplification only for ``decimate``, fonttools only for
 ``legends``), which are not in the QA environment::
@@ -270,6 +276,7 @@ import trimesh
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import board_faces  # noqa: E402  (beside this file; -I leaves it off the path)
+import export_obj  # noqa: E402
 import glb_legends  # noqa: E402
 import legend_source  # noqa: E402
 import model_raster  # noqa: E402
@@ -1946,13 +1953,15 @@ SOURCE_KEYS = ('vendor', 'format', 'url', 'repository', 'path', 'commit', 'sha25
                'license', 'copyright', 'license_note')
 
 
-def source_json(spec, out_path, summary):
+def source_json(spec, out_path, summary, obj=None):
     """The provenance record written beside a board's model.
 
     A spec with ``modules`` records each module's vendor file and transform
     under ``modules``; a spec whose legends lie on another face than the front
     records that face's frame under ``parameters.face_frames``. A spec with
-    neither writes the record it always wrote."""
+    neither writes the record it always wrote. *obj*, the record of the OBJ
+    and MTL written from a board's master (``export_obj.record``), goes last,
+    under ``obj``."""
     data = Path(out_path).read_bytes()
     src = spec['source']
     printed = ({'legends': summary['legends'],
@@ -2000,6 +2009,7 @@ def source_json(spec, out_path, summary):
                 for k, v in summary['screen'].items()},
         },
         **printed,
+        **({'obj': obj} if obj else {}),
     }
 
 
@@ -2174,10 +2184,15 @@ def main(argv=None):
         target = REPO / spec['output']
 
         def record(model, summary):
-            data = source_json(spec, model, summary)
+            # a board's master is also written as OBJ and MTL, from the GLB itself
+            obj = (export_obj.write(model, spec['board'])
+                   if export_obj.applies(spec['output']) else None)
+            data = source_json(spec, model, summary, obj)
             dest = spec['_dir'] / 'source.json'
             dest.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
             print(f'wrote {rel(dest)}: gzip {data["model_gzip_bytes"]} bytes')
+            if obj:
+                print(f'wrote {obj["obj"]} ({obj["obj_bytes"]} bytes) and {obj["mtl"]}')
 
         if args.web_px_per_mm is not None:
             ppm = args.web_px_per_mm

@@ -25,15 +25,19 @@ SPDX-FileCopyrightText = ["2026 José M. Requena Plens <jmrplens@kleidos.dev>",
                           "2024 The Khronos Group, Inc. (the PBR Neutral tone mapping function)"]
 SPDX-License-Identifier = "MIT AND Apache-2.0"
 
-# The M5Stack boards' models, master and web level of detail: our recipe,
-# parts and legends over re-meshed M5Stack case geometry (m5stack/M5_Hardware,
-# MIT, "Copyright (c) 2021 M5Stack"; NOTICE.md). The T-Deck Plus's model is
-# this project's own throughout (_shared/tdeck_plus_case.py) and takes the
-# first row.
+# The M5Stack boards' models, master and web level of detail and the master
+# as Wavefront OBJ: our recipe, parts and legends over re-meshed M5Stack case
+# geometry (m5stack/M5_Hardware, MIT, "Copyright (c) 2021 M5Stack";
+# NOTICE.md). An OBJ's material library (.mtl) holds only our materials and
+# takes the first row, as does the T-Deck Plus's model, this project's own
+# throughout (_shared/tdeck_plus_case.py).
 [[annotations]]
 path = ["sticks3/model/*.glb", "m5stickc-plus2/model/*.glb", "m5stickc-plus1/model/*.glb",
         "m5stickc-plus-se/model/*.glb", "coreink/model/*.glb", "cores3-se/model/*.glb",
-        "m5stack-core2-v13/model/*.glb", "cardputer/model/*.glb", "models-contact-sheet.png"]
+        "m5stack-core2-v13/model/*.glb", "cardputer/model/*.glb", "models-contact-sheet.png",
+        "sticks3/model/*.obj", "m5stickc-plus2/model/*.obj", "m5stickc-plus1/model/*.obj",
+        "m5stickc-plus-se/model/*.obj", "coreink/model/*.obj", "cores3-se/model/*.obj",
+        "m5stack-core2-v13/model/*.obj", "cardputer/model/*.obj"]
 precedence = "override"
 SPDX-FileCopyrightText = ["2026 José M. Requena Plens <jmrplens@kleidos.dev>",
                           "2021 M5Stack"]

@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="CoreS3-SE icon">
+<img src="icon.svg" width="96" height="96" alt="CoreS3-SE icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="337" height="320" alt="CoreS3-SE front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # CoreS3-SE
 
@@ -209,9 +209,11 @@ Every wiring fact comes from the vendor's schematic Sch_M5_CoreS3_SE_v1.0 (Altiu
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
 - [`svg/top.svg`](svg/top.svg): the top face and what it prints.
-- [`model/cores3-se.glb`](model/cores3-se.glb): the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept.
+- [`model/cores3-se.glb`](model/cores3-se.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/cores3-se-web.glb`](model/cores3-se-web.glb): its web level of detail.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/cores3-se.obj`](model/cores3-se.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/cores3-se.mtl`](model/cores3-se.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/cores3-se.pdf`](schematic/cores3-se.pdf): the connectivity schematic, made to be followed by clicking.

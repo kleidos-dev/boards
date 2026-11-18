@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="Core2 v1.3 icon">
+<img src="icon.svg" width="96" height="96" alt="Core2 v1.3 icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="337" height="320" alt="Core2 v1.3 front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # Core2 v1.3
 
@@ -205,9 +205,11 @@ The board is two PCBs: the core (ESP32, AXP192, LCD, touch, RTC, speaker amplifi
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
 - [`svg/top.svg`](svg/top.svg): the top face and what it prints.
-- [`model/m5stack-core2-v13.glb`](model/m5stack-core2-v13.glb): the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept.
+- [`model/m5stack-core2-v13.glb`](model/m5stack-core2-v13.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/m5stack-core2-v13-web.glb`](model/m5stack-core2-v13-web.glb): its web level of detail.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/m5stack-core2-v13.obj`](model/m5stack-core2-v13.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/m5stack-core2-v13.mtl`](model/m5stack-core2-v13.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/m5stack-core2-v13.pdf`](schematic/m5stack-core2-v13.pdf): the connectivity schematic, made to be followed by clicking.

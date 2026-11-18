@@ -39,7 +39,7 @@ jobs:
           # A model's inputs: its drawings, measurements, recipe and records,
           # the code that builds and checks it, the fonts, the pins, its tests.
           # shellcheck disable=SC2034
-          models='^([^/]+/(model|svg)/|[^/]+/measurements\.json$|_shared/|fonts/|requirements\.txt$|tests/(conftest|test_board_model_legends)\.py$|\.github/workflows/check\.yml$)'
+          models='^([^/]+/(model|svg)/|[^/]+/measurements\.json$|_shared/|fonts/|requirements\.txt$|tests/(conftest|test_board_model_legends|test_board_model_obj)\.py$|\.github/workflows/check\.yml$)'
           # The checkers the selftests plant defects in, and their fixtures.
           # shellcheck disable=SC2034
           checkers='^(_shared/[^/]+\.py$|_shared/fixtures/|requirements\.txt$|tests/(conftest|test_board_model_legends)\.py$|\.github/workflows/check\.yml$)'

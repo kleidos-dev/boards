@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="StickC-Plus2 icon">
+<img src="icon.svg" width="96" height="96" alt="StickC-Plus2 icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="226" height="320" alt="StickC-Plus2 front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # StickC-Plus2
 
@@ -211,9 +211,11 @@ Components are the parts of the vendor's schematic v0.5 (three sheets). Resistor
 - [`icon.svg`](icon.svg): a 64 px pictogram of the board.
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
-- [`model/m5stickc-plus2.glb`](model/m5stickc-plus2.glb): the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept.
+- [`model/m5stickc-plus2.glb`](model/m5stickc-plus2.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/m5stickc-plus2-web.glb`](model/m5stickc-plus2-web.glb): its web level of detail.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/m5stickc-plus2.obj`](model/m5stickc-plus2.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/m5stickc-plus2.mtl`](model/m5stickc-plus2.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/m5stickc-plus2.pdf`](schematic/m5stickc-plus2.pdf): the connectivity schematic, made to be followed by clicking.

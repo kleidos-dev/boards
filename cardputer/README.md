@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="Cardputer-Adv icon">
+<img src="icon.svg" width="96" height="96" alt="Cardputer-Adv icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="467" height="320" alt="Cardputer-Adv front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # Cardputer-Adv
 
@@ -221,9 +221,11 @@ Two boards make the product: the Stamp-S3A core module (SoC, crystal, antenna, 3
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
 - [`svg/top.svg`](svg/top.svg): the top face and what it prints.
 - [`svg/left.svg`](svg/left.svg): the left face and what it prints.
-- [`model/cardputer.glb`](model/cardputer.glb): the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept.
+- [`model/cardputer.glb`](model/cardputer.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/cardputer-web.glb`](model/cardputer-web.glb): its web level of detail.
-- [`model/spec.json`](model/spec.json): the recipe both are built from.
+- [`model/cardputer.obj`](model/cardputer.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/cardputer.mtl`](model/cardputer.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.
 - [`schematic/cardputer.pdf`](schematic/cardputer.pdf): the connectivity schematic, made to be followed by clicking.
