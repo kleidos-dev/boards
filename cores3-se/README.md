@@ -209,8 +209,10 @@ Every wiring fact comes from the vendor's schematic Sch_M5_CoreS3_SE_v1.0 (Altiu
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
 - [`svg/top.svg`](svg/top.svg): the top face and what it prints.
-- [`model/cores3-se.glb`](model/cores3-se.glb): the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept.
+- [`model/cores3-se.glb`](model/cores3-se.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/cores3-se-web.glb`](model/cores3-se-web.glb): its web level of detail.
+- [`model/cores3-se.obj`](model/cores3-se.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/cores3-se.mtl`](model/cores3-se.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
 - [`model/spec.json`](model/spec.json): the recipe both are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.

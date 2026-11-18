@@ -63,8 +63,13 @@ FOLDER = [
     ("svg/left.svg", "the left face and what it prints"),
     ("svg/right.svg", "the right face and what it prints"),
     ("svg/bottom.svg", "the bottom face and what it prints"),
-    ("model/{b}.glb", "the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept"),
+    ("model/{b}.glb", "the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format "
+                      "for the web and most viewers"),
     ("model/{b}-web.glb", "its web level of detail"),
+    ("model/{b}.obj", "the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format "
+                      "for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); "
+                      "written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py)"),
+    ("model/{b}.mtl", "the OBJ's materials: each part's colour, transparency, roughness and metalness"),
     ("model/spec.json", "the recipe both are built from"),
     ("model/source.json", "the master's provenance"),
     ("model/web.json", "the web level's record"),

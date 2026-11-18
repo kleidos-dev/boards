@@ -204,8 +204,10 @@ LilyGO publishes one mainboard schematic for the T-Deck family (dated 2023-06-01
 - [`icon.svg`](icon.svg): a 64 px pictogram of the board.
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
-- [`model/tdeck-plus.glb`](model/tdeck-plus.glb): the 3D model, glTF 2.0 at 1 unit = 1 mm, every print kept.
+- [`model/tdeck-plus.glb`](model/tdeck-plus.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/tdeck-plus-web.glb`](model/tdeck-plus-web.glb): its web level of detail.
+- [`model/tdeck-plus.obj`](model/tdeck-plus.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/tdeck-plus.mtl`](model/tdeck-plus.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
 - [`model/spec.json`](model/spec.json): the recipe both are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.

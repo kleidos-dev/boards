@@ -16,6 +16,7 @@ See [`../_shared/schema.md`](../_shared/schema.md) for the drawing and measureme
 | `<board>/icon.svg` | drawn by hand: a 64 px pictogram of the board |
 | `<board>/model/spec.json` | maintained by hand: the pinned vendor file, which of its parts to keep, the turn into the model's frame, the screen's depth, the parts the shell lacks and the materials (format in `_shared/build_board_glb.py`) |
 | `<board>/model/<board>.glb`, `<board>/model/source.json` | `_shared/build_board_glb.py <board>/model/spec.json`: the board's master model, every part, every triangle and every print kept, its printed legends read from the legend groups of `<board>/svg/front.svg` (and of `back.svg` and the other faces' drawings, for a print on those faces), and its provenance (vendor file, and a module's, digest, builder version, libraries, parameters, size, and for each legends mesh the digest of the groups it was built from). The StickS3's is the one the Kleidos site's first renders were drawn from; its spec also has `sticks3/build_sticks3_glb.py`, which keeps the command line its model was first built with |
+| `<board>/model/<board>.obj`, `<board>/model/<board>.mtl` | `_shared/export_obj.py`, which the builder runs whenever it writes a board's master (or `python -I _shared/export_obj.py [<board> ...]` on its own): the master as Wavefront OBJ and its material library, written from the GLB alone, in millimetres, Y up, one object per part; `source.json` records both under `obj` ("Formats: GLB and OBJ", below) |
 | `<board>/model/<board>-web.glb`, `<board>/model/web.json` | `_shared/build_board_glb.py <board>/model/spec.json --web-px-per-mm <px per mm>` (each board's scale from the Kleidos repository's `site/tools/build-web-model.mjs --scales`): the board's web level of detail, the master less the prints a reader cannot see at the largest scale the site draws the board at, and its record (its bytes, the master's bytes it was built beside, the scale it was built for) ("Two levels of detail", below) |
 | `_shared/fixtures/faces/` | `_shared/face_fixture.py` (two boxes, a front and a back drawing, a spec), then `_shared/build_board_glb.py` (its model and `source.json`): a board of two vendor files that prints on its front and its back, the one model those paths are tested on until a board does both ("Prints on other faces", below) |
 | `_shared/check_board_model.py` output | nothing in the tree: its views and report go to `--out` (a temporary directory by default) |
@@ -35,7 +36,7 @@ Every `front.svg` answers the contract in [`../_shared/schema.md`](../_shared/sc
 
 ## Status
 
-Every board folder carries `README.md`, `board.json`, `measurements.json`, `svg/front.svg`, `svg/back.svg`, `icon.svg`, `model/` (the master model, its web level of detail and their records and recipe) and `schematic/` ("Schematics", below); a board that prints on a side also carries that side's drawing (`svg/left.svg`, `svg/top.svg`). Every board but the CoreInk also carries a `sources.md` listing the vendor drawings, photos and CAD files its front and measurements were taken on, and what could not be established about them. `README.md` is written from `board.json` by `_shared/emit_board_readme.py`, one layout for all nine (`tests/test_board_readme.py` fails when a page differs). The vendor files the figures came from (CAD files, schematics, dimension drawings, product photos and renders) are never kept here: they are not ours to redistribute, and what they gave is preserved in `measurements.json`, in the drawings and in the table below. `NOTICE.md` says what is cited and why.
+Every board folder carries `README.md`, `board.json`, `measurements.json`, `svg/front.svg`, `svg/back.svg`, `icon.svg`, `model/` (the master model, as GLB and as OBJ with its MTL, its web level of detail and their records and recipe) and `schematic/` ("Schematics", below); a board that prints on a side also carries that side's drawing (`svg/left.svg`, `svg/top.svg`). Every board but the CoreInk also carries a `sources.md` listing the vendor drawings, photos and CAD files its front and measurements were taken on, and what could not be established about them. `README.md` is written from `board.json` by `_shared/emit_board_readme.py`, one layout for all nine (`tests/test_board_readme.py` fails when a page differs). The vendor files the figures came from (CAD files, schematics, dimension drawings, product photos and renders) are never kept here: they are not ours to redistribute, and what they gave is preserved in `measurements.json`, in the drawings and in the table below. `NOTICE.md` says what is cited and why.
 
 Legend: ✅ an official file for this SKU, ⚠️ proxy from a related SKU, ❌ never found.
 
@@ -167,6 +168,27 @@ The M5StickC Plus 1.1 prints its whole back label: `label` of its `back.svg`, on
   `strip` needs only the standard library and writes the file from the model alone, every legend gone or, with a scale, only those too thin to draw at it; `build_board_glb.py <spec> --check --without-legends` builds the model with no legends mesh from the vendor file and holds the two to the same bytes. The web model's cutter (the Kleidos repository's `site/tools/build-web-model.mjs`) takes either file with no change.
 
 **What keeps them right.** The sheets lie three position steps (0.03 mm) over the highest face under them, facing +Z (the T-Deck's round marks keep the height of the plate's print around them, three steps over the trackball's band, which leaves them eight over the plate they lie on). The builder reads the written model back and refuses it when the nearest face under a legend is closer than two steps, when any face lies over one, or when a legend has no face of its `on` mesh under it (`model_raster.legend_clearance`); it also refuses a plane of the drawing that no legends mesh draws, and a model of more than 45 materials, the inks counted: what the strictest reader of the format has room for, the lit shader's 48 slots less the three the builder keeps for a scene's own ("The screen contract", below). `_shared/legend_placement.py`, which `check_board_model.py` runs, reads the drawing and the written model apart and measures each group's ink against the model's: the furthest any point of either outline lies from the other is at most 0.012 mm on the Cardputer (mean 0.006) and 0.008 mm on the T-Deck Plus (mean 0.006), against a tolerance of 0.02 mm, two position steps. `tests/test_board_model_legends.py` runs that check on every model wherever the tests run, CI included, and its selftest where the checker's code or the fixtures change, on a weekly schedule and on demand ("Tests and CI", below): `requirements.txt` pins the four libraries they read with (numpy, shapely, mapbox_earcut and fonttools) at the versions each model's `source.json` says it was built with, and the suite fails a pin that is not one of those. On a machine without them the tests skip and name the install command; in CI they fail.
+
+### Formats: GLB and OBJ
+
+Every board's master is in two formats, with the same geometry:
+
+- **GLB** (`<board>.glb`, glTF 2.0 binary): for the web and most viewers (the Kleidos site, browser engines such as three.js, Blender, online glTF viewers). It stores metres, as glTF requires, with quantized positions (`KHR_mesh_quantization`), PBR materials and the screen's UVs; the builder writes it and everything else is read from it.
+- **OBJ and MTL** (`<board>.obj` with `<board>.mtl` beside it, Wavefront): for most other 3D tools, which import OBJ where they may not import glTF (FreeCAD, Fusion, MeshLab, slicers, and Blender too). `_shared/export_obj.py` writes both from the GLB alone, whenever the builder writes a board's master: millimetres (one unit a millimetre, the unit of `measurements.json`), the glTF frame (+Y up the screen, +Z out of it, +X to the device's right, the GLB's origin), one object (`o`) and one group (`g`) per mesh of the GLB with its node's name, in the GLB's order, each vertex with its normal, and on the screen and the glass their texture coordinates turned to OBJ's convention (v up), so an image laid on the screen reads upright. The MTL holds the GLB's materials in their order: `Kd` the base colour in sRGB (the GLB stores it linear), `d` its alpha, `Pr` and `Pm` its roughness and metalness (the PBR extension of MTL most importers read), `Ns` and `Ks` a classic reader's approximation of those two, and `illum 0` for the unlit screen, `2` for the rest. The models carry no texture, so neither file names one.
+
+The OBJ's header names the GLB and its SHA-256, and its numbers are fixed decimals (positions and normals to 4 places, texture coordinates to 5, trailing zeros dropped, never `-0`) with LF line endings, so the same GLB always gives the same bytes. `source.json` records the two files under `obj`: their paths, digests and sizes, the exporter's version, the units and the counts. `python -I _shared/export_obj.py --check` and `tests/test_board_model_obj.py` fail when a committed OBJ, MTL or record is not what the committed GLB gives; the test also reads each OBJ back with another reader (trimesh) and holds its vertices, triangles and bounds to the GLB's, its objects to the GLB's meshes and its materials to the GLB's. The checks' fixture (`_shared/fixtures/faces/`) gets no OBJ. A build that writes the OBJ changes no byte of the GLB, so the builder keeps its version.
+
+| Board | GLB bytes (gzip) | OBJ bytes (gzip) | MTL bytes | Objects | Vertices | Triangles |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `sticks3` | 765,884 (285,585) | 1,951,921 (382,862) | 4,147 | 51 | 40,742 | 38,703 |
+| `m5stickc-plus2` | 531,580 (200,617) | 1,355,672 (270,038) | 3,382 | 39 | 28,095 | 26,618 |
+| `m5stickc-plus1` | 551,392 (205,582) | 1,388,766 (276,473) | 4,172 | 47 | 28,786 | 27,282 |
+| `m5stickc-plus-se` | 542,856 (202,540) | 1,359,642 (271,516) | 4,360 | 51 | 28,159 | 26,641 |
+| `coreink` | 678,152 (263,940) | 1,734,949 (359,680) | 3,788 | 47 | 36,410 | 33,244 |
+| `cores3-se` | 418,272 (155,462) | 1,131,054 (219,617) | 2,497 | 36 | 22,682 | 19,316 |
+| `m5stack-core2-v13` | 963,924 (360,766) | 2,650,653 (492,447) | 4,005 | 48 | 52,247 | 49,064 |
+| `cardputer` | 1,390,768 (521,410) | 3,815,410 (717,939) | 4,362 | 91 | 75,586 | 67,996 |
+| `tdeck-plus` | 406,196 (137,940) | 1,001,695 (187,752) | 2,860 | 38 | 21,659 | 18,949 |
 
 ### Two levels of detail: the master and the web's
 
@@ -330,7 +352,7 @@ Several `pwr_flags` on one sheet are stacked upwards from the first, clear of th
 `tests/` holds three kinds of test, told apart by pytest markers (`tests/conftest.py`):
 
 - the contracts of the drawings, the specifications and the schematics, with no marker: fast, on every push and pull request;
-- `models`: every model held to what builds it as it is now (built from its drawings and spec as they are, its legends where its drawings print them, its materials at separate depths and within the readers' table, its web level the master less what a reader cannot see), on every push and pull request that touches a model's inputs (a board's `model/`, `svg/` or `measurements.json`, `_shared/`, `fonts/`, `requirements.txt` or these tests);
+- `models`: every model held to what builds it as it is now (built from its drawings and spec as they are, its legends where its drawings print them, its materials at separate depths and within the readers' table, its web level the master less what a reader cannot see, its OBJ and MTL what its GLB gives, `tests/test_board_model_obj.py`), on every push and pull request that touches a model's inputs (a board's `model/`, `svg/` or `measurements.json`, `_shared/`, `fonts/`, `requirements.txt` or these tests);
 - `selftest` (also `models`): the checkers' own tests, each planting defects in a model or a drawing that the checker must catch, and the face fixture rebuilt byte for byte. They are slow, each planted defect a whole placement of a board, so CI runs them only when a checker's code (`_shared/*.py` but the schematic and specification scripts) or the fixtures change, every Monday and on demand.
 
 `.github/workflows/check.yml` decides which of the three jobs run in its `changes` job, from the paths a push or a pull request touched; a scheduled or manual run runs all three. Locally:
@@ -356,6 +378,20 @@ The digests of the committed models, master and web level, for a reader that pin
 | `m5stack-core2-v13` | `2e52119fbc1a9da3acdbb8a4920af18f06d577e4d47836a88142863e98391af2` | 963,924 | `3f4ba486cf47ee7f56dd52caa28433bd85b1e43ea60d698115f092297b1303ff` | 827,020 |
 | `cardputer` | `f0c9c55163cf81293797884e09390919440041311a2a8fa3607542c3025b77ed` | 1,390,768 | `b0d3b184328e82d3aa0e011540421fd8f73b17b495d8bc2e5fd4190a269c452f` | 949,036 |
 | `tdeck-plus` | `2ea45ef998b5da3f85212265f03d735f37a426f057af2a34ff5fcf4947961932` | 406,196 | `319051b0d6e67f87c83a98cc6c14648241d7f90322bcdceb21bc5ea20e974eac` | 377,620 |
+
+The OBJ and MTL written from each master (`source.json`, `obj`):
+
+| Board | OBJ `sha256` | Bytes | MTL `sha256` | Bytes |
+| --- | --- | ---: | --- | ---: |
+| `sticks3` | `e952ebf3383bb565a275ef6b91712753c811b8b30942a33ac6b594e41262c593` | 1,951,921 | `196e3bd75b22be7417045459239e49ad2d26d17ada723bfaf624704ab42432ad` | 4,147 |
+| `m5stickc-plus2` | `71622b96f5dc701bd28fed6a6894780a4a38a570e4bad25fa490b3d6bd5df744` | 1,355,672 | `4a25368c74344273dd2007d450d2b844d5674e0775321078d78cbb9b55be77da` | 3,382 |
+| `m5stickc-plus1` | `18a39d4322f9b01d0ecaa4b9766c72317166734f01e9965d0f5b04b4bd4a362d` | 1,388,766 | `61a0755839771032060ee8ca2252c89950302383bd03233f0acc0d8ac4ef9299` | 4,172 |
+| `m5stickc-plus-se` | `54b58d9968c996dbd5892f4ad93ae088221a7c7387f3e63fe2146b6148a6f25f` | 1,359,642 | `9352b7ed6c76cd21bf8ddde68c679a55ae594a2b3ee4ddeb9eef8b8404547f64` | 4,360 |
+| `coreink` | `1137701ab8461bab3241a9e85eba157c3ff4f1297b583cee61957609562beb67` | 1,734,949 | `cdfea3798174dfd1dd00cad9cccc71364149613e670ee048249a6416e9f478bb` | 3,788 |
+| `cores3-se` | `4021c8e655328b2fcd066126fc30a6bfeadf022f61020caeac02cb4e883e220f` | 1,131,054 | `af383f9ffbb19291d00004326217b3ff2a623c4148dd4b8c822893ed7115b8a4` | 2,497 |
+| `m5stack-core2-v13` | `53924953df07688448cd9eb44438b54f58499a80660f5f669146fe08ec4f8d89` | 2,650,653 | `c7b48209c609980a8b5101ef0e0ea0647757a68536f14deacf12c8a9beb980c1` | 4,005 |
+| `cardputer` | `fd8234dcaf1796b52718b4fdb140190b5d8bd634521ef40631b0453bec3c754d` | 3,815,410 | `85db700b6a0baad96533553372ae35cbd3fef4f6d82015b2426358fd1c106f8c` | 4,362 |
+| `tdeck-plus` | `d266d1290324d8247448e07d23d8acc575b84c1a90e0ce868668804f7ccaa336` | 1,001,695 | `122a2729c633375ea6c9584b3b7c81546f27d5ba8a545a7da6ed684890aa477a` | 2,860 |
 
 ## Per-board workflow
 
