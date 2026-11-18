@@ -1,0 +1,146 @@
+{
+  "device_id": "coreink",
+  "display_name": "M5Stack CoreInk",
+  "vendor": "M5Stack",
+  "sku": "K048",
+  "theme": "coreink_white",
+  "case": {
+    "width": 40.0,
+    "height": 56.0,
+    "depth": 16.0,
+    "corner_radius": 3.0,
+    "color": "#F7F7F5",
+    "material": "PC",
+    "note": "material is the vendor's figure: its specification table gives the enclosure as plastic (PC). It was PC+ABS until 2026-11-17, with no source."
+  },
+  "display": {
+    "tech": "E-Paper",
+    "controller": "SSD1681",
+    "active_w_mm": 27.6,
+    "active_h_mm": 27.6,
+    "resolution_w_px": 200,
+    "resolution_h_px": 200,
+    "origin_x_mm": 6.39,
+    "origin_y_mm": 11.66,
+    "native_orientation": "portrait",
+    "firmware_rotation_deg": 0,
+    "note": "Origin photo-measured 2026-10-18 from the factory clock demo's pixels on the vendor front photo, mapped onto the case through the four hole centers (the photo shows the front face 1.2 % larger than the case and 0.4 mm left of center); the window in the cover spans x 4.96-35.19, y 10.695-40.235 mm."
+  },
+  "buttons": [
+    {
+      "id": "DialUp",
+      "logical": "up",
+      "gpio": 37,
+      "active": "low",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 1.5,
+      "height_mm": 3.5,
+      "center_x_mm": 40.0,
+      "center_y_mm": 17.9,
+      "label_on_case": "▲"
+    },
+    {
+      "id": "DialMid",
+      "logical": "primary",
+      "gpio": 38,
+      "active": "low",
+      "face": "right",
+      "shape": "circle",
+      "diameter_mm": 3.0,
+      "center_x_mm": 40.0,
+      "center_y_mm": 19.95,
+      "label_on_case": "OK"
+    },
+    {
+      "id": "DialDown",
+      "logical": "down",
+      "gpio": 39,
+      "active": "low",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 1.5,
+      "height_mm": 3.5,
+      "center_x_mm": 40.0,
+      "center_y_mm": 22.0,
+      "label_on_case": "▼"
+    },
+    {
+      "id": "BtnEXT",
+      "logical": "back",
+      "gpio": 5,
+      "active": "low",
+      "face": "top",
+      "shape": "rect",
+      "width_mm": 5.28,
+      "height_mm": 4.4,
+      "center_x_mm": 26.0,
+      "center_y_mm": 0.0,
+      "note": "The top user key (M5Core-Ink BtnEXT; the back sticker names it BTN G5), one of the board's three plain keys (owner, on his unit, 2026-11-17). A tongue molded into the back shell's top end, flush with it. From M5Stack's CoreInk.stl (the pinned file the model is built from): the opening spans x 22.27 to 29.73 and the pad's face x 23.36 to 28.64 (width_mm), z 3.5 to 7.9 mm from the back (height_mm), hinged toward the front. Its GPIO is the Kleidos firmware's PIN_USER_BUTTON (variants/m5core_ink/variant.h); the vendor's schematic marks the line KEY at the HAT connector and draws no key. svg/front.svg carries its target on the top edge (hs-BtnEXT)."
+    },
+    {
+      "id": "Power",
+      "logical": "power",
+      "gpio": 27,
+      "active": "low",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 3.8,
+      "height_mm": 3.88,
+      "center_x_mm": 40.0,
+      "center_y_mm": 41.0,
+      "note": "The power key, a push key on the dial's side, under the dial's pocket; not a slide switch (owner, on his unit, 2026-11-17; the vendor's schematic draws S1 as a push switch to GND, read on GPIO27 through D5, and the back sticker points at it with 'Switch G27' and 'POWER ON'). A tongue molded into the back shell's right wall, flush with it. From M5Stack's CoreInk.stl: the opening spans y 37.97 to 44.03 and the pad's face y 39.06 to 42.94 (height_mm, along the edge), z 8.3 to 12.1 mm from the back (width_mm, across the wall), hinged toward the back. svg/front.svg carries its target on the right edge (hs-Power)."
+    },
+    {
+      "id": "Reset",
+      "logical": "reset",
+      "gpio": -1,
+      "active": "low",
+      "face": "back",
+      "shape": "rect",
+      "width_mm": 4.13,
+      "height_mm": 3.41,
+      "center_x_mm": 6.0,
+      "center_y_mm": 14.67,
+      "note": "The reset key, on the back (owner, on his unit, 2026-11-17), where the sticker's SYSTEM RST arrow points; S2 on the vendor's schematic, a push key from EN to GND. A tongue molded into the back shell, flush with the back, hinged at its lower end. From M5Stack's CoreInk.stl: in the back frame (x from the case's left edge as seen from behind) the opening is a stadium, x 30.94 to 37.06, y 11.98 to 22.02, and the pad's face is 4.13 mm wide about x 34.0, round at its top (y 12.97, radius 2.07) and flat down to a crease at y 16.38; center_x_mm is that 34.0 in this file's front frame (40 - 34.0), and the box is the pad's. M5Stack's straight-on photo of the back shows the same key (slot top at y 11.9, its arms' ends at y 20.2). svg/back.svg draws it (reset-key) and carries its target (hs-Reset)."
+    }
+  ],
+  "extras": [
+    {
+      "type": "usb-c",
+      "face": "bottom",
+      "center_x_mm": 24.0,
+      "center_y_mm": 56.0
+    },
+    {
+      "type": "led",
+      "face": "inside",
+      "center_x_mm": null,
+      "center_y_mm": null,
+      "color": "green",
+      "note": "The status LED on GPIO10, active low: green, inside the case near the top end (owner, on his unit, 2026-11-17: it lit on the Kleidos firmware's LED-on command). Its place inside the case is not measured, and the nulls say so; the earlier entry (red, on the front at x 39, y 44) matched neither the unit nor the vendor's shell, whose front cover has no opening there."
+    }
+  ],
+  "notes": "Up/OK/down (GPIO 37/38/39) are one jog wheel on the RIGHT EDGE, upper area (the wheel shows at y 15.9-24.0 mm in an edge pocket spanning y 10-29.6 mm, photo-measured 2026-10-18) — owner-confirmed 2026-07-15 that the front face has NO dial (front = screen + embossed M5 + 4 corner screws); the earlier front-face x24/y38-50 coordinates were stale 48 mm-case guesses. Besides the dial the board has three plain keys (owner, on his unit, 2026-11-17): the top user key (G5), the power key (G27) on the dial's side, a push key and not a slide switch, and the reset key on the back. Each is a tongue molded into the back shell, flush with its wall, and its place is read off M5Stack's CoreInk.stl; width_mm and height_mm run as this file's x and y do, so the power key's are across its wall and along the edge, and the top key's along the edge and across its wall. The earlier entries (a slide switch 'PowerSwitch' at y 12 in the dial's pocket, a reset hole on the right face at y 22, the top key unmeasured) were wrong. Display controller corrected 2026-07-15 (silicon chip-ID read-back): GDEY0154D67 panel driven by SSD1681 (was mislabeled GDEW0154M09). Case width corrected 48.0 -> 40.0 mm (right-edge button anchors updated to match); active area 27.6 x 27.6 mm / 184 PPI already correct.",
+  "sources": [
+    {
+      "kind": "stl",
+      "url": "https://github.com/m5stack/M5_Hardware/blob/067ddd8fa3cf17506dba4769e50237daf21359db/Products/K048_CoreInk/Structures/CoreInk.stl",
+      "note": "M5Stack's case file (SHA-256 20ef9043e2ff0bc7814d2ba48481561116109880569b35a2ca9cff18b745467f, the file model/spec.json pins): the three plain keys, read on its back shell on 2026-11-17. Not kept in this repository."
+    },
+    {
+      "kind": "photo",
+      "url": "https://shop.m5stack.com/cdn/shop/files/6_2f1f124d-f916-4bdf-a943-d31436a702e8.webp",
+      "note": "M5Stack's straight-on product photo of the back: the reset key beside the sticker's SYSTEM RST arrow, and the sticker's names for the keys. Not kept in this repository."
+    },
+    {
+      "kind": "schematic",
+      "url": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/schematic/Core/coreink/coreink_sch.pdf",
+      "note": "The vendor's one-page schematic (schematic/netlist.yaml says where it was read): S1 the power key on GPIO27, S2 the reset key on EN."
+    },
+    {
+      "kind": "observation",
+      "note": "The owner, on his own CoreInk, 2026-11-17, by eye: the three plain keys and where each is, the power key a push key, the status LED green, inside the case near the top, lit by the firmware's LED-on command."
+    }
+  ]
+}

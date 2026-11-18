@@ -1,0 +1,309 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# How the StickC-Plus SE schematic is drawn: the symbol each part takes, our
+# own symbols, and the sheets, blocks and rows the parts sit in. The facts
+# (values, pins, nets) are in netlist.yaml; _shared/kicad_schematic.py joins
+# the two.
+#
+# parts: a part takes the symbol its prefix names under _by_prefix unless it has
+# a row of its own. "pins" maps our symbol's pin number to the vendor's pin
+# (a list when one of our pins stands for several of the vendor's, "-" when the
+# vendor has no such pin). "angle" turns the symbol (90: a vertical two-pin part
+# lies flat). U5's pin 2 stands for the LCD's GND (2) and PAD, both on GND.
+# symbols: "hide_pin_numbers" hides a symbol's pin numbers (J2: the print
+# numbers only its CC and data pins, so the names carry those numbers, and
+# its unnumbered VCC, GND and SHELL take the hidden numbers V, G and SH).
+# rows: each row of a block is laid left to right; an item is a reference,
+# {col: [...]} for a column of two-pin parts, {cols: [[...], [...]]} for
+# several, or {text: ...}.
+# sheets: "summary" and "parts" fill the sheet's box on the contents page; a
+# sheet with "index" (power, nets, parts) is a page of tables the generator
+# writes from netlist.yaml, after the drawing. The nets page's "gpio_title"
+# and "pmic_title" name its GPIO tables after this board's parts, and
+# "test_points" titles the table of its pads.
+# root: the contents page's heading and the panels of its right-hand column;
+# revisions: the history the contents page prints (the last one is in every
+# title block). short: what a part is, in the parts list and the power tree.
+# power_tree: its boxes, [column, row], and arrows, each a connection
+# netlist.yaml has (the generator refuses any other).
+
+paper: A3
+title_block:
+  title: StickC-Plus SE (K016-P-SE)
+  company: "Kleidos boards: connectivity documented from the vendor's public documentation"
+  comments:
+    - "Sources: M5Stack K016-P-SE schematic (print of 2025-11-04) and docs; README.md"
+    - "Values as documented. Layout and symbols: Kleidos boards"
+    - "License: MIT. github.com/kleidos-dev/boards"
+
+revisions:
+  - {rev: 1, date: "2026-11-17", change: "First drawing: every part, pin and net of the vendor's one-page print, with the contents, power tree, nets and parts pages, page/zone links that land on their label, DNP marks and no script in the PDF."}
+  - {rev: 2, date: "2026-11-17", change: "Kleidos additions and corrections K1-K28, listed above, from the datasheets, the vendor's docs page and three bench records."}
+  - {rev: 3, date: "2026-11-17", change: "An entry is marked wherever an index page shows its element again; a pin on no net says what it is on the nets page; the title block says the drawing carries entries."}
+
+grounds:
+  GND: kleidos:GND
+
+parts:
+  _by_prefix:
+    R: {symbol: "kleidos:R", angle: 90, stub: 0}
+    C: {symbol: "kleidos:C", angle: 90, stub: 0}
+    L: {symbol: "kleidos:L", angle: 90, stub: 0}
+    D: {symbol: "kleidos:D_Zener", stub: 0, short: ESD diode}
+    LED: {symbol: "kleidos:LED", stub: 0}
+    S: {symbol: "kleidos:SW_Push", stub: 0}
+    MOS: {symbol: "kleidos:Q_NMOS", short: N-MOSFET}
+    PAD: {symbol: "kleidos:TestPoint", stub: 0, short: Pad}
+  CX1: {symbol: "kleidos:C_Polarized", angle: 90, stub: 0, short: Polarised capacitor}
+  CX2: {symbol: "kleidos:C_Polarized", angle: 90, stub: 0, short: Polarised capacitor}
+  Y1: {symbol: "kleidos:Crystal", stub: 0, short: Crystal}
+  E1: {symbol: "kleidos:Antenna", short: Antenna}
+  J1: {symbol: "kleidos:Conn_01x04", short: Grove connector}
+  J2: {symbol: "m5stickc-plus-se:TYPEC", pins: {V: VCC, G: GND, SH: SHELL}}
+  J3: {symbol: "kleidos:Conn_01x02", short: Battery connector}
+  BAT1: {symbol: "kleidos:Conn_01x02", short: Backup cell}
+  U1: {symbol: "m5stickc-plus-se:PICO_D4"}
+  U2: {symbol: "m5stickc-plus-se:AXP192"}
+  U3: {symbol: "m5stickc-plus-se:SPM1423HM4H-B"}
+  U4: {symbol: "m5stickc-plus-se:BM8563"}
+  U5: {symbol: "m5stickc-plus-se:LCD_IPS", pins: {"2": ["2", PAD]}}
+  U6: {symbol: "m5stickc-plus-se:CH552T"}
+  U7: {symbol: "m5stickc-plus-se:MPU6886"}
+  U8: {symbol: "m5stickc-plus-se:SGM6603"}
+
+symbols:
+  PICO_D4:
+    short: ESP32 SiP module
+    description: ESP32-PICO-D4 system-in-package (the pins the vendor draws, and 44, 45, 47, 48 from the datasheet, K9)
+    left: ["1 VDDA", "43 VDDA", "46 VDDA", "37 VDD3P3_CPU", "3 VDDA3P3", "19 VDD3P3_RTC", "4 VDDA3P3",
+           "26 VDD_SDIO", "-", "2 LNA_IN", "-", "9 EN", "-", "44 XTAL_N_NC", "45 XTAL_P_NC", "47 CAP2_NC",
+           "48 CAP1_NC"]
+    bottom: ["49 PAD"]
+    right: ["23 IO0", "41 IO1/U0TXD", "22 IO2", "40 IO3/U0RXD", "24 IO4", "34 IO5", "31 IO6/CLK",
+            "32 IO7/SD0", "33 IO8/SD1", "28 IO9/SD2", "29 IO10/SD3", "30 IO11/CMD", "18 IO12", "20 IO13",
+            "17 IO14", "21 IO15", "25 IO16", "27 IO17", "35 IO18", "38 IO19", "42 IO21", "39 IO22",
+            "36 IO23", "14 IO25", "15 IO26", "16 IO27", "12 IO32", "13 IO33", "10 IO34", "11 IO35",
+            "5 IO36", "6 IO37", "7 IO38", "8 IO39"]
+  AXP192:
+    short: PMU
+    description: AXP192 power-management IC
+    left: ["32 ACIN", "33 ACIN", "31 VBUS", "34 BAT", "35 BAT", "30 BACKUP", "-",
+           "1 SDA", "2 SCK", "48 IRQ", "5 PWROK", "6 N_VBUSEN", "23 PWRON", "40 EXTEN", "-",
+           "24 BIAS", "25 VREF", "26 VINT", "-",
+           "3 N_RSTO", "36 CHGLED", "27 PWREN", "43 NC", "18 GPIO1", "20 GPIO2", "41 GPIO3", "42 GPIO4"]
+    right: ["38 IPSOUT", "39 IPSOUT", "21 APS", "44 VIN1", "7 VIN2", "14 VIN3", "13 LDOIN", "-",
+            "45 LX1", "47 DCDC1", "8 LX2", "10 DCDC2", "15 LX3", "17 DCDC3", "-",
+            "28 LDO1", "29 SYSEN", "12 LDO2", "11 LDO3", "19 GPIO0"]
+    bottom: ["4 N_OE", "9 PGND2", "16 PGND3", "22 AGND", "37 TS", "46 PGND1", "49 PAD"]
+  SPM1423HM4H-B:
+    short: PDM microphone
+    description: Digital MEMS microphone, PDM output
+    left: ["6 VCC", "4 CLK", "5 DATA"]
+    bottom: ["1 GND", "2 SELECT", "3 GND"]
+  BM8563:
+    short: RTC
+    description: Real-time clock
+    left: ["8 VDD", "5 SDA", "6 SCL", "3 ~{INT}"]
+    right: ["1 OSCI", "2 OSCO", "7 CLKOUT"]
+    bottom: ["4 VSS"]
+  LCD_IPS:
+    short: LCD module
+    description: IPS LCD module, 1.14-inch 135 x 240, ST7789V2 driver (docs page, K2; the print gives no part number)
+    left: ["6 SCK", "5 MOSI", "4 RS", "8 CS", "3 RESET", "-", "1 LEDA", "7 VDD"]
+    bottom: ["2 GND/PAD"]
+  CH552T:
+    short: USB-UART bridge
+    description: CH552T microcontroller, the USB-UART bridge (pin names as printed, pin 10's from the CH552 datasheet, K1)
+    left: ["19 VCC", "1 P3.2", "20 V33", "-", "14 P3.6", "15 P3.7", "-", "9 P3.1", "10 P3.0", "-",
+           "5 P1.7", "7 P1.0"]
+    right: ["2 P1.4", "3 P1.5", "4 P1.6", "8 P1.1", "17 P1.2", "16 P1.3", "11 P3.3", "12 P3.4", "13 P3.5"]
+    bottom: ["18 GND", "6 RST"]
+  MPU6886:
+    short: IMU footprint
+    description: MPU-6886 IMU footprint, not fitted on the SE (pin names from the MPU-6886 datasheet, K28)
+    left: ["8 VDDIO", "13 VDD", "22 nCS", "-", "24 SDA/SDI", "23 SCL/SCLK", "12 INT", "-", "9 AD0/SDO", "18 GND"]
+    right: ["1 NC", "2 NC", "3 NC", "4 NC", "5 NC", "6 NC", "7 NC", "10 REGOUT", "11 FSYNC", "14 NC", "15 NC",
+            "16 NC", "17 NC", "19 RESV", "20 RESV", "21 NC"]
+  SGM6603:
+    short: Boost converter
+    description: SGM6603-5.0 boost converter
+    left: ["6 IN", "1 SW", "3 EN"]
+    right: ["5 OUT", "4 NC/FB"]
+    bottom: ["2 GND"]
+  TYPEC:
+    short: USB-C receptacle
+    ref: J
+    description: USB Type-C receptacle (pins as the vendor draws them; it numbers only CC and data)
+    hide_pin_numbers: true
+    left: ["V VCC", "A5 CC1(A5)", "B5 CC2(B5)"]
+    right: ["A6 DP1(A6)", "B6 DP2(B6)", "A7 DN1(A7)", "B7 DN2(B7)"]
+    bottom: ["G GND", "SH SHELL"]
+
+root:
+  title: Contents
+  heading: "M5Stack StickC-Plus SE (K016-P-SE) schematic"
+  subheading: "Kleidos boards: every part, pin and net, connectivity documented from the vendor's public documentation"
+  panels:
+    - title: How to read it
+      text: |
+        Click a box on the left to open its page. "Contents" and the page numbers at the bottom right of
+        every page lead back here and to each page.
+
+        Cyan lines are connections: wires and pin ends, all one width. A dot joins lines; a cross on a pin
+        end means the pin is not connected. Pins connect by net labels (the boxed names): pins whose labels
+        carry the same name are on one net, on any page. [3/C4] after a label: page 3 carries that net too,
+        its label in zone C4 (column 4, row C of the border). Click it to land on that label. No
+        [page/zone]: the net is on this page only. Click a part's reference to find its row in the parts
+        list; the row's page/zone leads back. A part crossed out in red is not fitted (DNP). White: parts
+        and their references. Grey: values, pin names, pin numbers. A dashed frame is a block of the
+        circuit, titled at its top left. An amber K5 marks a Kleidos addition or correction: it leads to
+        its row below.
+    - title: Notes
+      text: |
+        Every part, pin and net of the StickC-Plus SE, with the values the vendor documents: connectivity
+        documented from the vendor's public documentation, with Kleidos additions and corrections listed on
+        page 1 (M5Stack's K016-P-SE schematic, one A4 sheet printed 2025-11-04, and its docs page, cited in
+        README.md and netlist.yaml beside this file). Layout and symbols are this project's. No footprints,
+        no PCB, no part numbers beyond the documented ones. Values are as the vendor prints them (5.1K,
+        100uF/4V). A value of NC means not fitted: those parts (the IMU footprint U7, C21, C28, C29) are
+        marked DNP. Reference designators are the vendor's; the print leaves two parts without one: the
+        ESP32-PICO-D4 ("U?") is U1 here, the battery connector ("Li_Ion") is J3. Nets the print leaves
+        unnamed carry names of ours (AXP_LX1, MOS1_G...). Wires that cross in the print without a junction
+        dot are read as not connected: U1 pins 4 and 19 reach only C43 and C40, U6 pin 20 only C25
+        (README.md, where pins 4 and 19 are open questions). U7's pin names are the MPU-6886 datasheet's
+        (K28); U6's pin 10 is named P3.0, the datasheet's name (K1). Zones: columns 1-8 and rows A-F,
+        50 mm apart, printed in the border.
+
+sheets:
+  - file: pmu.kicad_sch
+    name: Power, clock and boost
+    summary: "The AXP192 power-management IC with its inputs, the cell and the backup cell, the SYS I2C pull-ups, the BM8563 clock, the power key with the clock's wake path, and the 5 V boost for the Grove port."
+    parts: "U2 AXP192, J3 battery, BAT1 backup cell, U4 BM8563, Y1, U8 SGM6603-5.0, S1 power key, R401/C401"
+    pwr_flags: [GND]
+    blocks:
+      - title: PMU (AXP192)
+        rows:
+          - [U2, {cols: [[C3, C13, C24, C30, C23, CX2], [L2, C5, CX1, C15, C20, C8], [R5, C16, C10, R2, R3, R4, R21]]}]
+      - title: Battery and backup cell
+        rows:
+          - [J3, BAT1]
+      - title: RTC
+        rows:
+          - [U4, Y1, {col: [C12, C9, C11]}]
+      - title: Power key and RTC wake
+        rows:
+          - [S1, D13, {col: [R401, C401]}]
+      - title: 5 V boost (5VOUT_BOOST)
+        rows:
+          - [U8, {cols: [[L4, R18], [C36, C45, C46]]}]
+  - file: soc.kicad_sch
+    name: ESP32-PICO-D4
+    summary: "The ESP32-PICO-D4 module with its supply decoupling and antenna match, the strapping and button pull-ups, the unfitted IMU footprint, the ten pads and the series resistors and ESD diodes in front of three of them."
+    parts: "U1 ESP32-PICO-D4, E1 antenna, U7 IMU footprint (not fitted), PAD1-PAD10, R105-R107, D14-D16"
+    blocks:
+      - title: ESP32-PICO-D4 (U1)
+        rows:
+          - [U1]
+      - title: Supply decoupling
+        rows:
+          - [{cols: [[C38, C39, C41, C42, C44], [C40, C43]]}]
+      - title: Antenna and match
+        rows:
+          - [E1, {cols: [[L1], [C2, C1]]}]
+      - title: Strapping and pull-ups
+        rows:
+          - [{col: [R12, R8, R14, R20, R11]}]
+      - title: IMU footprint (not fitted on the SE)
+        rows:
+          - [U7, {col: [C28, C29, C21]}]
+      - title: Pads
+        rows:
+          - [{cols: [[PAD1, PAD2, PAD3, PAD4, PAD5], [PAD6, PAD7, PAD8, PAD9, PAD10]]}]
+      - title: Pad series resistors and ESD
+        rows:
+          - [{cols: [[R105, R106, R107], [D14, D15, D16]]}]
+  - file: io.kicad_sch
+    name: USB, LCD and peripherals
+    summary: "The USB-C port, the CH552T USB-UART bridge with its auto-reset switches, the LCD, the microphone, the IR and red LEDs, the two keys and the Grove port."
+    parts: "J2 USB-C, U6 CH552T, MOS1 MOS2 CJ2302, U5 LCD, U3 SPM1423HM4H-B, LED1 LED2, S2 S3, J1 Grove"
+    blocks:
+      - title: USB Type-C
+        rows:
+          - [J2, {cols: [[R13, R19, C4], [D3, D4]]}]
+      - title: USB-UART bridge (CH552)
+        rows:
+          - [U6, {col: [C25, C27]}]
+      - title: Auto-reset and UART (GP0/EN/UART)
+        rows:
+          - [MOS2, MOS1, {cols: [[R101, R102, R103, R104], [R109, R108, R25, R24]]}]
+      - title: IPS LCD
+        rows:
+          - [U5, {col: [C18]}]
+      - title: Microphone (I2S_MIC)
+        rows:
+          - [U3, {col: [C7]}]
+      - title: LED/IR
+        rows:
+          - [{cols: [[LED1, LED2], [D6, D7]]}]
+      - title: Keys
+        rows:
+          - [{cols: [[S2, S3], [D8]]}]
+      - title: Grove
+        rows:
+          - [J1, {col: [D1, D2, C37]}]
+  - file: power.kicad_sch
+    name: Power tree and rails
+    index: power
+    summary: "How power flows from the USB-C port, the VIN pad and the cells through the AXP192 to every rail, and each rail's nominal voltage, source and enable. Every box leads to where it is drawn."
+  - file: nets.kicad_sch
+    name: Nets and signals
+    index: nets
+    gpio_title: ESP32-PICO-D4 GPIO (U1)
+    pmic_title: AXP192 GPIO (U2)
+    test_points: {title: Pads}
+    summary: "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32-PICO-D4 and AXP192 GPIO, the I2C addresses, the pads and every pull-up and pull-down."
+  - file: parts.kicad_sch
+    name: Parts
+    index: parts
+    summary: "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A reference on the drawing leads to its row, the row back to it."
+
+power_tree:
+  title: Power tree
+  pitch: [27.94, 17.78]
+  nodes:
+    J2: [0, 0]
+    VBUS_USB: [1, 0]
+    PAD6: [0, 1]
+    VBUS_VIN: [1, 1]
+    J3: [0, 2]
+    VBAT_Li_Ion: [1, 2]
+    BAT1: [0, 3]
+    VBAT_RTC: [1, 3]
+    U2: [2, 1.5]
+    IPSOUT: [3, 0]
+    U8: [4, 0]
+    EXT_VDD: [5, 0]
+    VESP_3V3: [3, 1]
+    RTC_VDD: [3, 2]
+    LCD_BL_VCC: [3, 3]
+    LCD_LOGIC_VCC: [3, 4]
+    MIC_VCC: [3, 5]
+  edges:
+    - [J2, VBUS_USB]
+    - [PAD6, VBUS_VIN]
+    - [J3, VBAT_Li_Ion]
+    - [BAT1, VBAT_RTC]
+    - [VBUS_USB, U2]
+    - [VBUS_VIN, U2]
+    - [VBAT_Li_Ion, U2]
+    - [VBAT_RTC, U2]
+    - [U2, IPSOUT]
+    - [U2, VESP_3V3]
+    - [U2, RTC_VDD]
+    - [U2, LCD_BL_VCC]
+    - [U2, LCD_LOGIC_VCC]
+    - [U2, MIC_VCC]
+    - [IPSOUT, U8]
+    - [U8, EXT_VDD]
+  note: "The AXP192 takes VBUS_USB (VBUS), VBUS_VIN (ACIN), the cell (BAT) and the backup cell (BACKUP), and gives IPSOUT, DCDC1 (VESP_3V3), LDO1 to LDO3 (RTC_VDD, LCD_BL_VCC, LCD_LOGIC_VCC) and GPIO0 (MIC_VCC). The print states no voltage for VBUS_VIN, RTC_VDD, LCD_BL_VCC, LCD_LOGIC_VCC or MIC_VCC; the docs page and the AXP192 datasheet give all but RTC_VDD's (K5 to K8)."

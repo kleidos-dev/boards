@@ -1,0 +1,31 @@
+# AGENTS.md — boards
+
+Rules for any agent changing this repository. [README.md](README.md) says what it holds; [docs/models-and-drawings.md](docs/models-and-drawings.md) says which script writes each file and how drawings and models are made.
+
+## What is where
+
+- `<board>/`: one folder per board, `svg/front.svg` (written only by `_shared/emit_front_svg.py`, contract in `_shared/schema.md`), `svg/back.svg` and a printing side's `svg/<face>.svg` (written only by `_shared/emit_back_svg.py`), `measurements.json` and `board.json` (by hand, every value with its source, schema `_shared/board.schema.json`), `README.md` (written from `board.json` by `_shared/emit_board_readme.py`), `sources.md` (by hand: the vendor files the front and measurements were taken on, by address), `icon.svg`, `model/` (spec, master and web models, provenance; written by `_shared/build_board_glb.py`) and `schematic/` (KiCad sources, `netlist.yaml`, `layout.yaml` and the PDF; `_shared/export_schematic.py` also writes one SVG per page into `schematic/svg/`, which git ignores).
+- `_shared/`: the builders and checks, Python; `_shared/fixtures/`: the checks' own test board. `tests/`: their tests (`-m models` the board models', `-m selftest` the checkers' planted defects, slow). `fonts/`: Inter, unmodified. `LICENSE` (the MIT License, a copy of `LICENSES/MIT.txt`), `LICENSES/`, `REUSE.toml`, `NOTICE.md`: licensing.
+- `.claude/skills/`: this repository's own agent skills; this folder is their source (the owner's decision: each repository's `.claude/` is the source of its skills). `board-specs-and-schematics`: what a board folder holds and who writes each file, the schematics' Kleidos entries and bench records, the checks. `visual-reference-svg-reconstruction`: measuring a board face on references kept outside the tree and drawing it through the generators, with its overlay tool. Load the one that covers the work before starting it.
+
+## Checks before you commit
+
+```bash
+.venv/bin/reuse lint
+.venv/bin/python _shared/check_public_tree.py
+.venv/bin/python _shared/check_board_specs.py
+.venv/bin/python -m pytest tests
+.venv/bin/python _shared/export_schematic.py <board>   # when a schematic changed (needs kicad-cli 10.0.7)
+```
+
+Regenerate what a script owns instead of editing it by hand (`_shared/emit_board_readme.py`, `_shared/emit_front_svg.py --contact-sheet`, `_shared/kicad_schematic.py <board>`, `_shared/build_board_glb.py <board>/model/spec.json`), and commit the regenerated files with the change that caused them. CI (`.github/workflows/check.yml`) runs the same checks, the schematic ones in KiCad 10.0.7's container.
+
+## Rules
+
+- **No vendor file, ever.** Photos, renders, vendor drawings, schematic PDFs, datasheets and CAD files are cited by address and never copied into the tree; `_shared/check_public_tree.py` enforces it. The only PDF allowed is a board's own schematic export.
+- **Every file has a license** in `REUSE.toml`: everything this project writes (code, drawings, data, models, schematics, prose, skills) is MIT (owner, 2026-11-17: free use, inside OSI-approved licenses, never Creative Commons); Inter is OFL-1.1, the Khronos function Apache-2.0, M5Stack's case geometry MIT with their notice. A new kind of file gets its row in the same change; a new third-party source gets its notice in `NOTICE.md`.
+- **Every value has a source.** A part, pin, value or dimension says where it came from (a vendor page, a datasheet, a measurement); never guess one.
+- **Schematics** (owner, 2026-11-17): describe them as the board's connectivity documented from the vendor's public documentation, never as the vendor's schematic "redrawn" or "copied". One wire width for wires and pin lines. Every cross-reference in the PDF (contents boxes, page links, the `[page/zone]` after a net label, each part's reference and its row in the parts list, the index pages, bookmarks) is clickable and lands on the place it names, not only its page; the PDF holds no script, so it works the same in every reader; `_shared/check_schematic_links.py` holds them. Every value in `netlist.yaml` names its source (the vendor's published schematic, its page and version). The drawing improves on the vendor's print rather than following it to the letter (owner, 2026-11-17): a detail the print does not show goes in when a primary source makes it certain (the chip's datasheet, the vendor's own other documents, the Kleidos firmware's verified behaviour on that board, cited by its repository path and the symbol (function, constant or macro) without a commit or line, since the firmware's history will be squashed when it is published, or a bench probe run for it), and a drawing error of the print is corrected when the evidence settles it; each is an entry of `kleidos` in `netlist.yaml`, marked on the drawing and listed with its source on page 1, so nothing silently differs from the print. What is still uncertain stays out and the board's README lists it as open; measure on the bench when in doubt. The notes then say "connectivity documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1". The format and the generator's optional keys: `docs/models-and-drawings.md`, "Schematics".
+- **English** in every file. **Markdown prose is never hard-wrapped**: one line per paragraph and per list item; code, tables and fenced blocks keep their own layout.
+- **Commits:** signed, under the project identity, imperative English subject of at most 72 columns (aim for 50), a blank second line, body wrapped at 72 columns, no AI attribution lines. Never `--no-verify`, never a force push to `main`.
+- Nothing private: no `.env` values, IP or MAC addresses, lab hostnames, serial-port paths or home-directory paths. `_shared/check_public_tree.py` fails on the ones a pattern can name (a serial-port device path, a MAC address, a private IPv4 address, a home-directory path, an e-mail address other than the project's); a hostname or a secret it cannot know, so read a bench record before committing it.

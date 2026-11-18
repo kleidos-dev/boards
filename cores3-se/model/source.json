@@ -1,0 +1,216 @@
+{
+  "board": "cores3-se",
+  "model": "cores3-se/model/cores3-se.glb",
+  "model_sha256": "65989de5fa2003395b1d2ad523ccf81f8d087a3fb8d3d62c3a5d33ef2ec6d49f",
+  "model_bytes": 418272,
+  "model_gzip_bytes": 155462,
+  "triangles": 19316,
+  "meshes": 36,
+  "materials": 24,
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/dccc804775037bb1c1457b7d31bf3ba583150d57/Products/K128-SE_CoreS3-SE/Structures/CoreS3-SE.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K128-SE_CoreS3-SE/Structures/CoreS3-SE.stl",
+    "commit": "dccc804775037bb1c1457b7d31bf3ba583150d57",
+    "sha256": "529349b80662f2bb83e87a3d59075d91ab54aa3e2d5356d72d69fded36767354",
+    "bytes": 1435084,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "modules": [
+    {
+      "name": "bottom3",
+      "source": {
+        "vendor": "M5Stack",
+        "format": "stl",
+        "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/f66b64a1ee5502887d28921f654b24b3b36e9721/Products/A014-D_Base_M5GO_Bottom3/Structures/Base_M5GO_Bottom3_Bottom_Shell.stl",
+        "repository": "https://github.com/m5stack/M5_Hardware",
+        "path": "Products/A014-D_Base_M5GO_Bottom3/Structures/Base_M5GO_Bottom3_Bottom_Shell.stl",
+        "commit": "f66b64a1ee5502887d28921f654b24b3b36e9721",
+        "sha256": "4c51536c900ee1ecb837f898d8c1b42153fc55bdce24c9c699fe6557860f3098",
+        "bytes": 510184,
+        "license": "MIT",
+        "copyright": "Copyright (c) 2021 M5Stack",
+        "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+      },
+      "tessellation": null,
+      "transform": [
+        {
+          "translate": [
+            0.0,
+            0.0,
+            -7.8
+          ]
+        }
+      ]
+    }
+  ],
+  "builder": {
+    "script": "_shared/build_board_glb.py",
+    "version": "1.6.0",
+    "spec": "cores3-se/model/spec.json",
+    "spec_sha256": "3c56a1867dc5324cc1b2e437df0132a9c9a1e797de6c673a0fe4b701a123fa91",
+    "python": "3.14.7",
+    "packages": {
+      "numpy": "2.5.4",
+      "shapely": "2.2.0",
+      "trimesh": "5.2.0",
+      "mapbox_earcut": "2.1.0",
+      "scipy": "1.18.1",
+      "networkx": "3.7",
+      "rtree": "1.4.1",
+      "cascadio": "0.1.1",
+      "fast-simplification": "0.2.0",
+      "fonttools": "4.68.0"
+    }
+  },
+  "parameters": {
+    "quant_mm": 0.01,
+    "planar_min_area_mm2": 1.5,
+    "tessellation": null,
+    "transform": [
+      {
+        "rotate": {
+          "axis": "x",
+          "deg": 90
+        }
+      }
+    ],
+    "center_mm": [
+      0.0,
+      0.0,
+      -0.55
+    ],
+    "front_frame": {
+      "left_x": -27.0,
+      "top_y": 27.0
+    },
+    "face_frames": {
+      "top": {
+        "left_x": -27.0,
+        "back_z": -12.3
+      }
+    },
+    "screen": {
+      "x0": -20.4,
+      "x1": 20.4,
+      "y_top": 15.3,
+      "y_bot": -15.3,
+      "w": 40.8,
+      "h": 30.6,
+      "resolution": [
+        320,
+        240
+      ]
+    }
+  },
+  "legends": [
+    {
+      "mesh": "label_legends",
+      "plane": "rating",
+      "on": "top_label",
+      "face": "top",
+      "drawing": "cores3-se/svg/top.svg",
+      "legends_sha256": "8131fe66214bcbc9b9e9b12db9bddccffeb552270812567193347837b949aba2",
+      "y_mm": 27.0,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 22,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "fonts/inter/Inter-Medium.ttf": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872",
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#111111",
+          "vertices": 2075,
+          "triangles": 2025,
+          "area_mm2": 47.901,
+          "stroke_mm": 0.27,
+          "mesh": "label_legends_111111"
+        },
+        {
+          "fill": "#969696",
+          "vertices": 387,
+          "triangles": 393,
+          "area_mm2": 17.479,
+          "stroke_mm": 0.554,
+          "mesh": "label_legends_969696"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "top_label",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "port_tag_legends",
+      "plane": "port-tag",
+      "on": "base_port_tag",
+      "face": "top",
+      "drawing": "cores3-se/svg/top.svg",
+      "legends_sha256": "e5c6ec24cefb11d62c534690a8274e59bc0b7436c6262b0c641970245d4e46c1",
+      "y_mm": 26.73,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 6,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#111111",
+          "vertices": 192,
+          "triangles": 192,
+          "area_mm2": 3.681,
+          "stroke_mm": 0.223,
+          "mesh": "port_tag_legends_111111"
+        },
+        {
+          "fill": "#1a7fc0",
+          "vertices": 68,
+          "triangles": 66,
+          "area_mm2": 0.869,
+          "stroke_mm": 0.203,
+          "mesh": "port_tag_legends_1a7fc0"
+        },
+        {
+          "fill": "#a9a49e",
+          "vertices": 6,
+          "triangles": 2,
+          "area_mm2": 1.053,
+          "stroke_mm": 0.31,
+          "mesh": "port_tag_legends_a9a49e"
+        },
+        {
+          "fill": "#dbdcdb",
+          "vertices": 142,
+          "triangles": 144,
+          "area_mm2": 13.95,
+          "stroke_mm": 0.591,
+          "mesh": "port_tag_legends_dbdcdb"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "base_port_tag",
+        "least_mm": 0.02
+      }
+    }
+  ],
+  "without_legends": {
+    "bytes": 361464,
+    "gzip_bytes": 133515,
+    "sha256": "c48d07d985ae1a17a04d87dcdf7ee53af49b47d4b762b522d1d1010bfc83b5bc",
+    "meshes": 30,
+    "materials": 19
+  }
+}

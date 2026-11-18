@@ -1,0 +1,131 @@
+{
+  "device_id": "tdeck-plus",
+  "display_name": "LilyGO T-Deck Plus",
+  "vendor": "LilyGO",
+  "sku": "T-Deck-Plus",
+  "theme": "tdeck_black",
+  "case": {
+    "width": 73.14,
+    "height": 114.98,
+    "depth": 20.4,
+    "corner_radius": 12.2,
+    "color": "#525357",
+    "material": "PC+ABS",
+    "note": "Outline from LilyGO's shell STEP: R12.2 top corners, the bottom edge one continuous curve, side rails 0.1 mm proud. color is the shell's at the top; the face reads black (bevel #161618, glass #111113)."
+  },
+  "display": {
+    "tech": "TFT-IPS",
+    "controller": "ST7789",
+    "active_w_mm": 57.6,
+    "active_h_mm": 43.2,
+    "resolution_w_px": 320,
+    "resolution_h_px": 240,
+    "origin_x_mm": 7.83,
+    "origin_y_mm": 16.4,
+    "native_orientation": "landscape",
+    "firmware_rotation_deg": 270,
+    "note": "Active area datasheet-verified 2026-07-15: 57.60 x 43.20 mm (2.8\", ~141 PPI, pixel pitch 0.18 mm square); was 49.0 x 37.0 mm (~165 PPI). Owner-verified 2026-07-15 (visible glass 58 x 43-44 mm). Origin photo-measured 2026-10-19 on two vendor front views registered onto the shell STEP outline: the lit picture they show is 2.6 % larger than the active area because it is the panel's viewing area (7.06, 15.78, 59.14 x 44.44 mm, which the front draws as the window), with the active area centered inside it; y from the case top."
+  },
+  "buttons": [
+    {
+      "id": "Trackball",
+      "logical": "navigate",
+      "gpio": -1,
+      "active": "scroll",
+      "face": "front",
+      "shape": "circle",
+      "diameter_mm": 4.96,
+      "center_x_mm": 37.97,
+      "center_y_mm": 67.85,
+      "note": "The ball; its metal ring reaches r 4.75 mm and the bezel r 5.3 mm. Centered 1.4 mm right of the case center."
+    },
+    {
+      "id": "Power",
+      "logical": "power",
+      "gpio": -1,
+      "active": "slide",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 3.0,
+      "height_mm": 6.0,
+      "center_x_mm": 73.14,
+      "center_y_mm": 20.0,
+      "label_on_case": "PWR"
+    },
+    {
+      "id": "Reset",
+      "logical": "reset",
+      "gpio": -1,
+      "active": "low",
+      "face": "left",
+      "shape": "circle",
+      "diameter_mm": 2.0,
+      "center_x_mm": 0.0,
+      "center_y_mm": 20.0
+    }
+  ],
+  "keyboard": {
+    "rows": 4,
+    "cols": 10,
+    "origin_x_mm": 5.27,
+    "origin_y_mm": 75.02,
+    "key_w_mm": 5.47,
+    "key_h_mm": 6.71,
+    "gap_mm": 0.93,
+    "controller": "ESP32-C3 I2C slave",
+    "i2c_addr": "0x55",
+    "notes": "Geometry only: the keycaps with their dark rim as drawn on the front (2026-10-19). What each of the 35 keys prints is the front's, drawn in svg/front.svg by _shared/emit_front_svg.py from its own table, with a legend group and an hs-key-<slug> hotspot per key, and is not listed here a second time; rows and cols are the grid of the three letter rows, which the bottom row does not follow. The columns are 6.40 mm apart (gap_mm is the horizontal gap), the three letter rows 7.85 mm apart (tops 75.02 / 82.87 / 90.72); the bottom row (shift, mic, space, sym, shift) has keys of their own widths at y 98.65-104.14."
+  },
+  "extras": [
+    {
+      "type": "trackball-chevrons",
+      "face": "front",
+      "center_x_mm": 37.97,
+      "center_y_mm": 67.85
+    },
+    {
+      "type": "label",
+      "text": "LILYGO",
+      "center_x_mm": 36.84,
+      "center_y_mm": 11.21,
+      "size_mm": 2.2,
+      "color": "#BFBFBF",
+      "weight": "700"
+    },
+    {
+      "type": "usb-c",
+      "face": "bottom",
+      "center_x_mm": 36.5,
+      "center_y_mm": 114.98
+    },
+    {
+      "type": "microphone",
+      "face": "front",
+      "center_x_mm": 8.0,
+      "center_y_mm": 110.0
+    },
+    {
+      "type": "slot",
+      "face": "front",
+      "note": "A slot above the screen, silver ends and a dark middle. Its purpose is undocumented: LILYGO's specification and pin-map images draw it without a label, and its documentation page and repository name nothing there; the speaker sits at the bottom-right corner behind the PCB, sounding through six holes on the lower edge (board.json speaker).",
+      "center_x_mm": 36.92,
+      "center_y_mm": 6.22,
+      "width_mm": 15.17,
+      "height_mm": 1.23
+    },
+    {
+      "type": "antenna-internal",
+      "face": "inside-top",
+      "center_x_mm": 36.5,
+      "center_y_mm": 4.0
+    }
+  ],
+  "notes": "Plus = T-Deck + GPS (a u-blox MIA-M10Q on the bench unit; LilyGO fits a Quectel L76K on some) + SX1262 LoRa. This front reference models the internal-antenna variant without an external SMA connector. Silver chevrons flank the trackball, pointing inward toward it; a slot of undocumented purpose sits above the screen (not the speaker, which sounds through the lower edge). Front-face y values measure from the CASE top; the display, trackball, chevrons, LILYGO print (the top one prints a cap box 14.70 x 3.17 mm), top slot and keyboard are the front's (photo-measured 2026-10-19). Edge-button and microphone positions are approximate.",
+  "sources": [
+    {
+      "kind": "see",
+      "url": "sources.md",
+      "local": "sources.md"
+    }
+  ]
+}

@@ -1,0 +1,1759 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# M5Stack CoreInk (K048): every component, every pin and the net it is on, as
+# the vendor's published schematic shows them: connectivity documented from
+# the vendor's public documentation, with Kleidos additions and corrections
+# listed on page 1 (each an entry of "kleidos", below, with its source; the
+# triage behind them is improvements.md). Facts only: what connects where and
+# through what. The drawing in this folder (coreink.kicad_sch) is generated
+# from this file; README.md says how, and how the two are checked against each
+# other.
+#
+# Read from: the one printed page of the PDF below (an Altium print with no
+# netlist in it), block by block. Each wire was followed on the page's vector
+# drawing as well as by eye; values come from the printed page only.
+#
+# Conventions:
+# - pins are the vendor's pin numbers. Where the print gives a part no pin
+#   numbers (two-pin passives, diodes, transistors, switches, the antennas,
+#   the buzzer, the USB-C's VCC, GND and SHELL), the pin names used here are
+#   ours: "1"/"2" for a two-pin part (1 the end listed first in the part's
+#   note, else the left or upper end as printed), A/K for a diode,
+#   B/C/E and G/S/D for the transistors, as their symbols draw them;
+# - net names are the vendor's; a net the vendor left unnamed gets a name of
+#   ours, listed under "named_here";
+# - NC is a pin the schematic leaves unconnected (with or without its
+#   no-connect cross);
+# - "block" is the titled frame of the vendor's page the part sits in.
+
+board: coreink
+source:
+  title: CoreInk schematic, one page (coreink_sch.pdf, M5Stack); no version or date printed on the sheet; the PDF was written on 2020-07-22
+  url: https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/schematic/Core/coreink/coreink_sch.pdf
+  listed_at: https://docs.m5stack.com/en/core/CoreInk
+  read_from: https://web.archive.org/web/20251017235233id_/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/schematic/Core/coreink/coreink_sch.pdf
+  read_note: The vendor's host timed out from the machine that wrote this file; the Internet Archive's copy of 2025-10-17 was read, the same file board.json cites. The vendor's own CDN serves the same file (same SHA-256, checked 2026-11-17).
+  also_served_at: https://static-cdn.m5stack.com/resource/docs/schematic/Core/coreink/coreink_sch.pdf
+  sha256: 182ea9c6e90bdc7696aacb26db054a1f4125f7640aa505e3d9a2301163e334b5
+  checked: 2026-11-17
+  pages:
+    1: "The whole board on one A4 page, in titled blocks: BUS, ESD, USB TYPE-C, FPC TO HAT, BUZZER, the ESP32-PICO-D4 (untitled), USB2UART, BUTTONS, PMU, CHARGER, PWR_SW&ADC, 5V DC-DC, 3.3V DC-DC, RTC, GROVE, the e-paper connector (untitled), EPD BOOST, BATTERY PORT"
+  also_read:
+    - url: https://docs.m5stack.switch-science.com/en/core/CoreInk
+      mirror_of: https://docs.m5stack.com/en/core/CoreInk
+      used_for: the PinMap (dial up/middle/down, user button, LED, buzzer, power hold, RTC, USB-UART), the battery (390mAh @ 3.7V), the input (5V @ 500mA), the two USB-UART versions (CP2104, CH9102)
+      checked: 2026-11-17
+    - url: https://static-cdn.m5stack.com/resource/docs/products/core/coreink/coreink_sch_01.webp
+      used_for: the vendor's block diagram, the second image of the docs page's schematic section; it names the charger TP4057 and the module ESP32-PICO-D4, and carries no connectivity drawn here
+      checked: 2026-11-17
+    - url: https://www.espressif.com/sites/default/files/documentation/esp32-pico_series_datasheet_en.pdf
+      used_for: "the Kleidos additions on U1 (kleidos, below): pins 44, 45, 47 and 48 (Table 2, NC), the in-package flash pins (Table 3), the strapping pins and their pulls at reset (Table 8, Section 3.2), the input-only pins (Table 2 and its notes), the RTC GPIOs (Table 2); version 1.5"
+      checked: 2026-11-17
+    - url: https://web.archive.org/web/2024id_/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/BM8563_V1.1_cn.pdf
+      used_for: the BM8563's I2C address (write 0xA2, read 0xA3), as board.json cites it (Kleidos addition K25)
+      checked: 2026-11-16
+    - url: https://web.archive.org/web/2024id_/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/SY7088-Silergy.pdf
+      used_for: the SY7088's 1.2 V feedback reference, which with R43 / R44 gives SYS_P050 (Kleidos addition K26), as board.json cites it
+      checked: 2026-11-16
+    - title: Kleidos firmware repository (read 2026-11-17)
+      used_for: "behaviour the firmware relies on and that works on the real board, cited by file path and symbol in the Kleidos additions: the panel's reads on GPIO23 (K17); second sources for the power key's deep-sleep wake on GPIO27 and the RTC alarm path on GPIO19"
+      checked: 2026-11-17
+    - url: https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/sleep_modes.html
+      used_for: "ESP-IDF's Sleep Modes (Espressif), for the ESP32: the ext0 and ext1 deep-sleep wake sources take RTC GPIOs only; any other GPIO wakes the chip from light sleep only (K16, K18)"
+      checked: 2026-11-17
+
+named_here:   # nets the print leaves unnamed: our name, and where the net is
+  ANT_FEED: "L1 to ANT1, ANT2 and C6 (after the pi network)"
+  BUZZER_AC: "R2 to C1 (the buzzer drive's coupling capacitor)"
+  BUZZER_N: "BZ1's second pin, Q1 collector, D4 anode"
+  BUZZER_P: "BZ1 +, R5, D4 cathode"
+  D19_K: "D19 cathode to R51"
+  EPD_PUMP: "C43 to D16 and D17 (the VEE charge pump)"
+  EPD_SW: "L4, Q6 drain, C43, D15 (the booster's switch node)"
+  EPD_VCOM: "EPD1 VCOM (24) and C41"
+  EPD_VDD: "EPD1 VDD (18) and C37"
+  EPD_VGH: "EPD1 VGH (5) and C36"
+  EPD_VGL: "EPD1 VGL (4) and C35"
+  EPD_VPP: "EPD1 VPP (19) and C38"
+  EPD_VSH: "EPD1 VSH (20) and C39"
+  EPD_VSL: "EPD1 VSL (22) and C40"
+  LED1_A: "LED1 anode to R34"
+  PWR_KEY: "S1 to the cathodes of D5 and D6"
+  Q1_BASE: "Q1 base, C1, D18 cathode"
+  Q2_BASE: "Q2 base to R30"
+  Q3_BASE: "Q3 base to R31"
+  Q3_C: "Q3 collector to D7 cathode"
+  Q4_GATE: "Q4 gate, R32, R36"
+  Q5_GATE: "Q5 gate, R33, R51, D14 cathode"
+  RTC_INT: "U4 ~INT (3), R38, the cathodes of D12 and D13"
+  RTC_OSCI: "U4 OSCI (1), X1, C26"
+  RTC_OSCO: "U4 OSCO (2), X1, C27"
+  U1_LNA_IN: "U1 LNA_IN (2), C4, L1"
+  U1_VDD_SDIO: "U1 VDD_SDIO (26) and C16 only: the print does not join it to MCU_VDD"
+  U2_DTR: "U2 DTR (23), Q3 emitter, R30"
+  U2_RST: "U2 ~RST (9) and R20"
+  U2_RTS: "U2 RTS (19), Q2 emitter, R31"
+  U2_VDD: "U2 VDD (6) and VIO (5), C5, R20"
+  U3_FB: "U3 FB (5), R39, R40"
+  U3_SW: "U3 SW (3) and L3"
+  U5_FB: "U5 FB (5), R43, R44"
+  U5_LX: "U5 LX (1, 2) and L2"
+  U6_CHRG: "U6 ~CHG (1) and the LED1 cathode"
+  U6_PROG: "U6 PROG (6) and R45"
+  USB_CC1: "J2 CC1 (A5) and R1"
+  USB_CC2: "J2 CC2 (B5) and R4"
+  USB_DM: "J2 DN1 and DN2 (A7, B7) and R18"
+  USB_DP: "J2 DP1 and DP2 (A6, B6) and R17"
+  VBAT_SW: "Q4 drain, R50, R41 (the switched battery)"
+
+rails:   # nominal: the voltage the net's name states (5V, P050 = 5.0 V), USB's 5 V for
+         # USB_5V (docs: input 5V @ 500mA), the cell the docs give for SYS_BAT, and the
+         # block title "3.3V DC-DC" for MCU_VDD; blank where the print states none
+  USB_5V:
+    nominal: "5 V"
+    from: J2
+    what: "USB-C VCC. Feeds the CP2104 (VBUS, REGIN), D8 into EXT_5VI and D19 to the power hold."
+  EXT_5VI:
+    nominal: "5 V"
+    from: "D8, BUS1, J1"
+    what: "USB_5V through D8 1N5819, or 5 V fed in at the M5-Bus (BUS1 pin 3, 5VIN) or the HAT FPC (J1 pin 10)."
+  CHG:
+    nominal: ""
+    from: FU1
+    what: "EXT_5VI through FU1 (PTC 1A): the charger's input; also D9 into BST_IN and R34 to the charge LED."
+  SYS_BAT:
+    nominal: "3.7 V cell"
+    from: J4
+    what: "The battery (J4; 390mAh @ 3.7V per the docs), charged by U6 from CHG. Feeds the RTC, the boost through D10, Q4, the M5-Bus BAT pin and J1 pin 8."
+  BST_IN:
+    nominal: ""
+    from: "D9, D10"
+    what: "The boost's input: CHG through D9 1N5819, or SYS_BAT through D10 SS34."
+  VBAT_SW:
+    nominal: ""
+    from: Q4
+    what: "SYS_BAT through Q4 SI2301 while its gate is low; drives PS_EN through R50 10K and the battery divider R41 20K / R42 5.1K to GPIO35."
+    enable: "Q4 gate: R32 100K to SYS_BAT, pulled low through R36 47R by PWR_TRIG (S1 through D6, GPIO12 or USB_5V through Q5, the RTC through D13)"
+  SYS_P050:
+    nominal: "5.0 V"
+    from: U5
+    what: "U5 SY7088 boost from BST_IN through L2 2.2UH; R43 15K / R44 4.7K on FB (5.03 V with the datasheet's 1.2 V reference, board.json). Feeds the 3.3 V buck and, through D11, EXT_5VO."
+    enable: "PS_EN (U5 EN): R35 100K to GND, R50 10K from VBAT_SW"
+  MCU_VDD:
+    nominal: "3.3 V"
+    from: U3
+    what: "U3 SY8089 buck from SYS_P050 through L3 2.2UH (block \"3.3V DC-DC\"); R39 22K / R40 5.1K on FB. Supplies the ESP32-PICO-D4, the panel and its booster, the pull-ups, the ESD arrays, M5-Bus 3V3 and J1 pin 9."
+    enable: "EN tied to IN (SYS_P050)"
+  EXT_5VO:
+    nominal: "5 V"
+    from: D11
+    what: "SYS_P050 through D11 1N5819. Grove 5V, M5-Bus 5VOUT, J1 pin 4 and the buzzer."
+  U2_VDD:
+    nominal: ""
+    from: U2
+    what: "CP2104 VDD (6), tied to VIO (5); C5 104/10V, R20 10K to ~RST."
+  VGG:
+    nominal: ""
+    from: D15
+    what: "Panel PREVGH (EPD1 pin 21): the booster's switch node EPD_SW through D15 1N5819; C45 105/25V."
+  VEE:
+    nominal: ""
+    from: D17
+    what: "Panel PREVGL (EPD1 pin 23): the C43 / D16 / D17 charge pump from EPD_SW; C44 105/25V."
+
+i2c:
+  bus: {sda: "GPIO21 (U1 pin 42)", scl: "GPIO22 (U1 pin 39)", pullups: "R26 (SDA) and R27 (SCL), 2.2K/1% to MCU_VDD"}
+  devices:
+    - {ref: U4, part: BM8563, address: "0x51", source: "BM8563 datasheet V1.1: write 0xA2, read 0xA3 (board.json); the docs' PinMap puts the RTC on G21/G22"}
+  also_on_bus: M5-Bus pins 9 (G21/SDA) and 10 (G22/SCL) through R8 and R9 47R/1%; D2 holds both lines' ESD
+
+esp32_gpio:   # module pin -> GPIO, net, what it does (U1). Strapping, input-only, RTC
+              # and in-package flash pins per the ESP32-PICO datasheet v1.5; the roles per
+              # the docs' PinMap; each such fact is a Kleidos addition (kleidos, below).
+  GPIO0: {pin: 23, net: GPIO0, what: "EPD RST# (EPD1 pin 10); boot-mode strap, internal pull-up at reset: R28 2.2K/1% to MCU_VDD, pulled low through D7 by the auto-reset transistor Q3"}
+  GPIO1: {pin: 41, net: GPIO1, what: "U0TXD, through R22 47R/1% to the CP2104's RXD (CP_RX)"}
+  GPIO2: {pin: 22, net: GPIO2, what: "Buzzer: through R2 2.2K/1% and C1 to Q1's base; R3 5.1K/1% to GND; strap, internal pull-down at reset"}
+  GPIO3: {pin: 40, net: GPIO3, what: "U0RXD, through R21 47R/1% from the CP2104's TXD (CP_TX)"}
+  GPIO4: {pin: 24, net: GPIO4, what: "EPD BUSY (EPD1 pin 9)"}
+  GPIO5: {pin: 34, net: GPIO5, what: "J1 pin 2, marked KEY: the user key, beyond J1; strap, internal pull-up at reset"}
+  GPIO6: {pin: 31, net: "NC", what: "in-package flash CLK"}
+  GPIO7: {pin: 32, net: "NC", what: "in-package flash WP/SIO2"}
+  GPIO8: {pin: 33, net: "NC", what: "in-package flash SI/SIO0"}
+  GPIO9: {pin: 28, net: GPIO9, what: "EPD CS# (EPD1 pin 12)"}
+  GPIO10: {pin: 29, net: GPIO10, what: "J1 pin 1, marked LED: the status LED, beyond J1; green, lit when GPIO10 is low"}
+  GPIO11: {pin: 30, net: "NC", what: "in-package flash HOLD/SIO3"}
+  GPIO12: {pin: 18, net: GPIO12, what: "Power hold: through D14 to Q5's gate; MTDI strap, internal pull-down at reset, so VDD_SDIO is fed from VDD3P3_RTC (MCU_VDD)"}
+  GPIO13: {pin: 20, net: GPIO13, what: "M5-Bus G13/RXD through R6 47R/1%; D1 ESD"}
+  GPIO14: {pin: 17, net: GPIO14, what: "M5-Bus G14/TXD through R7 47R/1%; D1 ESD"}
+  GPIO15: {pin: 21, net: GPIO15, what: "EPD D/C (EPD1 pin 11); MTDO strap, internal pull-up at reset"}
+  GPIO16: {pin: 25, net: "NC", what: "in-package flash CS"}
+  GPIO17: {pin: 27, net: "NC", what: "in-package flash SO/SIO1"}
+  GPIO18: {pin: 35, net: GPIO18, what: "EPD SCK (EPD1 pin 13); M5-Bus G18/SCK through R10 47R/1%; D2 ESD"}
+  GPIO19: {pin: 38, net: GPIO19, what: "RTC alarm: from U4 ~INT through D12; R37 10K/1% to MCU_VDD; not an RTC GPIO, so it cannot wake the ESP32 from deep sleep (the alarm switches the board on through D13)"}
+  GPIO21: {pin: 42, net: GPIO21, what: "I2C SDA (BM8563); R26 2.2K/1% to MCU_VDD; M5-Bus G21/SDA through R8; D2 ESD"}
+  GPIO22: {pin: 39, net: GPIO22, what: "I2C SCL (BM8563); R27 2.2K/1% to MCU_VDD; M5-Bus G22/SCL through R9; D2 ESD"}
+  GPIO23: {pin: 36, net: GPIO23, what: "EPD MOSI (EPD1 pin 14), also carries the SSD1681 panel's reads (3-wire); M5-Bus G23/MOSI through R14 47R/1%; D3 ESD"}
+  GPIO25: {pin: 14, net: GPIO25, what: "M5-Bus G25/IO and J1 pin 7 through R15 47R/1%; D3 ESD"}
+  GPIO26: {pin: 15, net: GPIO26, what: "M5-Bus G26/IO and J1 pin 5 through R13 47R/1%; D3 ESD"}
+  GPIO27: {pin: 16, net: GPIO27, what: "Power key S1 through D5, active low; R19 10K/1% to MCU_VDD, C2 105/6.3V; RTC_GPIO17, so it can wake the ESP32 from deep sleep (EXT0)"}
+  GPIO32: {pin: 12, net: GPIO32, what: "Grove J3 pin 3 (IO1) through R48 47R/1%"}
+  GPIO33: {pin: 13, net: GPIO33, what: "Grove J3 pin 4 (IO2) through R49 47R/1%"}
+  GPIO34: {pin: 10, net: GPIO34, what: "M5-Bus G34/MISO through R12 47R/1%; D3 ESD (input only, no internal pull)"}
+  GPIO35: {pin: 11, net: GPIO35, what: "Battery voltage: R41 20K/1% from VBAT_SW, R42 5.1K/1% to GND, C30 105/6.3V; ADC1_CH7 (input only, no internal pull)"}
+  GPIO36: {pin: 5, net: GPIO36, what: "M5-Bus G36/27/AD and J1 pin 6 through R11 47R/1%; D2 ESD (input only, no internal pull)"}
+  GPIO37: {pin: 6, net: GPIO37, what: "Dial up: S3 pin 1; R25 10K/1% to MCU_VDD, C9 (input only, no internal pull)"}
+  GPIO38: {pin: 7, net: GPIO38, what: "Dial press: S3 pin T; R23 10K/1% to MCU_VDD, C7 (input only, no internal pull)"}
+  GPIO39: {pin: 8, net: GPIO39, what: "Dial down: S3 pin 2; R24 10K/1% to MCU_VDD, C8 (input only, no internal pull)"}
+
+pulls:   # every resistor with one end on a rail or ground and the other on a signal
+  - {signal: USB_CC1, down: GND, via: R1, value: "5.1K/1%"}
+  - {signal: GPIO2, down: GND, via: R3, value: "5.1K/1%"}
+  - {signal: BUZZER_P, up: EXT_5VO, via: R5, value: "4.7R/1%"}
+  - {signal: USB_CC2, down: GND, via: R4, value: "5.1K/1%"}
+  - {signal: GPIO27, up: MCU_VDD, via: R19, value: "10K/1%"}
+  - {signal: U2_RST, up: U2_VDD, via: R20, value: "10K/1%"}
+  - {signal: GPIO38, up: MCU_VDD, via: R23, value: "10K/1%"}
+  - {signal: GPIO39, up: MCU_VDD, via: R24, value: "10K/1%"}
+  - {signal: GPIO37, up: MCU_VDD, via: R25, value: "10K/1%"}
+  - {signal: GPIO21, up: MCU_VDD, via: R26, value: "2.2K/1%"}
+  - {signal: GPIO22, up: MCU_VDD, via: R27, value: "2.2K/1%"}
+  - {signal: GPIO0, up: MCU_VDD, via: R28, value: "2.2K/1%"}
+  - {signal: MCU_RST, up: MCU_VDD, via: R29, value: "10K/1%"}
+  - {signal: Q4_GATE, up: SYS_BAT, via: R32, value: "100K/1%"}
+  - {signal: Q5_GATE, down: GND, via: R33, value: "10K/1%"}
+  - {signal: LED1_A, up: CHG, via: R34, value: "2.2K/1%"}
+  - {signal: PS_EN, down: GND, via: R35, value: "100K/1%"}
+  - {signal: GPIO19, up: MCU_VDD, via: R37, value: "10K/1%"}
+  - {signal: RTC_INT, up: SYS_BAT, via: R38, value: "10K/1%"}
+  - {signal: U3_FB, up: MCU_VDD, via: R39, value: "22K/1%"}
+  - {signal: U3_FB, down: GND, via: R40, value: "5.1K/1%"}
+  - {signal: GPIO35, up: VBAT_SW, via: R41, value: "20K/1%"}
+  - {signal: GPIO35, down: GND, via: R42, value: "5.1K/1%"}
+  - {signal: U5_FB, up: SYS_P050, via: R43, value: "15K/1%"}
+  - {signal: U5_FB, down: GND, via: R44, value: "4.7K/1%"}
+  - {signal: U6_PROG, down: GND, via: R45, value: "5.1K/1%"}
+  - {signal: EPD_GD, down: GND, via: R46, value: "10K/1%"}
+  - {signal: EPD_IS, down: GND, via: R47, value: "0.47R/1%"}
+  - {signal: PS_EN, up: VBAT_SW, via: R50, value: "10K/1%"}
+
+kleidos:   # Kleidos additions to the vendor's print, each marked on the drawing and listed on page 1
+  # (docs/models-and-drawings.md, "Schematics"; the triage behind them: improvements.md). "ESP32-PICO
+  # v1.5" is Espressif's ESP32-PICO Series Datasheet v1.5 (also_read, above). Firmware
+  # citations name a file of the Kleidos firmware repository and its symbol; second sources, kept off the
+  # page-1 table for its length, are in the comment after a cite.
+  - id: K1
+    kind: addition
+    what: "U1 pin 44, XTAL_N_NC: NC; not on the vendor's symbol."
+    element: {pin: U1.44}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 15"
+  - id: K2
+    kind: addition
+    what: "U1 pin 45, XTAL_P_NC: NC; not on the vendor's symbol."
+    element: {pin: U1.45}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 15"
+  - id: K3
+    kind: addition
+    what: "U1 pin 47, CAP2_NC: NC; not on the vendor's symbol."
+    element: {pin: U1.47}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 15"
+  - id: K4
+    kind: addition
+    what: "U1 pin 48, CAP1_NC: NC; not on the vendor's symbol."
+    element: {pin: U1.48}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 15"
+  - id: K5
+    kind: addition
+    what: "GPIO0 is the boot-mode strap: pulled up at reset."
+    element: {gpio: GPIO0}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"
+  - id: K6
+    kind: addition
+    what: "GPIO2 is a strap: pulled down at reset."
+    element: {gpio: GPIO2}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"
+  - id: K7
+    kind: addition
+    what: "GPIO5 is a strap: pulled up at reset."
+    element: {gpio: GPIO5}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"   # the key's level when pressed is open (README, Open questions; improvements.md T05, P05)
+  - id: K8
+    kind: addition
+    what: "GPIO6 (CLK) is the in-package flash's clock."
+    element: {gpio: GPIO6}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K9
+    kind: addition
+    what: "GPIO7 (SD0) is the in-package flash's WP/SIO2."
+    element: {gpio: GPIO7}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K10
+    kind: addition
+    what: "GPIO8 (SD1) is the in-package flash's SI/SIO0."
+    element: {gpio: GPIO8}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K11
+    kind: addition
+    what: "GPIO11 (CMD) is the in-package flash's HOLD/SIO3."
+    element: {gpio: GPIO11}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K12
+    kind: addition
+    what: "GPIO12, MTDI strap: low at reset, so VDD_SDIO = VDD3P3_RTC."
+    element: {gpio: GPIO12}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, Section 3.2"   # Table 8 p. 23, Section 3.2 p. 25; D14's anode on GPIO12 keeps the USB hold path (D19, R51) off the strap
+  - id: K13
+    kind: addition
+    what: "GPIO15 is the MTDO strap: pulled up at reset."
+    element: {gpio: GPIO15}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"
+  - id: K14
+    kind: addition
+    what: "GPIO16 is the in-package flash's chip select."
+    element: {gpio: GPIO16}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K15
+    kind: addition
+    what: "GPIO17 is the in-package flash's SO/SIO1."
+    element: {gpio: GPIO17}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K16
+    kind: addition
+    what: "GPIO19 is not an RTC GPIO, so it cannot wake deep sleep."
+    element: {gpio: GPIO19}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 15; ESP-IDF Sleep Modes"   # also: Kleidos firmware, variants/m5core_ink/variant.h, BOARD_SLEEP_MODE_HOLD_RELEASE and its comment (the alarm switches the board on through D13 instead)
+  - id: K17
+    kind: addition
+    what: "GPIO23 also carries the SSD1681 panel's reads (3-wire)."
+    element: {gpio: GPIO23}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, src/hal/display/epaper_panel_driver.cpp: EpaperPanelDriver::makePanelReadDevice"   # also: EpaperPanelDriver::readPanelRegister, and display_hal_epaper.cpp readPanelRegister; panel RAM read back over SDA on the board (2026-07-14) and the SSD1681 identity on 2026-07-15
+  - id: K18
+    kind: addition
+    what: "GPIO27 is RTC_GPIO17, so the power key can wake deep sleep."
+    element: {gpio: GPIO27}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 14; ESP-IDF Sleep Modes"   # also: Kleidos firmware, src/hal/common/power_manager_core_ink.cpp (enablePinWakeup on kPinPowerButton) and variants/m5core_ink/variant.h, BOARD_SLEEP_MODE_HOLD_RELEASE (EXT0 wake on USB power)
+  - id: K19
+    kind: addition
+    what: "GPIO34 is input only, with no internal pull."
+    element: {gpio: GPIO34}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, pp. 13-14"
+  - id: K20
+    kind: addition
+    what: "GPIO35 is input only, with no internal pull."
+    element: {gpio: GPIO35}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, pp. 13-14"
+  - id: K21
+    kind: addition
+    what: "GPIO36 is input only, with no internal pull."
+    element: {gpio: GPIO36}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 13"   # Table 2's notes, p. 13: input-only pins have no pull-up or pull-down
+  - id: K22
+    kind: addition
+    what: "GPIO37 is input only, with no internal pull."
+    element: {gpio: GPIO37}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 13"
+  - id: K23
+    kind: addition
+    what: "GPIO38 is input only, with no internal pull."
+    element: {gpio: GPIO38}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 13"
+  - id: K24
+    kind: addition
+    what: "GPIO39 is input only, with no internal pull."
+    element: {gpio: GPIO39}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 13"
+  - id: K25
+    kind: addition
+    what: "The BM8563 U4 answers at I2C address 0x51."
+    element: {i2c: U4}
+    source:
+      type: datasheet
+      cite: "BM8563 V1.1: write A2h, read A3h"   # also: Kleidos firmware, src/drivers/rtc/bm8563_regs.h, bm8563::kI2cAddress = 0x51 (works on the board)
+  - id: K26
+    kind: addition
+    what: "SYS_P050 is 5.03 V: 1.2 V x (1 + 15K / 4.7K)."
+    element: {rail: SYS_P050}
+    source:
+      type: datasheet
+      cite: "SY7088: VOUT equation, 1.2 V VREF"
+  - id: K27
+    kind: addition
+    what: "USB_5V is the 5 V @ 500 mA input the docs give."
+    element: {rail: USB_5V}
+    source:
+      type: vendor-doc
+      cite: "CoreInk docs page, specifications"
+  - id: K28
+    kind: addition
+    what: "SYS_BAT is the 390 mAh 3.7 V cell the docs give."
+    element: {rail: SYS_BAT}
+    source:
+      type: vendor-doc
+      cite: "CoreInk docs page, specifications"
+  - id: K29
+    kind: addition
+    what: "GPIO10's status LED is green, lit when GPIO10 is low."
+    element: {gpio: GPIO10}
+    source:
+      type: bench
+      cite: "bench/2026-11-17-led-and-user-key.md"   # the firmware drove GPIO10 low on its LED-on command (Kleidos firmware: PIN_STATUS_LED and STATUS_LED_ACTIVE_LOW in variants/m5core_ink/variant.h, statusLedOffLevel in src/hal/common/peripheral_switch.cpp) and the owner saw the LED lit, green, 2026-11-17
+
+components:
+  ANT1:
+    value: "(no value printed)"
+    page: 1
+    block: MCU
+    note: "Antenna; the print gives no value and no pin numbers. Pin 1 here is the end on the feed, pin 2 the end on GND. The docs page calls the board's antenna a 2.4G 3D antenna."
+    pins:
+      "1": ANT_FEED
+      "2": GND
+  ANT2:
+    value: IPEX
+    page: 1
+    block: MCU
+    note: "IPEX RF connector; the print gives no pin numbers: 1 here is the centre contact, 2 the shell."
+    pins:
+      "1": ANT_FEED   # centre
+      "2": GND   # shell
+  BUS1:
+    value: M5_BUS_16P_H7.1
+    page: 1
+    block: BUS
+    note: "M5-Bus, 16-pin socket."
+    pins:
+      "1": GND   # GND
+      "2": SYS_BAT   # BAT
+      "3": EXT_5VI   # 5VIN
+      "4": EXT_5VO   # 5VOUT
+      "5": EXT_RST   # RST
+      "6": MCU_VDD   # 3V3
+      "7": EXT_G13   # G13/RXD
+      "8": EXT_G14   # G14/TXD
+      "9": EXT_G21   # G21/SDA
+      "10": EXT_G22   # G22/SCL
+      "11": EXT_G18   # G18/SCK
+      "12": EXT_G36   # G36/27/AD
+      "13": EXT_G34   # G34/MISO
+      "14": EXT_G26   # G26/IO
+      "15": EXT_G23   # G23/MOSI
+      "16": EXT_G25   # G25/IO
+  BZ1:
+    value: BUZZER
+    page: 1
+    block: BUZZER
+    note: "Passive buzzer; its symbol has three pins and no numbers: 1 here is the one marked +, 2 the other end of the coil, 3 the pin drawn on the front of the symbol, which goes to GND."
+    pins:
+      "1": BUZZER_P   # +
+      "2": BUZZER_N
+      "3": GND
+  C1:
+    value: 106/6.3V
+    page: 1
+    block: BUZZER
+    pins:
+      "1": BUZZER_AC
+      "2": Q1_BASE
+  C2:
+    value: 105/6.3V
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": GPIO27
+      "2": GND
+  C3:
+    value: 106/6.3V
+    page: 1
+    block: USB2UART
+    pins:
+      "1": USB_5V
+      "2": GND
+  C4:
+    value: 1.5PF
+    page: 1
+    block: MCU
+    pins:
+      "1": U1_LNA_IN
+      "2": GND
+  C5:
+    value: 104/10V
+    page: 1
+    block: USB2UART
+    pins:
+      "1": U2_VDD
+      "2": GND
+  C6:
+    value: 1.2PF
+    page: 1
+    block: MCU
+    pins:
+      "1": ANT_FEED
+      "2": GND
+  C7:
+    value: 105/6.3V
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": GPIO38
+      "2": GND
+  C8:
+    value: 105/6.3V
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": GPIO39
+      "2": GND
+  C9:
+    value: 105/6.3V
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": GPIO37
+      "2": GND
+  C10:
+    value: 105/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C11:
+    value: 106/6.3V
+    page: 1
+    block: CHARGER
+    pins:
+      "1": SYS_BAT
+      "2": GND
+  C12:
+    value: 105/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C13:
+    value: 105/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C14:
+    value: 105/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C15:
+    value: 105/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C16:
+    value: 105/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": U1_VDD_SDIO
+      "2": GND
+  C17:
+    value: 105/6.3V
+    page: 1
+    block: USB2UART
+    pins:
+      "1": MCU_RST
+      "2": GND
+  C18:
+    value: 105/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C19:
+    value: 226/6.3V
+    page: 1
+    block: "3.3V DC-DC"
+    pins:
+      "1": SYS_P050
+      "2": GND
+  C20:
+    value: 47UF/6.3V
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "1": BST_IN
+      "2": GND
+  C21:
+    value: 47UF/6.3V
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "1": BST_IN
+      "2": GND
+  C22:
+    value: 106/6.3V
+    page: 1
+    block: PMU
+    pins:
+      "1": EXT_5VI
+      "2": GND
+  C23:
+    value: 106/6.3V
+    page: 1
+    block: CHARGER
+    pins:
+      "1": CHG
+      "2": GND
+  C25:
+    value: 104/10V
+    page: 1
+    block: RTC
+    pins:
+      "1": SYS_BAT
+      "2": GND
+  C26:
+    value: 6PF
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_OSCI
+      "2": GND
+  C27:
+    value: 6PF
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_OSCO
+      "2": GND
+  C28:
+    value: 226/6.3V
+    page: 1
+    block: "3.3V DC-DC"
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C29:
+    value: 106/6.3V
+    page: 1
+    block: PMU
+    pins:
+      "1": EXT_5VO
+      "2": GND
+  C30:
+    value: 105/6.3V
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": GPIO35
+      "2": GND
+  C31:
+    value: 47UF/6.3V
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "1": SYS_P050
+      "2": GND
+  C33:
+    value: 226/6.3V
+    page: 1
+    block: "3.3V DC-DC"
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C34:
+    value: 106/6.3V
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C35:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": EPD_VGL
+      "2": GND
+  C36:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": EPD_VGH
+      "2": GND
+  C37:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": EPD_VDD
+      "2": GND
+  C38:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": EPD_VPP
+      "2": GND
+  C39:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": EPD_VSH
+      "2": GND
+  C40:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": EPD_VSL
+      "2": GND
+  C41:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": EPD_VCOM
+      "2": GND
+  C42:
+    value: 105/25V
+    page: 1
+    block: EPD
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  C43:
+    value: 105/25V
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "1": EPD_SW
+      "2": EPD_PUMP
+  C44:
+    value: 105/25V
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "1": VEE
+      "2": GND
+  C45:
+    value: 105/25V
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "1": VGG
+      "2": GND
+  C46:
+    value: 226/6.3V
+    page: 1
+    block: MCU
+    pins:
+      "1": MCU_VDD
+      "2": GND
+  D1:
+    value: SRV05-4
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO13   # IO1
+      "2": GND   # GND
+      "3": MCU_RST   # IO2
+      "4": "NC"   # IO3
+      "5": MCU_VDD   # VCC
+      "6": GPIO14   # IO4
+  D2:
+    value: SRV05-4
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO21   # IO1
+      "2": GND   # GND
+      "3": GPIO36   # IO2
+      "4": GPIO18   # IO3
+      "5": MCU_VDD   # VCC
+      "6": GPIO22   # IO4
+  D3:
+    value: SRV05-4
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO34   # IO1
+      "2": GND   # GND
+      "3": GPIO25   # IO2
+      "4": GPIO23   # IO3
+      "5": MCU_VDD   # VCC
+      "6": GPIO26   # IO4
+  D4:
+    value: "4148"
+    page: 1
+    block: BUZZER
+    pins:
+      "A": BUZZER_N   # anode
+      "K": BUZZER_P   # cathode
+  D5:
+    value: "4148"
+    page: 1
+    block: BUTTONS
+    pins:
+      "A": GPIO27   # anode
+      "K": PWR_KEY   # cathode
+  D6:
+    value: "4148"
+    page: 1
+    block: BUTTONS
+    pins:
+      "A": PWR_TRIG   # anode
+      "K": PWR_KEY   # cathode
+  D7:
+    value: "4148"
+    page: 1
+    block: USB2UART
+    pins:
+      "A": GPIO0   # anode
+      "K": Q3_C   # cathode
+  D8:
+    value: 1N5819
+    page: 1
+    block: PMU
+    pins:
+      "A": USB_5V   # anode
+      "K": EXT_5VI   # cathode
+  D9:
+    value: 1N5819
+    page: 1
+    block: PMU
+    pins:
+      "A": CHG   # anode
+      "K": BST_IN   # cathode
+  D10:
+    value: SS34
+    page: 1
+    block: PMU
+    pins:
+      "A": SYS_BAT   # anode
+      "K": BST_IN   # cathode
+  D11:
+    value: 1N5819
+    page: 1
+    block: PMU
+    pins:
+      "A": SYS_P050   # anode
+      "K": EXT_5VO   # cathode
+  D12:
+    value: "4148"
+    page: 1
+    block: RTC
+    pins:
+      "A": GPIO19   # anode
+      "K": RTC_INT   # cathode
+  D13:
+    value: "4148"
+    page: 1
+    block: RTC
+    pins:
+      "A": PWR_TRIG   # anode
+      "K": RTC_INT   # cathode
+  D14:
+    value: "4148"
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "A": GPIO12   # anode
+      "K": Q5_GATE   # cathode
+  D15:
+    value: 1N5819
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "A": EPD_SW   # anode
+      "K": VGG   # cathode
+  D16:
+    value: 1N5819
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "A": EPD_PUMP   # anode
+      "K": GND   # cathode
+  D17:
+    value: 1N5819
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "A": VEE   # anode
+      "K": EPD_PUMP   # cathode
+  D18:
+    value: "4148"
+    page: 1
+    block: BUZZER
+    pins:
+      "A": GND   # anode
+      "K": Q1_BASE   # cathode
+  D19:
+    value: "4148"
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "A": USB_5V   # anode
+      "K": D19_K   # cathode
+  EPD1:
+    value: EPD_SPI
+    page: 1
+    block: "EPD (untitled block)"
+    note: "E-paper panel connector (24-pin FPC). The vendor's symbol has no pin 1; its pin 0 is the shell."
+    pins:
+      "0": GND   # SHELL_GND
+      "2": EPD_GD   # GDR
+      "3": EPD_IS   # RESE
+      "4": EPD_VGL   # VGL
+      "5": EPD_VGH   # VGH
+      "6": "NC"   # TSCL
+      "7": "NC"   # TSDA
+      "8": GND   # BSI
+      "9": GPIO4   # BUSY
+      "10": GPIO0   # RST#
+      "11": GPIO15   # D/C
+      "12": GPIO9   # CS#
+      "13": GPIO18   # SCK
+      "14": GPIO23   # MOSI
+      "15": MCU_VDD   # VDDIO
+      "16": MCU_VDD   # VCI
+      "17": GND   # VSS
+      "18": EPD_VDD   # VDD
+      "19": EPD_VPP   # VPP
+      "20": EPD_VSH   # VSH
+      "21": VGG   # PREVGH
+      "22": EPD_VSL   # VSL
+      "23": VEE   # PREVGL
+      "24": EPD_VCOM   # VCOM
+  FU1:
+    value: "PTC 1A"
+    page: 1
+    block: PMU
+    note: "Resettable fuse; pin 1 is the end on EXT_5VI (pin numbers ours)."
+    pins:
+      "1": EXT_5VI
+      "2": CHG
+  J1:
+    value: CON10
+    page: 1
+    block: "FPC TO HAT"
+    note: "10-pin FPC to the top HAT board; the print marks pin 1 \"LED\" and pin 2 \"KEY\" (what is beyond J1 is not on the schematic)."
+    pins:
+      "1": GPIO10   # 1
+      "2": GPIO5   # 2
+      "3": GND   # 3
+      "4": EXT_5VO   # 4
+      "5": EXT_G26   # 5
+      "6": EXT_G36   # 6
+      "7": EXT_G25   # 7
+      "8": SYS_BAT   # 8
+      "9": MCU_VDD   # 9
+      "10": EXT_5VI   # 10
+      "SH": GND   # SH
+  J2:
+    value: TYPEC
+    page: 1
+    block: "USB TYPE-C"
+    note: "USB Type-C receptacle. The print numbers only the CC and data contacts; its pins VCC, GND and SHELL carry no number, and V, G and SH are ours."
+    pins:
+      "A5": USB_CC1   # CC1
+      "A6": USB_DP   # DP1
+      "A7": USB_DM   # DN1
+      "B5": USB_CC2   # CC2
+      "B6": USB_DP   # DP2
+      "B7": USB_DM   # DN2
+      "G": GND   # GND
+      "SH": GND   # SHELL
+      "V": USB_5V   # VCC
+  J3:
+    value: GROVE
+    page: 1
+    block: GROVE
+    note: "Grove (HY2.0-4P) port."
+    pins:
+      "0": GND   # SH
+      "1": GND   # GND
+      "2": EXT_5VO   # 5V
+      "3": EXT_G32   # IO1
+      "4": EXT_G33   # IO2
+  J4:
+    value: CON2
+    page: 1
+    block: "BATTERY PORT"
+    note: "Battery connector."
+    pins:
+      "1": GND   # 1
+      "2": SYS_BAT   # 2
+      "SH": GND   # SH
+  L1:
+    value: 1.8nH
+    page: 1
+    block: MCU
+    pins:
+      "1": U1_LNA_IN
+      "2": ANT_FEED
+  L2:
+    value: 2.2UH
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "1": BST_IN
+      "2": U5_LX
+  L3:
+    value: 2.2UH
+    page: 1
+    block: "3.3V DC-DC"
+    pins:
+      "1": U3_SW
+      "2": MCU_VDD
+  L4:
+    value: 10UH
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "1": MCU_VDD
+      "2": EPD_SW
+  LED1:
+    value: RED
+    page: 1
+    block: CHARGER
+    note: "Charge indicator."
+    pins:
+      "A": LED1_A   # anode
+      "K": U6_CHRG   # cathode
+  Q1:
+    value: S8050
+    page: 1
+    block: BUZZER
+    note: "NPN; base, collector and emitter as the symbol draws them."
+    pins:
+      "B": Q1_BASE   # base
+      "C": BUZZER_N   # collector
+      "E": GND   # emitter
+  Q2:
+    value: S8050
+    page: 1
+    block: USB2UART
+    note: "NPN; base, collector and emitter as the symbol draws them (no pin numbers printed)."
+    pins:
+      "B": Q2_BASE   # base
+      "C": MCU_RST   # collector
+      "E": U2_RTS   # emitter
+  Q3:
+    value: S8050
+    page: 1
+    block: USB2UART
+    note: "NPN; base, collector and emitter as the symbol draws them."
+    pins:
+      "B": Q3_BASE   # base
+      "C": Q3_C   # collector
+      "E": U2_DTR   # emitter
+  Q4:
+    value: SI2301
+    page: 1
+    block: "PWR_SW&ADC"
+    note: "P-channel MOSFET; gate, source and drain as the symbol draws them (no pin numbers printed)."
+    pins:
+      "D": VBAT_SW   # drain
+      "G": Q4_GATE   # gate
+      "S": SYS_BAT   # source
+  Q5:
+    value: SI2302
+    page: 1
+    block: "PWR_SW&ADC"
+    note: "N-channel MOSFET; gate, source and drain as the symbol draws them."
+    pins:
+      "D": PWR_TRIG   # drain
+      "G": Q5_GATE   # gate
+      "S": GND   # source
+  Q6:
+    value: CJ2310
+    page: 1
+    block: "EPD BOOST"
+    note: "N-channel MOSFET; gate, source and drain as the symbol draws them."
+    pins:
+      "D": EPD_SW   # drain
+      "G": EPD_GD   # gate
+      "S": EPD_IS   # source
+  R1:
+    value: 5.1K/1%
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_CC1
+      "2": GND
+  R2:
+    value: 2.2K/1%
+    page: 1
+    block: BUZZER
+    pins:
+      "1": GPIO2
+      "2": BUZZER_AC
+  R3:
+    value: 5.1K/1%
+    page: 1
+    block: BUZZER
+    pins:
+      "1": GPIO2
+      "2": GND
+  R4:
+    value: 5.1K/1%
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_CC2
+      "2": GND
+  R5:
+    value: 4.7R/1%
+    page: 1
+    block: BUZZER
+    pins:
+      "1": EXT_5VO
+      "2": BUZZER_P
+  R6:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO13
+      "2": EXT_G13
+  R7:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO14
+      "2": EXT_G14
+  R8:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO21
+      "2": EXT_G21
+  R9:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO22
+      "2": EXT_G22
+  R10:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO18
+      "2": EXT_G18
+  R11:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO36
+      "2": EXT_G36
+  R12:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO34
+      "2": EXT_G34
+  R13:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO26
+      "2": EXT_G26
+  R14:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO23
+      "2": EXT_G23
+  R15:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": GPIO25
+      "2": EXT_G25
+  R16:
+    value: 47R/1%
+    page: 1
+    block: ESD
+    pins:
+      "1": MCU_RST
+      "2": EXT_RST
+  R17:
+    value: 47R/1%
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_DP
+      "2": SYS_DP
+  R18:
+    value: 47R/1%
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_DM
+      "2": SYS_DM
+  R19:
+    value: 10K/1%
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": MCU_VDD
+      "2": GPIO27
+  R20:
+    value: 10K/1%
+    page: 1
+    block: USB2UART
+    pins:
+      "1": U2_VDD
+      "2": U2_RST
+  R21:
+    value: 47R/1%
+    page: 1
+    block: USB2UART
+    pins:
+      "1": CP_TX
+      "2": GPIO3
+  R22:
+    value: 47R/1%
+    page: 1
+    block: USB2UART
+    pins:
+      "1": CP_RX
+      "2": GPIO1
+  R23:
+    value: 10K/1%
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": MCU_VDD
+      "2": GPIO38
+  R24:
+    value: 10K/1%
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": MCU_VDD
+      "2": GPIO39
+  R25:
+    value: 10K/1%
+    page: 1
+    block: BUTTONS
+    pins:
+      "1": MCU_VDD
+      "2": GPIO37
+  R26:
+    value: 2.2K/1%
+    page: 1
+    block: MCU
+    pins:
+      "1": GPIO21
+      "2": MCU_VDD
+  R27:
+    value: 2.2K/1%
+    page: 1
+    block: MCU
+    pins:
+      "1": GPIO22
+      "2": MCU_VDD
+  R28:
+    value: 2.2K/1%
+    page: 1
+    block: USB2UART
+    pins:
+      "1": GPIO0
+      "2": MCU_VDD
+  R29:
+    value: 10K/1%
+    page: 1
+    block: USB2UART
+    pins:
+      "1": MCU_VDD
+      "2": MCU_RST
+  R30:
+    value: 10K/1%
+    page: 1
+    block: USB2UART
+    pins:
+      "1": Q2_BASE
+      "2": U2_DTR
+  R31:
+    value: 10K/1%
+    page: 1
+    block: USB2UART
+    pins:
+      "1": Q3_BASE
+      "2": U2_RTS
+  R32:
+    value: 100K/1%
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": SYS_BAT
+      "2": Q4_GATE
+  R33:
+    value: 10K/1%
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": Q5_GATE
+      "2": GND
+  R34:
+    value: 2.2K/1%
+    page: 1
+    block: CHARGER
+    pins:
+      "1": CHG
+      "2": LED1_A
+  R35:
+    value: 100K/1%
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "1": PS_EN
+      "2": GND
+  R36:
+    value: 47R/1%
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": Q4_GATE
+      "2": PWR_TRIG
+  R37:
+    value: 10K/1%
+    page: 1
+    block: RTC
+    pins:
+      "1": MCU_VDD
+      "2": GPIO19
+  R38:
+    value: 10K/1%
+    page: 1
+    block: RTC
+    pins:
+      "1": SYS_BAT
+      "2": RTC_INT
+  R39:
+    value: 22K/1%
+    page: 1
+    block: "3.3V DC-DC"
+    pins:
+      "1": U3_FB
+      "2": MCU_VDD
+  R40:
+    value: 5.1K/1%
+    page: 1
+    block: "3.3V DC-DC"
+    pins:
+      "1": U3_FB
+      "2": GND
+  R41:
+    value: 20K/1%
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": VBAT_SW
+      "2": GPIO35
+  R42:
+    value: 5.1K/1%
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": GPIO35
+      "2": GND
+  R43:
+    value: 15K/1%
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "1": SYS_P050
+      "2": U5_FB
+  R44:
+    value: 4.7K/1%
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "1": U5_FB
+      "2": GND
+  R45:
+    value: 5.1K/1%
+    page: 1
+    block: CHARGER
+    pins:
+      "1": U6_PROG
+      "2": GND
+  R46:
+    value: 10K/1%
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "1": EPD_GD
+      "2": GND
+  R47:
+    value: 0.47R/1%
+    page: 1
+    block: "EPD BOOST"
+    pins:
+      "1": EPD_IS
+      "2": GND
+  R48:
+    value: 47R/1%
+    page: 1
+    block: GROVE
+    pins:
+      "1": GPIO32
+      "2": EXT_G32
+  R49:
+    value: 47R/1%
+    page: 1
+    block: GROVE
+    pins:
+      "1": GPIO33
+      "2": EXT_G33
+  R50:
+    value: 10K/1%
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": VBAT_SW
+      "2": PS_EN
+  R51:
+    value: 5.1K/1%
+    page: 1
+    block: "PWR_SW&ADC"
+    pins:
+      "1": D19_K
+      "2": Q5_GATE
+  S1:
+    value: "SW (side, POWER)"
+    page: 1
+    block: BUTTONS
+    note: "Power key. The print's value is Chinese text (zhong wugui ce an: a side-press switch) and its label POWER; pin numbers ours."
+    pins:
+      "1": PWR_KEY
+      "2": GND
+  S2:
+    value: PTS_820_H2.5mm
+    page: 1
+    block: BUTTONS
+    note: "Reset key (labelled RESET); pin numbers ours."
+    pins:
+      "1": MCU_RST
+      "2": GND
+  S3:
+    value: K1-1502SA-02
+    page: 1
+    block: BUTTONS
+    note: "Three-way dial switch, labelled MULTI-FUNCTION."
+    pins:
+      "1": GPIO37   # 1
+      "2": GPIO39   # 2
+      "C": GND   # C
+      "T": GPIO38   # T
+  U1:
+    value: PICO_D4
+    page: 1
+    block: "MCU (untitled block, ESP32-PICO-D4)"
+    note: "ESP32-PICO-D4 SiP (the block diagram names it). The vendor's symbol has no pins 44, 45, 47 or 48; the datasheet gives each as NC, and they are drawn unconnected as Kleidos additions K1 to K4. IO6-IO8, IO11, IO16 and IO17 carry the print's no-connect crosses: they are the in-package flash's (K8 to K11, K14, K15)."
+    pins:
+      "0": GND   # PAD
+      "1": MCU_VDD   # VDDA
+      "2": U1_LNA_IN   # LNA_IN
+      "3": MCU_VDD   # VDDA3P3
+      "4": MCU_VDD   # VDDA3P3
+      "5": GPIO36   # IO36
+      "6": GPIO37   # IO37
+      "7": GPIO38   # IO38
+      "8": GPIO39   # IO39
+      "9": MCU_RST   # EN
+      "10": GPIO34   # IO34
+      "11": GPIO35   # IO35
+      "12": GPIO32   # IO32
+      "13": GPIO33   # IO33
+      "14": GPIO25   # IO25
+      "15": GPIO26   # IO26
+      "16": GPIO27   # IO27
+      "17": GPIO14   # IO14
+      "18": GPIO12   # IO12
+      "19": MCU_VDD   # VDD3P3_RTC
+      "20": GPIO13   # IO13
+      "21": GPIO15   # IO15
+      "22": GPIO2   # IO2
+      "23": GPIO0   # IO0
+      "24": GPIO4   # IO4
+      "25": "NC"   # IO16
+      "26": U1_VDD_SDIO   # VDD_SDIO
+      "27": "NC"   # IO17
+      "28": GPIO9   # IO9/SD2
+      "29": GPIO10   # IO10/SD3
+      "30": "NC"   # IO11/CMD
+      "31": "NC"   # IO6/CLK
+      "32": "NC"   # IO7/SD0
+      "33": "NC"   # IO8/SD1
+      "34": GPIO5   # IO5
+      "35": GPIO18   # IO18
+      "36": GPIO23   # IO23
+      "37": MCU_VDD   # VDD3P3_CPU
+      "38": GPIO19   # IO19
+      "39": GPIO22   # IO22
+      "40": GPIO3   # IO3/U0RXD
+      "41": GPIO1   # IO1/U0TXD
+      "42": GPIO21   # IO21
+      "43": MCU_VDD   # VDDA
+      "44": "NC"   # XTAL_N_NC (not on the vendor's symbol; K1)
+      "45": "NC"   # XTAL_P_NC (not on the vendor's symbol; K2)
+      "46": MCU_VDD   # VDDA
+      "47": "NC"   # CAP2_NC (not on the vendor's symbol; K3)
+      "48": "NC"   # CAP1_NC (not on the vendor's symbol; K4)
+  U2:
+    value: CP2104-F03-GMR
+    page: 1
+    block: USB2UART
+    note: "USB to UART bridge. The vendor's docs say later units carry a CH9102 instead; this schematic shows the CP2104."
+    pins:
+      "0": GND   # PAD
+      "1": "NC"   # RI
+      "2": GND   # GND
+      "3": SYS_DP   # DP
+      "4": SYS_DM   # DM
+      "5": U2_VDD   # VIO
+      "6": U2_VDD   # VDD
+      "7": USB_5V   # REGIN
+      "8": USB_5V   # VBUS
+      "9": U2_RST   # ~{RST}
+      "11": "NC"   # GPIO3
+      "12": "NC"   # GPIO2
+      "13": "NC"   # GPIO1
+      "14": "NC"   # GPIO0
+      "15": "NC"   # ~{SUSPEND}
+      "16": "NC"   # VPP
+      "17": "NC"   # SUSPEND
+      "18": "NC"   # CTS
+      "19": U2_RTS   # RTS
+      "20": CP_RX   # RXD
+      "21": CP_TX   # TXD
+      "22": "NC"   # DSR
+      "23": U2_DTR   # DTR
+      "24": "NC"   # DCD
+  U3:
+    value: SY8089
+    page: 1
+    block: "3.3V DC-DC"
+    pins:
+      "1": SYS_P050   # EN
+      "2": GND   # GND
+      "3": U3_SW   # SW
+      "4": SYS_P050   # IN
+      "5": U3_FB   # FB
+  U4:
+    value: BM8563
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_OSCI   # OSCI
+      "2": RTC_OSCO   # OSCO
+      "3": RTC_INT   # ~{INT}
+      "4": GND   # VSS
+      "5": GPIO21   # SDA
+      "6": GPIO22   # SCL
+      "7": "NC"   # CLKOUT
+      "8": SYS_BAT   # VDD
+  U5:
+    value: SY7088
+    page: 1
+    block: "5V DC-DC"
+    pins:
+      "0": GND   # PAD
+      "1": U5_LX   # LX
+      "2": U5_LX   # LX
+      "3": PS_EN   # EN
+      "4": GND   # SGND
+      "5": U5_FB   # FB
+      "6": BST_IN   # IN
+      "7": SYS_P050   # OUT
+      "8": SYS_P050   # OUT
+  U6:
+    value: TP40P57
+    page: 1
+    block: CHARGER
+    note: "Single-cell charger as the schematic writes it (TP40P57); the vendor's block diagram calls it TP4057."
+    pins:
+      "1": U6_CHRG   # ~{CHG}
+      "2": GND   # GND
+      "3": SYS_BAT   # BAT
+      "4": CHG   # VCC
+      "5": "NC"   # ~{STDBY}
+      "6": U6_PROG   # PROG
+  X1:
+    value: 32.768K
+    page: 1
+    block: RTC
+    note: "Crystal; pin 1 is the end on OSCI (pin numbers ours)."
+    pins:
+      "1": RTC_OSCI
+      "2": RTC_OSCO
+
+nets:   # every net and the pins on it (the drawing's pages are in layout.yaml)
+  ANT_FEED: {pins: [ANT1.1, ANT2.1, C6.1, L1.2]}
+  BST_IN: {pins: [C20.1, C21.1, D9.K, D10.K, L2.1, U5.6]}
+  BUZZER_AC: {pins: [C1.1, R2.2]}
+  BUZZER_N: {pins: [BZ1.2, D4.A, Q1.C]}
+  BUZZER_P: {pins: [BZ1.1, D4.K, R5.2]}
+  CHG: {pins: [C23.1, D9.A, FU1.2, R34.1, U6.4]}
+  CP_RX: {pins: [R22.1, U2.20]}
+  CP_TX: {pins: [R21.1, U2.21]}
+  D19_K: {pins: [D19.K, R51.1]}
+  EPD_GD: {pins: [EPD1.2, Q6.G, R46.1]}
+  EPD_IS: {pins: [EPD1.3, Q6.S, R47.1]}
+  EPD_PUMP: {pins: [C43.2, D16.A, D17.K]}
+  EPD_SW: {pins: [C43.1, D15.A, L4.2, Q6.D]}
+  EPD_VCOM: {pins: [C41.1, EPD1.24]}
+  EPD_VDD: {pins: [C37.1, EPD1.18]}
+  EPD_VGH: {pins: [C36.1, EPD1.5]}
+  EPD_VGL: {pins: [C35.1, EPD1.4]}
+  EPD_VPP: {pins: [C38.1, EPD1.19]}
+  EPD_VSH: {pins: [C39.1, EPD1.20]}
+  EPD_VSL: {pins: [C40.1, EPD1.22]}
+  EXT_5VI: {pins: [BUS1.3, C22.1, D8.K, FU1.1, J1.10]}
+  EXT_5VO: {pins: [BUS1.4, C29.1, D11.K, J1.4, J3.2, R5.1]}
+  EXT_G13: {pins: [BUS1.7, R6.2]}
+  EXT_G14: {pins: [BUS1.8, R7.2]}
+  EXT_G18: {pins: [BUS1.11, R10.2]}
+  EXT_G21: {pins: [BUS1.9, R8.2]}
+  EXT_G22: {pins: [BUS1.10, R9.2]}
+  EXT_G23: {pins: [BUS1.15, R14.2]}
+  EXT_G25: {pins: [BUS1.16, J1.7, R15.2]}
+  EXT_G26: {pins: [BUS1.14, J1.5, R13.2]}
+  EXT_G32: {pins: [J3.3, R48.2]}
+  EXT_G33: {pins: [J3.4, R49.2]}
+  EXT_G34: {pins: [BUS1.13, R12.2]}
+  EXT_G36: {pins: [BUS1.12, J1.6, R11.2]}
+  EXT_RST: {pins: [BUS1.5, R16.2]}
+  GND: {pins: [ANT1.2, ANT2.2, BUS1.1, BZ1.3, C2.2, C3.2, C4.2, C5.2, C6.2, C7.2, C8.2, C9.2, C10.2, C11.2, C12.2, C13.2, C14.2, C15.2, C16.2, C17.2, C18.2, C19.2, C20.2, C21.2, C22.2, C23.2, C25.2, C26.2, C27.2, C28.2, C29.2, C30.2, C31.2, C33.2, C34.2, C35.2, C36.2, C37.2, C38.2, C39.2, C40.2, C41.2, C42.2, C44.2, C45.2, C46.2, D1.2, D2.2, D3.2, D16.K, D18.A, EPD1.0, EPD1.8, EPD1.17, J1.3, J1.SH, J2.G, J2.SH, J3.0, J3.1, J4.1, J4.SH, Q1.E, Q5.S, R1.2, R3.2, R4.2, R33.2, R35.2, R40.2, R42.2, R44.2, R45.2, R46.2, R47.2, S1.2, S2.2, S3.C, U1.0, U2.0, U2.2, U3.2, U4.4, U5.0, U5.4, U6.2]}
+  GPIO0: {pins: [D7.A, EPD1.10, R28.1, U1.23]}
+  GPIO1: {pins: [R22.2, U1.41]}
+  GPIO10: {pins: [J1.1, U1.29]}
+  GPIO12: {pins: [D14.A, U1.18]}
+  GPIO13: {pins: [D1.1, R6.1, U1.20]}
+  GPIO14: {pins: [D1.6, R7.1, U1.17]}
+  GPIO15: {pins: [EPD1.11, U1.21]}
+  GPIO18: {pins: [D2.4, EPD1.13, R10.1, U1.35]}
+  GPIO19: {pins: [D12.A, R37.2, U1.38]}
+  GPIO2: {pins: [R2.1, R3.1, U1.22]}
+  GPIO21: {pins: [D2.1, R8.1, R26.1, U1.42, U4.5]}
+  GPIO22: {pins: [D2.6, R9.1, R27.1, U1.39, U4.6]}
+  GPIO23: {pins: [D3.4, EPD1.14, R14.1, U1.36]}
+  GPIO25: {pins: [D3.3, R15.1, U1.14]}
+  GPIO26: {pins: [D3.6, R13.1, U1.15]}
+  GPIO27: {pins: [C2.1, D5.A, R19.2, U1.16]}
+  GPIO3: {pins: [R21.2, U1.40]}
+  GPIO32: {pins: [R48.1, U1.12]}
+  GPIO33: {pins: [R49.1, U1.13]}
+  GPIO34: {pins: [D3.1, R12.1, U1.10]}
+  GPIO35: {pins: [C30.1, R41.2, R42.1, U1.11]}
+  GPIO36: {pins: [D2.3, R11.1, U1.5]}
+  GPIO37: {pins: [C9.1, R25.2, S3.1, U1.6]}
+  GPIO38: {pins: [C7.1, R23.2, S3.T, U1.7]}
+  GPIO39: {pins: [C8.1, R24.2, S3.2, U1.8]}
+  GPIO4: {pins: [EPD1.9, U1.24]}
+  GPIO5: {pins: [J1.2, U1.34]}
+  GPIO9: {pins: [EPD1.12, U1.28]}
+  LED1_A: {pins: [LED1.A, R34.2]}
+  MCU_RST: {pins: [C17.1, D1.3, Q2.C, R16.1, R29.2, S2.1, U1.9]}
+  MCU_VDD: {pins: [BUS1.6, C10.1, C12.1, C13.1, C14.1, C15.1, C18.1, C28.1, C33.1, C34.1, C42.1, C46.1, D1.5, D2.5, D3.5, EPD1.15, EPD1.16, J1.9, L3.2, L4.1, R19.1, R23.1, R24.1, R25.1, R26.2, R27.2, R28.2, R29.1, R37.1, R39.2, U1.1, U1.3, U1.4, U1.19, U1.37, U1.43, U1.46]}
+  PS_EN: {pins: [R35.1, R50.2, U5.3]}
+  PWR_KEY: {pins: [D5.K, D6.K, S1.1]}
+  PWR_TRIG: {pins: [D6.A, D13.A, Q5.D, R36.2]}
+  Q1_BASE: {pins: [C1.2, D18.K, Q1.B]}
+  Q2_BASE: {pins: [Q2.B, R30.1]}
+  Q3_BASE: {pins: [Q3.B, R31.1]}
+  Q3_C: {pins: [D7.K, Q3.C]}
+  Q4_GATE: {pins: [Q4.G, R32.2, R36.1]}
+  Q5_GATE: {pins: [D14.K, Q5.G, R33.1, R51.2]}
+  RTC_INT: {pins: [D12.K, D13.K, R38.2, U4.3]}
+  RTC_OSCI: {pins: [C26.1, U4.1, X1.1]}
+  RTC_OSCO: {pins: [C27.1, U4.2, X1.2]}
+  SYS_BAT: {pins: [BUS1.2, C11.1, C25.1, D10.A, J1.8, J4.2, Q4.S, R32.1, R38.1, U4.8, U6.3]}
+  SYS_DM: {pins: [R18.2, U2.4]}
+  SYS_DP: {pins: [R17.2, U2.3]}
+  SYS_P050: {pins: [C19.1, C31.1, D11.A, R43.1, U3.1, U3.4, U5.7, U5.8]}
+  U1_LNA_IN: {pins: [C4.1, L1.1, U1.2]}
+  U1_VDD_SDIO: {pins: [C16.1, U1.26]}
+  U2_DTR: {pins: [Q3.E, R30.2, U2.23]}
+  U2_RST: {pins: [R20.2, U2.9]}
+  U2_RTS: {pins: [Q2.E, R31.2, U2.19]}
+  U2_VDD: {pins: [C5.1, R20.1, U2.5, U2.6]}
+  U3_FB: {pins: [R39.1, R40.1, U3.5]}
+  U3_SW: {pins: [L3.1, U3.3]}
+  U5_FB: {pins: [R43.2, R44.1, U5.5]}
+  U5_LX: {pins: [L2.2, U5.1, U5.2]}
+  U6_CHRG: {pins: [LED1.K, U6.1]}
+  U6_PROG: {pins: [R45.1, U6.6]}
+  USB_5V: {pins: [C3.1, D8.A, D19.A, J2.V, U2.7, U2.8]}
+  USB_CC1: {pins: [J2.A5, R1.1]}
+  USB_CC2: {pins: [J2.B5, R4.1]}
+  USB_DM: {pins: [J2.A7, J2.B7, R18.1]}
+  USB_DP: {pins: [J2.A6, J2.B6, R17.1]}
+  VBAT_SW: {pins: [Q4.D, R41.1, R50.1]}
+  VEE: {pins: [C44.1, D17.A, EPD1.23]}
+  VGG: {pins: [C45.1, D15.K, EPD1.21]}

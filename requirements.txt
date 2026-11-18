@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: MIT
+#
+# The model builder's libraries, pinned at the versions each model's
+# model/source.json records it was built with (builder.packages), and the
+# tools the checks run. Install into a virtual environment:
+#   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+# Python 3.14 (the version source.json records); numpy 2.5.4 needs 3.12+.
+
+# Model builder and model checks (_shared/build_board_glb.py,
+# check_board_model.py, legend_placement.py, model_raster.py, legend_mesh.py)
+numpy==2.5.4
+shapely==2.2.0
+trimesh==5.2.0
+mapbox_earcut==2.1.0
+scipy==1.18.1
+networkx==3.7
+rtree==1.4.1
+cascadio==0.1.1
+fast-simplification==0.2.0
+fonttools==4.68.0
+# check_board_model.py draws its comparison sheets with it
+matplotlib==3.11.2
+# models_contact_sheet.py writes the PNG through it
+pillow==13.0.0
+
+# Schematic generator and checks (_shared/kicad_schematic.py,
+# check_schematic.py, export_schematic.py); exporting also needs KiCad's
+# kicad-cli, which pip does not install (no KiCad library is read)
+pyyaml==6.0.3
+# check_schematic_links.py reads the PDF's links and bookmarks with it
+pypdf==7.1.0
+
+# Checks
+pytest==9.2.0
+reuse==6.3.0
+# reuse needs one module that detects a file's encoding
+charset-normalizer==3.5.2

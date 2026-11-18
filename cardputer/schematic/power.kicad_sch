@@ -1,0 +1,3512 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "595f8daa-309e-5648-9ad8-6ed3d96fe02b")
+	(paper "A2")
+	(title_block
+		(title "M5Stack Cardputer-Adv (K132-Adv): Power tree and rails")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: M5Stack Cardputer-Adv v1.0 and Stamp-S3 v0.3.3 schematics; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols)
+	(text "Power tree and rails"
+		(exclude_from_sim no)
+		(at 15.24 20.32 0)
+		(effects
+			(font
+				(size 3 3)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "2614ec9c-b331-5994-8536-ac4bf5a99025")
+	)
+	(text "Power tree"
+		(exclude_from_sim no)
+		(at 15.24 33.02 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "584a0ff7-fb53-5b3c-8663-1fb02bb295fa")
+	)
+	(rectangle
+		(start 15.24 34.7)
+		(end 39.37 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "8f5caf4c-54af-51ee-a7dc-7c928ba0435c")
+	)
+	(text "J1 Battery connector"
+		(exclude_from_sim no)
+		(at 16.51 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "68a0bf16-3953-5b63-bdea-5d698fda69f0")
+	)
+	(text "Header 2"
+		(exclude_from_sim no)
+		(at 16.51 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "7f4621bd-4893-5383-b664-3deaedb2d280")
+	)
+	(rectangle
+		(start 43.18 34.7)
+		(end 67.31 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "670ff226-5698-5c60-817d-a8ba5ffbd06f")
+	)
+	(text "BAT"
+		(exclude_from_sim no)
+		(at 44.45 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "dd506063-db4f-5d16-a9d6-c4b88574af95")
+	)
+	(text "Li-ion cell"
+		(exclude_from_sim no)
+		(at 44.45 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "13496a8c-9410-5e66-acab-70eb066e76b1")
+	)
+	(rectangle
+		(start 71.12 34.7)
+		(end 95.25 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "74c31786-4c64-598a-b92a-3a7a5eea6980")
+	)
+	(text "Q2 P-channel MOSFET"
+		(exclude_from_sim no)
+		(at 72.39 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "8b5b2e5d-8ca0-5a07-8a9b-583ed51dcf2d")
+	)
+	(text "LP3218DT1G"
+		(exclude_from_sim no)
+		(at 72.39 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "18cec700-70b0-5dcd-b183-c408aace61d5")
+	)
+	(rectangle
+		(start 99.06 34.7)
+		(end 123.19 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "ed18a28a-21eb-5a37-a3c6-1fecb96c85de")
+	)
+	(text "Q3 P-channel MOSFET"
+		(exclude_from_sim no)
+		(at 100.33 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "558ec486-a2cc-5424-b20b-cba8408423ff")
+	)
+	(text "LP3218DT1G"
+		(exclude_from_sim no)
+		(at 100.33 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "aadd2478-c72f-51d9-a5a6-04cedd856904")
+	)
+	(rectangle
+		(start 15.24 52.48)
+		(end 39.37 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "bebf863d-03ad-5131-90f7-c0e4d41345f6")
+	)
+	(text "J8 Battery connector"
+		(exclude_from_sim no)
+		(at 16.51 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "365c9041-c92a-5d55-9318-10e83b6c4b46")
+	)
+	(text "Header 2"
+		(exclude_from_sim no)
+		(at 16.51 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "c1237027-5e1e-5c65-a7fb-5106509b563b")
+	)
+	(rectangle
+		(start 127 52.48)
+		(end 151.13 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "762d223f-1a2d-524a-b02a-7c3601df89b2")
+	)
+	(text "R1 Resistor"
+		(exclude_from_sim no)
+		(at 128.27 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "b2dba8b4-7d7e-5004-a9c2-7c3f9b578094")
+	)
+	(text "0.8Ω"
+		(exclude_from_sim no)
+		(at 128.27 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "20f3b475-abf3-5d32-b3ea-d7cd826e391f")
+	)
+	(rectangle
+		(start 154.94 52.48)
+		(end 179.07 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f55f7212-8885-55b1-982b-5dbab2118a01")
+	)
+	(text "U1 Li-ion charger"
+		(exclude_from_sim no)
+		(at 156.21 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "7890fb54-41b4-5d56-bb38-78bedfe13d85")
+	)
+	(text "TP4057"
+		(exclude_from_sim no)
+		(at 156.21 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "0eee6204-7fbc-520a-b5ae-c3e7c322db50")
+	)
+	(rectangle
+		(start 182.88 52.48)
+		(end 207.01 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "424e4086-a22a-5af6-8548-587666b3b605")
+	)
+	(text "VBAT_IN"
+		(exclude_from_sim no)
+		(at 184.15 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "54c464b7-52ea-533b-8cdd-94fcbbab1203")
+	)
+	(text "Li-ion cell"
+		(exclude_from_sim no)
+		(at 184.15 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "62cc7168-4776-531a-9d43-23d51cd0d2c3")
+	)
+	(rectangle
+		(start 210.82 52.48)
+		(end 234.95 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4ffab46a-f7e4-5714-9c6e-49e46ac59e08")
+	)
+	(text "Q1 P-channel MOSFET"
+		(exclude_from_sim no)
+		(at 212.09 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "350ea2fc-2089-59d3-87a0-dcc1db2575f0")
+	)
+	(text "LP3218DT1G"
+		(exclude_from_sim no)
+		(at 212.09 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "6efe1cda-4110-5f35-a756-27ec531240e8")
+	)
+	(rectangle
+		(start 238.76 52.48)
+		(end 262.89 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5048a802-f163-57d9-9a98-6b44a9f9c897")
+	)
+	(text "VBAT_OUT"
+		(exclude_from_sim no)
+		(at 240.03 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "71b6fbb8-c959-5171-86bc-9e13902f963c")
+	)
+	(text "VBAT_IN or +5VIN"
+		(exclude_from_sim no)
+		(at 240.03 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "1379aad4-6e5c-5195-b075-bc01e85c4ca3")
+	)
+	(text "K4"
+		(exclude_from_sim no)
+		(at 260.69 51.38 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "b7f1da96-9e5b-5194-b8f8-3199be0db724")
+	)
+	(rectangle
+		(start 15.24 70.26)
+		(end 39.37 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "9413ffbe-a346-587c-83f9-faa484c673fd")
+	)
+	(text "J102 USB-C"
+		(exclude_from_sim no)
+		(at 16.51 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "59ccc6cc-3184-5cb3-bf3e-2ef5db557052")
+	)
+	(text "USB-TYPEC"
+		(exclude_from_sim no)
+		(at 16.51 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "ce9a8a48-9a9f-5e93-9158-f21a52e03f4d")
+	)
+	(text "K12"
+		(exclude_from_sim no)
+		(at 36.07 69.16 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "5e4471b9-b3c1-52d6-a11c-0bc9467bebe8")
+	)
+	(rectangle
+		(start 43.18 70.26)
+		(end 67.31 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d73580ab-24f5-59d3-9e16-26fab65057d1")
+	)
+	(text "USB_VBUS"
+		(exclude_from_sim no)
+		(at 44.45 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "9c8d4b81-88db-5151-a19d-510c6f2cf92e")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 44.45 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "b8362c46-a253-5491-9f43-85e01c020fb8")
+	)
+	(rectangle
+		(start 71.12 70.26)
+		(end 95.25 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "51729710-1aca-582e-97fa-c43e2c54a074")
+	)
+	(text "F101 PPTC fuse"
+		(exclude_from_sim no)
+		(at 72.39 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "d94aacdf-e54f-5f66-9d83-c1e85dd3aa4a")
+	)
+	(text "6V/1A/PPTC"
+		(exclude_from_sim no)
+		(at 72.39 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "787aa4ec-2eb9-5924-92c1-4fa14e5f5cd7")
+	)
+	(rectangle
+		(start 99.06 70.26)
+		(end 123.19 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "60c7c654-4c33-5a72-a212-9092db2e8597")
+	)
+	(text "+5VIN"
+		(exclude_from_sim no)
+		(at 100.33 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "b4473678-9512-5dfc-ace3-08fa46e035b6")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 100.33 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "717a6eca-df8b-5338-bdb4-a62a8e89358d")
+	)
+	(rectangle
+		(start 127 70.26)
+		(end 151.13 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "46e00a45-fc84-5752-a007-b432475b959f")
+	)
+	(text "D1 Schottky diode"
+		(exclude_from_sim no)
+		(at 128.27 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "58cb4fec-499b-5bfb-9d66-7aaddc406d08")
+	)
+	(text "SS34"
+		(exclude_from_sim no)
+		(at 128.27 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "3e44cf6f-8979-57aa-995e-a3a7f1a9587d")
+	)
+	(rectangle
+		(start 266.7 70.26)
+		(end 290.83 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f84d66ca-6401-5558-ae81-7a06d30bb671")
+	)
+	(text "R2 Resistor"
+		(exclude_from_sim no)
+		(at 267.97 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "b99458ad-2e44-5fbe-8a02-36a3dffd6b0b")
+	)
+	(text "0Ω"
+		(exclude_from_sim no)
+		(at 267.97 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "c2e4a710-f5f7-5881-a69e-f40a84725e1f")
+	)
+	(rectangle
+		(start 294.64 69.11)
+		(end 318.77 78.21)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d45bb6a5-602d-5cf8-a71d-41c53df2eb5d")
+	)
+	(text "U2 Boost converter"
+		(exclude_from_sim no)
+		(at 295.91 71.41 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "f2b75470-20d7-50b2-8998-9c57410b96b5")
+	)
+	(text "SY7088"
+		(exclude_from_sim no)
+		(at 295.91 73.71 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "d4ccb7dd-654f-5406-933f-25fc50f23294")
+	)
+	(text "EN U2_IN"
+		(exclude_from_sim no)
+		(at 295.91 76.01 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "5ccd936b-554c-55e4-b9d2-5a04d5ba1171")
+	)
+	(rectangle
+		(start 322.58 70.26)
+		(end 346.71 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "c88e6921-0968-50fe-b9cb-36f6667de7ea")
+	)
+	(text "BOOST_OUT"
+		(exclude_from_sim no)
+		(at 323.85 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "7ed3cb08-f124-548f-9bdc-ef2165da1b30")
+	)
+	(text "5.29 V"
+		(exclude_from_sim no)
+		(at 323.85 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "1c472381-0e48-54fe-b151-f5d08399e9ec")
+	)
+	(rectangle
+		(start 350.52 70.26)
+		(end 374.65 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "0c335a3c-2573-5f69-a77b-9a18cedd60eb")
+	)
+	(text "D2 Schottky diode"
+		(exclude_from_sim no)
+		(at 351.79 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "77b530e4-6501-5603-939e-0fe8250d5145")
+	)
+	(text "SS34"
+		(exclude_from_sim no)
+		(at 351.79 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "45c10b6d-c284-5cb7-827f-35e12b2fbb98")
+	)
+	(rectangle
+		(start 378.46 70.26)
+		(end 402.59 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "45e9834e-ed71-54a7-abaf-28c70768a73e")
+	)
+	(text "+5VOUT"
+		(exclude_from_sim no)
+		(at 379.73 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "c3a80dcf-29e0-5c45-9656-fcd9eeb895b6")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 379.73 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "b56408fa-f129-5a3b-8ed7-a45a8710a50b")
+	)
+	(rectangle
+		(start 266.7 86.89)
+		(end 290.83 95.99)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "511b6a27-b09a-5125-9cea-a54cdf01d493")
+	)
+	(text "U4 Buck converter"
+		(exclude_from_sim no)
+		(at 267.97 89.19 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "c4800508-aa13-519f-82f0-9f68653584fb")
+	)
+	(text "SY8089"
+		(exclude_from_sim no)
+		(at 267.97 91.49 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "69c4f50d-9b71-55e9-b005-47c7a4b217d4")
+	)
+	(text "always on"
+		(exclude_from_sim no)
+		(at 267.97 93.79 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "7d9119a9-ba4c-5f23-b485-226a7c6d9167")
+	)
+	(rectangle
+		(start 294.64 88.04)
+		(end 318.77 94.84)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "2ed3a7bb-31d4-5214-8949-ddb948460a40")
+	)
+	(text "L2 Inductor"
+		(exclude_from_sim no)
+		(at 295.91 90.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "1e80ea5f-ddf6-5c9b-a91e-a919dbd43cb7")
+	)
+	(text "3015 4.7uH"
+		(exclude_from_sim no)
+		(at 295.91 92.64 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "075ddbd7-5950-5a59-b40c-de4373d21332")
+	)
+	(rectangle
+		(start 322.58 88.04)
+		(end 346.71 94.84)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "139daf16-6253-5ab2-8b4f-00109f8f417c")
+	)
+	(text "+3.3V"
+		(exclude_from_sim no)
+		(at 323.85 90.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "ca851d55-3b91-549e-8eb5-2733a06d8017")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 323.85 92.64 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "550849bd-dd95-55bc-88ca-5659902de173")
+	)
+	(text "K6"
+		(exclude_from_sim no)
+		(at 344.51 86.94 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "c55c0244-29fc-58dd-b4ba-4bd3c8d0fd85")
+	)
+	(rectangle
+		(start 350.52 86.89)
+		(end 374.65 95.99)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "ffb0f131-9063-59b9-98a7-5f20a634d372")
+	)
+	(text "U102 Load switch"
+		(exclude_from_sim no)
+		(at 351.79 89.19 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "f939c838-d9fd-5fea-8383-da3481a94c4e")
+	)
+	(text "AW35122FDR"
+		(exclude_from_sim no)
+		(at 351.79 91.49 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "13f9f617-5fb2-5c3d-b6ce-6ee2049b9829")
+	)
+	(text "EN DISP_BL"
+		(exclude_from_sim no)
+		(at 351.79 93.79 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "1c103966-58b6-5ee3-8128-75377bc1614b")
+	)
+	(rectangle
+		(start 378.46 88.04)
+		(end 402.59 94.84)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "b999f073-213a-52cb-a85b-48da2a78d0ec")
+	)
+	(text "BL_3V3"
+		(exclude_from_sim no)
+		(at 379.73 90.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "55d7fda3-1a51-5645-b39b-50d5f6254b5e")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 379.73 92.64 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "ec7c73d2-2408-56aa-b7f7-ca57da0ff7b5")
+	)
+	(rectangle
+		(start 127 104.67)
+		(end 151.13 113.77)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "db12b0c0-d5f7-59c4-ac13-ccfa341239d9")
+	)
+	(text "U104 Buck converter"
+		(exclude_from_sim no)
+		(at 128.27 106.97 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "3e1cbe1e-9d2b-5252-9301-ec11fb7b34c7")
+	)
+	(text "JW5712"
+		(exclude_from_sim no)
+		(at 128.27 109.27 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "599abb4a-f092-5665-be29-7b52f1b15b75")
+	)
+	(text "EN U104_EN"
+		(exclude_from_sim no)
+		(at 128.27 111.57 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "8d10687d-200d-5905-9f01-c4e817a5c592")
+	)
+	(rectangle
+		(start 350.52 105.82)
+		(end 374.65 112.62)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "bae62648-3d5b-581b-b2a6-7333d340740d")
+	)
+	(text "R24 Resistor"
+		(exclude_from_sim no)
+		(at 351.79 108.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "c711dde9-39e3-50ba-ae23-194aec4cf1f6")
+	)
+	(text "33R/1%"
+		(exclude_from_sim no)
+		(at 351.79 110.42 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "0c26bc19-ed60-5876-8203-3581b5702a6a")
+	)
+	(rectangle
+		(start 378.46 105.82)
+		(end 402.59 112.62)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "7eb348c7-1479-5ccb-82dc-b951af159a84")
+	)
+	(text "AVDD"
+		(exclude_from_sim no)
+		(at 379.73 108.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "4b0c2f9b-2419-5c05-9a2a-59b9c677d584")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 379.73 110.42 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "83489495-c2fb-5790-a547-21c60e8b5664")
+	)
+	(rectangle
+		(start 99.06 123.6)
+		(end 123.19 130.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "e9254afc-9233-5c34-b1ba-38a16743c751")
+	)
+	(text "+5VOUT"
+		(exclude_from_sim no)
+		(at 100.33 125.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "3af69564-b7af-572c-a0de-bf3363699d6a")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 100.33 128.2 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "fd931e90-8bb6-5d5f-85d0-00065d4a9639")
+	)
+	(rectangle
+		(start 127 123.6)
+		(end 151.13 130.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "059366c4-9bde-5017-920d-ed8e458305fb")
+	)
+	(text "SW2 SPDT switch"
+		(exclude_from_sim no)
+		(at 128.27 125.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "f48cb967-7603-5932-8d8f-ccd9c68b8660")
+	)
+	(text "SW-SPDT"
+		(exclude_from_sim no)
+		(at 128.27 128.2 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "b99f8262-6ea4-59b9-927b-b250bb985dd3")
+	)
+	(rectangle
+		(start 154.94 123.6)
+		(end 179.07 130.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "7537e501-3061-57ee-9b5f-3481b1261675")
+	)
+	(text "+5VGrove"
+		(exclude_from_sim no)
+		(at 156.21 125.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "e600dce7-e3c9-51d5-8f98-22e302a08bd0")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 156.21 128.2 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "42ffeaf2-3d67-56d9-a626-1abb464b45eb")
+	)
+	(polyline
+		(pts
+			(xy 39.37 38.1)
+			(xy 41.91 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "e03c62f2-2878-51f1-850f-e48bc3004df2")
+	)
+	(polyline
+		(pts
+			(xy 41.91 37.465)
+			(xy 43.18 38.1)
+			(xy 41.91 38.735)
+			(xy 41.91 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "96cc62d7-9cca-533b-b6e6-f4a8b9491049")
+	)
+	(polyline
+		(pts
+			(xy 39.37 55.88)
+			(xy 41.275 55.88)
+			(xy 41.275 38.1)
+			(xy 41.91 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "10a4ed66-4e0d-593c-b2e0-a7ddcabfc030")
+	)
+	(polyline
+		(pts
+			(xy 41.91 37.465)
+			(xy 43.18 38.1)
+			(xy 41.91 38.735)
+			(xy 41.91 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "557736cb-efc6-50fc-a556-8fcf3bd770e0")
+	)
+	(polyline
+		(pts
+			(xy 67.31 38.1)
+			(xy 69.85 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "11ccb3cc-9f22-5f6b-86c7-ce7741fc33d1")
+	)
+	(polyline
+		(pts
+			(xy 69.85 37.465)
+			(xy 71.12 38.1)
+			(xy 69.85 38.735)
+			(xy 69.85 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "d36c21ab-a3b1-5dae-bdbc-755231add976")
+	)
+	(polyline
+		(pts
+			(xy 95.25 38.1)
+			(xy 97.79 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "46050262-0534-510e-93f9-7a3efc8c000f")
+	)
+	(polyline
+		(pts
+			(xy 97.79 37.465)
+			(xy 99.06 38.1)
+			(xy 97.79 38.735)
+			(xy 97.79 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "eb3d70b0-0930-50b5-80c0-276597e80bfe")
+	)
+	(polyline
+		(pts
+			(xy 123.19 38.1)
+			(xy 180.975 38.1)
+			(xy 180.975 55.88)
+			(xy 181.61 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f9537bd4-44bb-53e4-874b-200fd88d036a")
+	)
+	(polyline
+		(pts
+			(xy 181.61 55.245)
+			(xy 182.88 55.88)
+			(xy 181.61 56.515)
+			(xy 181.61 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "47f66c43-bddc-55ed-ac27-5157eae3194c")
+	)
+	(polyline
+		(pts
+			(xy 39.37 73.66)
+			(xy 41.91 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "ff04c173-3077-53d6-a717-a0f22778069c")
+	)
+	(polyline
+		(pts
+			(xy 41.91 73.025)
+			(xy 43.18 73.66)
+			(xy 41.91 74.295)
+			(xy 41.91 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "ac0c550a-bb2e-5745-9e7c-a28590ded5ab")
+	)
+	(polyline
+		(pts
+			(xy 67.31 73.66)
+			(xy 69.85 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "b24a0923-b2e0-5b80-914c-a5b5a3966885")
+	)
+	(polyline
+		(pts
+			(xy 69.85 73.025)
+			(xy 71.12 73.66)
+			(xy 69.85 74.295)
+			(xy 69.85 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "e161c580-2c5c-530e-b665-67cc3f46ce5b")
+	)
+	(polyline
+		(pts
+			(xy 95.25 73.66)
+			(xy 97.79 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d4c83717-43cd-58c6-8d80-5744523a27b5")
+	)
+	(polyline
+		(pts
+			(xy 97.79 73.025)
+			(xy 99.06 73.66)
+			(xy 97.79 74.295)
+			(xy 97.79 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "330504f9-4f17-5344-961c-95e1da75e576")
+	)
+	(polyline
+		(pts
+			(xy 123.19 73.66)
+			(xy 125.095 73.66)
+			(xy 125.095 55.88)
+			(xy 125.73 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "e824c2d1-5484-5306-9104-0364c5cd6218")
+	)
+	(polyline
+		(pts
+			(xy 125.73 55.245)
+			(xy 127 55.88)
+			(xy 125.73 56.515)
+			(xy 125.73 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "1a0aa029-4179-58aa-bd92-4407b1e790e1")
+	)
+	(polyline
+		(pts
+			(xy 151.13 55.88)
+			(xy 153.67 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "249f7a78-7f6a-5c59-be65-98e1d4e1a3d7")
+	)
+	(polyline
+		(pts
+			(xy 153.67 55.245)
+			(xy 154.94 55.88)
+			(xy 153.67 56.515)
+			(xy 153.67 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "66786564-61ac-5e7f-8357-dc0667e4f04f")
+	)
+	(polyline
+		(pts
+			(xy 179.07 55.88)
+			(xy 181.61 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "8a062ced-8b54-5b16-8d93-30cae89bfdb2")
+	)
+	(polyline
+		(pts
+			(xy 181.61 55.245)
+			(xy 182.88 55.88)
+			(xy 181.61 56.515)
+			(xy 181.61 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "f1bfdadb-79a6-50cc-b550-d06ddab46d59")
+	)
+	(polyline
+		(pts
+			(xy 207.01 55.88)
+			(xy 209.55 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "c85130e9-67e7-5d6e-98c9-6021fab15886")
+	)
+	(polyline
+		(pts
+			(xy 209.55 55.245)
+			(xy 210.82 55.88)
+			(xy 209.55 56.515)
+			(xy 209.55 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "8ae2726a-c32b-5d5c-9c1c-6495e4fd01ec")
+	)
+	(polyline
+		(pts
+			(xy 234.95 55.88)
+			(xy 237.49 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4b33a0cc-41d6-5237-b534-610378772d29")
+	)
+	(polyline
+		(pts
+			(xy 237.49 55.245)
+			(xy 238.76 55.88)
+			(xy 237.49 56.515)
+			(xy 237.49 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "35986fec-6d19-517b-8837-32d2a78cc56f")
+	)
+	(polyline
+		(pts
+			(xy 123.19 73.66)
+			(xy 125.73 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4ba3e8a4-d3a7-587b-8587-5cbec0bca33e")
+	)
+	(polyline
+		(pts
+			(xy 125.73 73.025)
+			(xy 127 73.66)
+			(xy 125.73 74.295)
+			(xy 125.73 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "f49788bf-bd51-52ae-9f28-5d87f7c98e55")
+	)
+	(polyline
+		(pts
+			(xy 151.13 73.66)
+			(xy 236.855 73.66)
+			(xy 236.855 55.88)
+			(xy 237.49 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "3aa4c104-35ed-5477-91ad-c17ba3bf9fed")
+	)
+	(polyline
+		(pts
+			(xy 237.49 55.245)
+			(xy 238.76 55.88)
+			(xy 237.49 56.515)
+			(xy 237.49 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "08a72c4f-5f4f-5d08-8ff5-f9628b1b1bf8")
+	)
+	(polyline
+		(pts
+			(xy 262.89 55.88)
+			(xy 264.795 55.88)
+			(xy 264.795 73.66)
+			(xy 265.43 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "e438f691-2632-57af-a901-64656fce5762")
+	)
+	(polyline
+		(pts
+			(xy 265.43 73.025)
+			(xy 266.7 73.66)
+			(xy 265.43 74.295)
+			(xy 265.43 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "8b186173-eb7b-5634-b02a-e243d3428c21")
+	)
+	(polyline
+		(pts
+			(xy 290.83 73.66)
+			(xy 293.37 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "571447fe-263f-5cb8-ac02-6d8e9f8dd618")
+	)
+	(polyline
+		(pts
+			(xy 293.37 73.025)
+			(xy 294.64 73.66)
+			(xy 293.37 74.295)
+			(xy 293.37 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "3be6c0e8-1885-5726-9abe-ed3dfb94a23d")
+	)
+	(polyline
+		(pts
+			(xy 318.77 73.66)
+			(xy 321.31 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "6444f54e-d57a-5638-90d1-d2ce58776e50")
+	)
+	(polyline
+		(pts
+			(xy 321.31 73.025)
+			(xy 322.58 73.66)
+			(xy 321.31 74.295)
+			(xy 321.31 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "084a2253-1526-5113-85ae-39cfc38922a6")
+	)
+	(polyline
+		(pts
+			(xy 346.71 73.66)
+			(xy 349.25 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "6770fe5d-bb6c-5f98-94d6-dc49be6748de")
+	)
+	(polyline
+		(pts
+			(xy 349.25 73.025)
+			(xy 350.52 73.66)
+			(xy 349.25 74.295)
+			(xy 349.25 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "d0571a0b-8484-534e-8a14-aa84f940f749")
+	)
+	(polyline
+		(pts
+			(xy 374.65 73.66)
+			(xy 377.19 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "748cafa5-e1ac-5393-8f6c-86c83aa2ea94")
+	)
+	(polyline
+		(pts
+			(xy 377.19 73.025)
+			(xy 378.46 73.66)
+			(xy 377.19 74.295)
+			(xy 377.19 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "68e0d77a-2912-56b8-ada4-28b7573f5d29")
+	)
+	(polyline
+		(pts
+			(xy 262.89 55.88)
+			(xy 264.795 55.88)
+			(xy 264.795 91.44)
+			(xy 265.43 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "6dd201e2-99d2-5fde-afb5-0fc85caa790a")
+	)
+	(polyline
+		(pts
+			(xy 265.43 90.805)
+			(xy 266.7 91.44)
+			(xy 265.43 92.075)
+			(xy 265.43 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "426a3297-e98c-579c-ac0a-dc77a5574068")
+	)
+	(polyline
+		(pts
+			(xy 290.83 91.44)
+			(xy 293.37 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "dc8e0779-4d1b-5b3b-a917-3bf3b80e10c3")
+	)
+	(polyline
+		(pts
+			(xy 293.37 90.805)
+			(xy 294.64 91.44)
+			(xy 293.37 92.075)
+			(xy 293.37 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "b3152c76-4979-5d91-8b2c-2ac8b0860ce7")
+	)
+	(polyline
+		(pts
+			(xy 318.77 91.44)
+			(xy 321.31 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "7185bcf8-11c8-503c-b4d8-ed0f684f20bc")
+	)
+	(polyline
+		(pts
+			(xy 321.31 90.805)
+			(xy 322.58 91.44)
+			(xy 321.31 92.075)
+			(xy 321.31 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "0da4526a-d4ac-5baa-b2ff-3a2fa5afd8ee")
+	)
+	(polyline
+		(pts
+			(xy 123.19 73.66)
+			(xy 125.095 73.66)
+			(xy 125.095 109.22)
+			(xy 125.73 109.22)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "e98a9004-bbde-5ff5-b035-f85daa6d7d0c")
+	)
+	(polyline
+		(pts
+			(xy 125.73 108.585)
+			(xy 127 109.22)
+			(xy 125.73 109.855)
+			(xy 125.73 108.585)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "b3cdd225-d8a4-539e-888d-3a8bddedf7af")
+	)
+	(polyline
+		(pts
+			(xy 151.13 109.22)
+			(xy 320.675 109.22)
+			(xy 320.675 91.44)
+			(xy 321.31 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "c6fee060-a6a3-553a-ad7e-af9170a73a87")
+	)
+	(polyline
+		(pts
+			(xy 321.31 90.805)
+			(xy 322.58 91.44)
+			(xy 321.31 92.075)
+			(xy 321.31 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "fc34446a-44af-5e3e-ae52-7086d4d4a367")
+	)
+	(polyline
+		(pts
+			(xy 346.71 91.44)
+			(xy 349.25 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4951b1df-91a2-5137-af35-fc6b74e8d172")
+	)
+	(polyline
+		(pts
+			(xy 349.25 90.805)
+			(xy 350.52 91.44)
+			(xy 349.25 92.075)
+			(xy 349.25 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "f993356b-36a0-5d95-a79a-2c67d5d590aa")
+	)
+	(polyline
+		(pts
+			(xy 374.65 91.44)
+			(xy 377.19 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "c733542d-322b-51d1-8145-1e9ee5787fb1")
+	)
+	(polyline
+		(pts
+			(xy 377.19 90.805)
+			(xy 378.46 91.44)
+			(xy 377.19 92.075)
+			(xy 377.19 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "da1162ad-c08e-5894-a286-57e425491a96")
+	)
+	(polyline
+		(pts
+			(xy 346.71 91.44)
+			(xy 348.615 91.44)
+			(xy 348.615 109.22)
+			(xy 349.25 109.22)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "7e7fadc8-0b01-5db4-a69a-e06d51001a73")
+	)
+	(polyline
+		(pts
+			(xy 349.25 108.585)
+			(xy 350.52 109.22)
+			(xy 349.25 109.855)
+			(xy 349.25 108.585)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "2b37e981-e156-5797-ab63-8e6308cf635b")
+	)
+	(polyline
+		(pts
+			(xy 374.65 109.22)
+			(xy 377.19 109.22)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "ecb4abf0-30a5-502c-955d-fb5f16050107")
+	)
+	(polyline
+		(pts
+			(xy 377.19 108.585)
+			(xy 378.46 109.22)
+			(xy 377.19 109.855)
+			(xy 377.19 108.585)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "1b858254-c75e-5e8b-a1e5-71ca57a92ae8")
+	)
+	(polyline
+		(pts
+			(xy 123.19 73.66)
+			(xy 125.095 73.66)
+			(xy 125.095 127)
+			(xy 125.73 127)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "cc924414-6ead-50d6-9ee7-54c35899c1d0")
+	)
+	(polyline
+		(pts
+			(xy 125.73 126.365)
+			(xy 127 127)
+			(xy 125.73 127.635)
+			(xy 125.73 126.365)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "b22f5508-31b7-59b7-9d77-5471a8025a2d")
+	)
+	(polyline
+		(pts
+			(xy 123.19 127)
+			(xy 125.73 127)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f4140e9d-9c71-5a43-a2df-a3e853831249")
+	)
+	(polyline
+		(pts
+			(xy 125.73 126.365)
+			(xy 127 127)
+			(xy 125.73 127.635)
+			(xy 125.73 126.365)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "012afe51-094d-5422-95f9-95dffb1c99da")
+	)
+	(polyline
+		(pts
+			(xy 151.13 127)
+			(xy 153.67 127)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "ad240e03-6b68-5a21-8ace-a9a438a5aca2")
+	)
+	(polyline
+		(pts
+			(xy 153.67 126.365)
+			(xy 154.94 127)
+			(xy 153.67 127.635)
+			(xy 153.67 126.365)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "20ec8ebd-6bca-5417-a652-4c481dd18d2b")
+	)
+	(text "+5VOUT is drawn twice: D2 feeds it from the boost, and SW2 takes it (or +5VIN) for the Grove port. Q2 and Q3, back to back, pass the cell to VBAT_IN as SW1 sets Q3's gate (Q2's is on GND); Q1 passes VBAT_IN to VBAT_OUT, its gate held by the CN809J U3 that watches +5VIN. The module's U104 and the carrier's U4 both drive +3.3V."
+		(exclude_from_sim no)
+		(at 15.24 135.48 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "43478544-43ff-5dd3-b9c8-2748f23ebd50")
+	)
+	(text "Rails"
+		(exclude_from_sim no)
+		(at 15.24 145.64 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "c26318ef-8f05-5bbf-a72a-00246a2fd2b7")
+	)
+	(text "Rail"
+		(exclude_from_sim no)
+		(at 15.24 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "dcc225ee-326b-5f50-8182-26412e85233c")
+	)
+	(text "Nominal"
+		(exclude_from_sim no)
+		(at 27.94 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "73e8e0b5-4142-516d-ae08-a3e98f3f87fb")
+	)
+	(text "What feeds it, and what it supplies"
+		(exclude_from_sim no)
+		(at 49.53 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "344f601e-c7e2-5eda-bea7-ce26888140f4")
+	)
+	(text "Enable"
+		(exclude_from_sim no)
+		(at 130.81 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "bc97ac41-074d-57bf-bce3-2c0f2de02b30")
+	)
+	(text "Drawn at"
+		(exclude_from_sim no)
+		(at 179.07 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "7b4efea0-8e7a-54ab-802d-4464f40e49d4")
+	)
+	(polyline
+		(pts
+			(xy 15.24 151.685)
+			(xy 195.58 151.685)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "81d8577b-0217-51e3-8c70-f5fe2e646021")
+	)
+	(text "USB_VBUS"
+		(exclude_from_sim no)
+		(at 15.24 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "74020d26-d81a-5cb9-8a44-f0469a8cad52")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 27.94 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cb9a1003-6aab-5dbf-97d4-0cae2128bcc1")
+	)
+	(text "USB-C VBUS on the module (J102), into the fuse F101 6V/1A/PPTC."
+		(exclude_from_sim no)
+		(at 49.53 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8c550b21-b1b9-5cd9-bbd7-254ddb1e72bb")
+	)
+	(text "6/E1"
+		(exclude_from_sim no)
+		(at 179.07 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "21f17ddf-7231-5433-a0b6-a1aae3ad0251")
+	)
+	(text "+5VIN"
+		(exclude_from_sim no)
+		(at 15.24 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e4da8265-521a-5af9-a3ce-42890b576c7b")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 27.94 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "177bf0df-4c3f-53b0-8896-df52a6626bd3")
+	)
+	(text "USB VBUS after F101 (the module's VIN_5V, on M101 pin 13 / P1 pin 13)."
+		(exclude_from_sim no)
+		(at 49.53 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d5c8d66b-0a23-5f20-a7a5-d5e8e53d79bc")
+	)
+	(text "Feeds the module's buck U104 and its LCD connector J101 pin 12, and on"
+		(exclude_from_sim no)
+		(at 49.53 158.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3f2d9dd9-95b9-5029-acf0-c29513a6a3ad")
+	)
+	(text "the carrier the charger U1 (through R1 0.8Ω), the supervisor U3, D1"
+		(exclude_from_sim no)
+		(at 49.53 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "463f2ca5-80ed-5e02-8196-f2edf09e83a5")
+	)
+	(text "into VBAT_OUT, SW2 and EXT P3 pin 14."
+		(exclude_from_sim no)
+		(at 49.53 163.585 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "91826564-e199-5227-be82-64fb2da06807")
+	)
+	(text "2/A2"
+		(exclude_from_sim no)
+		(at 179.07 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "93fdd52c-0ee8-554b-a86e-7a7c285c93b3")
+	)
+	(text "5/A2"
+		(exclude_from_sim no)
+		(at 184.82 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "190c5db6-1262-5813-92c0-aac8a91a97bb")
+	)
+	(text "6/E4"
+		(exclude_from_sim no)
+		(at 190.57 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "63ffc5d9-30b1-5d46-a35b-13bd40683e73")
+	)
+	(text "BAT"
+		(exclude_from_sim no)
+		(at 15.24 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d42be136-d620-5097-9b0f-1f2a93aa78be")
+	)
+	(text "Li-ion cell"
+		(exclude_from_sim no)
+		(at 27.94 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "25eb02a4-f9ae-56e7-81ae-21f0bcf1d3d1")
+	)
+	(text "The battery connectors J1 (BAT+ pin 2, BAT- pin 1) and J8 (pin 1, pin"
+		(exclude_from_sim no)
+		(at 49.53 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ad1fd5e7-2650-5cdc-9eae-6e4118233d18")
+	)
+	(text "2 GND); to Q2."
+		(exclude_from_sim no)
+		(at 49.53 168.665 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "09225755-2ba9-5979-859a-250166cd5b1f")
+	)
+	(text "2/A4"
+		(exclude_from_sim no)
+		(at 179.07 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "b7af2adc-68ce-532a-8570-25bec6946c4b")
+	)
+	(text "VBAT_IN"
+		(exclude_from_sim no)
+		(at 15.24 171.205 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "64095f7f-6728-592c-aae8-2fd9faaa5f6f")
+	)
+	(text "Li-ion cell"
+		(exclude_from_sim no)
+		(at 27.94 171.205 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fefcd703-56d9-538a-9dab-5b73c0c3d0b8")
+	)
+	(text "U1 TP4057 charger output (BAT, PROG R5 3.3KΩ); joined to BAT through"
+		(exclude_from_sim no)
+		(at 49.53 171.205 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "623eed95-cb4f-5a2b-bb7d-ff0efdeb12ff")
+	)
+	(text "Q2 and Q3, back to back (Q2's gate on GND; SW1 sets Q3's through R9)."
+		(exclude_from_sim no)
+		(at 49.53 173.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8ac0bb99-e18f-5be9-955d-a6b6792304f9")
+	)
+	(text "Divided by R8 / R12 100KΩ to G10."
+		(exclude_from_sim no)
+		(at 49.53 176.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8a041ad0-05fe-566a-a878-18cb14914dd9")
+	)
+	(text "2/A1"
+		(exclude_from_sim no)
+		(at 179.07 171.205 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "59f6582c-c3ce-59c3-a7e2-2d7edb318186")
+	)
+	(text "VBAT_OUT"
+		(exclude_from_sim no)
+		(at 15.24 178.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "33aed87a-4deb-50bf-ae57-d96d4027a596")
+	)
+	(text "VBAT_IN or +5VIN"
+		(exclude_from_sim no)
+		(at 27.94 178.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b5d8f92e-ce14-5884-9231-ce898255e500")
+	)
+	(text "Q1 from VBAT_IN, its gate held by the CN809J U3 (RESET, watching"
+		(exclude_from_sim no)
+		(at 49.53 178.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2542c7f3-ab40-5432-b836-132adfd9cb89")
+	)
+	(text "+5VIN: low below 4.00 V, so Q1 conducts only without USB) and R7 100KΩ"
+		(exclude_from_sim no)
+		(at 49.53 181.365 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8051410f-9a11-50c6-85c4-725812650c19")
+	)
+	(text "to GND; D1 SS34 from +5VIN. Feeds the boost U2 (through R2 0Ω) and the"
+		(exclude_from_sim no)
+		(at 49.53 183.905 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8b63f9e7-2066-5763-bfd1-5b46c16e0873")
+	)
+	(text "buck U4."
+		(exclude_from_sim no)
+		(at 49.53 186.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "239ec6c1-ca92-5601-82b1-b062c0616511")
+	)
+	(text "Q1 gate: U3 RESET"
+		(exclude_from_sim no)
+		(at 130.81 178.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8b4f81a1-33cb-516b-8ad9-1a82065f1d14")
+	)
+	(text "2/B6"
+		(exclude_from_sim no)
+		(at 179.07 178.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "5215b757-a881-59f4-99f8-1c30f2a05033")
+	)
+	(text "BOOST_OUT"
+		(exclude_from_sim no)
+		(at 15.24 188.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "20ac12e9-0441-5324-a653-c52b94572fbd")
+	)
+	(text "5.29 V"
+		(exclude_from_sim no)
+		(at 27.94 188.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c3f599cd-37aa-5163-9410-95383c227530")
+	)
+	(text "U2 SY7088 boost from VBAT_OUT through L1 3015 1.5uH; R4 75KΩ over R6"
+		(exclude_from_sim no)
+		(at 49.53 188.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "72a9b0b9-f7e3-5681-ad97-801c47720d6a")
+	)
+	(text "22KΩ on FB, by the printed formula Vout = 1.2V*(R1/R2+1): 5.29 V. To"
+		(exclude_from_sim no)
+		(at 49.53 191.525 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2278948b-1128-58bb-a6f9-ddc5f8bcdc66")
+	)
+	(text "D2."
+		(exclude_from_sim no)
+		(at 49.53 194.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3d3723a9-b016-56e0-92d5-f7c594a63879")
+	)
+	(text "2/A9"
+		(exclude_from_sim no)
+		(at 179.07 188.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "75a73d92-4c54-5114-95fb-511e2d56fbcc")
+	)
+	(text "+5VOUT"
+		(exclude_from_sim no)
+		(at 15.24 196.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "228a1c68-8903-52ed-890d-d9c443b3b99d")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 27.94 196.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "944bf337-fccb-5822-993c-acb8fdc8f1e3")
+	)
+	(text "BOOST_OUT through D2 SS34. To SW2 (Grove), FPC1 pin 4 and EXT P3 pin"
+		(exclude_from_sim no)
+		(at 49.53 196.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "eaaad4f9-82db-5b7a-8fd5-65d0d86a7b74")
+	)
+	(text "12."
+		(exclude_from_sim no)
+		(at 49.53 199.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "38e78729-5f04-5209-855f-7a000bcb552d")
+	)
+	(text "2/A10"
+		(exclude_from_sim no)
+		(at 179.07 196.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "4a7b5431-2413-53b7-a23e-a4c3c33d823a")
+	)
+	(text "5/A2"
+		(exclude_from_sim no)
+		(at 185.94 196.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "aa735fe5-ab8b-550e-b5c0-39479ed0231d")
+	)
+	(text "+5VGrove"
+		(exclude_from_sim no)
+		(at 15.24 201.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e7a54ed0-f59f-5c5c-ade2-3d071cc8f8d5")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 27.94 201.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "67ff2c6d-660d-523d-a590-91f80e36406c")
+	)
+	(text "SW2 picks +5VOUT (pin 1) or +5VIN (pin 3) for the Grove port J2 pin 3."
+		(exclude_from_sim no)
+		(at 49.53 201.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "782e4469-3131-59b1-b1a1-abbc6e314e60")
+	)
+	(text "2/E8"
+		(exclude_from_sim no)
+		(at 179.07 201.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "f9d36737-fa38-5c97-8222-d7e88158e6e8")
+	)
+	(text "+3.3V"
+		(exclude_from_sim no)
+		(at 15.24 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b30d0a5f-087b-5743-bb52-62de9ec09362")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 27.94 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f137234c-e1de-59d4-88b5-40763e10b832")
+	)
+	(text "U4 SY8089 buck from VBAT_OUT through L2 3015 4.7uH (R11 68KΩ over R13"
+		(exclude_from_sim no)
+		(at 49.53 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d7d38c7c-1db1-5a38-af1b-b4bd83109f52")
+	)
+	(text "15KΩ on FB: 0.6 V × (1 + 68K/15K) = 3.32 V); and the module's U104"
+		(exclude_from_sim no)
+		(at 49.53 206.765 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "40970382-1552-54a0-b0f9-c28319a17f61")
+	)
+	(text "JW5712 buck from +5VIN through L104 (\"IOUT: 0~0.6A\" printed), the"
+		(exclude_from_sim no)
+		(at 49.53 209.305 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7d6a62e3-d364-521a-b259-1b11cbfcdf3e")
+	)
+	(text "module's VDD_3V3, joined through M101 pin 28 / P2 pin 1. Supplies the"
+		(exclude_from_sim no)
+		(at 49.53 211.845 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2ec1484b-50ca-5cce-bd3e-90ad09f36bf5")
+	)
+	(text "ESP32-S3, the keyboard scanner U9, the motion sensor (through FB7),"
+		(exclude_from_sim no)
+		(at 49.53 214.385 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f492277c-244f-5cc6-ab3b-f403f4e390c9")
+	)
+	(text "the codec (through R24), the amplifier U5 (through FB3), the"
+		(exclude_from_sim no)
+		(at 49.53 216.925 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ec9ad6d2-2755-52ae-b002-6a3657a9d5e0")
+	)
+	(text "microphone (through R41), the microSD card, the LCD connectors J101 /"
+		(exclude_from_sim no)
+		(at 49.53 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "141e8e8c-c3c8-59a6-913f-abf01ea61195")
+	)
+	(text "J103 (pin 2) and the backlight switch U102, FPC1 pin 2 and the"
+		(exclude_from_sim no)
+		(at 49.53 222.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f8071b76-6459-5412-befe-8f964b217f54")
+	)
+	(text "pull-ups."
+		(exclude_from_sim no)
+		(at 49.53 224.545 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d0d211ad-283b-572c-9445-4727ffb46dbf")
+	)
+	(text "U4: EN tied to IN; U104: EN pulled up to"
+		(exclude_from_sim no)
+		(at 130.81 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6367a4e9-380a-5712-a213-da60d4fecf51")
+	)
+	(text "+5VIN by R116 100K/1%"
+		(exclude_from_sim no)
+		(at 130.81 206.765 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b438667a-72da-51bf-a080-733b3cc80eb4")
+	)
+	(text "2/B9"
+		(exclude_from_sim no)
+		(at 179.07 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "b415ae36-7ddf-5e0f-b28c-d8cb1e433843")
+	)
+	(text "3/A3"
+		(exclude_from_sim no)
+		(at 184.82 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "8d0d4c33-c0e0-5684-8f24-ac9b0f8fcb8b")
+	)
+	(text "4/A3"
+		(exclude_from_sim no)
+		(at 190.57 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "6e52d527-7d19-5041-b798-86a4b1fd2948")
+	)
+	(text "6/B7"
+		(exclude_from_sim no)
+		(at 179.07 206.765 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "176e12ca-608a-5c75-a661-229225ba7852")
+	)
+	(text "BL_3V3"
+		(exclude_from_sim no)
+		(at 15.24 227.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "313dc80f-92ab-5004-a729-29f295a7561a")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 27.94 227.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "12a6765c-3a09-5973-9434-a29999ec3177")
+	)
+	(text "U102 AW35122FDR load switch from +3.3V. Supplies the LCD backlight"
+		(exclude_from_sim no)
+		(at 49.53 227.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "aae1999b-9286-5fd1-9670-810544030172")
+	)
+	(text "(J101 and J103 pin 8) and the RGB LED U103."
+		(exclude_from_sim no)
+		(at 49.53 229.625 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e0d53836-ed81-5251-9845-e0e704b6fa52")
+	)
+	(text "DISP_BL (GPIO38)"
+		(exclude_from_sim no)
+		(at 130.81 227.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b8ab8dde-213f-530a-aade-da8a3bc96e53")
+	)
+	(text "6/D2"
+		(exclude_from_sim no)
+		(at 179.07 227.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "f465cdf1-d926-5793-b0e8-f0dacc46a328")
+	)
+	(text "FLASH_VCC"
+		(exclude_from_sim no)
+		(at 15.24 232.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7d039457-ad83-5225-bb46-797e1535b77d")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 27.94 232.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d481e231-2482-5de0-99dd-726cf9e4584f")
+	)
+	(text "The ESP32-S3FN8's VDD_SPI pin (29), decoupled by C104 and C126: the"
+		(exclude_from_sim no)
+		(at 49.53 232.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d4778609-6aba-555b-84b1-3b320ca63f88")
+	)
+	(text "supply of the flash in the package, 3.3 V (the FN8's VDD_SPI voltage)"
+		(exclude_from_sim no)
+		(at 49.53 234.705 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f694b150-e4aa-5efe-8a65-cdd3f521bdb0")
+	)
+	(text "from VDD3P3_RTC through RSPI; GPIO45, unconnected, latches low, which"
+		(exclude_from_sim no)
+		(at 49.53 237.245 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f9c0fa01-8ac4-5bb0-b2fe-8174be0edb03")
+	)
+	(text "selects 3.3 V unless an eFuse forces VDD_SPI."
+		(exclude_from_sim no)
+		(at 49.53 239.785 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "97c7ba8b-ac3d-5acc-816e-5d1128c5b494")
+	)
+	(text "6/A1"
+		(exclude_from_sim no)
+		(at 179.07 232.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "2772f164-ee19-55c4-aa90-5d62443502ce")
+	)
+	(text "AVDD"
+		(exclude_from_sim no)
+		(at 15.24 242.325 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9027343d-3f47-5bf3-9355-37bf0f5e22ba")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 27.94 242.325 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "98b5b598-7bf6-50ba-9590-06a8e49bb4f7")
+	)
+	(text "From +3.3V through R24 33R/1%. The ES8311's PVDD, DVDD and AVDD."
+		(exclude_from_sim no)
+		(at 49.53 242.325 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "26cf3b3f-478b-545f-928d-bc888f65f100")
+	)
+	(text "4/A6"
+		(exclude_from_sim no)
+		(at 179.07 242.325 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "7916f489-5402-5aa4-8ef3-93db8414b521")
+	)
+	(text "K4"
+		(exclude_from_sim no)
+		(at 196.85 178.825 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "72a4c315-2042-5f69-bb03-4464a887b0c6")
+	)
+	(text "K6"
+		(exclude_from_sim no)
+		(at 196.85 204.225 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "86d132e6-8195-5995-ae38-4cbeb8269495")
+	)
+	(text "K18"
+		(exclude_from_sim no)
+		(at 196.85 232.165 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "957f217f-308d-5611-8a78-0733bcc37707")
+	)
+	(text "Contents"
+		(exclude_from_sim no)
+		(at 482 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "d4891fb9-e185-59a4-972b-5f7e405ce7a2")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 495.5827 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "71184fa9-c517-50de-80dc-eacd1c75c036")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 505.0197 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "946274c1-8de6-59a7-82eb-9f616dd8652c")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 510.4947 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "eaabbc19-8e41-52cd-b2cc-339a0e3e3ad0")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 515.9697 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "0c2d7676-5ea0-5656-b0cd-827f96952209")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 521.4447 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "0cedbf85-32f0-59f1-815c-06f06b046375")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 526.9197 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "4afa2f80-3bf9-5ba0-9e7b-9cd35aabb537")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 532.3947 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "9a5dfb3d-1433-5cb5-b561-967d55b4538f")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 537.8697 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "9f80c5c8-6d33-58ce-95e8-70a9d54f2091")
+	)
+	(text "[8]"
+		(exclude_from_sim no)
+		(at 543.3447 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "5f2e6ac4-94c0-581e-8151-d93bd0d3ce78")
+	)
+	(text "[9]"
+		(exclude_from_sim no)
+		(at 548.8197 373 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "6efd21db-f934-5148-8a64-3809713a5227")
+	)
+	(embedded_fonts no)
+)

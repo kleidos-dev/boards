@@ -1,0 +1,480 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# How the T-Deck Plus schematic is drawn: the symbol each part takes, our own
+# symbols, and the sheets, blocks and rows the parts sit in. The facts (values,
+# pins, nets) are in netlist.yaml; _shared/kicad_schematic.py joins the two.
+#
+# parts: a part takes the symbol its prefix names under _by_prefix unless it has
+# a row of its own. "pins" maps our symbol's pin number to the vendor's pin.
+# "angle" turns the symbol (90: a vertical two-pin part lies flat).
+# rows: each row of a block is laid left to right; an item is a reference,
+# {col: [...]} for a column of two-pin parts, {cols: [[...], [...]]} for several.
+# sheets: "summary" and "parts" fill the sheet's box on the contents page; a
+# sheet with "index" (additions, power, nets, parts) is a page of tables the generator
+# writes from netlist.yaml, after the drawing.
+# power_tree: its boxes, [column, row], and arrows, each a connection
+# netlist.yaml has (the generator refuses any other).
+
+paper: A3
+title_block:
+  title: LILYGO T-Deck Plus
+  company: "Kleidos boards: connectivity documented from the vendor's public documentation"
+  comments:
+    - "Sources: LilyGO T-Deck schematic 2023-06-01, GPS sheets; README.md"
+    - "Values as documented. Layout and symbols: Kleidos boards"
+    - "License: MIT. github.com/kleidos-dev/boards"
+
+revisions:
+  - {rev: 1, date: "2026-11-17", change: "First drawing: every part, pin and net of the mainboard and the two GPS daughterboards, from the vendor's public documentation."}
+  - {rev: 2, date: "2026-11-17", change: "Kleidos additions and corrections K1-K20, listed above, from datasheets, the vendor's documentation, the Kleidos firmware on this board and a bench probe."}
+  - {rev: 3, date: "2026-11-17", change: "K21-K24: which way each trackball sensor reads. Markers repeated on the index pages; pins on no net say what they are; the title block names the entries."}
+
+# The vendor's print hangs a net label on one pin only for ES7210_INT, DMIC_CLK
+# and Lora_P1.01_GPIO2 (labels leading nowhere else); the drawing keeps them.
+erc_ignore: [isolated_pin_label]
+
+grounds:
+  GND: kleidos:GND
+  AGND: kleidos:GNDA
+  ADC_GND: kleidos:GNDREF
+  M10_GND: kleidos:GND
+  L76K_GND: kleidos:GND
+
+parts:
+  _by_prefix:
+    R: {symbol: "kleidos:R", angle: 90, stub: 0}
+    RC: {symbol: "kleidos:R", angle: 90, stub: 0}
+    RD: {symbol: "kleidos:R", angle: 90, stub: 0}
+    RQ: {symbol: "kleidos:R", angle: 90, stub: 0}
+    RU: {symbol: "kleidos:R", angle: 90, stub: 0}
+    RW: {symbol: "kleidos:R", angle: 90, stub: 0}
+    RY: {symbol: "kleidos:R", angle: 90, stub: 0}
+    C: {symbol: "kleidos:C", angle: 90, stub: 0}
+    CCE: {symbol: "kleidos:C", angle: 90, stub: 0}
+    CCW: {symbol: "kleidos:C", angle: 90, stub: 0}
+    CD: {symbol: "kleidos:C", angle: 90, stub: 0}
+    CP: {symbol: "kleidos:C", angle: 90, stub: 0}
+    CW: {symbol: "kleidos:C", angle: 90, stub: 0}
+    CY: {symbol: "kleidos:C", angle: 90, stub: 0}
+    L: {symbol: "kleidos:L", angle: 90, stub: 0}
+  R15: {symbol: "kleidos:R", angle: 90, stub: 0, short: Inductor (R symbol)}
+  L2: {symbol: "kleidos:FerriteBead_Small", angle: 90, stub: 0}
+  L3: {symbol: "kleidos:FerriteBead_Small", angle: 90, stub: 0}
+  L4: {symbol: "kleidos:FerriteBead_Small", angle: 90, stub: 0}
+  D1: {symbol: "kleidos:D_Schottky", stub: 0}
+  D2: {symbol: "kleidos:D", stub: 0, short: Diode, pins: {"1": "2", "2": "1"}}
+  D3: {symbol: "kleidos:D", stub: 0, short: Diode, pins: {"1": "2", "2": "1"}}
+  D101: {symbol: "kleidos:D", stub: 0, short: Diode}
+  D201: {symbol: "kleidos:D", stub: 0, short: Diode}
+  LED1: {symbol: "kleidos:LED", stub: 0, pins: {"1": "2", "2": "1"}}
+  Q1: {symbol: "kleidos:Q_NMOS"}
+  Q2: {symbol: "kleidos:Q_NMOS"}
+  Q3: {symbol: "kleidos:Q_NMOS"}
+  Q4: {symbol: "kleidos:Q_PMOS", short: P-MOSFET}
+  Q5: {symbol: "kleidos:Q_PMOS", short: P-MOSFET}
+  Q6: {symbol: "kleidos:Q_PMOS", short: P-MOSFET}
+  Q7: {symbol: "kleidos:Q_NPN", short: NPN transistor}
+  S1: {symbol: "kleidos:SW_Push", stub: 0, short: Reset key, pins: {"1": "2", "2": "3"}}
+  KEY1: {symbol: "tdeck-plus:TS-1187AB"}
+  SW1: {symbol: "tdeck-plus:K3-1391D"}
+  T1: {symbol: "tdeck-plus:TRACKBALL"}
+  XX2: {symbol: "tdeck-plus:ANTENNA_2P"}
+  U4: {symbol: "kleidos:Crystal_GND24", short: Crystal}
+  J1: {symbol: "kleidos:Conn_01x06", short: C3 UART header}
+  P8: {symbol: "kleidos:Conn_01x04", short: 4-pin header}
+  P1: {symbol: "kleidos:Conn_01x02", short: Speaker}
+  P3: {symbol: "kleidos:Conn_01x02", short: Battery connector}
+  P2: {symbol: "tdeck-plus:LCD_18P"}
+  P4: {symbol: "tdeck-plus:TOUCH_6P"}
+  JP1: {symbol: "tdeck-plus:KEYBOARD_28P"}
+  TF: {symbol: "tdeck-plus:MP3T-F"}
+  U0: {symbol: "tdeck-plus:HPD16A"}
+  U1: {symbol: "tdeck-plus:ESP32-S3-WROOM-1"}
+  U2: {symbol: "tdeck-plus:ES7210"}
+  U3: {symbol: "tdeck-plus:W25Q32FVSS"}
+  U5: {symbol: "tdeck-plus:ESP32-C3"}
+  U6: {symbol: "tdeck-plus:MAX98357A"}
+  U7: {symbol: "tdeck-plus:USB-C_22P"}
+  U8: {symbol: "tdeck-plus:SY8089AAC"}
+  U9: {symbol: "tdeck-plus:AW9364DNR"}
+  UP1: {symbol: "tdeck-plus:TP4065B"}
+  UZ1: {symbol: "tdeck-plus:AN48841B"}
+  UZ2: {symbol: "tdeck-plus:AN48841B"}
+  UZ3: {symbol: "tdeck-plus:AN48841B"}
+  UZ4: {symbol: "tdeck-plus:AN48841B"}
+  MIC1: {symbol: "tdeck-plus:MSM381A3729H9CP"}
+  MIC2: {symbol: "tdeck-plus:MSM381A3729H9CP"}
+  MIC3: {symbol: "tdeck-plus:MSM381A3729H9CP"}
+  MIC4: {symbol: "tdeck-plus:MSM381A3729H9CP"}
+  U101: {symbol: "tdeck-plus:MIA-M10Q"}
+  U201: {symbol: "tdeck-plus:L76K"}
+  J101: {symbol: "kleidos:Battery_Cell", short: Backup cell}
+  J201: {symbol: "kleidos:Battery_Cell", short: Backup cell}
+  J102: {symbol: "kleidos:Conn_01x05", short: GPS board connector}
+  J202: {symbol: "kleidos:Conn_01x05", short: GPS board connector}
+  J103: {symbol: "kleidos:Conn_01x03", short: Antenna connector}
+  J203: {symbol: "kleidos:Conn_01x03", short: Antenna connector}
+
+symbols:
+  ESP32-S3-WROOM-1:
+    short: ESP32-S3 module
+    description: ESP32-S3-WROOM-1 module (pin names as the vendor prints them)
+    left: ["2 3V3", "3 EN", "-", "27 IO0", "39 IO1", "38 IO2", "15 IO3", "4 IO4", "5 IO5", "6 IO6", "7 IO7",
+           "12 IO8", "17 IO9", "18 IO10", "19 IO11", "20 IO12", "21 IO13", "22 IO14", "8 IO15", "9 IO16",
+           "10 IO17", "11 IO18"]
+    right: ["13 IO19", "14 IO20", "23 IO21", "28 IO35", "29 IO36", "30 IO37", "31 IO38", "32 IO39", "33 IO40",
+            "34 IO41", "35 IO42", "37 TXD0", "36 RXD0", "26 IO45", "16 IO46", "24 IO47", "25 IO48"]
+    bottom: ["1 GND", "40 GND", "41 EPAD"]
+  ESP32-C3:
+    short: Keyboard MCU
+    description: ESP32-C3 (QFN32), the keyboard controller (pin names as the vendor prints them, but pins 4 and 5, named after the ESP32-C3 datasheet, K9 and K10)
+    left: ["2 VDD3P3", "3 VDD3P3", "11 VDD3P3_RTC", "17 VDD3P3_CPU", "31 VDDA", "32 VDDA", "-", "1 LNA_IN",
+           "7 CHIP_EN", "-", "30 XTAL_P", "29 XTAL_N"]
+    right: ["4 XTAL_32K_P", "5 XTAL_32K_N", "6 GPIO2", "8 GPIO3", "9 MTMS", "10 MTDI", "12 MTCK", "13 MTDO",
+            "14 GPIO8", "15 GPIO9", "16 GPIO10", "18 VDD_SPI", "19 SPIHD", "20 SPIWP", "21 SPICS0", "22 SPICLK",
+            "23 SPID", "24 SPIQ", "25 GPIO18", "26 GPIO19", "27 U0RXD", "28 U0TXD"]
+    bottom: ["33 GND"]
+  ES7210:
+    short: 4-ch audio ADC
+    description: ES7210 four-channel microphone ADC
+    left: ["6 VDDP", "7 VDDD", "22 VDDA", "23 VDDM", "-", "5 MCLK", "9 SCLK", "10 LRCK", "11 SDOUT1/TDMOUT",
+           "12 SDOUT2/TDMIN", "13 INT", "14 DMIC_CLK", "-", "3 CDATA", "4 CCLK", "1 AD0", "2 AD1"]
+    right: ["16 MIC1P", "15 MIC1N", "19 MIC2P", "20 MIC2N", "31 MIC3P", "32 MIC3N", "28 MIC4P", "27 MIC4N", "-",
+            "24 MICBIAS12", "26 MICBIAS34", "-", "17 REFP12", "18 REFQ12", "29 REFP34", "30 REFQ34", "25 REFQM"]
+    bottom: ["8 GNDD", "21 GNDA", "33 E_GND"]
+  HPD16A:
+    short: LoRa module
+    description: HPD16A LoRa module (SX1262)
+    left: ["5 VCC", "-", "13 NSS", "12 SCK", "11 MOSI", "10 MISO", "14 NRESET", "8 BUSY", "7 DIO1", "3 DIO3", "6 NC"]
+    right: ["1 ANT", "-", "4 NC", "15 NC"]
+    bottom: ["2 GND", "9 GND", "16 GND"]
+  MAX98357A:
+    short: Speaker amplifier
+    description: MAX98357A class-D amplifier, I2S input
+    left: ["7 VDD", "8 VDD", "-", "1 DIN", "16 BCLK", "14 LRCLK", "4 SD_MODE", "2 GAIN_SLOT"]
+    right: ["9 OUTP", "10 OUTN", "-", "5 NC", "6 NC", "12 NC", "13 NC"]
+    bottom: ["3 GND", "11 GND", "15 GND"]
+  AW9364DNR:
+    short: Backlight driver
+    description: AW9364 four-channel LED current sink
+    left: ["3 VIN", "2 EN"]
+    right: ["8 LED1", "7 LED2", "6 LED3", "5 LED4"]
+    bottom: ["1 PGND", "4 AGND", "9 EP"]
+  SY8089AAC:
+    short: Buck converter
+    description: SY8089 synchronous buck converter
+    left: ["4 IN", "1 EN"]
+    right: ["3 LX", "5 FB"]
+    bottom: ["2 GND"]
+  TP4065B:
+    short: Li-ion charger
+    description: TP4065 linear Li-ion charger
+    left: ["4 VCC", "5 PROG"]
+    right: ["3 BAT", "1 CHRG"]
+    bottom: ["2 GND"]
+  AN48841B:
+    short: Hall sensor
+    description: AN48841B Hall-effect switch
+    left: ["4 VCC", "1 NC", "3 NC"]
+    right: ["5 OUT"]
+    bottom: ["2 GND"]
+  MSM381A3729H9CP:
+    short: MEMS microphone
+    description: MSM381A3729H9CP MEMS microphone
+    left: ["1 VDD", "2 GND"]
+    right: ["4 OUT", "3 GND"]
+  W25Q32FVSS:
+    short: SPI flash (C3)
+    description: W25Q32 32 Mbit SPI flash
+    left: ["8 VCC", "3 WP(IO2)", "7 HOLD(IO3)", "1 CS"]
+    right: ["6 CLK", "5 DI(IO0)", "2 DO(IO1)"]
+    bottom: ["4 GND"]
+  USB-C_22P:
+    short: USB-C receptacle
+    description: USB Type-C receptacle, 16 contacts + 4 shell + 2 NC (pin names as the vendor prints them)
+    left: ["A4 UBUS1", "A9 UBUS2", "B4 PWR", "B9 PWR1", "-", "A5 CC", "B5 VCONN", "-", "A6 DP1+", "B6 DP+",
+           "A7 DN1-", "B7 DN-", "-", "A8 SUB1", "B8 SBU2", "5 NC", "6 NC"]
+    bottom: ["A1 GND", "A12 GND", "B1 GND", "B12 GND", "1 GND", "2 GND", "3 GND", "4 GND"]
+  K3-1391D:
+    short: Power switch
+    description: K3-1391D slide switch
+    ref: SW
+    left: ["1 1"]
+    right: ["2 2", "3 3"]
+  TS-1187AB:
+    short: Trackball key
+    description: TS-1187AB push switch (A0-A1 and B0-B1 joined inside)
+    ref: KEY
+    left: ["1 A0", "3 B0"]
+    right: ["2 A1", "4 B1"]
+  TRACKBALL:
+    short: Trackball
+    description: Trackball mechanism, four pads
+    ref: T
+    bottom: ["1 1", "2 2", "3 3", "4 4"]
+  ANTENNA_2P:
+    short: LoRa antenna
+    description: Antenna, feed and ground (printed TIAN)
+    ref: XX
+    left: ["1 FEED"]
+    right: ["2 GND"]
+  LCD_18P:
+    short: LCD connector
+    description: LCD connector, 18 pins (2.8 inch panel)
+    ref: P
+    right: ["1 GND", "2 RESET", "3 SCL", "4 D/C", "5 CSX", "6 SDA", "7 SDO", "8 GND", "9 VDD", "10 LED-A",
+            "11 LED-K", "12 LED-K", "13 LED-K", "14 LED-K", "15 NC", "16 NC", "17 NC", "18 NC"]
+  TOUCH_6P:
+    short: Touch connector
+    description: Touch panel connector, 6 pins
+    ref: P
+    right: ["1 GND", "2 RST", "3 INT", "4 SDA", "5 SCL", "6 VCC"]
+  KEYBOARD_28P:
+    short: Keyboard connector
+    description: Keyboard board-to-board connector, 24 contacts + ground tabs (28 numbered pins)
+    ref: JP
+    left: ["1 GND", "2 MIC_VDD", "3 MIC", "4 AGND", "5 GND", "6 ROW1", "7 COL1", "8 ROW2", "9 COL2", "10 COL3",
+           "11 GND", "12 GND", "13 GND", "14 GND"]
+    right: ["28 GND", "27 ROW7", "26 LDDA_1_2", "25 LDDA_3_4", "24 LDDA_1_4", "23 LDDA_2_3", "22 ROW6",
+            "21 ROW5", "20 ROW4", "19 COL5", "18 ROW3", "17 COL4", "16 GND", "15 GND"]
+  MP3T-F:
+    short: microSD socket
+    description: MP3T-F TF (microSD) card socket
+    ref: TF
+    left: ["4 VDD", "2 DATA3", "3 CMD", "5 CLK", "7 DATA0", "8 DATA1", "1 DATA2", "11 COM"]
+    bottom: ["6 VSS", "9 CD#", "10 COM", "12 COM", "13 COM"]
+  MIA-M10Q:
+    short: GNSS module
+    description: u-blox MIA-M10Q GNSS module (ball names as the vendor prints them)
+    left: ["B1 VCC", "J4 V_IO", "J5 V_BCKP", "C6 VCC_RF", "-", "B9 RF_IN", "-", "G1 TX", "H1 RX", "A7 TIMEPULSE",
+           "-", "F9 RESERVED", "G7 RESERVED", "D2 RESERVED", "E2 RESERVED"]
+    right: ["A4 RTC_I", "A6 EXTINT", "C4 RESET_N", "C7 SAFEBOOT_N", "D1 SDA", "E1 SCL", "F7 PIO6", "H9 LNA_EN",
+            "J6 VIO_SEL", "C1 RESERVED", "C5 RESERVED", "D9 RESERVED", "E7 RESERVED", "G9 RESERVED", "J1 RESERVED",
+            "J2 RESERVED", "J3 RESERVED", "J7 RESERVED"]
+    bottom: ["A1 GND", "A2 GND", "A3 GND", "A5 RTC_O", "A8 GND", "A9 GND", "B2 GND", "B8 GND", "C3 GND", "C9 GND",
+             "E3 GND", "E4 GND", "E9 GND", "F1 GND", "F3 GND", "F4 GND", "G3 GND", "G4 GND", "G5 GND", "G6 GND",
+             "H8 GND", "J8 GND", "J9 GND"]
+  L76K:
+    short: GNSS module
+    description: Quectel L76K GNSS module
+    left: ["8 VCC", "6 VBACKUP", "9 RESET_N", "-", "2 TXD", "3 RXD", "4 1PPS", "-", "18 SET"]
+    right: ["11 RF_IN", "14 VDD_RF", "-", "5 WAKE_UP", "7 RESERVED", "13 ANTON", "15 RESERVED", "16 RESERVED",
+            "17 RESERVED"]
+    bottom: ["1 GND", "10 GND", "12 GND"]
+
+root:
+  title: Contents
+  heading: "LILYGO T-Deck Plus schematic"
+  subheading: "Kleidos boards: every part, pin and net, connectivity documented from the vendor's public documentation"
+  panels:
+    - title: How to read it
+      text: |
+        Click a box on the left to open its page. "Contents" and the page
+        numbers at the bottom right of every page lead back here and to each page.
+
+        Cyan lines are connections: wires and pin ends, all one width.
+        A dot joins lines; a cross on a pin end means the pin is not connected.
+        Pins connect by net labels (the boxed names): pins whose labels carry
+        the same name are on one net, on any page.
+        [3/C4] after a label: page 3 carries that net too, its label in zone C4
+        (column 4, row C of the border). Click it to land on that label.
+        No [page/zone]: the net is on this page only.
+        Click a part's reference to find its row in the parts list; the row's
+        page/zone leads back. A part crossed out in red is not fitted (DNP).
+        White: parts and their references. Grey: values, pin names, pin numbers.
+        A dashed frame is a block of the circuit, titled at its top left.
+        An amber K3 marks a Kleidos addition or correction: it leads to its row below.
+    - title: Notes
+      text: |
+        Every part, pin and net of the T-Deck Plus mainboard and of its two GPS
+        daughterboards, with the values the vendor documents: connectivity
+        documented from the vendor's public documentation, with Kleidos additions and
+        corrections listed on page 1 (LilyGO's T-Deck schematic of 2023-06-01 and
+        its T-Deck-GPS V1.0 and T-Deck-L76K V1.0 sheets, cited in README.md and
+        netlist.yaml). Layout and symbols are this project's. No footprints, no PCB.
+        Values are as the vendor prints them (100K%1, 1uF/6.3V). A value of NC
+        means not fitted: those parts are marked DNP.
+        Designators are the vendor's. The GPS boards reuse the main board's, so
+        theirs are +100 (MIA-M10Q board) and +200 (L76K board), and their nets
+        carry M10_ and L76K_: no cable to the main board is published (what P8
+        carries to the GPS board: K3, K7, K8).
+        Nets the vendor left unnamed carry names of ours (U8_FB, PWR_GATE...).
+        Zones: columns 1-8 and rows A-F, 50 mm apart, printed in the border.
+
+sheets:
+  - file: contents_continued.kicad_sch
+    name: Contents, continued
+    index: additions
+    summary: "The rest of the Kleidos additions and corrections, which page 1 has no room for, each id leading to where it is marked; then the revision history."
+  - file: power.kicad_sch
+    name: Power input, charging and rails
+    summary: "USB-C input, the Li-ion charger and battery, the power path and switch, the 3.3 V buck, and the V3V and BAT switches PWR_EN controls."
+    parts: "U7 USB-C, UP1 TP4065B, P3 battery, D1 1N5819, Q5 SI2307, SW1, U8 SY8089AAC, Q4 Q6 SI2301, Q7 PMBT3904, LED1"
+    pwr_flags: [GND]
+    blocks:
+      - title: USB-C input
+        rows:
+          - [U7, {col: [RC5, RC6]}]
+      - title: Charger and battery
+        rows:
+          - [UP1, {cols: [[C39, CW4, R25], [LED1, RW1]]}]
+          - [P3, {col: [C45, C46, RD1]}]
+      - title: Power path and switch
+        rows:
+          - [D1, Q5, SW1, {col: [RD4, C40, C41]}]
+      - title: 3.3 V buck (VDD3V3)
+        rows:
+          - [U8, {cols: [[L5, RY1, RY2], [R23, R24, C42], [C43, C44]]}]
+      - title: V3V and BAT switches (PWR_EN)
+        rows:
+          - [Q4, Q6, Q7]
+          - [D2, D3, {cols: [[RQ1, R26], [R27, R28]]}]
+      - title: Battery voltage (BAT_ADC)
+        rows:
+          - [{col: [RD2, RD3, CD1]}]
+  - file: soc.kicad_sch
+    name: ESP32-S3, TF card, trackball and LoRa
+    summary: "The ESP32-S3-WROOM-1 with reset, boot key and the UART header, the TF card on the shared SPI bus, the trackball's Hall sensors and key, and the LoRa module with its antenna."
+    parts: "U1 ESP32-S3-WROOM-1, S1, KEY1, P8, TF MP3T-F, UZ1-UZ4 AN48841B, T1, U0 HPD16A, XX2"
+    blocks:
+      - title: ESP32-S3 module
+        rows:
+          - [U1, {cols: [[C5, C6], [R6, C9, S1]]}]
+      - title: Trackball
+        rows:
+          - [UZ1, UZ2, {col: [CW8, CW10]}]
+          - [UZ3, UZ4, {col: [CCW4, CCE5]}]
+          - [T1, KEY1, {col: [RY31]}]
+      - title: TF card
+        rows:
+          - [TF, {cols: [[RU1, RU2, RU3], [R3, R4, R5], [C10, C11]]}]
+      - title: LoRa module
+        rows:
+          - [U0, {col: [C50, C51, R50]}, XX2]
+      - title: UART header
+        rows:
+          - [P8]
+  - file: keyboard.kicad_sch
+    name: Keyboard controller, display and touch
+    summary: "The ESP32-C3 that scans the keyboard, with its flash, crystal and UART header; the keyboard connector and its backlight switch; the LCD connector with its backlight driver; the touch connector."
+    parts: "U5 ESP32-C3, U3 W25Q32FVSS, U4 40 MHz, J1, JP1 keyboard, Q3 BSS138, P2 LCD, U9 AW9364DNR, P4 touch"
+    blocks:
+      - title: ESP32-C3 keyboard controller
+        rows:
+          - [U5, {cols: [[L1, C31, C32, C28, C29], [C33, C34, C38, R19, C37]]}]
+      - title: LCD connector and backlight driver
+        rows:
+          - [P2, {col: [CW1, CW2, CW3, CW22, RY34]}]
+          - [U9, {col: [CW5, R3Y]}]
+      - title: Touch connector
+        rows:
+          - [P4, {col: [RY35, CW24, CW6, CW7]}]
+      - title: Keyboard connector and backlight
+        rows:
+          - [JP1, Q3, {col: [R18]}]
+      - title: 40 MHz crystal
+        rows:
+          - [U4, {col: [C27, C26, R15]}]
+      - title: Flash
+        rows:
+          - [U3, {col: [R10, C25, R17]}]
+      - title: "C3 pull-ups and UART header"
+        rows:
+          - [J1, {col: [R11, R12, R13, R14]}]
+  - file: audio.kicad_sch
+    name: Microphones, audio ADC and speaker
+    summary: "The four MEMS microphones and the ES7210 ADC with the I2C level shifter to the ESP32-S3 side; the MAX98357A amplifier, its filter and the speaker."
+    parts: "U2 ES7210, MIC1-MIC4 MSM381A3729H9CP, Q1 Q2 BSS123, U6 MAX98357A, P1 speaker"
+    pwr_flags: [ADC_GND, AGND]
+    blocks:
+      - title: ES7210 audio ADC
+        rows:
+          - [U2, {cols: [[C3, C4, C23, C24, R9, R1, R2, R7, R8], [C12, C13, C14, C15, C21, C16, C17, C18, C19], [C20, C22, CY5, CY6, CY7, CY8]]}]
+      - title: Speaker amplifier
+        rows:
+          - [U6, {col: [L4, C35, C36, R20, R21, R22, R16]}]
+          - [{cols: [[L2, L3, CP1], [CP2, CP3, CP4], [CP5, CP6]]}, P1]
+      - title: Microphone 1
+        rows:
+          - [MIC1, {col: [C1, C2, Rm1]}]
+      - title: Microphone 2
+        rows:
+          - [MIC2, {col: [C7, CY1, Rm2]}]
+      - title: Microphone 3
+        rows:
+          - [MIC3, {col: [CY4, CY3, Rm4]}]
+      - title: Microphone 4
+        rows:
+          - [MIC4, {col: [C8, CY2, Rm3]}]
+      - title: I2C level shifter (V3V side)
+        rows:
+          - [Q1, Q2]
+          - [{cols: [[RC1, RC2], [RC3, RC4]]}]
+  - file: gps.kicad_sch
+    name: GPS daughterboards
+    summary: "The two GPS daughterboards LilyGO publishes for the T-Deck: the MIA-M10Q board (parts +100) and the L76K board (parts +200), each with its backup cell, antenna connector and 5-pin connector."
+    parts: "U101 MIA-M10Q, J101 J201 MS412FE, J102 J202, J103 J203 IPEX, U201 L76K"
+    pwr_flags: [M10_GND, L76K_GND]
+    blocks:
+      - title: "MIA-M10Q board (T-Deck-GPS V1.0)"
+        rows:
+          - [U101, {cols: [[C101, C107, C108], [R101, R102]]}]
+          - [{cols: [[R104, C105, L101, C106], [D101, R103]]}, J101, J103, J102]
+      - title: "L76K board (T-Deck-L76K V1.0)"
+        rows:
+          - [U201, {cols: [[C207, C208, C201], [R201, C204, R202], [C205, L201]]}]
+          - [{cols: [[R204, C206, C202, C203], [D201, R203]]}, J201, J203, J202]
+  - file: tree.kicad_sch
+    name: Power tree and rails
+    index: power
+    summary: "How power flows from the USB-C input and the battery to every rail, and each rail's nominal voltage, source and enable. Every box leads to where it is drawn."
+  - file: nets.kicad_sch
+    name: Nets and signals
+    index: nets
+    summary: "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32-S3 and ESP32-C3 GPIO, the I2C addresses, every pull-up and pull-down."
+  - file: parts.kicad_sch
+    name: Parts
+    index: parts
+    summary: "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A reference on the drawing leads to its row, the row back to it."
+
+power_tree:
+  title: Power tree
+  pitch: [27.94, 17.78]
+  nodes:
+    U7: [0, 0]
+    VBUS: [1, 0]
+    D1: [2, 0]
+    UP1: [2, 1]
+    P3: [2, 2]
+    VBAT: [3, 2]
+    Q5: [4, 2]
+    SW1_IN: [5, 0]
+    SW1: [6, 0]
+    +5V: [7, 0]
+    U8: [8, 0]
+    L5: [9, 0]
+    VDD3V3: [10, 0]
+    Q6: [11, 0]
+    V3V: [12, 0]
+    Q4: [8, 1]
+    BAT: [9, 1]
+  edges:
+    - [U7, VBUS]
+    - [VBUS, D1]
+    - [VBUS, UP1]
+    - [UP1, VBAT]
+    - [P3, VBAT]
+    - [VBAT, Q5]
+    - [D1, SW1_IN]
+    - [Q5, SW1_IN]
+    - [SW1_IN, SW1]
+    - [SW1, +5V]
+    - [+5V, U8]
+    - [+5V, Q4]
+    - [U8, L5]
+    - [L5, VDD3V3]
+    - [Q4, BAT]
+    - [VDD3V3, Q6]
+    - [Q6, V3V]
+  note: "Q5 conducts while VBUS is absent (its gate is on VBUS). Q4 and Q6 share PWR_GATE, which Q7 pulls low while PWR_EN (IO10) is high. The GPS daughterboard takes VDD3V3 from P8 (K3); its own nets stay apart, as no cable is published."

@@ -1,0 +1,339 @@
+{
+  "board": "m5stickc-plus1",
+  "model": "m5stickc-plus1/model/m5stickc-plus1.glb",
+  "model_sha256": "ac78bd53264652842adbb8e9d69422d9a0150c4fe5987d55c34585bb2de61169",
+  "model_bytes": 551392,
+  "model_gzip_bytes": 205582,
+  "triangles": 27282,
+  "meshes": 47,
+  "materials": 42,
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/48baa75a9476f4070dd5f107c1c28e2c9f383a96/Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl",
+    "commit": "48baa75a9476f4070dd5f107c1c28e2c9f383a96",
+    "sha256": "56dcfd382032d177ea049f890f59db965a56c161a8db588e80dd45e66576685a",
+    "bytes": 616284,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "builder": {
+    "script": "_shared/build_board_glb.py",
+    "version": "1.6.0",
+    "spec": "m5stickc-plus1/model/spec.json",
+    "spec_sha256": "8c13447afb01c62ba0f1f31d146f1e527c9505176583e664aa378bd147e3a816",
+    "python": "3.14.7",
+    "packages": {
+      "numpy": "2.5.4",
+      "shapely": "2.2.0",
+      "trimesh": "5.2.0",
+      "mapbox_earcut": "2.1.0",
+      "scipy": "1.18.1",
+      "networkx": "3.7",
+      "rtree": "1.4.1",
+      "cascadio": "0.1.1",
+      "fast-simplification": "0.2.0",
+      "fonttools": "4.68.0"
+    }
+  },
+  "parameters": {
+    "quant_mm": 0.01,
+    "planar_min_area_mm2": 1.5,
+    "tessellation": null,
+    "transform": [
+      {
+        "rotate": {
+          "axis": "y",
+          "deg": 180
+        }
+      },
+      {
+        "translate": [
+          12.0,
+          24.0,
+          -6.5
+        ]
+      }
+    ],
+    "center_mm": [
+      12.0,
+      24.0,
+      -6.75
+    ],
+    "front_frame": {
+      "left_x": 0.0,
+      "top_y": 48.0
+    },
+    "face_frames": {
+      "back": {
+        "right_x": 24.0,
+        "top_y": 48.0
+      }
+    },
+    "screen": {
+      "x0": 4.57,
+      "x1": 19.43,
+      "y_top": 44.465,
+      "y_bot": 19.555,
+      "w": 14.86,
+      "h": 24.91,
+      "resolution": [
+        135,
+        240
+      ]
+    }
+  },
+  "legends": [
+    {
+      "mesh": "label_legends",
+      "plane": "label",
+      "on": "back_label",
+      "face": "back",
+      "drawing": "m5stickc-plus1/svg/back.svg",
+      "legends_sha256": "66f201aadc49bd0fce2d805e8b2d96d48e1aa2180fcc888b3c5af60d3b3f5c66",
+      "z_mm": -13.49,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 125,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "fonts/inter/Inter-Medium.ttf": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872",
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#003f5f",
+          "vertices": 474,
+          "triangles": 460,
+          "area_mm2": 3.663,
+          "stroke_mm": 0.129,
+          "mesh": "label_legends_003f5f"
+        },
+        {
+          "fill": "#0d4f82",
+          "vertices": 109,
+          "triangles": 103,
+          "area_mm2": 2.106,
+          "stroke_mm": 0.183,
+          "mesh": "label_legends_0d4f82"
+        },
+        {
+          "fill": "#111111",
+          "vertices": 3605,
+          "triangles": 3495,
+          "area_mm2": 64.053,
+          "stroke_mm": 0.236,
+          "mesh": "label_legends_111111"
+        },
+        {
+          "fill": "#118cd0",
+          "vertices": 462,
+          "triangles": 466,
+          "area_mm2": 9.922,
+          "stroke_mm": 0.398,
+          "mesh": "label_legends_118cd0"
+        },
+        {
+          "fill": "#1d95da",
+          "vertices": 571,
+          "triangles": 591,
+          "area_mm2": 47.339,
+          "stroke_mm": 0.535,
+          "mesh": "label_legends_1d95da"
+        },
+        {
+          "fill": "#309963",
+          "vertices": 346,
+          "triangles": 356,
+          "area_mm2": 17.069,
+          "stroke_mm": 0.527,
+          "mesh": "label_legends_309963"
+        },
+        {
+          "fill": "#3a3a3a",
+          "vertices": 3665,
+          "triangles": 3471,
+          "area_mm2": 13.181,
+          "stroke_mm": 0.078,
+          "mesh": "label_legends_3a3a3a"
+        },
+        {
+          "fill": "#3d6e8f",
+          "vertices": 36,
+          "triangles": 34,
+          "area_mm2": 1.355,
+          "stroke_mm": 0.122,
+          "mesh": "label_legends_3d6e8f"
+        },
+        {
+          "fill": "#5f5b58",
+          "vertices": 32,
+          "triangles": 28,
+          "area_mm2": 2.005,
+          "stroke_mm": 0.335,
+          "mesh": "label_legends_5f5b58"
+        },
+        {
+          "fill": "#7ad7ed",
+          "vertices": 292,
+          "triangles": 296,
+          "area_mm2": 8.447,
+          "stroke_mm": 0.411,
+          "mesh": "label_legends_7ad7ed"
+        },
+        {
+          "fill": "#858585",
+          "vertices": 822,
+          "triangles": 780,
+          "area_mm2": 2.587,
+          "stroke_mm": 0.068,
+          "mesh": "label_legends_858585"
+        },
+        {
+          "fill": "#8a3a3a",
+          "vertices": 1129,
+          "triangles": 1065,
+          "area_mm2": 3.467,
+          "stroke_mm": 0.076,
+          "mesh": "label_legends_8a3a3a"
+        },
+        {
+          "fill": "#9da09e",
+          "vertices": 395,
+          "triangles": 409,
+          "area_mm2": 12.323,
+          "stroke_mm": 0.395,
+          "mesh": "label_legends_9da09e"
+        },
+        {
+          "fill": "#b0402a",
+          "vertices": 99,
+          "triangles": 97,
+          "area_mm2": 2.082,
+          "stroke_mm": 0.167,
+          "mesh": "label_legends_b0402a"
+        },
+        {
+          "fill": "#bcca9d",
+          "vertices": 91,
+          "triangles": 95,
+          "area_mm2": 2.601,
+          "stroke_mm": 0.28,
+          "mesh": "label_legends_bcca9d"
+        },
+        {
+          "fill": "#c33161",
+          "vertices": 668,
+          "triangles": 682,
+          "area_mm2": 16.594,
+          "stroke_mm": 0.433,
+          "mesh": "label_legends_c33161"
+        },
+        {
+          "fill": "#c48c4f",
+          "vertices": 266,
+          "triangles": 274,
+          "area_mm2": 11.675,
+          "stroke_mm": 0.484,
+          "mesh": "label_legends_c48c4f"
+        },
+        {
+          "fill": "#c8320a",
+          "vertices": 877,
+          "triangles": 909,
+          "area_mm2": 44.661,
+          "stroke_mm": 0.519,
+          "mesh": "label_legends_c8320a"
+        },
+        {
+          "fill": "#cbcbc9",
+          "vertices": 719,
+          "triangles": 743,
+          "area_mm2": 40.569,
+          "stroke_mm": 0.461,
+          "mesh": "label_legends_cbcbc9"
+        },
+        {
+          "fill": "#e20e63",
+          "vertices": 183,
+          "triangles": 185,
+          "area_mm2": 5.207,
+          "stroke_mm": 0.414,
+          "mesh": "label_legends_e20e63"
+        },
+        {
+          "fill": "#e64824",
+          "vertices": 96,
+          "triangles": 100,
+          "area_mm2": 11.906,
+          "stroke_mm": 0.647,
+          "mesh": "label_legends_e64824"
+        },
+        {
+          "fill": "#e6e7e7",
+          "vertices": 356,
+          "triangles": 358,
+          "area_mm2": 28.094,
+          "stroke_mm": 0.726,
+          "mesh": "label_legends_e6e7e7"
+        },
+        {
+          "fill": "#e8642f",
+          "vertices": 112,
+          "triangles": 108,
+          "area_mm2": 2.407,
+          "stroke_mm": 0.246,
+          "mesh": "label_legends_e8642f"
+        },
+        {
+          "fill": "#ef6968",
+          "vertices": 183,
+          "triangles": 189,
+          "area_mm2": 8.629,
+          "stroke_mm": 0.488,
+          "mesh": "label_legends_ef6968"
+        },
+        {
+          "fill": "#fa6665",
+          "vertices": 92,
+          "triangles": 90,
+          "area_mm2": 13.436,
+          "stroke_mm": 0.673,
+          "mesh": "label_legends_fa6665"
+        },
+        {
+          "fill": "#fcce0f",
+          "vertices": 570,
+          "triangles": 578,
+          "area_mm2": 21.686,
+          "stroke_mm": 0.483,
+          "mesh": "label_legends_fcce0f"
+        },
+        {
+          "fill": "#ffffff",
+          "vertices": 3898,
+          "triangles": 3770,
+          "area_mm2": 44.156,
+          "stroke_mm": 0.169,
+          "mesh": "label_legends_ffffff"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "back_label",
+        "least_mm": 0.02
+      }
+    }
+  ],
+  "without_legends": {
+    "bytes": 166100,
+    "gzip_bytes": 62746,
+    "sha256": "56ad2c09815bb63441d5f04d29e34c4926c50b0421f1bcb78e38e78a8f45c06f",
+    "meshes": 20,
+    "materials": 15
+  }
+}

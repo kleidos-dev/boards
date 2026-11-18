@@ -1,0 +1,256 @@
+{
+  "schema": 1,
+  "board": "coreink",
+  "node_name": "CoreInk",
+  "output": "coreink/model/coreink.glb",
+  "copyright": "Case geometry (front cover with its window and debossed M5, back shell with the top key, the side power key and the back reset key): M5Stack, M5_Hardware Products/K048_CoreInk/Structures/CoreInk.stl @067ddd8f, MIT License, Copyright (c) 2021 M5Stack. E-paper panel, dial, connectors, labels, screws, filler and materials: Kleidos (MIT). Printed legends (the back sticker's and the left side's label): the legends of Kleidos's own back and left-side drawings, their glyphs outlines of Inter 4.1 (SIL Open Font License 1.1, Copyright (c) 2016 The Inter Project Authors).",
+  "notes": "The STL holds the device twice: the assembly at x = -20..20 mm (back shell, 6180 faces, z 0..16; front cover, 4548 faces, z 8..16) and an exploded copy at x 38.85..137.92, plus two four-face slivers. Only the assembly's two shells are kept. Its frame is already the build frame (+Y towards the HAT end, +Z out of the screen, +X towards the dial), so there is no transform; the front frame of measurements.json starts at x = -20, y = 4. The shells are hollow and carry none of the parts bought in: no e-paper panel, no dial, no connectors, no labels, no screws. Those are added here from measurements.json, the cuts in the shells and M5Stack's product photos (front, both sides, both ends, back).",
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "file": "CoreInk.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K048_CoreInk/Structures/CoreInk.stl",
+    "commit": "067ddd8fa3cf17506dba4769e50237daf21359db",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/067ddd8fa3cf17506dba4769e50237daf21359db/Products/K048_CoreInk/Structures/CoreInk.stl",
+    "sha256": "20ef9043e2ff0bc7814d2ba48481561116109880569b35a2ca9cff18b745467f",
+    "bytes": 1073284,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "transform": [],
+  "split": true,
+  "select": {"max_le": [20.5, null, null]},
+  "parts": [
+    {
+      "name": "back",
+      "match": {"extent_gt": [39, null, 15]},
+      "ops": [{"decimate": {"face_count": 4800}}],
+      "note": "6180 faces in the STL; quadric decimation to 4800 moves the surface by at most 0.037 mm (40,000 points sampled on the STL, 20,000 on the result)."
+    },
+    {
+      "name": "front",
+      "match": {"extent_gt": [39, null, null]},
+      "ops": [{"decimate": {"face_count": 3500}}],
+      "note": "4548 faces in the STL; decimation to 3500 moves the surface by at most 0.019 mm."
+    }
+  ],
+  "volumes": {
+    "fill": [
+      [-17.9, 16.9, -43.5, -4.4, 1.7, 13.8],
+      [-11.7, 11.7, -4.4, 2.2, 1.7, 13.8],
+      [-11.7, -6.3, -50.7, -43.5, 1.7, 13.8],
+      [6.3, 11.7, -50.7, -43.5, 1.7, 13.8],
+      [-6.3, 6.3, -46.5, -43.5, 1.7, 13.8],
+      [-6.3, 6.3, -50.13, -46.5, 11.8, 13.8],
+      [-6.3, -4.49, -50.7, -46.5, 8.2, 11.8],
+      [4.49, 6.3, -50.7, -46.5, 8.2, 11.8],
+      [-4.49, 4.49, -50.7, -46.5, 8.22, 8.5],
+      [-6.3, -5.12, -50.7, -46.5, 1.7, 8.2],
+      [5.12, 6.3, -50.7, -46.5, 1.7, 8.2],
+      [-5.12, 5.12, -50.7, -46.5, 1.7, 2.98]
+    ],
+    "panel": [
+      [-15.7, 15.7, -36.9, -5.3, 13.8, 14.92]
+    ],
+    "hidden": [
+      [-20.1, 20.1, -52.1, 4.1, 1.13, 1.27],
+      [-18.3, 18.3, -51.0, 2.6, 1.73, 1.87],
+      [-18.6, 18.6, -43.3, 2.6, 1.93, 2.07],
+      [-11.8, 11.8, -51.0, 2.6, 1.93, 2.07],
+      [-18.6, -13.3, -51.0, -43.3, 1.93, 2.07],
+      [13.3, 18.6, -51.0, -43.3, 1.93, 2.07],
+      [-20.1, 20.1, -43.3, 4.1, 7.43, 7.57],
+      [-11.4, 11.4, -52.1, 4.1, 7.43, 7.57],
+      [-20.1, -11.9, -52.1, -43.3, 7.43, 7.57],
+      [11.9, 20.1, -52.1, -43.3, 7.43, 7.57],
+      [-20.1, 20.1, -52.1, 4.1, 8.93, 9.07],
+      [-19.75, 19.75, -43.3, -4.0, 13.93, 14.07],
+      [-11.8, 11.8, -52.1, 4.1, 13.93, 14.07],
+      [-19.75, -13.3, -4.0, 4.1, 13.93, 14.07],
+      [13.3, 19.75, -4.0, 4.1, 13.93, 14.07],
+      [-20.1, 20.1, -52.1, -44.3, 13.93, 14.07],
+      [-18.3, 18.3, -51.0, 0.9, 14.93, 15.07],
+      [-10.4, 16.85, -44.5, -4.5, 0.13, 0.27],
+      [-6.35, 6.35, -50.7, -44.4, 0.13, 0.27],
+      [-6.5, 6.5, -30.5, -17.5, 0.06, 1.8]
+    ],
+    "note": "fill: the opaque inside every cut shows: the body between the four corner bosses (x <= 16.9, clear of the dial pocket), the column under the HAT end, the two columns beside the bottom connectors, the wall behind them (from y -50.13, where the shell's ceiling over the USB-C opening ends: it reached under that ceiling to y -50.7, the two faces on one plane there, z 11.8), and the pieces around the USB-C receptacle and the HY2.0-4P housing that keep both open. panel: the e-paper module under the window (its face 0.08 mm under the cover's inner face, z 15). hidden: cull only, never drawn: thin slabs around the shells' inner flat faces that nothing can see (the cover's underside at z 15, the bosses' undersides at z 14, mating faces at z 7.5 and 9, the floor at z 1.2, 1.8 and 2, the label recess and the magnet ring under the back label). The builder drops a face when each corner lies in any box, so a wall between two slabs goes too; the set was checked on this build by ray casting (48 directions from four points of every face it takes, none escaping), which is why there is no slab at the z 8 seam."
+  },
+  "cull": {"parts": ["front", "back"], "volumes": ["fill", "panel", "hidden"], "margin": 0.06},
+  "center_mm": [0.0, -24.0, 8.0],
+  "front_frame": {"left_x": -20.0, "top_y": 4.0},
+  "face_frames": {"left": {"back_z": 0.0, "top_y": 4.0}},
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "planar_min_area": 1.5,
+  "materials": [
+    {"name": "case", "hex": "#F7F7F5", "rough": 0.55},
+    {"name": "epd_panel", "rgb": [214, 214, 210], "rough": 0.7},
+    {"name": "screen", "rgb": [200, 200, 196], "rough": 1.0, "unlit": true},
+    {"name": "glass", "rgb": [0, 0, 0], "rough": 0.04, "alpha": 0.06},
+    {"name": "internal", "rgb": [16, 16, 18], "rough": 0.95},
+    {"name": "dial_black", "rgb": [30, 30, 32], "rough": 0.6},
+    {"name": "usb_metal", "rgb": [196, 196, 200], "rough": 0.32, "metal": 1.0},
+    {"name": "black_plastic", "rgb": [26, 26, 28], "rough": 0.55},
+    {"name": "hole", "rgb": [3, 3, 4], "rough": 1.0},
+    {"name": "white_plastic", "rgb": [234, 232, 224], "rough": 0.55},
+    {"name": "brass", "rgb": [200, 158, 84], "rough": 0.38, "metal": 1.0},
+    {"name": "screw", "rgb": [52, 52, 56], "rough": 0.45, "metal": 0.8},
+    {"name": "label", "rgb": [250, 250, 248], "rough": 0.5},
+    {"name": "header_black", "rgb": [17, 17, 18], "rough": 0.5},
+    {"name": "header_funnel", "rgb": [8, 8, 9], "rough": 0.7}
+  ],
+  "meshes": [
+    {"name": "case_front", "part": "front", "material": "case", "smooth_deg": 40.0},
+    {"name": "case_back", "part": "back", "material": "case", "smooth_deg": 40.0},
+    {
+      "name": "panel",
+      "note": "The e-paper module (GDEW0154D67) behind the window; its border shows between the window walls and the active area.",
+      "material": "epd_panel",
+      "shapes": [{"prism": {"axis": "z", "volume": "panel", "profile": {"rounded": 0.6}}}]
+    },
+    {"name": "screen", "material": "screen", "screen": {"z": 14.94}},
+    {
+      "name": "glass",
+      "note": "The panel's front sheet over the window opening (narrowest at x 5.70..34.30, y 11.20..39.40 in the front frame), its edges under the cover.",
+      "material": "glass",
+      "glass": {"rect": [5.45, 34.55, 10.95, 39.65], "frame": "front", "z": 14.955}
+    },
+    {"name": "internal", "material": "internal", "shapes": [{"volume": "fill"}]},
+    {
+      "name": "dial",
+      "note": "The three-way jog wheel (up, push, down): a knurled disc on an axis normal to the front, its rim through the right-hand pocket between the back shell (z 8.5) and the cover (z 11.4). Its center and radius come from the arc front.svg draws (x 37.92..39.73 across y 15.87..24.02).",
+      "material": "dial_black",
+      "shapes": [{"frame": "front", "cylinder": {"axis": "z", "c": [34.24, 19.945], "r": 5.49,
+                                                 "range": [8.75, 11.15], "sections": 40}}]
+    },
+    {
+      "name": "usb_c_shell",
+      "note": "The USB-C receptacle in the bottom end, centered on the case (the cover's opening x -4.7..4.7, z 8.5..11.8).",
+      "material": "usb_metal",
+      "smooth_deg": 40,
+      "shapes": [
+        {"prism": {"axis": "y", "range": [-51.7, -46.4],
+                   "profile": {"stadium": [0.0, 10.15, 8.94, 3.26], "inner": ["8.94 - 0.5", "3.26 - 0.5"]}}}
+      ]
+    },
+    {
+      "name": "usb_c_tongue",
+      "material": "black_plastic",
+      "shapes": [{"box": [-3.3, 3.3, -51.0, -46.5, "10.15 - 0.35", "10.15 + 0.35"]}]
+    },
+    {
+      "name": "grove",
+      "note": "The HY2.0-4P housing under the USB-C, in the back shell's opening (x -6.06..6.06, z 2.3..8.5): back, top, side and bottom walls around a cavity with the key slot at the bottom.",
+      "material": "white_plastic",
+      "shapes": [
+        {"box": [-4.4, 4.4, -47.0, -46.5, 3.5, 7.9]},
+        {"box": [-5.1, 5.1, -51.6, -46.5, 7.9, 8.2]},
+        {"box": [-5.1, -4.4, -51.6, -46.5, 3.0, 7.9]},
+        {"box": [4.4, 5.1, -51.6, -46.5, 3.0, 7.9]},
+        {"box": [-4.4, -3.2, -51.6, -46.5, 3.0, 4.3]},
+        {"box": [3.2, 4.4, -51.6, -46.5, 3.0, 4.3]},
+        {"box": [-3.2, 3.2, -51.6, -46.5, 3.0, 3.5]}
+      ]
+    },
+    {
+      "name": "grove_pins",
+      "material": "brass",
+      "shapes": [
+        {"box": ["-3.0 - 0.32", "-3.0 + 0.32", -51.0, -47.0, 7.0, 7.64]},
+        {"box": ["-1.0 - 0.32", "-1.0 + 0.32", -51.0, -47.0, 7.0, 7.64]},
+        {"box": ["1.0 - 0.32", "1.0 + 0.32", -51.0, -47.0, 7.0, 7.64]},
+        {"box": ["3.0 - 0.32", "3.0 + 0.32", -51.0, -47.0, 7.0, 7.64]}
+      ]
+    },
+    {
+      "name": "hat_header",
+      "note": "The 1x8 HAT female header in the top end's opening (x -10.55..10.55, z 0..2.74), its face flush with the end; open from the back too, under the label strip. Its inner end (y -4.3) lies 0.1 mm inside the filler's column under the HAT end, not on the column's own end (y -4.4).",
+      "material": "header_black",
+      "shapes": [{"box": [-10.45, 10.45, -4.3, 3.95, 0.2, 2.72]}]
+    },
+    {
+      "name": "hat_header_funnels",
+      "material": "header_funnel",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "3.95 + 0.010", "facing": 1, "u_center": 0.0,
+                                "v_center": "(0.2 + 2.72) / 2", "cols": 8, "rows": 1,
+                                "pitch": 2.54, "size": 1.5}}]
+    },
+    {
+      "name": "hat_header_holes",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "3.95 + 0.020", "facing": 1, "u_center": 0.0,
+                                "v_center": "(0.2 + 2.72) / 2", "cols": 8, "rows": 1,
+                                "pitch": 2.54, "size": 0.8}}]
+    },
+    {
+      "name": "mbus_header",
+      "note": "The 2x8 M-BUS female header in the back's slot (x -16.66..-11.28, y -43.38..-22.35).",
+      "material": "header_black",
+      "shapes": [{"box": [-16.55, -11.39, -43.27, -22.46, 0.25, 1.75]}]
+    },
+    {
+      "name": "mbus_header_funnels",
+      "material": "header_funnel",
+      "shapes": [{"quad_grid": {"axis": "z", "at": "0.25 - 0.010", "facing": -1,
+                                "u_center": "(-16.55 + -11.39) / 2", "v_center": "(-43.27 + -22.46) / 2",
+                                "cols": 2, "rows": 8, "pitch": 2.54, "size": 1.5}}]
+    },
+    {
+      "name": "mbus_header_holes",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "z", "at": "0.25 - 0.020", "facing": -1,
+                                "u_center": "(-16.55 + -11.39) / 2", "v_center": "(-43.27 + -22.46) / 2",
+                                "cols": 2, "rows": 8, "pitch": 2.54, "size": 0.8}}]
+    },
+    {
+      "name": "back_label",
+      "note": "The printed back sticker: its main paper in the shell's 0.2 mm recess (x -10.5..18.5), following the recess's outline 0.1 to 0.2 mm inside it (0.03 to 0.05 mm inside it along the top right and the bottom left, and 0.05 mm under the shell's face at x 13.6..16.8 under ON, where the shell's floor under the edge has holes), over the buzzer's six holes (the sticker covers them, as M5Stack's photo of the back shows), the pin-map strip over the HAT header's back (x -10.53..10.53, the opening's walls at 10.58), and the Ext.PORT tab between the screws. What is printed on them is label_legends.",
+      "material": "label",
+      "shapes": [
+        {"prism": {"axis": "z", "range": [0.06, 0.2], "profile": {"polygon": [[-10.3, -4.6], [10.65, -4.6], [10.65, -1.5], [13.0, -3.72], [13.4, -4.13], [13.8, -4.5], [14.2, -4.66], [14.6, -4.81], [15.0, -4.93], [15.6, -4.98], [16.0, -5.03], [16.4, -5.01], [17.0, -4.93], [17.6, -4.86], [17.8, -4.91], [18.0, -5.01], [18.2, -5.16], [18.3, -5.45], [18.4, -5.9], [18.4, -42.2], [18.3, -42.6], [18.05, -42.88], [17.8, -43.09], [17.4, -43.14], [16.8, -43.15], [16.0, -43.075], [15.6, -43.075], [15.2, -43.175], [14.6, -43.3], [14.0, -43.5], [13.6, -43.66], [13.2, -43.89], [12.8, -44.16], [12.4, -44.585], [12.0, -45.01], [11.8, -45.15], [11.4, -45.4], [6.4, -45.4], [6.4, -44.6], [-6.4, -44.6], [-6.4, -45.4], [-9.5, -45.4], [-9.85, -45.3], [-10.15, -45.1], [-10.3, -44.8]]}}},
+        {"box": [-10.53, 10.53, -4.6, 3.93, 0.06, 0.2]},
+        {"box": [-6.3, 6.3, -50.85, -44.6, 0.06, 0.2]}
+      ]
+    },
+    {
+      "name": "label_legends",
+      "note": "What back.svg prints on the back sticker (its back-label group): the HAT pin strip, the maker's block, the dial's disc, the chips and the power chain, the certification marks, the power key's block (Switch G27, POWER ON), USB-C, the MI-BUS table and the Ext.PORT tab, 0.03 mm out from the sticker's face (z 0.06).",
+      "legends": {"drawing": "../svg/back.svg", "face": "back", "plane": "label", "on": "back_label", "z": "0.06 - 0.03", "flatness": 0.004, "rough": 0.5}
+    },
+    {
+      "name": "side_label",
+      "note": "The CORE-INK label on the left side, in its recess (y -40.88..-7.12, z 2..14).",
+      "material": "label",
+      "shapes": [{"prism": {"axis": "x", "range": [-19.85, -19.77],
+                            "profile": {"rounded_rect": [-40.8, -7.2, 2.05, 13.95], "r": 1.0}}}]
+    },
+    {
+      "name": "side_legends",
+      "note": "What left.svg prints on the left side's label (its side-label group): CORE, the cyan dot and INK, 0.03 mm out from the label's face (x -19.85).",
+      "legends": {"drawing": "../svg/left.svg", "face": "left", "plane": "side", "on": "side_label", "x": "-19.85 - 0.03", "flatness": 0.004, "rough": 0.5}
+    },
+    {
+      "name": "screws",
+      "note": "The two screws in the back's counterbores at the bottom end.",
+      "material": "screw",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [-9.0, -48.0], "r": 1.85, "range": [0.9, 1.95]}},
+        {"cylinder": {"axis": "z", "c": [9.0, -48.0], "r": 1.85, "range": [0.9, 1.95]}}
+      ]
+    },
+    {
+      "name": "screw_slots",
+      "material": "hole",
+      "shapes": [
+        {"box": ["-9.0 - 1.1", "-9.0 + 1.1", -48.2, -47.8, 0.88, 0.91]},
+        {"box": ["9.0 - 1.1", "9.0 + 1.1", -48.2, -47.8, 0.88, 0.91]},
+        {"box": ["-9.0 - 0.2", "-9.0 + 0.2", -49.1, -46.9, 0.88, 0.91]},
+        {"box": ["9.0 - 0.2", "9.0 + 0.2", -49.1, -46.9, 0.88, 0.91]}
+      ]
+    }
+  ]
+}

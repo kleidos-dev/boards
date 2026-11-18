@@ -1,0 +1,1994 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# M5StickS3 (K150): every component, every pin and the net it is on, as the
+# vendor's published schematic shows them, plus the Kleidos additions and
+# corrections under "kleidos" (each with its source, marked on the drawing and
+# listed on page 1). Facts only: what connects where and through what. The drawing in this folder (sticks3.kicad_sch) is generated from
+# this file; README.md says how, and how the two are checked against each other.
+#
+# Read from: the four printed pages of the PDF below, and the netlist Altium
+# wrote into the same PDF's bookmarks (Nets -> Pins per sheet), which every
+# connection here matches. Values come from the printed pages only.
+#
+# Conventions:
+# - pins are the vendor's pin numbers (BGA balls as A1, B2...);
+# - net names are the vendor's; a net the vendor left unnamed gets a name of
+#   ours, listed under "renamed" with the name Altium generated for it;
+# - NC is a pin the schematic leaves unconnected;
+# - the daughterboard (page 4) reuses designators the main board has, so its
+#   parts are numbered +100 here (U1 -> U101, CN1 -> CN101...); its own net
+#   names, where they differ from the main board's, are under "aliases".
+
+board: sticks3
+source:
+  title: K150 StickS3 schematic, project V0.6 (2025-11-11)
+  url: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1207/K150_Stick_S3_PRJ_V0.6_20251111_2025_11_17_16_10_24.pdf
+  listed_at: https://docs.m5stack.com/en/core/StickS3
+  read_from: https://web.archive.org/web/20260308045411/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1207/K150_Stick_S3_PRJ_V0.6_20251111_2025_11_17_16_10_24.pdf
+  read_note: The vendor host refused connections from the machine that wrote this file on 2026-11-16; the Wayback Machine copy (captured 2026-03-08) was read instead.
+  sha256: e5272c97bbe52d6937bde89c9c85bfddb7d1d076145e4d2b960ff596c20d0226
+  checked: 2026-11-16
+  pages:
+    1: Block diagram, power network, power modes and I/O map (sheet 02_StickS3_Block diagram)
+    2: Power management (sheet 03_Power_Management)
+    3: MCU core and functions (sheet 04_MUC_Core and Function)
+    4: HAT2 daughterboard with IR and speaker (StickS3_PRJ_FPC_V1.0_20251125, Sheet1)
+  not_drawn: The PDF bookmarks also carry a second daughterboard, StickS3_PRJ_Lite_FPC_V1.0_20251105 (an LED in place of the IR parts), which no page prints; it is not in this file.
+  also_read:
+    - url: https://docs.m5stack.switch-science.com/en/core/StickS3
+      mirror_of: https://docs.m5stack.com/en/core/StickS3
+      used_for: I2C addresses, the PinMap, the HAT2 header pinout, the Grove wire colours, J3's HY2.0-4P part, LED1's colour (green, "Download Mode")
+      checked: 2026-11-17
+    - url: https://github.com/m5stack/M5PM1/blob/main/docs/M5PM1_Datasheet_EN.pdf
+      title: M5PM1 Chip User Manual V1.9 (M5Stack)
+      used_for: the M5PM1's I2C address 0x6E (section I.2 (4), p. 1) (K9); its pin table (Table 1 p. 2, Table 2 p. 3)
+      checked: 2026-11-17
+    - url: https://documentation.espressif.com/esp32-s3-pico-1_datasheet_en.pdf
+      title: ESP32-S3-PICO-1 Series Datasheet v1.2 (Espressif)
+      used_for: SPICS1 (GPIO26) and GPIO33 to GPIO37 go to the N8R8's in-package Octal PSRAM (Table 2-1 note 4, p. 13) (K2 to K7)
+      checked: 2026-11-17
+    - title: Bosch Sensortec BMI270 datasheet BST-BMI270-DS000-08, revision 1.6
+      where: bosch-sensortec.com
+      used_for: address 0x68 with SDO on GND (section 6.5, p. 128); CSB on VDDIO selects I2C (section 6.3, p. 123; Table 17, p. 122) (K10)
+      checked: 2026-11-17
+    - url: https://files.waveshare.com/wiki/common/ES8311.DS.pdf
+      title: Everest Semiconductor ES8311 datasheet, revision 10.0, January 2021 (a distributor's copy)
+      used_for: address 0011 00x with x = CE; CE on AGND gives 0x18 (section 5, p. 8) (K11)
+      checked: 2026-11-17
+    - url: https://datasheet.lcsc.com/datasheet/pdf/a6e12bc064a50d5a017e9740df82b571.pdf
+      title: Awinic AW329XX (AW32901) datasheet V1.1, September 2018 (LCSC's copy, part C401023)
+      sha256: e44d055edf7a46f6a3fe935f898637785299c64036838fe64fd448f3c4c17e48
+      used_for: with OVLO on GND (directly or through 0 ohm) U7 trips at its default 5.95 V rising, 5.83 to 6.07 V, 130 mV hysteresis (p. 1, the VIN_OVLO table p. 2, note 2 p. 4) (K1)
+      checked: 2026-11-17
+    - url: https://datasheet.lcsc.com/datasheet/pdf/1300ae41d9efc3741e3098a9a42c762d.pdf
+      title: JCET CJ3439KDW datasheet, revision D, March 2016 (LCSC's copy, part C99824)
+      sha256: 41cb3b3374616678b096dfab449a544e165c1878e2b6d7b2f0fbf1c70effcb66
+      used_for: Q2's channels and pins, N-channel on 1 S, 2 G, 6 D and P-channel on 3 D, 4 S, 5 G (p. 1, equivalent circuit); the drawing agrees (no entry)
+      checked: 2026-11-17
+    - url: https://www.ickey.cn/static-pf/datasheet/32/b8/e731/32b8e731bcfd31639095bdc5f4bfa1d4.pdf
+      title: Awinic AW8737A datasheet V1.2, July 2022 (a distributor's copy; Awinic lists it at https://www.awinic.com/en/productDetail/AW8737AFCR)
+      sha256: 53f7263c943cb4b63bc587c9e34a6b829ebac80649b6ae8cd8a607d6d5e00d12
+      used_for: U19 pin D3 (PVDD) is the charge pump's output, pin A4 (~SHDN) a one-wire pulse control (p. 3); the drawing agrees (no entry)
+      checked: 2026-11-17
+    - url: https://www.vishay.com/docs/82748/vsop383.pdf
+      title: Vishay VSOP383.. datasheet, document 82748, revision 1.6, 2026-02-09
+      used_for: U101's pinning (1, 4, 5 N.C., 2 VS, 3 OUT, 6, 8 GND, 7 IN for an outside photodiode, p. 2), the output's internal pull-up to VS (p. 1); the drawing agrees (no entry)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-i2c-scan-l3b.md
+      used_for: only 0x18, 0x68 and 0x6E answer on the bus; 0x18 leaves it with L3B (corroborates K9 to K11)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-charge-status-pyg0.md
+      used_for: PYG0 reads 0 while U15 charges the cell and 1 otherwise, with USB in (K8)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-ir-rx-gpio42.md
+      used_for: GPIO42 idles low with GROVE_5V up (no entry; which daughterboard is fitted stays open)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-pmic-rails-and-led.md
+      used_for: the M5PM1 switches LED1 (POWER_CONFIG bit 4); the rails through the M5PM1's ADC (no entry)
+      checked: 2026-11-17
+
+renamed:
+  ANT_FEED: NetC56_2
+  GPIO18_MCLK: NetR47_1
+  GPIO40_SCK: NetR51_2
+  GPIO43_TXD: NetR50_2
+  IR_LED_K: NetQ1_3 (page 4)
+  IR_LED_R: NetR2_1 (page 4)
+  IR_PD: NetU1_7 (page 4)
+  IR_TX_GATE: NetQ1_1 (page 4)
+  LCD_BL_A: Net1_10
+  LCD_BL_K: Net1_12
+  LED1_A: NetLED1_1
+  LED1_K: NetLED1_2
+  Q2B_GATE: NetQ2_5
+  Q3_GATE: NetQ3_G
+  RF_MATCH: NetC60_2
+  SCL_ISO: NetQ4_3
+  SDA_ISO: NetQ5_3
+  U12_EN: NetQ1_D
+  U12_OUT: NetC25_2
+  U15_PROG: NetR12_2
+  U18_ADCVREF: NetC41_2
+  U18_DACVREF: NetC42_2
+  U18_MIC1N: NetC39_2
+  U18_MIC1P: NetC38_2
+  U18_OUTN: NetC43_1
+  U18_OUTP: NetC45_1
+  U18_VMID: NetC40_2
+  U19_C1N: NetC46_1
+  U19_C1P: NetC46_2
+  U19_C2N: NetC47_1
+  U19_C2P: NetC47_2
+  U19_INN: NetR32_1
+  U19_INP: NetR31_1
+  U19_PVDD: NetC37_2
+  U19_VON: NetFB2_1
+  U19_VOP: NetFB1_1
+  U20_LNA_IN: NetC63_2
+  U20_VDD3P3: NetC61_2
+  U21_GND3: NetR26_2
+  U21_OUT: NetR48_1
+  U21_VDD: NetC65_2
+  U2_SW: NetC9_2
+  U7_OVLO: NetR7_2
+  U9_FB: NetR13_1
+  U9_LX: NetL2_2
+  USB_CC1: NetJ1_A5
+  USB_CC2: NetJ1_B5
+  USB_N_R: NetFT1_1
+  USB_P_R: NetFT1_2
+  VBAT_SW: NetQ2_3
+
+aliases:   # daughterboard (page 4) net name -> the main-board net it is mated to through J2/CN101
+  5V_IN: HAT2_5VIN
+  5V_VBUS: GROVE_5V
+  BOOT_OUT: G0_BOOT_OUT
+  EXT_BAT: VBAT_L0
+  LED_RX: G42_IR_RX
+  LED_TX: G46_IR_TX
+  SYS_3V3: 3V3_L2
+
+rails:   # nominal: the voltage the net's name states (3V3, 5V), USB's 5 V for VBUS, the
+         # divider's 5.0 V for BOOST_OUT, the cell U15 (a Li-ion charger) charges for
+         # VBAT_L0; VBUS_L0 is whichever of Internal_5V and VBAT_L0 is up
+  VUSBIN_L0:
+    nominal: "5 V"
+    from: J1
+    what: "USB-C VBUS (A4/B9, B4/A9)."
+    pages: [2]
+  5VIN_L0:
+    nominal: "5 V"
+    from: U7
+    what: "U7 AW32901FCR over-voltage switch from VUSBIN_L0; OVLO on GND (R8 0R), so it trips at 5.95 V, not the printed \"OVP = 5V\" (K1)."
+    enable: nEN tied to GND (always on)
+    pages: [2]
+  Internal_5V:
+    nominal: "5 V"
+    from: "U6, U11, D10"
+    what: U6 CH213K from 5VIN_L0; U11 CH213K from HAT2_5VIN; U12 AW35122FDR + D10 from GROVE_5V.
+    enable: U12 EN pulled up to GROVE_5V by R11 100K and pulled to GND by Q1 while EXT_5V_EN is high
+    pages: [2]
+  VBUS_L0:
+    nominal: "5 V or VBAT_L0"
+    from: "U13, U14"
+    what: U13 CH213K from Internal_5V; U14 CH213K from VBAT_L0. The system supply every regulator below takes.
+    pages: [2, 3]
+  VBAT_L0:
+    nominal: "Li-ion cell"
+    from: J4
+    what: Battery connector; charged by U15 LGS4056 from Internal_5V (190 mA printed).
+    enable: "U15 CE = CHG_EN (M5PM1 pin 2), R18 1M to GND"
+    pages: [2, 4]
+  3V3_L0:
+    nominal: "3.3 V"
+    from: U3
+    what: "U3 CM1801F33 LDO from VBUS_L0 (\"L0 always on\", Iq 0.8 uA printed). Supplies the M5PM1, the power key pull-up and the status LED."
+    enable: EN tied to VIN
+    pages: [2]
+  3V3_L1:
+    nominal: "3.3 V"
+    from: U4
+    what: U4 CM1801F33 LDO from VBUS_L0. Supplies the BMI270.
+    enable: "3V3_L1_EN (M5PM1 pin 18 LDO3V3_EN_PP), R5 1M to GND"
+    pages: [2, 3]
+  3V3_L2:
+    nominal: "3.3 V"
+    from: U2
+    what: "U2 JW5712 buck from VBUS_L0 through L1 2.2 uH. Supplies the ESP32-S3, the I2C pull-ups, the keys and HAT2 pin 9."
+    enable: "3V3_L2_EN (M5PM1 pin 14 DCDC3V3_EN_PP), R2 1M to GND; VSEL1-3 tied to VBUS_L0"
+    pages: [2, 3, 4]
+  3V3_L3B:
+    nominal: "3.3 V"
+    from: U5
+    what: U5 AW35122FDR load switch from 3V3_L2. Supplies the LCD and its backlight.
+    enable: "PYG2_L3B_EN (M5PM1 pin 20), R1 100K to GND"
+    pages: [2, 3]
+  3V3_L3B_AU:
+    nominal: "3.3 V"
+    from: U1
+    what: "U1 CM1801F33 LDO from VBUS_L0. Supplies the ES8311, the microphone and the audio side of the I2C isolator."
+    enable: "PYG2_L3B_EN (M5PM1 pin 20), R1 100K to GND"
+    pages: [2, 3]
+  BOOST_OUT:
+    nominal: "5.0 V"
+    from: U9
+    what: U9 SY7088 boost from VBUS_L0 through L2 2.2 uH; R13 147K / R14 46.4K set 5.0 V (Vout = 1.2 V x (1 + R13/R14)).
+    enable: "EXT_5V_EN (M5PM1 pin 10 BOOST5V_EN_PP), R10 100K to GND"
+    pages: [2]
+  GROVE_5V:
+    nominal: "5 V"
+    from: U8
+    what: U8 TPS22916C load switch from BOOST_OUT; or an outside 5 V fed in at the Grove port (J3 pin 2) or HAT2 pins 6/8.
+    enable: EXT_5V_EN
+    pages: [2, 4]
+  HAT2_5VIN:
+    nominal: "5 V"
+    from: J2
+    what: "Outside 5 V input on HAT2 pins 2/4 (header pin \"5V_IN\")."
+    pages: [2, 4]
+  AGND:
+    nominal: "0 V"
+    from: R35
+    what: "Audio ground, joined to GND at one point through R35 0R."
+    pages: [3]
+
+i2c:
+  bus: {sda: G47_SDA (GPIO47), scl: G48_SCL (GPIO48), pullups: "R39 (SDA) and R38 (SCL), 2.2K/1% to 3V3_L2"}
+  devices:
+    - {ref: U16, part: M5PM1, address: "0x6E", source: "M5PM1 manual V1.9, section I.2 (4), p. 1; docs PinMap \"M5PM1 (0x6e)\"; bench scan 2026-11-17 (K9)"}
+    - {ref: U17, part: BMI270, address: "0x68", source: "BMI270 datasheet rev 1.6, section 6.5, p. 128 (SDO, pin 1, on GND); docs PinMap \"BMI270 (0x68)\"; bench scan 2026-11-17 (K10)"}
+    - {ref: U18, part: ES8311, address: "0x18", source: "ES8311 datasheet rev 10.0, section 5, p. 8 (CE, pin 20, on AGND); docs PinMap \"ES8311 (0x18)\"; reached through Q4/Q5; bench scan 2026-11-17 (K11)"}
+  also_on_bus: J6 pins 6 (SCL) and 8 (SDA), the LCD connector
+  isolator: Q4 (SCL) and Q5 (SDA), 2N7002DW pairs back to back; their gates sit on 3V3_L2 and 3V3_L3B_AU, so the codec side (AUDIO_I2C_SCL/SDA, R33/R34 2.2K/1% to 3V3_L3B_AU) joins the bus only while both rails are up.
+
+esp32_gpio:   # module pin -> GPIO, net, what it does (U20)
+  GPIO0: {pin: 5, net: G0_BOOT_OUT, what: boot strap; R46 10K pull-up to 3V3_L2; driven by M5PM1 BOOT_OUT_OD (strapping pin)}
+  GPIO1: {pin: 6, net: EXT_GPIO1, what: HAT2}
+  GPIO2: {pin: 7, net: EXT_GPIO2, what: HAT2}
+  GPIO3: {pin: 8, net: EXT_GPIO3, what: HAT2 (strapping pin)}
+  GPIO4: {pin: 9, net: EXT_GPIO4, what: HAT2}
+  GPIO5: {pin: 10, net: EXT_GPIO5, what: HAT2}
+  GPIO6: {pin: 11, net: EXT_GPIO6, what: HAT2}
+  GPIO7: {pin: 12, net: EXT_GPIO7, what: HAT2}
+  GPIO8: {pin: 13, net: EXT_GPIO8, what: HAT2}
+  GPIO9: {pin: 14, net: GROVE_G9, what: Grove J3 pin 3 (yellow)}
+  GPIO10: {pin: 15, net: GROVE_G10, what: Grove J3 pin 4 (white)}
+  GPIO11: {pin: 16, net: G11_KEY1, what: "KEY1 (S2), active low"}
+  GPIO12: {pin: 17, net: G12_KEY2, what: "KEY2 (S3), active low"}
+  GPIO13: {pin: 18, net: PYG1_IRQ, what: "M5PM1 IRQ out (pin 17), active low"}
+  GPIO14: {pin: 19, net: G14_I2S_DDAC, what: I2S data to the ES8311 DAC (DSDIN)}
+  GPIO15: {pin: 21, net: G15_I2S_LRCK, what: I2S LRCK}
+  GPIO16: {pin: 22, net: G16_I2S_DADC, what: I2S data from the ES8311 ADC (ASDOUT)}
+  GPIO17: {pin: 23, net: G17_I2S_BCLK, what: I2S BCLK}
+  GPIO18: {pin: 24, net: GPIO18_MCLK, what: I2S MCLK through R47 22R (net G18_I2S_MCLK)}
+  GPIO19: {pin: 25, net: G19_DM, what: USB D- through FT1}
+  GPIO20: {pin: 26, net: G20_DP, what: USB D+ through FT1}
+  GPIO21: {pin: 27, net: G21_LCD_RST, what: LCD reset}
+  GPIO26: {pin: 28, net: "NC", what: "SPICS1: in-package Octal PSRAM (ESP32-S3-PICO-1 datasheet v1.2, Table 2-1 note 4); not available (K2)"}
+  GPIO48: {pin: 36, net: G48_SCL, what: I2C SCL}
+  GPIO47: {pin: 37, net: G47_SDA, what: "I2C SDA (M5PM1, BMI270, LCD connector, ES8311 via Q5)"}
+  GPIO33: {pin: 38, net: "NC", what: "in-package Octal PSRAM (ESP32-S3-PICO-1 datasheet v1.2, Table 2-1 note 4); not available (K3)"}
+  GPIO34: {pin: 39, net: "NC", what: "in-package Octal PSRAM (ESP32-S3-PICO-1 datasheet v1.2, Table 2-1 note 4); not available (K4)"}
+  GPIO35: {pin: 40, net: "NC", what: "in-package Octal PSRAM (ESP32-S3-PICO-1 datasheet v1.2, Table 2-1 note 4); not available (K5)"}
+  GPIO36: {pin: 41, net: "NC", what: "in-package Octal PSRAM (ESP32-S3-PICO-1 datasheet v1.2, Table 2-1 note 4); not available (K6)"}
+  GPIO37: {pin: 42, net: "NC", what: "in-package Octal PSRAM (ESP32-S3-PICO-1 datasheet v1.2, Table 2-1 note 4); not available (K7)"}
+  GPIO38: {pin: 43, net: G38_LCD_BL, what: LCD backlight switch Q6 gate}
+  GPIO39: {pin: 44, net: G39_MOSI, what: LCD SPI data}
+  GPIO40: {pin: 45, net: GPIO40_SCK, what: LCD SPI clock through R51 22R (net G40_SCK)}
+  GPIO41: {pin: 47, net: G41_LCD_CS, what: LCD chip select (R41 10K pull-up to 3V3_L3B)}
+  GPIO42: {pin: 48, net: G42_IR_RX, what: IR receiver (HAT2 J2 pin 17)}
+  GPIO43: {pin: 49, net: GPIO43_TXD, what: "UART0 TX through R50 499R to EXT_GPIO43 (HAT2, TP8)"}
+  GPIO44: {pin: 50, net: EXT_GPIO44, what: "UART0 RX, HAT2 and TP9"}
+  GPIO45: {pin: 51, net: G45_LCD_RS, what: LCD data/command (strapping pin)}
+  GPIO46: {pin: 52, net: G46_IR_TX, what: IR LED driver (HAT2 J2 pin 15) (strapping pin)}
+
+pmic_gpio:   # M5PM1 (U16) GPIOs as the schematic wires them
+  PYG0: {pin: 3, net: PYG0_CHG_STAT, what: "U15 CHRG: 0 while U15 charges (K8)"}
+  PYG1: {pin: 17, net: PYG1_IRQ, what: "IRQ out to GPIO13"}
+  PYG2: {pin: 20, net: PYG2_L3B_EN, what: "U5 and U1 EN: 3V3_L3B, 3V3_L3B_AU"}
+  PYG3: {pin: 13, net: PYG3_SPK_Pulse, what: "U19 ~SHDN (amplifier)"}
+  PYG4: {pin: 12, net: PYG4_IMU_INT, what: "BMI270 INT1"}
+
+pulls:   # every resistor with one end on a rail or ground and the other on a signal
+  - {signal: PYG2_L3B_EN, down: GND, via: R1, value: "100K/1%"}
+  - {signal: 3V3_L2_EN, down: GND, via: R2, value: "1M/1%"}
+  - {signal: USB_CC1, down: GND, via: R3, value: "5.1K/1%"}
+  - {signal: USB_CC2, down: GND, via: R4, value: "5.1K/1%"}
+  - {signal: 3V3_L1_EN, down: GND, via: R5, value: "1M/1%"}
+  - {signal: PYG4_IMU_INT, up: 3V3_L1, via: R6, value: "100K/1%"}
+  - {signal: U7_OVLO, up: VUSBIN_L0, via: R7, value: "NC"}
+  - {signal: U7_OVLO, down: GND, via: R8, value: 0R}
+  - {signal: VBAT_ADC_EN, down: GND, via: R9, value: "10K/1%"}
+  - {signal: EXT_5V_EN, down: GND, via: R10, value: "100K/1%"}
+  - {signal: U12_EN, up: GROVE_5V, via: R11, value: "100K/1%"}
+  - {signal: U15_PROG, down: GND, via: R12, value: "4.7K/1%"}
+  - {signal: U9_FB, up: BOOST_OUT, via: R13, value: "147K/1%"}
+  - {signal: U9_FB, down: GND, via: R14, value: "46.4K/1%"}
+  - {signal: Q2B_GATE, up: VBAT_L0, via: R15, value: "100K/1%"}
+  - {signal: PYG0_CHG_STAT, up: 3V3_L0, via: R16, value: "100K/1%"}
+  - {signal: PWR_BTN, up: 3V3_L0, via: R17, value: "10K/1%"}
+  - {signal: CHG_EN, down: GND, via: R18, value: "1M/1%"}
+  - {signal: 5VIN_ADC, up: 5VIN_L0, via: R19, value: "10K/1%"}
+  - {signal: 5VIN_ADC, down: GND, via: R20, value: "10K/1%"}
+  - {signal: EXT_5V_ADC, up: GROVE_5V, via: R21, value: "10K/1%"}
+  - {signal: EXT_5V_ADC, down: GND, via: R22, value: "10K/1%"}
+  - {signal: VBAT_ADC, down: GND, via: R24, value: "1K/1%"}
+  - {signal: LED1_A, up: 3V3_L0, via: R25, value: "1K/1%"}
+  - {signal: U21_GND3, down: AGND, via: R26, value: 0R}
+  - {signal: LCD_BL_A, up: 3V3_L3B, via: R27, value: "10R/1%"}
+  - {signal: Q3_GATE, down: GND, via: R28, value: "10K/1%"}
+  - {signal: PYG3_SPK_Pulse, down: GND, via: R30, value: "100K/1%"}
+  - {signal: AUDIO_I2C_SCL, up: 3V3_L3B_AU, via: R33, value: "2.2K/1%"}
+  - {signal: AUDIO_I2C_SDA, up: 3V3_L3B_AU, via: R34, value: "2.2K/1%"}
+  - {signal: G12_KEY2, up: 3V3_L2, via: R36, value: "10K/1%"}
+  - {signal: G11_KEY1, up: 3V3_L2, via: R37, value: "10K/1%"}
+  - {signal: G48_SCL, up: 3V3_L2, via: R38, value: "2.2K/1%"}
+  - {signal: G47_SDA, up: 3V3_L2, via: R39, value: "2.2K/1%"}
+  - {signal: SOC_RESET, up: 3V3_L2, via: R40, value: "10K/1%"}
+  - {signal: G41_LCD_CS, up: 3V3_L3B, via: R41, value: "10K/1%"}
+  - {signal: G38_LCD_BL, down: GND, via: R43, value: "5.1K/1%"}
+  - {signal: G0_BOOT_OUT, up: 3V3_L2, via: R46, value: "10K/1%"}
+  - {signal: U21_VDD, up: 3V3_L3B_AU, via: R52, value: "100R/1%"}
+  - {signal: IR_TX_GATE, down: GND, via: R101, value: "10K/1%"}
+  - {signal: G42_IR_RX, down: GND, via: R105, value: "20K/1%"}
+
+components:
+  C1:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": VBUS_L0
+      "2": GND
+  C2:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBUS_L0
+  C3:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBUS_L0
+  C4:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": VBUS_L0
+      "2": GND
+  C5:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBUS_L0
+  C6:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": 3V3_L3B_AU
+      "2": GND
+  C7:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C8:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": 3V3_L1
+      "2": GND
+  C9:
+    value: 1nF/50V
+    page: 2
+    pins:
+      "1": GND
+      "2": U2_SW
+  C10:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L0
+  C11:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C12:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C13:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": VUSBIN_L0
+      "2": GND
+  C14:
+    value: 1uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L3B
+  C15:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": BOOST_OUT
+  C16:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBUS_L0
+  C17:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBUS_L0
+  C18:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBUS_L0
+  C19:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": 5VIN_L0
+      "2": GND
+  C20:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": GROVE_5V
+  C21:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": GROVE_5V
+  C22:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": Internal_5V
+      "2": GND
+  C23:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": BOOST_OUT
+  C24:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": BOOST_OUT
+  C25:
+    value: 22uF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": U12_OUT
+  C26:
+    value: 22uF/16V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBAT_L0
+  C27:
+    value: 10nF/50V
+    page: 2
+    pins:
+      "1": GND
+      "2": PWR_BTN
+  C28:
+    value: 100nF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": EXT_5V_ADC
+  C29:
+    value: 100nF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 5VIN_ADC
+  C30:
+    value: 100nF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": VBAT_ADC
+  C31:
+    value: 100nF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L0
+  C32:
+    value: 10uF/10V
+    page: 3
+    pins:
+      "1": AGND
+      "2": 3V3_L3B_AU
+  C33:
+    value: 100nF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L1
+  C34:
+    value: 10uF/10V
+    page: 3
+    pins:
+      "1": AGND
+      "2": 3V3_L3B_AU
+  C35:
+    value: 100nF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L1
+  C36:
+    value: 22uF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": VBUS_L0
+  C37:
+    value: 22uF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": U19_PVDD
+  C38:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": MIC1_P
+      "2": U18_MIC1P
+  C39:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": MIC1_N
+      "2": U18_MIC1N
+  C40:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": AGND
+      "2": U18_VMID
+  C41:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": AGND
+      "2": U18_ADCVREF
+  C42:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": AGND
+      "2": U18_DACVREF
+  C43:
+    value: 33nF/25V
+    page: 3
+    pins:
+      "1": U18_OUTN
+      "2": DAC_L_N
+  C44:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": AGND
+      "2": 3V3_L3B_AU
+  C45:
+    value: 33nF/25V
+    page: 3
+    pins:
+      "1": U18_OUTP
+      "2": DAC_L_P
+  C46:
+    value: 2.2uF/10V
+    page: 3
+    pins:
+      "1": U19_C1N
+      "2": U19_C1P
+  C47:
+    value: 2.2uF/10V
+    page: 3
+    pins:
+      "1": U19_C2N
+      "2": U19_C2P
+  C48:
+    value: 100pF/50V
+    page: 3
+    pins:
+      "1": GND
+      "2": SPK_P
+  C49:
+    value: 100pF/50V
+    page: 3
+    pins:
+      "1": GND
+      "2": SPK_N
+  C50:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": SOC_RESET
+      "2": GND
+  C51:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": 3V3_L3B
+      "2": GND
+  C52:
+    value: 1nF/25V
+    page: 3
+    pins:
+      "1": G11_KEY1
+      "2": GND
+  C53:
+    value: 1nF/25V
+    page: 3
+    pins:
+      "1": G12_KEY2
+      "2": GND
+  C54:
+    value: 1uF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C55:
+    value: 100nF/16V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C56:
+    value: NC(TBD)
+    page: 3
+    note: "Not fitted (NC, TBD)."
+    pins:
+      "1": GND
+      "2": ANT_FEED
+  C57:
+    value: 22uF/16V
+    page: 3
+    pins:
+      "1": 3V3_L2
+      "2": GND
+  C58:
+    value: 100nF/10V
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L0
+  C59:
+    value: 22uF/16V
+    page: 3
+    pins:
+      "1": 3V3_L2
+      "2": GND
+  C60:
+    value: NC(TBD)
+    page: 3
+    note: "Not fitted (NC, TBD)."
+    pins:
+      "1": GND
+      "2": RF_MATCH
+  C61:
+    value: 100nF/16V
+    page: 3
+    pins:
+      "1": GND
+      "2": U20_VDD3P3
+  C62:
+    value: 22uF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C63:
+    value: NC(TBD)
+    page: 3
+    note: "Not fitted (NC, TBD)."
+    pins:
+      "1": GND
+      "2": U20_LNA_IN
+  C64:
+    value: 100nF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C65:
+    value: 100nF/10V
+    page: 3
+    pins:
+      "1": AGND
+      "2": U21_VDD
+  C66:
+    value: 10nF/10V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C67:
+    value: 22uF/10V
+    page: 3
+    pins:
+      "1": 3V3_L2
+      "2": GND
+  C68:
+    value: 100nF/25V
+    page: 3
+    pins:
+      "1": GND
+      "2": 3V3_L2
+  C69:
+    value: NC(TBD)
+    page: 3
+    note: "Not fitted (NC, TBD)."
+    pins:
+      "1": GND
+      "2": RF_MATCH
+  C102:
+    value: 10uF/10V
+    page: 4
+    note: Vendor designator C2.
+    pins:
+      "1": GND
+      "2": GROVE_5V
+  CN101:
+    value: AXE524124 (BTB)
+    page: 4
+    note: "Vendor designator CN1: the daughterboard plug that mates with J2. Its mounting tabs (TH) are on GND."
+    pins:
+      "1": HAT2_5VIN
+      "2": VBAT_L0
+      "3": HAT2_5VIN
+      "4": VBAT_L0
+      "5": GROVE_5V
+      "6": GND
+      "7": GROVE_5V
+      "8": GND
+      "9": G0_BOOT_OUT
+      "10": 3V3_L2
+      "11": EXT_GPIO4
+      "12": SPK_P
+      "13": EXT_GPIO5
+      "14": SPK_N
+      "15": EXT_GPIO6
+      "16": G46_IR_TX
+      "17": EXT_GPIO7
+      "18": G42_IR_RX
+      "19": EXT_GPIO8
+      "20": EXT_GPIO1
+      "21": EXT_GPIO43
+      "22": EXT_GPIO2
+      "23": EXT_GPIO44
+      "24": EXT_GPIO3
+      TH: GND
+  CN102:
+    value: "2x8 female header, 2.54 mm, 8.5 mm"
+    page: 4
+    note: "Vendor designator CN2: the HAT2 header on the top of the stick (pins 1-8 one row, 9-16 the other, counted round)."
+    pins:
+      "1": GND
+      "2": GROVE_5V
+      "3": G0_BOOT_OUT
+      "4": EXT_GPIO1
+      "5": EXT_GPIO8
+      "6": VBAT_L0
+      "7": 3V3_L2
+      "8": HAT2_5VIN
+      "9": EXT_GPIO3
+      "10": EXT_GPIO2
+      "11": EXT_GPIO44
+      "12": EXT_GPIO43
+      "13": EXT_GPIO7
+      "14": EXT_GPIO6
+      "15": EXT_GPIO4
+      "16": EXT_GPIO5
+  D1:
+    value: ESD5311
+    page: 2
+    pins:
+      "1": USB_N
+      "2": GND
+  D2:
+    value: ESD5311
+    page: 2
+    pins:
+      "1": GND
+      "2": USB_P
+  D10:
+    value: RB162VAM-20TR
+    page: 2
+    note: Drawn with its anode (pin 1) on U12 OUT and its cathode (pin 2) on Internal_5V.
+    pins:
+      "1": U12_OUT
+      "2": Internal_5V
+  FB1:
+    value: "120R@100MHz"
+    page: 3
+    pins:
+      "1": U19_VOP
+      "2": SPK_P
+  FB2:
+    value: "120R@100MHz"
+    page: 3
+    pins:
+      "1": U19_VON
+      "2": SPK_N
+  FT1:
+    value: SDMM0806H-2-900T
+    page: 3
+    pins:
+      "1": USB_N_R   # A_IN
+      "2": USB_P_R   # B_IN
+      "3": G19_DM   # A_OUT
+      "4": G20_DP   # B_OUT
+  J1:
+    value: USB_C_16P_Horizontal
+    page: 2
+    pins:
+      A1/B12: GND
+      A4/B9: VUSBIN_L0
+      A5: USB_CC1
+      A6: USB_P
+      A7: USB_N
+      A8: "NC"
+      B1/A12: GND
+      B4/A9: VUSBIN_L0
+      B5: USB_CC2
+      B6: USB_P
+      B7: USB_N
+      B8: "NC"
+      MH1: GND
+      MH2: GND
+      MH3: GND
+      MH4: GND
+  J2:
+    value: HAT2_BTB (28 pins)
+    page: 2
+    note: HAT2 board-to-board socket on the main board; it mates with CN101 on the daughterboard.
+    pins:
+      "1": VBAT_L0
+      "2": HAT2_5VIN
+      "3": VBAT_L0
+      "4": HAT2_5VIN
+      "5": GND
+      "6": GROVE_5V
+      "7": GND
+      "8": GROVE_5V
+      "9": 3V3_L2
+      "10": G0_BOOT_OUT
+      "11": SPK_P
+      "12": EXT_GPIO4
+      "13": SPK_N
+      "14": EXT_GPIO5
+      "15": G46_IR_TX
+      "16": EXT_GPIO6
+      "17": G42_IR_RX
+      "18": EXT_GPIO7
+      "19": EXT_GPIO1
+      "20": EXT_GPIO8
+      "21": EXT_GPIO2
+      "22": EXT_GPIO43
+      "23": EXT_GPIO3
+      "24": EXT_GPIO44
+      "25": GND
+      "26": GND
+      "27": GND
+      "28": GND
+  J3:
+    value: CON4
+    note: "Grove port. The print says only CON4; the vendor's docs page calls it an HY2.0-4P interface."
+    page: 2
+    pins:
+      "1": GND
+      "2": GROVE_5V
+      "3": GROVE_G9
+      "4": GROVE_G10
+  J4:
+    value: Battery (2 pins)
+    page: 2
+    pins:
+      "1": VBAT_L0
+      "2": GND
+  J5:
+    value: ANT_PAD
+    page: 3
+    pins:
+      "1": ANT_FEED
+      "2": GND
+  J6:
+    value: AXE512127D (LCD BTB)
+    page: 3
+    note: The print gives this connector no designator; J6 is ours.
+    pins:
+      "1": G41_LCD_CS
+      "2": GND
+      "3": 3V3_L3B
+      "4": "NC"
+      "5": G40_SCK
+      "6": G48_SCL
+      "7": G39_MOSI
+      "8": G47_SDA
+      "9": G45_LCD_RS
+      "10": LCD_BL_A
+      "11": G21_LCD_RST
+      "12": LCD_BL_K
+      "13": GND
+      "14": GND
+      "15": GND
+      "16": GND
+  L1:
+    value: 2.2uH FTC121065S2R2MBCA
+    page: 2
+    pins:
+      "1": U2_SW
+      "2": 3V3_L2
+  L2:
+    value: 2.2uH
+    page: 2
+    pins:
+      "1": VBUS_L0
+      "2": U9_LX
+  L3:
+    value: 0R(TBD)
+    page: 3
+    note: 0R placeholder (TBD).
+    pins:
+      "1": ANT_FEED
+      "2": RF_MATCH
+  L4:
+    value: 2nH
+    page: 3
+    pins:
+      "1": U20_VDD3P3
+      "2": 3V3_L2
+  L5:
+    value: 0R(TBD)
+    page: 3
+    note: 0R placeholder (TBD).
+    pins:
+      "1": RF_MATCH
+      "2": U20_LNA_IN
+  LED1:
+    value: LED
+    page: 2
+    note: "Pin 1 (anode) through R25 to 3V3_L0, pin 2 (cathode) to Q3 drain. The print gives no colour; the vendor's docs page calls it green (\"Download Mode\"), and it is green, inside the case, on the owner's unit (observed 2026-11-17)."
+    pins:
+      "1": LED1_A
+      "2": LED1_K
+  Q1:
+    value: 2N7002T
+    page: 2
+    pins:
+      D: U12_EN
+      G: EXT_5V_EN
+      S: GND
+  Q2:
+    value: CJ3439KDW
+    page: 2
+    note: "Dual MOSFET: an N-channel (Q2A: pins 1 S, 2 G, 6 D) and a P-channel (Q2B: pins 3 D, 4 S, 5 G), as the CJ3439KDW datasheet rev D gives them (p. 1, equivalent circuit)."
+    pins:
+      "1": GND
+      "2": VBAT_ADC_EN
+      "3": VBAT_SW
+      "4": VBAT_L0
+      "5": Q2B_GATE
+      "6": Q2B_GATE
+  Q3:
+    value: 2N7002T
+    page: 2
+    pins:
+      D: LED1_K
+      G: Q3_GATE
+      S: GND
+  Q4:
+    value: 2N7002DW
+    page: 3
+    note: "Dual N-MOSFET (Q4A: 1 S, 2 G, 6 D; Q4B: 3 D, 4 S, 5 G)."
+    pins:
+      "1": AUDIO_I2C_SCL
+      "2": 3V3_L3B_AU
+      "3": SCL_ISO
+      "4": G48_SCL
+      "5": 3V3_L2
+      "6": SCL_ISO
+  Q5:
+    value: 2N7002DW
+    page: 3
+    note: "Dual N-MOSFET (Q5A: 1 S, 2 G, 6 D; Q5B: 3 D, 4 S, 5 G)."
+    pins:
+      "1": G47_SDA
+      "2": 3V3_L2
+      "3": SDA_ISO
+      "4": AUDIO_I2C_SDA
+      "5": 3V3_L3B_AU
+      "6": SDA_ISO
+  Q6:
+    value: 2N7002T
+    page: 3
+    pins:
+      D: LCD_BL_K
+      G: G38_LCD_BL
+      S: GND
+  Q101:
+    value: N-MOSFET (part not printed)
+    page: 4
+    note: "Vendor designator Q1: pin 1 gate, pin 2 source, pin 3 drain."
+    pins:
+      "1": IR_TX_GATE
+      "2": GND
+      "3": IR_LED_K
+  R1:
+    value: "100K/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": PYG2_L3B_EN
+  R2:
+    value: "1M/1%"
+    page: 2
+    pins:
+      "1": 3V3_L2_EN
+      "2": GND
+  R3:
+    value: "5.1K/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": USB_CC1
+  R4:
+    value: "5.1K/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": USB_CC2
+  R5:
+    value: "1M/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": 3V3_L1_EN
+  R6:
+    value: "100K/1%"
+    page: 3
+    pins:
+      "1": PYG4_IMU_INT
+      "2": 3V3_L1
+  R7:
+    value: "NC"
+    page: 2
+    note: Not fitted (NC).
+    pins:
+      "1": VUSBIN_L0
+      "2": U7_OVLO
+  R8:
+    value: 0R
+    page: 2
+    pins:
+      "1": U7_OVLO
+      "2": GND
+  R9:
+    value: "10K/1%"
+    page: 2
+    pins:
+      "1": VBAT_ADC_EN
+      "2": GND
+  R10:
+    value: "100K/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": EXT_5V_EN
+  R11:
+    value: "100K/1%"
+    page: 2
+    pins:
+      "1": GROVE_5V
+      "2": U12_EN
+  R12:
+    value: "4.7K/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": U15_PROG
+  R13:
+    value: "147K/1%"
+    page: 2
+    pins:
+      "1": U9_FB
+      "2": BOOST_OUT
+  R14:
+    value: "46.4K/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": U9_FB
+  R15:
+    value: "100K/1%"
+    page: 2
+    pins:
+      "1": VBAT_L0
+      "2": Q2B_GATE
+  R16:
+    value: "100K/1%"
+    page: 2
+    pins:
+      "1": PYG0_CHG_STAT
+      "2": 3V3_L0
+  R17:
+    value: "10K/1%"
+    page: 2
+    pins:
+      "1": PWR_BTN
+      "2": 3V3_L0
+  R18:
+    value: "1M/1%"
+    page: 2
+    pins:
+      "1": GND
+      "2": CHG_EN
+  R19:
+    value: "10K/1%"
+    page: 2
+    pins:
+      "1": 5VIN_L0
+      "2": 5VIN_ADC
+  R20:
+    value: "10K/1%"
+    page: 2
+    pins:
+      "1": 5VIN_ADC
+      "2": GND
+  R21:
+    value: "10K/1%"
+    page: 2
+    pins:
+      "1": GROVE_5V
+      "2": EXT_5V_ADC
+  R22:
+    value: "10K/1%"
+    page: 2
+    pins:
+      "1": EXT_5V_ADC
+      "2": GND
+  R23:
+    value: "1K/1%"
+    page: 2
+    pins:
+      "1": VBAT_SW
+      "2": VBAT_ADC
+  R24:
+    value: "1K/1%"
+    page: 2
+    pins:
+      "1": VBAT_ADC
+      "2": GND
+  R25:
+    value: "1K/1%"
+    page: 2
+    pins:
+      "1": LED1_A
+      "2": 3V3_L0
+  R26:
+    value: 0R
+    page: 3
+    pins:
+      "1": AGND
+      "2": U21_GND3
+  R27:
+    value: "10R/1%"
+    page: 3
+    pins:
+      "1": 3V3_L3B
+      "2": LCD_BL_A
+  R28:
+    value: "10K/1%"
+    page: 2
+    pins:
+      "1": Q3_GATE
+      "2": GND
+  R29:
+    value: "0R/1%"
+    page: 2
+    pins:
+      "1": PY_STATUS_LED
+      "2": Q3_GATE
+  R30:
+    value: "100K/1%"
+    page: 3
+    pins:
+      "1": PYG3_SPK_Pulse
+      "2": GND
+  R31:
+    value: "10K/1%"
+    page: 3
+    pins:
+      "1": U19_INP
+      "2": DAC_L_P
+  R32:
+    value: "10K/1%"
+    page: 3
+    pins:
+      "1": U19_INN
+      "2": DAC_L_N
+  R33:
+    value: "2.2K/1%"
+    page: 3
+    pins:
+      "1": 3V3_L3B_AU
+      "2": AUDIO_I2C_SCL
+  R34:
+    value: "2.2K/1%"
+    page: 3
+    pins:
+      "1": 3V3_L3B_AU
+      "2": AUDIO_I2C_SDA
+  R35:
+    value: 0R
+    page: 3
+    pins:
+      "1": GND
+      "2": AGND
+  R36:
+    value: "10K/1%"
+    page: 3
+    pins:
+      "1": G12_KEY2
+      "2": 3V3_L2
+  R37:
+    value: "10K/1%"
+    page: 3
+    pins:
+      "1": G11_KEY1
+      "2": 3V3_L2
+  R38:
+    value: "2.2K/1%"
+    page: 3
+    pins:
+      "1": G48_SCL
+      "2": 3V3_L2
+  R39:
+    value: "2.2K/1%"
+    page: 3
+    pins:
+      "1": G47_SDA
+      "2": 3V3_L2
+  R40:
+    value: "10K/1%"
+    page: 3
+    pins:
+      "1": 3V3_L2
+      "2": SOC_RESET
+  R41:
+    value: "10K/1%"
+    page: 3
+    pins:
+      "1": 3V3_L3B
+      "2": G41_LCD_CS
+  R43:
+    value: "5.1K/1%"
+    page: 3
+    pins:
+      "1": GND
+      "2": G38_LCD_BL
+  R44:
+    value: "22R/1%"
+    page: 3
+    pins:
+      "1": USB_P_R
+      "2": USB_P
+  R45:
+    value: "22R/1%"
+    page: 3
+    pins:
+      "1": USB_N_R
+      "2": USB_N
+  R46:
+    value: "10K/1%"
+    page: 3
+    pins:
+      "1": 3V3_L2
+      "2": G0_BOOT_OUT
+  R47:
+    value: "22R/1%"
+    page: 3
+    pins:
+      "1": GPIO18_MCLK
+      "2": G18_I2S_MCLK
+  R48:
+    value: 0R
+    page: 3
+    pins:
+      "1": U21_OUT
+      "2": MIC1_P
+  R49:
+    value: 0R
+    page: 3
+    pins:
+      "1": U21_GND3
+      "2": MIC1_N
+  R50:
+    value: "499R/1%"
+    page: 3
+    pins:
+      "1": EXT_GPIO43
+      "2": GPIO43_TXD
+  R51:
+    value: "22R/1%"
+    page: 3
+    pins:
+      "1": G40_SCK
+      "2": GPIO40_SCK
+  R52:
+    value: "100R/1%"
+    page: 3
+    pins:
+      "1": 3V3_L3B_AU
+      "2": U21_VDD
+  R101:
+    value: "10K/1%"
+    page: 4
+    note: Vendor designator R1.
+    pins:
+      "1": IR_TX_GATE
+      "2": GND
+  R102:
+    value: "10R/1%"
+    page: 4
+    note: Vendor designator R2.
+    pins:
+      "1": IR_LED_R
+      "2": IR_LED_K
+  R103:
+    value: "22R/1%"
+    page: 4
+    note: Vendor designator R3.
+    pins:
+      "1": G46_IR_TX
+      "2": IR_TX_GATE
+  R105:
+    value: "20K/1%"
+    page: 4
+    note: Vendor designator R5.
+    pins:
+      "1": G42_IR_RX
+      "2": GND
+  R106:
+    value: "10K/1%"
+    page: 4
+    note: Vendor designator R6.
+    pins:
+      "1": RX
+      "2": G42_IR_RX
+  S1:
+    value: SW (power key)
+    page: 2
+    pins:
+      "1": PWR_BTN
+      "2": GND
+  S2:
+    value: SW (KEY1)
+    page: 3
+    pins:
+      "1": G11_KEY1
+      "2": GND
+  S3:
+    value: SW (KEY2)
+    page: 3
+    pins:
+      "1": G12_KEY2
+      "2": GND
+  TP1:
+    value: TP
+    page: 2
+    pins:
+      "1": GND
+  TP2:
+    value: TP
+    page: 2
+    pins:
+      "1": PY_STATUS_LED
+  TP3:
+    value: TP
+    page: 2
+    pins:
+      "1": G0_BOOT_OUT
+  TP4:
+    value: TP
+    page: 2
+    pins:
+      "1": 3V3_L2
+  TP5:
+    value: TP
+    page: 2
+    pins:
+      "1": 3V3_L0
+  TP6:
+    value: TP
+    page: 2
+    pins:
+      "1": SOC_RESET
+  TP8:
+    value: TP
+    page: 3
+    pins:
+      "1": EXT_GPIO43
+  TP9:
+    value: TP
+    page: 3
+    pins:
+      "1": EXT_GPIO44
+  TVS1:
+    value: ESD5311
+    page: 2
+    pins:
+      "1": GROVE_G10
+      "2": GND
+  TVS2:
+    value: ESD5311
+    page: 2
+    pins:
+      "1": GROVE_G9
+      "2": GND
+  U1:
+    value: CM1801F33
+    page: 2
+    pins:
+      "0": GND   # GND_EP
+      "1": 3V3_L3B_AU   # OUT
+      "2": GND   # GND
+      "3": PYG2_L3B_EN   # EN
+      "4": VBUS_L0   # VIN
+  U2:
+    value: JW5712
+    page: 2
+    pins:
+      A1: U2_SW   # SW
+      A2: VBUS_L0   # VIN
+      B1: 3V3_L2_EN   # EN
+      B2: GND   # GND
+      C1: VBUS_L0   # VSEL1
+      C2: 3V3_L2   # VOS
+      D1: VBUS_L0   # VSEL2
+      D2: VBUS_L0   # VSEL3
+  U3:
+    value: CM1801F33
+    page: 2
+    pins:
+      "0": GND   # GND_EP
+      "1": 3V3_L0   # OUT
+      "2": GND   # GND
+      "3": VBUS_L0   # EN
+      "4": VBUS_L0   # VIN
+  U4:
+    value: CM1801F33
+    page: 2
+    pins:
+      "0": GND   # GND_EP
+      "1": 3V3_L1   # OUT
+      "2": GND   # GND
+      "3": 3V3_L1_EN   # EN
+      "4": VBUS_L0   # VIN
+  U5:
+    value: AW35122FDR
+    page: 2
+    pins:
+      A1: 3V3_L3B   # OUT
+      A2: 3V3_L2   # IN
+      B1: GND   # GND
+      B2: PYG2_L3B_EN   # EN
+  U6:
+    value: CH213K
+    page: 2
+    pins:
+      "1": GND   # GND
+      "2": Internal_5V   # VOUT
+      "3": 5VIN_L0   # VIN
+  U7:
+    value: AW32901FCR
+    page: 2
+    pins:
+      A1: GND   # nEN
+      A2: 5VIN_L0   # OUT
+      A3: 5VIN_L0   # OUT
+      A4: GND   # GND
+      B1: "NC"   # nACOK
+      B2: 5VIN_L0   # OUT
+      B3: VUSBIN_L0   # IN
+      B4: GND   # GND
+      C1: U7_OVLO   # OVLO
+      C2: VUSBIN_L0   # IN
+      C3: VUSBIN_L0   # IN
+      C4: GND   # GND
+  U8:
+    value: TPS22916CNYFPR
+    page: 2
+    pins:
+      A1: GROVE_5V   # OUT
+      A2: BOOST_OUT   # IN
+      B1: GND   # GND
+      B2: EXT_5V_EN   # EN
+  U9:
+    value: SY7088
+    page: 2
+    pins:
+      "1": U9_LX   # LX
+      "2": U9_LX   # LX
+      "3": EXT_5V_EN   # EN
+      "4": GND   # SGND
+      "5": U9_FB   # FB
+      "6": VBUS_L0   # IN
+      "7": BOOST_OUT   # OUT
+      "8": BOOST_OUT   # OUT
+      "9": GND   # PGND
+  U11:
+    value: CH213K
+    page: 2
+    pins:
+      "1": GND   # GND
+      "2": Internal_5V   # VOUT
+      "3": HAT2_5VIN   # VIN
+  U12:
+    value: AW35122FDR
+    page: 2
+    pins:
+      A1: U12_OUT   # OUT
+      A2: GROVE_5V   # IN
+      B1: GND   # GND
+      B2: U12_EN   # EN
+  U13:
+    value: CH213K
+    page: 2
+    pins:
+      "1": GND   # GND
+      "2": VBUS_L0   # VOUT
+      "3": Internal_5V   # VIN
+  U14:
+    value: CH213K
+    page: 2
+    pins:
+      "1": GND   # GND
+      "2": VBUS_L0   # VOUT
+      "3": VBAT_L0   # VIN
+  U15:
+    value: LGS4056
+    page: 2
+    note: "Part name from the block diagram (page 1); page 2 prints no value. \"Charge current 190 mA\" is printed beside it."
+    pins:
+      "1": GND   # TEMP
+      "2": U15_PROG   # PROG
+      "3": GND   # GND
+      "4": Internal_5V   # VCC
+      "5": VBAT_L0   # BAT
+      "6": "NC"   # DONE
+      "7": PYG0_CHG_STAT   # CHRG
+      "8": CHG_EN   # CE
+      "9": GND   # EP
+  U16:
+    value: M5PM1 (PY32L020F15U6)
+    page: 2
+    note: M5PM1 power-management MCU; the part (PY32L020F15U6) is named on page 1.
+    pins:
+      "1": VBAT_ADC_EN   # BAT_ADC_EN_OD
+      "2": CHG_EN   # CHG_EN_PP
+      "3": PYG0_CHG_STAT   # G0_WAKEin(INT0/2)_IRQout_NEOPIXEL
+      "4": GND   # GND
+      "5": PY_STATUS_LED   # LED_EN_PP
+      "6": 3V3_L0   # VCC
+      "7": PWR_BTN   # BTN_PU
+      "8": G47_SDA   # I2C_SDA_OD
+      "9": G48_SCL   # I2C_SCL_OD
+      "10": EXT_5V_EN   # BOOST5V_EN_PP
+      "11": VBAT_ADC   # BAT_ADC_IN
+      "12": PYG4_IMU_INT   # G4_WAKEin(INT3/4)_IRQout_PWM
+      "13": PYG3_SPK_Pulse   # G3_WAKEin(INT3/4)_IRQout_PWM
+      "14": 3V3_L2_EN   # DCDC3V3_EN_PP
+      "15": G0_BOOT_OUT   # BOOT_OUT_OD
+      "16": 5VIN_ADC   # 5VIN_ADC_IN
+      "17": PYG1_IRQ   # G1_IRQout_ADC
+      "18": 3V3_L1_EN   # LDO3V3_EN_PP
+      "19": EXT_5V_ADC   # 5VOUT_ADC_IN
+      "20": PYG2_L3B_EN   # G2_WAKEin(INT0/2)_IRQout_ADC
+      "21": GND   # GND
+  U17:
+    value: BMI270
+    page: 3
+    pins:
+      "1": GND   # SDO
+      "2": "NC"   # ASDx
+      "3": "NC"   # ASCx
+      "4": PYG4_IMU_INT   # INT1
+      "5": 3V3_L1   # VDDIO
+      "6": GND   # GNDIO
+      "7": GND   # GND
+      "8": 3V3_L1   # VDD
+      "9": "NC"   # INT2
+      "10": "NC"   # OCSB
+      "11": "NC"   # OSDO
+      "12": 3V3_L1   # CSB
+      "13": G48_SCL   # SCx
+      "14": G47_SDA   # SDx
+  U18:
+    value: ES8311
+    page: 3
+    pins:
+      "0": AGND   # EPAD
+      "1": AUDIO_I2C_SCL   # CCLK
+      "2": G18_I2S_MCLK   # MCLK
+      "3": 3V3_L3B_AU   # PVDD
+      "4": 3V3_L3B_AU   # DVDD
+      "5": AGND   # DGND
+      "6": G17_I2S_BCLK   # SCLK/DMIC_SCL
+      "7": G16_I2S_DADC   # ASDOUT
+      "8": G15_I2S_LRCK   # LRCK
+      "9": G14_I2S_DDAC   # DSDIN
+      "10": AGND   # AGND
+      "11": 3V3_L3B_AU   # AVDD
+      "12": U18_OUTP   # OUTP
+      "13": U18_OUTN   # OUTN
+      "14": U18_DACVREF   # DACVREF
+      "15": U18_ADCVREF   # ADCVREF
+      "16": U18_VMID   # VMID
+      "17": U18_MIC1N   # MIC1N
+      "18": U18_MIC1P   # MIC1P/DMIC_SDA
+      "19": AUDIO_I2C_SDA   # CDATA
+      "20": AGND   # CE
+  U19:
+    value: AW8737A
+    page: 3
+    pins:
+      A1: U19_INP   # INP
+      A2: U19_INN   # INN
+      A3: VBUS_L0   # VDD
+      A4: PYG3_SPK_Pulse   # ~SHDN
+      B1: U19_C2N   # C2N
+      B2: U19_C2N   # C2N
+      B3: VBUS_L0   # VDD
+      B4: U19_VOP   # VOP
+      C1: U19_C1N   # C1N
+      C2: GND   # GND
+      C3: GND   # GND
+      C4: GND   # GND
+      D1: U19_C2P   # C2P
+      D2: U19_C1P   # C1P
+      D3: U19_PVDD   # PVDD
+      D4: U19_VON   # VON
+  U20:
+    value: ESP32-S3-PICO-1-N8R8
+    page: 3
+    note: Module part from page 1 (ESP32-S3-PICO-1-N8R8); page 3 prints ESP32-S3-PICO.
+    pins:
+      "0": GND   # GND_PAD
+      "1": U20_LNA_IN   # LNA_IN
+      "2": U20_VDD3P3   # VDD3P3
+      "3": U20_VDD3P3   # VDD3P3
+      "4": SOC_RESET   # CHIP_PU
+      "5": G0_BOOT_OUT   # GPIO0
+      "6": EXT_GPIO1   # GPIO1
+      "7": EXT_GPIO2   # GPIO2
+      "8": EXT_GPIO3   # GPIO3
+      "9": EXT_GPIO4   # GPIO4
+      "10": EXT_GPIO5   # GPIO5
+      "11": EXT_GPIO6   # GPIO6
+      "12": EXT_GPIO7   # GPIO7
+      "13": EXT_GPIO8   # GPIO8
+      "14": GROVE_G9   # GPIO9
+      "15": GROVE_G10   # GPIO10
+      "16": G11_KEY1   # GPIO11
+      "17": G12_KEY2   # GPIO12
+      "18": PYG1_IRQ   # GPIO13
+      "19": G14_I2S_DDAC   # GPIO14
+      "20": 3V3_L2   # VDD3P3_RTC
+      "21": G15_I2S_LRCK   # GPIO15/XTAL_32K_P
+      "22": G16_I2S_DADC   # GPIO16/XTAL_32K_N
+      "23": G17_I2S_BCLK   # GPIO17
+      "24": GPIO18_MCLK   # GPIO18
+      "25": G19_DM   # GPIO19
+      "26": G20_DP   # GPIO20
+      "27": G21_LCD_RST   # GPIO21
+      "28": "NC"   # GPIO26/SPICS1
+      "29": "NC"   # VDD_SPI
+      "30": "NC"   # SPIHD
+      "31": "NC"   # SPIWP
+      "32": "NC"   # SPICS0
+      "33": "NC"   # SPICLK
+      "34": "NC"   # SPIQ
+      "35": "NC"   # SPID
+      "36": G48_SCL   # GPIO48/SPICLK_N
+      "37": G47_SDA   # GPIO47/SPICLK_P
+      "38": "NC"   # GPIO33
+      "39": "NC"   # GPIO34
+      "40": "NC"   # GPIO35
+      "41": "NC"   # GPIO36
+      "42": "NC"   # GPIO37
+      "43": G38_LCD_BL   # GPIO38
+      "44": G39_MOSI   # GPIO39/MTCK
+      "45": GPIO40_SCK   # GPIO40/MTDO
+      "46": 3V3_L2   # VDD3P3_CPU
+      "47": G41_LCD_CS   # GPIO41/MTDI
+      "48": G42_IR_RX   # GPIO42/MTMS
+      "49": GPIO43_TXD   # GPIO43/U0TXD
+      "50": EXT_GPIO44   # GPIO44/U0RXD
+      "51": G45_LCD_RS   # GPIO45
+      "52": G46_IR_TX   # GPIO46
+      "53": "NC"   # XTAL_N
+      "54": "NC"   # XTAL_P
+      "55": 3V3_L2   # VDDA
+      "56": 3V3_L2   # VDDA
+  U21:
+    value: MSM381A3729H9BPC
+    page: 3
+    pins:
+      "1": U21_VDD   # VDD
+      "2": AGND   # GND
+      "3": U21_GND3   # GND
+      "4": U21_OUT   # OUT
+  U101:
+    value: VSOP38338
+    page: 4
+    note: Vendor designator U1 on the daughterboard sheet.
+    pins:
+      "1": "NC"   # NC
+      "2": GROVE_5V   # VCC
+      "3": RX   # OUT
+      "4": "NC"   # NC
+      "5": "NC"   # NC
+      "6": GND   # GND
+      "7": IR_PD   # IN
+      "8": GND   # GND
+  U102:
+    value: photodiode (as drawn)
+    page: 4
+    note: "Vendor designator U2: a photodiode symbol between U101 pin 7 (IN) and GND, cathode on IN."
+    pins:
+      "1": IR_PD
+      "2": GND
+  U103:
+    value: IR928-6C/F1(6-1)
+    page: 4
+    note: "Vendor designator U3: IR LED, anode on 5V_VBUS (= GROVE_5V), cathode through R102 to Q101 drain."
+    pins:
+      "1": IR_LED_R
+      "2": GROVE_5V
+  U104:
+    value: "SPK, 8Ω 1W"
+    page: 4
+    note: "Vendor designator U4 (\"SPK\"): the speaker; its rating, 8 ohm at 1 W, is printed on vendor page 1 (\"SPK 扬声器8Ω @ 1W\")."
+    pins:
+      "1": SPK_N
+      "2": SPK_P
+
+kleidos:   # Kleidos additions to and corrections of the vendor's print: each marked on the drawing and listed
+  # on page 1. A bench path is under this folder; the datasheets are cited in full under source.also_read
+  # and in README.md ("Kleidos additions and corrections"); improvements.md holds the triage.
+  - id: K1
+    kind: correction
+    what: "U7 trips at its default 5.95 V rising (5.83-6.07 V), since OVLO is on GND through R8 0R (R7 not fitted)."
+    vendor: "\"OVP = 5V\""
+    element: {rail: 5VIN_L0}
+    source:
+      type: datasheet
+      cite: "AW32901 datasheet V1.1, pp. 1, 2 and 4 (note 2)"
+  - id: K2
+    kind: addition
+    what: "GPIO26 (SPICS1): taken by the in-package Octal PSRAM."
+    element: {gpio: GPIO26}
+    source:
+      type: datasheet
+      cite: "ESP32-S3-PICO-1 datasheet v1.2, p. 13"
+  - id: K3
+    kind: addition
+    what: "GPIO33 (pin 38): taken by the in-package Octal PSRAM."
+    element: {gpio: GPIO33}
+    source:
+      type: datasheet
+      cite: "ESP32-S3-PICO-1 datasheet v1.2, p. 13"
+  - id: K4
+    kind: addition
+    what: "GPIO34 (pin 39): taken by the in-package Octal PSRAM."
+    element: {gpio: GPIO34}
+    source:
+      type: datasheet
+      cite: "ESP32-S3-PICO-1 datasheet v1.2, p. 13"
+  - id: K5
+    kind: addition
+    what: "GPIO35 (pin 40): taken by the in-package Octal PSRAM."
+    element: {gpio: GPIO35}
+    source:
+      type: datasheet
+      cite: "ESP32-S3-PICO-1 datasheet v1.2, p. 13"
+  - id: K6
+    kind: addition
+    what: "GPIO36 (pin 41): taken by the in-package Octal PSRAM."
+    element: {gpio: GPIO36}
+    source:
+      type: datasheet
+      cite: "ESP32-S3-PICO-1 datasheet v1.2, p. 13"
+  - id: K7
+    kind: addition
+    what: "GPIO37 (pin 42): taken by the in-package Octal PSRAM."
+    element: {gpio: GPIO37}
+    source:
+      type: datasheet
+      cite: "ESP32-S3-PICO-1 datasheet v1.2, p. 13"
+  - id: K8
+    kind: addition
+    what: "With USB in, PYG0 (U15 CHRG) reads 0 while U15 charges and 1 while it does not."
+    element: {gpio: PYG0, table: "M5PM1 GPIO (U16)"}
+    source:
+      type: bench
+      cite: "bench/2026-11-17-charge-status-pyg0.md, 2026-11-17"
+  - id: K9
+    kind: addition
+    what: "The M5PM1 U16 answers at I2C address 0x6E."
+    element: {i2c: U16}
+    source:
+      type: vendor-doc
+      cite: "M5PM1 manual V1.9, p. 1; bench/2026-11-17-i2c-scan-l3b.md"
+  - id: K10
+    kind: addition
+    what: "The BMI270 U17 answers at 0x68 (SDO on GND), in I2C mode (CSB on VDDIO)."
+    element: {i2c: U17}
+    source:
+      type: datasheet
+      cite: "BMI270 datasheet rev 1.6, pp. 123, 128; bench/2026-11-17-i2c-scan-l3b.md"
+  - id: K11
+    kind: addition
+    what: "The ES8311 U18 answers at 0x18 (CE on AGND) while 3V3_L3B_AU is up."
+    element: {i2c: U18}
+    source:
+      type: datasheet
+      cite: "ES8311 datasheet rev 10.0, p. 8; bench/2026-11-17-i2c-scan-l3b.md"
+
+nets:   # every named net and the pages it is drawn on
+  3V3_L0: {pages: [2], pins: [C10.2, C31.2, C58.2, R16.2, R17.2, R25.2, TP5.1, U3.1, U16.6]}
+  3V3_L1: {pages: [2, 3], pins: [C8.1, C33.2, C35.2, R6.2, U4.1, U17.5, U17.8, U17.12]}
+  3V3_L1_EN: {pages: [2], pins: [R5.2, U4.3, U16.18]}
+  3V3_L2: {pages: [2, 3, 4], pins: [C7.2, C11.2, C12.2, C54.2, C55.2, C57.1, C59.1, C62.2, C64.2, C66.2, C67.1, C68.2, CN101.10, CN102.7, J2.9, L1.2, L4.2, Q4.5, Q5.2, R36.2, R37.2, R38.2, R39.2, R40.1, R46.1, TP4.1, U2.C2, U5.A2, U20.20, U20.46, U20.55, U20.56]}
+  3V3_L2_EN: {pages: [2], pins: [R2.1, U2.B1, U16.14]}
+  3V3_L3B: {pages: [2, 3], pins: [C14.2, C51.1, J6.3, R27.1, R41.1, U5.A1]}
+  3V3_L3B_AU: {pages: [2, 3], pins: [C6.1, C32.2, C34.2, C44.2, Q4.2, Q5.5, R33.1, R34.1, R52.1, U1.1, U18.3, U18.4, U18.11]}
+  5VIN_ADC: {pages: [2], pins: [C29.2, R19.2, R20.1, U16.16]}
+  5VIN_L0: {pages: [2], pins: [C19.1, R19.1, U6.3, U7.A2, U7.A3, U7.B2]}
+  AGND: {pages: [3], pins: [C32.1, C34.1, C40.1, C41.1, C42.1, C44.1, C65.1, R26.1, R35.2, U18.0, U18.5, U18.10, U18.20, U21.2]}
+  ANT_FEED: {pages: [3], pins: [C56.2, J5.1, L3.1]}
+  AUDIO_I2C_SCL: {pages: [3], pins: [Q4.1, R33.2, U18.1]}
+  AUDIO_I2C_SDA: {pages: [3], pins: [Q5.4, R34.2, U18.19]}
+  BOOST_OUT: {pages: [2], pins: [C15.2, C23.2, C24.2, R13.2, U8.A2, U9.7, U9.8]}
+  CHG_EN: {pages: [2], pins: [R18.2, U15.8, U16.2]}
+  DAC_L_N: {pages: [3], pins: [C43.2, R32.2]}
+  DAC_L_P: {pages: [3], pins: [C45.2, R31.2]}
+  EXT_5V_ADC: {pages: [2], pins: [C28.2, R21.2, R22.1, U16.19]}
+  EXT_5V_EN: {pages: [2], pins: [Q1.G, R10.2, U8.B2, U9.3, U16.10]}
+  EXT_GPIO1: {pages: [2, 3, 4], pins: [CN101.20, CN102.4, J2.19, U20.6]}
+  EXT_GPIO2: {pages: [2, 3, 4], pins: [CN101.22, CN102.10, J2.21, U20.7]}
+  EXT_GPIO3: {pages: [2, 3, 4], pins: [CN101.24, CN102.9, J2.23, U20.8]}
+  EXT_GPIO4: {pages: [2, 3, 4], pins: [CN101.11, CN102.15, J2.12, U20.9]}
+  EXT_GPIO43: {pages: [2, 3, 4], pins: [CN101.21, CN102.12, J2.22, R50.1, TP8.1]}
+  EXT_GPIO44: {pages: [2, 3, 4], pins: [CN101.23, CN102.11, J2.24, TP9.1, U20.50]}
+  EXT_GPIO5: {pages: [2, 3, 4], pins: [CN101.13, CN102.16, J2.14, U20.10]}
+  EXT_GPIO6: {pages: [2, 3, 4], pins: [CN101.15, CN102.14, J2.16, U20.11]}
+  EXT_GPIO7: {pages: [2, 3, 4], pins: [CN101.17, CN102.13, J2.18, U20.12]}
+  EXT_GPIO8: {pages: [2, 3, 4], pins: [CN101.19, CN102.5, J2.20, U20.13]}
+  G0_BOOT_OUT: {pages: [2, 3, 4], pins: [CN101.9, CN102.3, J2.10, R46.2, TP3.1, U16.15, U20.5]}
+  G11_KEY1: {pages: [3], pins: [C52.1, R37.1, S2.1, U20.16]}
+  G12_KEY2: {pages: [3], pins: [C53.1, R36.1, S3.1, U20.17]}
+  G14_I2S_DDAC: {pages: [3], pins: [U18.9, U20.19]}
+  G15_I2S_LRCK: {pages: [3], pins: [U18.8, U20.21]}
+  G16_I2S_DADC: {pages: [3], pins: [U18.7, U20.22]}
+  G17_I2S_BCLK: {pages: [3], pins: [U18.6, U20.23]}
+  G18_I2S_MCLK: {pages: [3], pins: [R47.2, U18.2]}
+  G19_DM: {pages: [3], pins: [FT1.3, U20.25]}
+  G20_DP: {pages: [3], pins: [FT1.4, U20.26]}
+  G21_LCD_RST: {pages: [3], pins: [J6.11, U20.27]}
+  G38_LCD_BL: {pages: [3], pins: [Q6.G, R43.2, U20.43]}
+  G39_MOSI: {pages: [3], pins: [J6.7, U20.44]}
+  G40_SCK: {pages: [3], pins: [J6.5, R51.1]}
+  G41_LCD_CS: {pages: [3], pins: [J6.1, R41.2, U20.47]}
+  G42_IR_RX: {pages: [2, 3, 4], pins: [CN101.18, J2.17, R105.1, R106.2, U20.48]}
+  G45_LCD_RS: {pages: [3], pins: [J6.9, U20.51]}
+  G46_IR_TX: {pages: [2, 3, 4], pins: [CN101.16, J2.15, R103.1, U20.52]}
+  G47_SDA: {pages: [2, 3], pins: [J6.8, Q5.1, R39.1, U16.8, U17.14, U20.37]}
+  G48_SCL: {pages: [2, 3], pins: [J6.6, Q4.4, R38.1, U16.9, U17.13, U20.36]}
+  GND: {pages: [2, 3, 4], pins: [C1.2, C2.1, C3.1, C4.2, C5.1, C6.2, C7.1, C8.2, C9.1, C10.1, C11.1, C12.1, C13.2, C14.1, C15.1, C16.1, C17.1, C18.1, C19.2, C20.1, C21.1, C22.2, C23.1, C24.1, C25.1, C26.1, C27.1, C28.1, C29.1, C30.1, C31.1, C33.1, C35.1, C36.1, C37.1, C48.1, C49.1, C50.2, C51.2, C52.2, C53.2, C54.1, C55.1, C56.1, C57.2, C58.1, C59.2, C60.1, C61.1, C62.1, C63.1, C64.1, C66.1, C67.2, C68.1, C69.1, C102.1, CN101.6, CN101.8, CN101.TH, CN102.1, D1.2, D2.1, J1.A1/B12, J1.B1/A12, J1.MH1, J1.MH2, J1.MH3, J1.MH4, J2.5, J2.7, J2.25, J2.26, J2.27, J2.28, J3.1, J4.2, J5.2, J6.2, J6.13, J6.14, J6.15, J6.16, Q1.S, Q2.1, Q3.S, Q6.S, Q101.2, R1.1, R2.2, R3.1, R4.1, R5.1, R8.2, R9.2, R10.1, R12.1, R14.1, R18.1, R20.2, R22.2, R24.2, R28.2, R30.2, R35.1, R43.1, R101.2, R105.2, S1.2, S2.2, S3.2, TP1.1, TVS1.2, TVS2.2, U1.0, U1.2, U2.B2, U3.0, U3.2, U4.0, U4.2, U5.B1, U6.1, U7.A1, U7.A4, U7.B4, U7.C4, U8.B1, U9.4, U9.9, U11.1, U12.B1, U13.1, U14.1, U15.1, U15.3, U15.9, U16.4, U16.21, U17.1, U17.6, U17.7, U19.C2, U19.C3, U19.C4, U20.0, U101.6, U101.8, U102.2]}
+  GPIO18_MCLK: {pages: [3], pins: [R47.1, U20.24]}
+  GPIO40_SCK: {pages: [3], pins: [R51.2, U20.45]}
+  GPIO43_TXD: {pages: [3], pins: [R50.2, U20.49]}
+  GROVE_5V: {pages: [2, 4], pins: [C20.2, C21.2, C102.2, CN101.5, CN101.7, CN102.2, J2.6, J2.8, J3.2, R11.1, R21.1, U8.A1, U12.A2, U101.2, U103.2]}
+  GROVE_G10: {pages: [2, 3], pins: [J3.4, TVS1.1, U20.15]}
+  GROVE_G9: {pages: [2, 3], pins: [J3.3, TVS2.1, U20.14]}
+  HAT2_5VIN: {pages: [2, 4], pins: [CN101.1, CN101.3, CN102.8, J2.2, J2.4, U11.3]}
+  IR_LED_K: {pages: [4], pins: [Q101.3, R102.2]}
+  IR_LED_R: {pages: [4], pins: [R102.1, U103.1]}
+  IR_PD: {pages: [4], pins: [U101.7, U102.1]}
+  IR_TX_GATE: {pages: [4], pins: [Q101.1, R101.1, R103.2]}
+  Internal_5V: {pages: [2], pins: [C22.1, D10.2, U6.2, U11.2, U13.3, U15.4]}
+  LCD_BL_A: {pages: [3], pins: [J6.10, R27.2]}
+  LCD_BL_K: {pages: [3], pins: [J6.12, Q6.D]}
+  LED1_A: {pages: [2], pins: [LED1.1, R25.1]}
+  LED1_K: {pages: [2], pins: [LED1.2, Q3.D]}
+  MIC1_N: {pages: [3], pins: [C39.1, R49.2]}
+  MIC1_P: {pages: [3], pins: [C38.1, R48.2]}
+  PWR_BTN: {pages: [2], pins: [C27.2, R17.1, S1.1, U16.7]}
+  PYG0_CHG_STAT: {pages: [2], pins: [R16.1, U15.7, U16.3]}
+  PYG1_IRQ: {pages: [2, 3], pins: [U16.17, U20.18]}
+  PYG2_L3B_EN: {pages: [2], pins: [R1.2, U1.3, U5.B2, U16.20]}
+  PYG3_SPK_Pulse: {pages: [2, 3], pins: [R30.1, U16.13, U19.A4]}
+  PYG4_IMU_INT: {pages: [2, 3], pins: [R6.1, U16.12, U17.4]}
+  PY_STATUS_LED: {pages: [2], pins: [R29.1, TP2.1, U16.5]}
+  Q2B_GATE: {pages: [2], pins: [Q2.5, Q2.6, R15.2]}
+  Q3_GATE: {pages: [2], pins: [Q3.G, R28.1, R29.2]}
+  RF_MATCH: {pages: [3], pins: [C60.2, C69.2, L3.2, L5.1]}
+  RX: {pages: [4], pins: [R106.1, U101.3]}
+  SCL_ISO: {pages: [3], pins: [Q4.3, Q4.6]}
+  SDA_ISO: {pages: [3], pins: [Q5.3, Q5.6]}
+  SOC_RESET: {pages: [2, 3], pins: [C50.1, R40.2, TP6.1, U20.4]}
+  SPK_N: {pages: [2, 3, 4], pins: [C49.2, CN101.14, FB2.2, J2.13, U104.1]}
+  SPK_P: {pages: [2, 3, 4], pins: [C48.2, CN101.12, FB1.2, J2.11, U104.2]}
+  U12_EN: {pages: [2], pins: [Q1.D, R11.2, U12.B2]}
+  U12_OUT: {pages: [2], pins: [C25.2, D10.1, U12.A1]}
+  U15_PROG: {pages: [2], pins: [R12.2, U15.2]}
+  U18_ADCVREF: {pages: [3], pins: [C41.2, U18.15]}
+  U18_DACVREF: {pages: [3], pins: [C42.2, U18.14]}
+  U18_MIC1N: {pages: [3], pins: [C39.2, U18.17]}
+  U18_MIC1P: {pages: [3], pins: [C38.2, U18.18]}
+  U18_OUTN: {pages: [3], pins: [C43.1, U18.13]}
+  U18_OUTP: {pages: [3], pins: [C45.1, U18.12]}
+  U18_VMID: {pages: [3], pins: [C40.2, U18.16]}
+  U19_C1N: {pages: [3], pins: [C46.1, U19.C1]}
+  U19_C1P: {pages: [3], pins: [C46.2, U19.D2]}
+  U19_C2N: {pages: [3], pins: [C47.1, U19.B1, U19.B2]}
+  U19_C2P: {pages: [3], pins: [C47.2, U19.D1]}
+  U19_INN: {pages: [3], pins: [R32.1, U19.A2]}
+  U19_INP: {pages: [3], pins: [R31.1, U19.A1]}
+  U19_PVDD: {pages: [3], pins: [C37.2, U19.D3]}
+  U19_VON: {pages: [3], pins: [FB2.1, U19.D4]}
+  U19_VOP: {pages: [3], pins: [FB1.1, U19.B4]}
+  U20_LNA_IN: {pages: [3], pins: [C63.2, L5.2, U20.1]}
+  U20_VDD3P3: {pages: [3], pins: [C61.2, L4.1, U20.2, U20.3]}
+  U21_GND3: {pages: [3], pins: [R26.2, R49.1, U21.3]}
+  U21_OUT: {pages: [3], pins: [R48.1, U21.4]}
+  U21_VDD: {pages: [3], pins: [C65.2, R52.2, U21.1]}
+  U2_SW: {pages: [2], pins: [C9.2, L1.1, U2.A1]}
+  U7_OVLO: {pages: [2], pins: [R7.2, R8.1, U7.C1]}
+  U9_FB: {pages: [2], pins: [R13.1, R14.2, U9.5]}
+  U9_LX: {pages: [2], pins: [L2.2, U9.1, U9.2]}
+  USB_CC1: {pages: [2], pins: [J1.A5, R3.2]}
+  USB_CC2: {pages: [2], pins: [J1.B5, R4.2]}
+  USB_N: {pages: [2, 3], pins: [D1.1, J1.A7, J1.B7, R45.2]}
+  USB_N_R: {pages: [3], pins: [FT1.1, R45.1]}
+  USB_P: {pages: [2, 3], pins: [D2.2, J1.A6, J1.B6, R44.2]}
+  USB_P_R: {pages: [3], pins: [FT1.2, R44.1]}
+  VBAT_ADC: {pages: [2], pins: [C30.2, R23.2, R24.1, U16.11]}
+  VBAT_ADC_EN: {pages: [2], pins: [Q2.2, R9.1, U16.1]}
+  VBAT_L0: {pages: [2, 4], pins: [C26.2, CN101.2, CN101.4, CN102.6, J2.1, J2.3, J4.1, Q2.4, R15.1, U14.3, U15.5]}
+  VBAT_SW: {pages: [2], pins: [Q2.3, R23.1]}
+  VBUS_L0: {pages: [2, 3], pins: [C1.1, C2.2, C3.2, C4.1, C5.2, C16.2, C17.2, C18.2, C36.2, L2.1, U1.4, U2.A2, U2.C1, U2.D1, U2.D2, U3.3, U3.4, U4.4, U9.6, U13.2, U14.2, U19.A3, U19.B3]}
+  VUSBIN_L0: {pages: [2], pins: [C13.1, J1.A4/B9, J1.B4/A9, R7.1, U7.B3, U7.C2, U7.C3]}

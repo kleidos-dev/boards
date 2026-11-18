@@ -1,0 +1,5067 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "e4120b7e-c297-5c19-a666-9040436c2f37")
+	(paper "A3")
+	(title_block
+		(title "CoreS3-SE (K128-SE): Power path")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: M5Stack Sch_M5_CoreS3_SE_v1.0 (2025-06-03), docs; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols
+		(symbol "cores3-se:ME1502AM5G"
+			(pin_names
+				(offset 0.762)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "ME1502AM5G"
+				(at 0 -11.43 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Load switch, EN active high (as printed beside it)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "ME1502AM5G_0_1"
+				(rectangle
+					(start -7.62 5.08)
+					(end 7.62 -10.16)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "ME1502AM5G_1_1"
+				(pin passive line
+					(at -10.16 2.54 0)
+					(length 2.54)
+					(name "VIN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 0 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 -2.54 0)
+					(length 2.54)
+					(name "RSET"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "VOUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -12.7 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "cores3-se:ME1502CM5G"
+			(pin_names
+				(offset 0.762)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "ME1502CM5G"
+				(at 0 -11.43 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Load switch, EN active low (as printed beside it)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "ME1502CM5G_0_1"
+				(rectangle
+					(start -7.62 5.08)
+					(end 7.62 -10.16)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "ME1502CM5G_1_1"
+				(pin passive line
+					(at -10.16 2.54 0)
+					(length 2.54)
+					(name "VIN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 0 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 -2.54 0)
+					(length 2.54)
+					(name "RSET"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "VOUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -12.7 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:C"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "C"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: C"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "C_0_1"
+				(polyline
+					(pts
+						(xy -2.032 0.635)
+						(xy 2.032 0.635)
+					)
+					(stroke
+						(width 0.381)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -0.635)
+						(xy 2.032 -0.635)
+					)
+					(stroke
+						(width 0.381)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 3.175)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 3.175)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:C_Polarized"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "C_Polarized"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: C_Polarized"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "C_Polarized_0_1"
+				(polyline
+					(pts
+						(xy -2.032 0.635)
+						(xy 2.032 0.635)
+					)
+					(stroke
+						(width 0.381)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.286 -1.016)
+						(xy -1.143 -0.762)
+						(xy 0 -0.635)
+						(xy 1.143 -0.762)
+						(xy 2.286 -1.016)
+					)
+					(stroke
+						(width 0.381)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.651 1.524)
+						(xy -1.651 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.159 2.032)
+						(xy -1.143 2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_Polarized_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 3.175)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 3.175)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:GND"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board no)
+			(property "Reference" "#PWR"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: GND"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0)
+						(xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -1.27)
+						(xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.762 -1.905)
+						(xy 0.762 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.254 -2.54)
+						(xy 0.254 -2.54)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(hide yes)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:MountingHole_Pad"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole_Pad"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: MountingHole_Pad"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_Pad_0_1"
+				(circle
+					(center 0 1.27)
+					(radius 1.27)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 1.27)
+					(radius 0.508)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MountingHole_Pad_1_1"
+				(pin input line
+					(at 0 -2.54 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:R"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "R"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: R"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "R_0_1"
+				(rectangle
+					(start -0.889 -2.54)
+					(end 0.889 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "K15"
+		(exclude_from_sim no)
+		(at 44.23 26.67 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "e2e5aeb1-3f06-55f8-b8e4-3c650b003891")
+	)
+	(symbol
+		(lib_id "cores3-se:ME1502AM5G")
+		(at 49.53 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "955b45ba-6f3a-5675-a5a9-52208c03e14d")
+		(property "Reference" "U14"
+			(at 39.37 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "ME1502AM5G"
+			(at 39.37 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 49.53 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 49.53 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 49.53 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "856d739a-90da-5f0e-a3f5-d8ec8d290bd8")
+		)
+		(pin "2"
+			(uuid "bd1cc192-bb20-53f8-a7d6-6f6aaaa7ff6f")
+		)
+		(pin "3"
+			(uuid "a77897d1-8b30-5801-a2cc-8d96586245c6")
+		)
+		(pin "4"
+			(uuid "9d826671-9d82-57e7-969f-41ba90c0e19c")
+		)
+		(pin "5"
+			(uuid "25ec72e9-749a-5d13-ab02-c9d237874f2c")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "U14")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 59.69 33.02)
+			(xy 62.23 33.02)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "bf9239b0-4a0c-5f83-9339-e66afadedbd2")
+	)
+	(global_label "BUS_OUT"
+		(shape passive)
+		(at 62.23 33.02 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "be534d16-1cb4-5511-babb-940e490ac868")
+	)
+	(text "[2/C7]"
+		(exclude_from_sim no)
+		(at 72.73 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "7b7e02a0-cef1-5bc2-a8e1-6f73147c2ae0")
+	)
+	(text "[6/B6]"
+		(exclude_from_sim no)
+		(at 79.23 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "01d0f23f-c003-5293-b6cd-37521e7af988")
+	)
+	(wire
+		(pts
+			(xy 49.53 48.26)
+			(xy 49.53 50.8)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "e7579845-7bee-5a5b-a0d8-cb9ee79b7b78")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 49.53 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b3ff4ef5-23cd-50e3-a2f4-5a437893dd77")
+		(property "Reference" "#PWR149"
+			(at 49.53 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 49.53 54.8 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 49.53 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 49.53 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 49.53 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a8f85d90-26c4-5092-baeb-fd014dcab830")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR149")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 39.37 33.02)
+			(xy 36.83 33.02)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "4f51a9be-3d36-594b-af90-c1bbd6e21d3e")
+	)
+	(global_label "BUS_5V"
+		(shape passive)
+		(at 36.83 33.02 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2721a28d-9938-52ae-b836-299609a152a2")
+	)
+	(text "[3/B5]"
+		(exclude_from_sim no)
+		(at 21.73 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "e0887807-1247-5b16-8521-574f0e417fb9")
+	)
+	(wire
+		(pts
+			(xy 39.37 35.56)
+			(xy 36.83 35.56)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "7e68fc13-4e9c-5a8e-b36d-6eff3c02dddb")
+	)
+	(global_label "BUS_OUT_EN"
+		(shape passive)
+		(at 36.83 35.56 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "31360722-0ab8-540d-b8e6-38da4b595188")
+	)
+	(text "[6/A2]"
+		(exclude_from_sim no)
+		(at 17.33 35.56 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "c3ce50f5-8ba4-50f1-8c93-4e3b1ac3b31d")
+	)
+	(wire
+		(pts
+			(xy 39.37 38.1)
+			(xy 36.83 38.1)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "736041fb-6a21-56f9-b583-2a27daff7a37")
+	)
+	(global_label "U14_RSET"
+		(shape passive)
+		(at 36.83 38.1 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bcaad782-b1da-5bec-9df2-8baee9d9b893")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 111.76 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8fb84608-31a6-59f4-b37f-3854b35e1878")
+		(property "Reference" "R17"
+			(at 111.76 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "60K/1%"
+			(at 111.76 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 111.76 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 111.76 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 111.76 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "655b9ff9-5c83-5781-b9c1-918b117de1c0")
+		)
+		(pin "2"
+			(uuid "5da1d874-fa71-5d5c-ad49-973f320a5840")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "R17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "U14_RSET"
+		(shape passive)
+		(at 107.95 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9360995c-1b56-54d0-85fe-7239484031d5")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 115.57 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "336cf196-a998-53d9-98f0-e4c09c11725e")
+		(property "Reference" "#PWR150"
+			(at 115.57 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 118.97 27.94 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 115.57 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 115.57 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 115.57 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "78622556-8a4d-52ba-9c2e-df730cbfbaec")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR150")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 111.76 38.1 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ab3cf600-bbb0-5363-9cdf-efa74e22bfb9")
+		(property "Reference" "C117"
+			(at 111.76 34.798 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "470nF/25V"
+			(at 111.76 41.402 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 111.76 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 111.76 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 111.76 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "50a929dc-1f0d-5d3b-8556-4b3de84f29e3")
+		)
+		(pin "2"
+			(uuid "77b0091a-92f7-5a7a-9170-485ad4b3a7e5")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C117")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUS_5V"
+		(shape passive)
+		(at 107.95 38.1 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "45d0f770-1334-5142-9e6f-8f6dfc2f58fd")
+	)
+	(text "[3/B5]"
+		(exclude_from_sim no)
+		(at 92.85 38.1 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "cd73f9be-d47a-56f4-82ad-9b306ed3f29c")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 115.57 38.1 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "846a1285-2d60-59bb-b7be-8e69906b337f")
+		(property "Reference" "#PWR151"
+			(at 115.57 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 118.97 38.1 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 115.57 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 115.57 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 115.57 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4a703834-63b2-5adf-86fb-8b8033ebfea5")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR151")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 111.76 48.26 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a4a0eda8-2109-5546-9afb-51ed15a111bd")
+		(property "Reference" "C118"
+			(at 111.76 44.958 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF 6.3V"
+			(at 111.76 51.562 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 111.76 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 111.76 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 111.76 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9e2441fc-f3fe-5157-8163-3bcb913f7922")
+		)
+		(pin "2"
+			(uuid "8bb40c3c-f8c3-5b36-9d96-dec442cbecb2")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C118")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 107.95 48.26 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ef2a3286-756f-5f65-97a9-1668602bee42")
+		(property "Reference" "#PWR152"
+			(at 107.95 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 104.55 48.26 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 107.95 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 107.95 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 107.95 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1e5a283c-88d3-5c43-974e-1796ec83dc54")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR152")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUS_OUT"
+		(shape passive)
+		(at 115.57 48.26 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9fa6f6aa-bd22-5558-8fac-e12306b3530f")
+	)
+	(text "[2/C7]"
+		(exclude_from_sim no)
+		(at 126.07 48.26 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "d59116db-b7c5-50f3-8c0e-f9e5517bcf9f")
+	)
+	(text "[6/B6]"
+		(exclude_from_sim no)
+		(at 132.57 48.26 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "0639f6d1-d97b-5596-b0cc-545dd97ee633")
+	)
+	(rectangle
+		(start 12.7 12.7)
+		(end 144.78 62.23)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "0fbed69d-8893-5f63-b872-5535b89e7b90")
+	)
+	(text "Boost to the bus (U14)"
+		(exclude_from_sim no)
+		(at 14.605 14.605 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "1966fda0-5b9d-5ee3-93be-135678cea8c0")
+	)
+	(text "K16"
+		(exclude_from_sim no)
+		(at 187.74 26.67 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "a36ba4a7-00d5-5de7-92d6-3b49dcf2bbf9")
+	)
+	(symbol
+		(lib_id "cores3-se:ME1502AM5G")
+		(at 193.04 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "acecb805-b8c7-57da-8395-c4820ed6822d")
+		(property "Reference" "U17"
+			(at 182.88 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "ME1502AM5G"
+			(at 182.88 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 193.04 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 193.04 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 193.04 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e1646ef0-182a-5b61-b929-39056aaf19ab")
+		)
+		(pin "2"
+			(uuid "3b2095b5-e91b-53b4-9816-dda5d5e6a59f")
+		)
+		(pin "3"
+			(uuid "559a17ff-cda8-5f0e-a3b2-57fcec43e250")
+		)
+		(pin "4"
+			(uuid "f4591ae5-1c72-5c1b-bad4-cd03b4f56a2e")
+		)
+		(pin "5"
+			(uuid "cad15865-46c2-52c4-9045-049eb5563dd4")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "U17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 203.2 33.02)
+			(xy 205.74 33.02)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "12ec0d4d-577b-5cb8-bc86-6fffb8ea61ea")
+	)
+	(global_label "VUSB"
+		(shape passive)
+		(at 205.74 33.02 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7605675d-d5d4-5780-87e3-ee96cafb51be")
+	)
+	(text "[3/B1]"
+		(exclude_from_sim no)
+		(at 212.94 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "1fd6a434-b30b-5e52-8fd2-3c89f3cf4f5d")
+	)
+	(wire
+		(pts
+			(xy 193.04 48.26)
+			(xy 193.04 50.8)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "826b3aaa-a7f4-51b9-89aa-d83a03a56a1c")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 193.04 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b3ff4ef5-23cd-50e3-a2f4-5a437893dd77")
+		(property "Reference" "#PWR153"
+			(at 193.04 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 193.04 54.8 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 193.04 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 193.04 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 193.04 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a8f85d90-26c4-5092-baeb-fd014dcab830")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR153")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 182.88 33.02)
+			(xy 180.34 33.02)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "f5346d15-7da9-55f5-9d5e-75cfe3a09038")
+	)
+	(global_label "BUS_OUT"
+		(shape passive)
+		(at 180.34 33.02 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d4bac02c-6c81-564a-891b-3a6fe6b98498")
+	)
+	(text "[2/C7]"
+		(exclude_from_sim no)
+		(at 157.64 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "58833d24-7e54-59d3-8a7b-a7d40a09d684")
+	)
+	(text "[6/B6]"
+		(exclude_from_sim no)
+		(at 164.14 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "e5d6a783-3bac-55f1-8617-75b5f95dda38")
+	)
+	(wire
+		(pts
+			(xy 182.88 35.56)
+			(xy 180.34 35.56)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "e12f4f97-e9bb-59d8-9cde-26fc4d1a7570")
+	)
+	(global_label "USB_OTG_EN"
+		(shape passive)
+		(at 180.34 35.56 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "110678dd-df8e-517d-9931-69d1a2736731")
+	)
+	(text "[6/A2]"
+		(exclude_from_sim no)
+		(at 160.84 35.56 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "2d49d41b-35aa-52c4-97af-6baae0d6ac1c")
+	)
+	(wire
+		(pts
+			(xy 182.88 38.1)
+			(xy 180.34 38.1)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "c6115916-ac30-5877-a1ae-81871b0fbc78")
+	)
+	(global_label "U17_RSET"
+		(shape passive)
+		(at 180.34 38.1 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bfb896d2-00fc-5e43-8a74-7488b23c1318")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 241.3 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bf354f29-b754-5e25-815f-d13fcfdcdc0f")
+		(property "Reference" "R44"
+			(at 241.3 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "60K/1%"
+			(at 241.3 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 241.3 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 241.3 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 241.3 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c722ba1f-ffd2-56f3-af96-5b51d3243967")
+		)
+		(pin "2"
+			(uuid "4c8bb3b4-76a2-5162-85a4-2b0b2993db7f")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "R44")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "U17_RSET"
+		(shape passive)
+		(at 237.49 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b195c178-28b2-557c-b72f-8538892f64d7")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 245.11 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "336cf196-a998-53d9-98f0-e4c09c11725e")
+		(property "Reference" "#PWR154"
+			(at 245.11 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 248.51 27.94 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 245.11 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 245.11 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 245.11 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "78622556-8a4d-52ba-9c2e-df730cbfbaec")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR154")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 241.3 38.1 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "00df1117-2297-59c3-9215-cab854061f5b")
+		(property "Reference" "C111"
+			(at 241.3 34.798 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF 6.3V"
+			(at 241.3 41.402 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 241.3 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 241.3 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 241.3 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "013eec1d-abad-5d12-a21d-78d031b5a574")
+		)
+		(pin "2"
+			(uuid "cd9b6326-8912-5e6f-a723-f04e4a27c428")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C111")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 237.49 38.1 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3a73638c-3bf7-57f6-9673-a49251845f9c")
+		(property "Reference" "#PWR155"
+			(at 237.49 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 234.09 38.1 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 237.49 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 237.49 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 237.49 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8f54a67c-3ee5-51e1-a928-ad8640c96ecf")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR155")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VUSB"
+		(shape passive)
+		(at 245.11 38.1 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6e20aa53-0f1c-5fa2-a8a2-b840833df9ba")
+	)
+	(text "[3/B1]"
+		(exclude_from_sim no)
+		(at 252.31 38.1 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "17a85cde-a615-589e-868a-c03e23175406")
+	)
+	(rectangle
+		(start 152.4 12.7)
+		(end 264.16 62.23)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4e826e54-b2af-58c7-bc6d-642c813064dd")
+	)
+	(text "Bus to USB-C, OTG (U17)"
+		(exclude_from_sim no)
+		(at 154.305 14.605 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "268a935e-3b67-5f32-bb80-95aeb5425a69")
+	)
+	(text "K18"
+		(exclude_from_sim no)
+		(at 307.12 26.67 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "26294128-97ee-5b8b-8fc3-f33bfefc5e5a")
+	)
+	(symbol
+		(lib_id "cores3-se:ME1502CM5G")
+		(at 312.42 35.56 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5fcf2a73-9a61-5bfb-8087-600e5ad25f31")
+		(property "Reference" "U19"
+			(at 302.26 26.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "ME1502CM5G"
+			(at 302.26 29.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 312.42 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 312.42 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 312.42 35.56 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b267bc90-70ec-5d68-a356-ef64fabc1652")
+		)
+		(pin "2"
+			(uuid "97f1df61-317c-5bfc-8eb5-83f5f46798aa")
+		)
+		(pin "3"
+			(uuid "f5ae48b6-b282-5d77-a7fc-f952f5eb50a1")
+		)
+		(pin "4"
+			(uuid "a761a64d-0b8e-5aae-9c75-40508ec8d4b8")
+		)
+		(pin "5"
+			(uuid "f54e7871-d9cc-58fb-bac5-07a7a061d650")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "U19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 322.58 33.02)
+			(xy 325.12 33.02)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "4f11b965-bd1a-5db9-8d4f-2a11cf5b3c2a")
+	)
+	(global_label "VBUS"
+		(shape passive)
+		(at 325.12 33.02 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7d2c2d65-0341-58bc-82f8-ec48b7e63e0f")
+	)
+	(text "[2/A4]"
+		(exclude_from_sim no)
+		(at 332.32 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "6381ed21-744a-5e2f-9f7d-0edd638422ad")
+	)
+	(wire
+		(pts
+			(xy 312.42 48.26)
+			(xy 312.42 50.8)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "3f5ef4e2-840b-55d8-9c08-c05d9da67347")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 312.42 50.8 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b3ff4ef5-23cd-50e3-a2f4-5a437893dd77")
+		(property "Reference" "#PWR156"
+			(at 312.42 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 312.42 54.8 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 312.42 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 312.42 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 312.42 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a8f85d90-26c4-5092-baeb-fd014dcab830")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR156")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 302.26 33.02)
+			(xy 299.72 33.02)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "4c3e7a09-56ff-5d42-aae2-fe528ae81654")
+	)
+	(global_label "BUS_OUT"
+		(shape passive)
+		(at 299.72 33.02 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "05df8e0b-0677-51fc-a657-23fca5f25aea")
+	)
+	(text "[2/C7]"
+		(exclude_from_sim no)
+		(at 277.02 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "1a1c820b-7c58-53db-b18d-8e07620533ae")
+	)
+	(text "[6/B6]"
+		(exclude_from_sim no)
+		(at 283.52 33.02 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "570fd901-1f57-5d4a-9737-b10f37c83119")
+	)
+	(wire
+		(pts
+			(xy 302.26 35.56)
+			(xy 299.72 35.56)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "b9d9b9b9-c30c-53f1-9df7-2d9d10cdded3")
+	)
+	(global_label "BUS_OUT_EN"
+		(shape passive)
+		(at 299.72 35.56 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "7286fab0-6417-51b2-abd0-34db2a122559")
+	)
+	(text "[6/A2]"
+		(exclude_from_sim no)
+		(at 280.22 35.56 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "e9f57435-6a1d-5ab2-a9b5-ede38b42c2bc")
+	)
+	(wire
+		(pts
+			(xy 302.26 38.1)
+			(xy 299.72 38.1)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "7ddf2efc-59cc-50ae-8f31-a73fbd8b1df7")
+	)
+	(global_label "U19_RSET"
+		(shape passive)
+		(at 299.72 38.1 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6d7e4a9b-2352-54cc-a309-a4b1f9488e9c")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 373.38 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "41eb0cbc-2e70-582b-af42-37fca539456e")
+		(property "Reference" "R46"
+			(at 373.38 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "30K/1%"
+			(at 373.38 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 373.38 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 373.38 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 373.38 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "83c7232e-4354-57ca-a0e0-537595ccc44d")
+		)
+		(pin "2"
+			(uuid "798c44f5-b83a-5e5e-98c6-f37d92b6e5a2")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "R46")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "U19_RSET"
+		(shape passive)
+		(at 369.57 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bde45605-4b29-5bb9-8f2c-f247a2819759")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 377.19 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "336cf196-a998-53d9-98f0-e4c09c11725e")
+		(property "Reference" "#PWR157"
+			(at 377.19 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 380.59 27.94 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 377.19 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 377.19 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 377.19 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "78622556-8a4d-52ba-9c2e-df730cbfbaec")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR157")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 373.38 38.1 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d07ab005-af32-5546-b1ec-22d37fc2e6ca")
+		(property "Reference" "C108"
+			(at 373.38 34.798 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "470nF/25V"
+			(at 373.38 41.402 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 373.38 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 373.38 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 373.38 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cce83de2-a0d6-5350-b803-49d53948dbc4")
+		)
+		(pin "2"
+			(uuid "c715481e-512c-53c7-b986-12c2fafa4671")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C108")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUS_OUT"
+		(shape passive)
+		(at 369.57 38.1 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c91231fc-ad1a-5bda-aa63-15ef0a6e3d0e")
+	)
+	(text "[2/C7]"
+		(exclude_from_sim no)
+		(at 346.87 38.1 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "151244e7-d8f4-54ee-809d-6eda4ff051e8")
+	)
+	(text "[6/B6]"
+		(exclude_from_sim no)
+		(at 353.37 38.1 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "383a4dac-1b64-597a-a6b5-9933f04007e2")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 377.19 38.1 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "846a1285-2d60-59bb-b7be-8e69906b337f")
+		(property "Reference" "#PWR158"
+			(at 377.19 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 380.59 38.1 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 377.19 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 377.19 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 377.19 38.1 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4a703834-63b2-5adf-86fb-8b8033ebfea5")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR158")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 373.38 48.26 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c8c1b600-0ff8-5fbf-b296-ddd4f7d80c5e")
+		(property "Reference" "C113"
+			(at 373.38 44.958 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF 6.3V"
+			(at 373.38 51.562 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 373.38 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 373.38 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 373.38 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7808f29c-63a0-555c-ab75-f7e51b05d87d")
+		)
+		(pin "2"
+			(uuid "aa777a8b-cacb-583a-910b-822ce7b9a5b5")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C113")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 369.57 48.26 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ef2a3286-756f-5f65-97a9-1668602bee42")
+		(property "Reference" "#PWR159"
+			(at 369.57 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 366.17 48.26 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 369.57 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 369.57 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 369.57 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1e5a283c-88d3-5c43-974e-1796ec83dc54")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR159")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VBUS"
+		(shape passive)
+		(at 377.19 48.26 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "43f752eb-aef8-5b98-b500-0278c887de42")
+	)
+	(text "[2/A4]"
+		(exclude_from_sim no)
+		(at 384.39 48.26 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "b12e2ef8-458b-520b-813c-b0a20ba99630")
+	)
+	(rectangle
+		(start 271.78 12.7)
+		(end 396.24 62.23)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4f91e9ff-640b-535e-9690-9aa89d83f1ce")
+	)
+	(text "Bus to the PMU (U19)"
+		(exclude_from_sim no)
+		(at 273.685 14.605 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "60b8b0a4-1dd4-570d-8da6-69703994ac98")
+	)
+	(text "K17"
+		(exclude_from_sim no)
+		(at 44.23 83.82 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "9da0afe7-66ca-54c7-9774-f8140ce9d78f")
+	)
+	(symbol
+		(lib_id "cores3-se:ME1502CM5G")
+		(at 49.53 92.71 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "42281bfc-7a0f-51cb-a11d-154e2cbae974")
+		(property "Reference" "U18"
+			(at 39.37 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "ME1502CM5G"
+			(at 39.37 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 49.53 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 49.53 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 49.53 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b48bde3f-da0c-5237-95df-0bf4a66a7cc5")
+		)
+		(pin "2"
+			(uuid "c886ba74-0cc1-5145-8d60-d6a1228c4edb")
+		)
+		(pin "3"
+			(uuid "d1607f6b-3738-57be-b566-1e497d828f84")
+		)
+		(pin "4"
+			(uuid "53b7e879-c0c7-5f87-ba4f-a098a49a85e4")
+		)
+		(pin "5"
+			(uuid "f295519f-2587-54c7-96e4-76dbfeeafe10")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "U18")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 59.69 90.17)
+			(xy 62.23 90.17)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "1ac7033a-e6a5-5371-a859-4c2d764c15f9")
+	)
+	(global_label "VBUS"
+		(shape passive)
+		(at 62.23 90.17 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e5e7574b-ce93-54cf-ae12-95db62a587c6")
+	)
+	(text "[2/A4]"
+		(exclude_from_sim no)
+		(at 69.43 90.17 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "ae1c6ceb-f1ea-5bba-a955-7d66015bf36a")
+	)
+	(wire
+		(pts
+			(xy 49.53 105.41)
+			(xy 49.53 107.95)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "9df7d3f8-38ca-506c-af7d-2d07b4596a60")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 49.53 107.95 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b3ff4ef5-23cd-50e3-a2f4-5a437893dd77")
+		(property "Reference" "#PWR160"
+			(at 49.53 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 49.53 111.95 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 49.53 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 49.53 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 49.53 107.95 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a8f85d90-26c4-5092-baeb-fd014dcab830")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR160")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 39.37 90.17)
+			(xy 36.83 90.17)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "a853f032-a07d-5539-a89d-610462394d36")
+	)
+	(global_label "VUSB"
+		(shape passive)
+		(at 36.83 90.17 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d5008879-76da-587b-90c9-3d7398ce84af")
+	)
+	(text "[3/B1]"
+		(exclude_from_sim no)
+		(at 23.93 90.17 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "425fd16c-cec2-582f-898d-64e4ca913767")
+	)
+	(wire
+		(pts
+			(xy 39.37 92.71)
+			(xy 36.83 92.71)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "5809a592-de1d-5df9-b04b-0d22f489ebc9")
+	)
+	(global_label "USB_OTG_EN"
+		(shape passive)
+		(at 36.83 92.71 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a89660c7-d830-5071-a895-f987171433f1")
+	)
+	(text "[6/A2]"
+		(exclude_from_sim no)
+		(at 17.33 92.71 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "122bccab-a24f-5876-bb58-45a90d5c21d6")
+	)
+	(wire
+		(pts
+			(xy 39.37 95.25)
+			(xy 36.83 95.25)
+		)
+		(stroke
+			(width 0)
+			(type dot)
+		)
+		(uuid "c0459c51-a316-516d-9130-c91c7b33f766")
+	)
+	(global_label "U18_RSET"
+		(shape passive)
+		(at 36.83 95.25 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "5b295f14-b39d-518e-b893-abf092b45f49")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 100.33 85.09 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b8abc63a-2675-5186-9b89-5adf81a7e22f")
+		(property "Reference" "R45"
+			(at 100.33 82.55 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "30K/1%"
+			(at 100.33 87.63 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 100.33 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 100.33 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 100.33 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "da69b582-726e-573c-a152-689d8f78435e")
+		)
+		(pin "2"
+			(uuid "8cbfffaf-08ef-5b64-b0bc-80ed83aab72c")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "R45")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "U18_RSET"
+		(shape passive)
+		(at 96.52 85.09 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e280254b-9781-5897-86e6-b419c756f94e")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 104.14 85.09 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "336cf196-a998-53d9-98f0-e4c09c11725e")
+		(property "Reference" "#PWR161"
+			(at 104.14 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 107.54 85.09 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 104.14 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "78622556-8a4d-52ba-9c2e-df730cbfbaec")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR161")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 100.33 95.25 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e966d103-87b6-5ade-83b0-330754af9290")
+		(property "Reference" "C107"
+			(at 100.33 91.948 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "470nF/25V"
+			(at 100.33 98.552 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 100.33 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 100.33 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 100.33 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1839f668-a8f5-5184-a8f1-954976a81f31")
+		)
+		(pin "2"
+			(uuid "1bbfcc0a-98ac-5e0a-84b5-88305b4dfb5d")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C107")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VUSB"
+		(shape passive)
+		(at 96.52 95.25 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a619d97c-a645-523f-afd8-ec3e427f1bcf")
+	)
+	(text "[3/B1]"
+		(exclude_from_sim no)
+		(at 83.62 95.25 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "832c4a5a-1d6a-5239-a6a7-87dbe50a6f71")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 104.14 95.25 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "846a1285-2d60-59bb-b7be-8e69906b337f")
+		(property "Reference" "#PWR162"
+			(at 104.14 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 107.54 95.25 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 104.14 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 104.14 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 104.14 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4a703834-63b2-5adf-86fb-8b8033ebfea5")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR162")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 100.33 105.41 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7edc703e-e547-5fe8-9549-7db025bd1e93")
+		(property "Reference" "C112"
+			(at 100.33 102.108 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF 6.3V"
+			(at 100.33 108.712 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 100.33 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 100.33 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 100.33 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fa2f6e01-b502-55bf-8e95-ff85b570fe98")
+		)
+		(pin "2"
+			(uuid "a32ce70e-dd01-5648-ad22-9c27ba9ebded")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C112")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 96.52 105.41 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ef2a3286-756f-5f65-97a9-1668602bee42")
+		(property "Reference" "#PWR163"
+			(at 96.52 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 93.12 105.41 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 105.41 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1e5a283c-88d3-5c43-974e-1796ec83dc54")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR163")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VBUS"
+		(shape passive)
+		(at 104.14 105.41 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3065ea7f-29ab-5a1a-9bb0-1ae2f2564836")
+	)
+	(text "[2/A4]"
+		(exclude_from_sim no)
+		(at 111.34 105.41 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "950467a0-86a4-5088-b4fe-d86157d9fe58")
+	)
+	(rectangle
+		(start 12.7 69.85)
+		(end 124.46 119.38)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "490c55e9-8643-54e2-9b4e-df2bd52264e1")
+	)
+	(text "USB-C to the PMU (U18)"
+		(exclude_from_sim no)
+		(at 14.605 71.755 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "d091fbec-739e-5e58-b278-a98279883556")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 168.91 85.09 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "28b2537d-c5fa-5a17-bfcd-66e372b30cea")
+		(property "Reference" "C106"
+			(at 168.91 81.788 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "470nF/25V"
+			(at 168.91 88.392 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 168.91 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 168.91 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 168.91 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "93726bd5-1319-568f-90d2-657a49e1822a")
+		)
+		(pin "2"
+			(uuid "37d11875-74ff-554a-8977-ec8e81322ae5")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C106")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUS_OUT"
+		(shape passive)
+		(at 165.1 85.09 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ec0377a0-522d-5411-ab7c-7aa7a234a230")
+	)
+	(text "[2/C7]"
+		(exclude_from_sim no)
+		(at 142.4 85.09 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "ebe0d780-3c6a-5cdc-8f17-370dfac8a61d")
+	)
+	(text "[6/B6]"
+		(exclude_from_sim no)
+		(at 148.9 85.09 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "c1cdd835-2249-5aa8-bde4-49cedf1659b9")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 172.72 85.09 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "336cf196-a998-53d9-98f0-e4c09c11725e")
+		(property "Reference" "#PWR164"
+			(at 172.72 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 176.12 85.09 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 172.72 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 172.72 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 172.72 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "78622556-8a4d-52ba-9c2e-df730cbfbaec")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR164")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C_Polarized")
+		(at 168.91 95.25 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a5fdf078-0d14-5d48-bc4a-bfe692ea9430")
+		(property "Reference" "C124"
+			(at 168.91 91.694 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "220uF/6.3V/6.3x4.3/6R3AVEA221M0645"
+			(at 168.91 98.806 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 168.91 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 168.91 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 168.91 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fda5b048-edea-5458-818f-17c5ebeb6343")
+		)
+		(pin "2"
+			(uuid "6459a016-37e2-5ee0-a2b4-d73ea5e22be2")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C124")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "AXP_PS"
+		(shape passive)
+		(at 165.1 95.25 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a59a6f38-7056-5b56-9925-ae0faca39634")
+	)
+	(text "[2/A1]"
+		(exclude_from_sim no)
+		(at 137 95.25 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "553fc817-d6de-50e3-b953-7890bcf5543b")
+	)
+	(text "[3/B5]"
+		(exclude_from_sim no)
+		(at 143.5 95.25 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "969ba4c4-e46b-5135-85b4-ed35a03a2556")
+	)
+	(text "[5/A3]"
+		(exclude_from_sim no)
+		(at 150 95.25 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "73a6093b-b22d-56f5-a988-52cf72ddc58c")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 172.72 95.25 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "846a1285-2d60-59bb-b7be-8e69906b337f")
+		(property "Reference" "#PWR165"
+			(at 172.72 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 176.12 95.25 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 172.72 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 172.72 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 172.72 95.25 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4a703834-63b2-5adf-86fb-8b8033ebfea5")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR165")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:C_Polarized")
+		(at 168.91 106.68 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9a422a1f-1ab2-5029-acf3-6bca9db8c845")
+		(property "Reference" "C125"
+			(at 168.91 103.124 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "220uF/6.3V/6.3x4.3/6R3AVEA221M0645"
+			(at 168.91 110.236 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 168.91 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 168.91 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 168.91 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "37929089-910f-59b2-87a7-7ebbaf859509")
+		)
+		(pin "2"
+			(uuid "3ed9246a-89b8-579b-afd3-67abc0f0d6af")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "C125")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUS_OUT"
+		(shape passive)
+		(at 165.1 106.68 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8d60a5a3-8af6-5a8b-8afc-4fcf718587ae")
+	)
+	(text "[2/C7]"
+		(exclude_from_sim no)
+		(at 142.4 106.68 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "d6ea56b8-a1ca-5d5f-901e-343a23d4f4b3")
+	)
+	(text "[6/B6]"
+		(exclude_from_sim no)
+		(at 148.9 106.68 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "33f92d90-c643-57df-b0b5-9c671a5a09ec")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 172.72 106.68 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8336e741-d64e-5494-ae1c-a8c0031840d6")
+		(property "Reference" "#PWR166"
+			(at 172.72 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 176.12 106.68 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 172.72 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 172.72 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 172.72 106.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c88b4ba9-c2dc-5574-9039-7a7d0446668d")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR166")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(rectangle
+		(start 132.08 69.85)
+		(end 194.31 118.11)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "8a6cad2b-3583-55c2-91b7-e5e3c7d41895")
+	)
+	(text "Bulk capacitors"
+		(exclude_from_sim no)
+		(at 133.985 71.755 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "f7b4d3fb-7cc1-5fa3-ac35-43a3b530f582")
+	)
+	(symbol
+		(lib_id "kleidos:MountingHole_Pad")
+		(at 208.28 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e7d3df39-a946-54bd-97a9-96c2effd760d")
+		(property "Reference" "PHD1"
+			(at 207.01 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "phd_2.1mm"
+			(at 207.01 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 208.28 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 208.28 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 208.28 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ccc8fdcc-2ca4-52a3-a034-b4e1e4b5107f")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "PHD1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 208.28 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bd8afa94-4997-5b1f-8514-493bbed7310b")
+		(property "Reference" "#PWR167"
+			(at 208.28 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 208.28 95.44 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 208.28 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 208.28 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 208.28 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "72aaa31a-0005-5900-a2b8-0b3ba22ec82d")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR167")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:MountingHole_Pad")
+		(at 227.33 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ad8972cc-1e2a-5940-9b48-8ca9fcd7da13")
+		(property "Reference" "PHD2"
+			(at 226.06 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "phd_2.1mm"
+			(at 226.06 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 227.33 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 227.33 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 227.33 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "12e53575-27c6-5b08-bcb0-3d42b357457a")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "PHD2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 227.33 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bd8afa94-4997-5b1f-8514-493bbed7310b")
+		(property "Reference" "#PWR168"
+			(at 227.33 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 227.33 95.44 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 227.33 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 227.33 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 227.33 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "72aaa31a-0005-5900-a2b8-0b3ba22ec82d")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR168")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:MountingHole_Pad")
+		(at 246.38 88.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e71de25d-368d-51e0-a256-733e85d15fe6")
+		(property "Reference" "PHD3"
+			(at 245.11 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "phd_3mm"
+			(at 245.11 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 246.38 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 246.38 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ab151582-5844-53d4-acf3-62745381aafb")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "PHD3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 246.38 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bd8afa94-4997-5b1f-8514-493bbed7310b")
+		(property "Reference" "#PWR169"
+			(at 246.38 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 246.38 95.44 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 246.38 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 246.38 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 246.38 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "72aaa31a-0005-5900-a2b8-0b3ba22ec82d")
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797/309ed0c6-2a01-50db-b693-f0b49caa24a8"
+					(reference "#PWR169")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(rectangle
+		(start 201.93 69.85)
+		(end 259.08 102.87)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "a0f1b784-35a5-5c5e-b8db-ee8e4a5478e0")
+	)
+	(text "Mounting holes"
+		(exclude_from_sim no)
+		(at 203.835 71.755 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "0c85545a-6f4c-5640-a5a7-754de0414ac8")
+	)
+	(text "Contents"
+		(exclude_from_sim no)
+		(at 308 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "7342c22b-efc6-59b9-baa8-cfee882ed537")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 321.5827 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "24dd8063-3e79-580f-ab19-6de26af23543")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 331.0197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "4fefb690-c047-5064-bab6-6ef5d1080351")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 336.4947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "d8df3cef-7960-52bc-b7f7-fd91fb93065e")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 341.9697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "f5a0854a-f8da-5b33-948d-13f80b26e509")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 347.4447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "3d1fa31f-233f-5e38-8a26-ad12ec8f9b46")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 352.9197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "fb24c099-e308-54d3-baf7-fae1a93c3f83")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 358.3947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "bc6f582d-d0c0-57a0-a5a4-9c8044b20dc5")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 363.8697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "1ef49de5-e6ad-56dd-9342-77f8691c098f")
+	)
+	(text "[8]"
+		(exclude_from_sim no)
+		(at 369.3447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "464b232b-5269-5220-8a91-6b300590f5f7")
+	)
+	(text "[9]"
+		(exclude_from_sim no)
+		(at 374.8197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "492c10df-21a6-5e61-bb93-35ae38d11c87")
+	)
+	(text "[10]"
+		(exclude_from_sim no)
+		(at 380.2947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#10")
+		)
+		(uuid "25f57316-49b8-5fed-bf21-2577457aac9b")
+	)
+	(embedded_fonts no)
+)

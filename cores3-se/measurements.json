@@ -1,0 +1,149 @@
+{
+  "device_id": "cores3-se",
+  "display_name": "M5Stack CoreS3 SE",
+  "vendor": "M5Stack",
+  "sku": "K128-SE",
+  "theme": "cores3_white",
+  "case": {
+    "width": 54.0,
+    "height": 54.0,
+    "depth": 15.5,
+    "corner_radius": 5.0,
+    "color": "#E4E4E6",
+    "material": "PC+ABS+Glass",
+    "note": "depth is the vendor's figure, not measured: M5Stack's specification table gives 54.0 x 54.0 x 15.5 mm, its dimension drawing (the CoreS3-Lite's, which the CoreS3-SE page links as its model size) 15.5 mm for the frame and 16.5 mm over the back cover, and its CoreS3-SE.stl a 15.5 mm frame with the cover 1.0 mm proud of it; the model's case is that frame, 15.5 mm. It was 15.0 until 2026-11-17, the owner's hand measurement of 2026-07-15, taken without a caliper, as was his 22.0 mm with the battery base module attached (the vendor's files stack to 23.5 mm: the frame and the M5GO Battery Bottom3's 8.0 mm body). R5 shell; light grey frame around one black glass front set 1.47 mm inside the outline (R3.53). color is the front's case color at the top."
+  },
+  "display": {
+    "tech": "TFT-IPS-CapTouch",
+    "controller": "ILI9342C",
+    "active_w_mm": 40.8,
+    "active_h_mm": 30.6,
+    "resolution_w_px": 320,
+    "resolution_h_px": 240,
+    "origin_x_mm": 6.6,
+    "origin_y_mm": 11.7,
+    "native_orientation": "landscape",
+    "firmware_rotation_deg": 90,
+    "note": "Active area datasheet-verified 2026-07-15: 40.80 x 30.60 mm (2.0\", ~199 PPI, pixel pitch 0.1275 mm square); was 48.0 x 36.0 mm (~169 PPI). Origin from M5Stack's dimension drawing of the CoreS3 Lite shell (same case, 2026-10-19): the active area centered in the glass print's window 6.2-47.8 x 11.3-42.7 mm (41.6 x 31.4); the front render's lit rectangle lands within 0.2 mm of it."
+  },
+  "buttons": [
+    {
+      "id": "TouchScreen",
+      "logical": "pointer",
+      "gpio": -1,
+      "active": "touch",
+      "face": "front",
+      "shape": "rect",
+      "width_mm": 40.8,
+      "height_mm": 30.6,
+      "center_x_mm": 27.0,
+      "center_y_mm": 27.0
+    },
+    {
+      "id": "TouchA",
+      "logical": "primary",
+      "gpio": -1,
+      "active": "touch",
+      "face": "front",
+      "shape": "rect",
+      "width_mm": 13.6,
+      "height_mm": 5.1,
+      "center_x_mm": 13.4,
+      "center_y_mm": 44.85
+    },
+    {
+      "id": "TouchB",
+      "logical": "secondary",
+      "gpio": -1,
+      "active": "touch",
+      "face": "front",
+      "shape": "rect",
+      "width_mm": 13.6,
+      "height_mm": 5.1,
+      "center_x_mm": 27.0,
+      "center_y_mm": 44.85,
+      "label_on_case": "\u25cb"
+    },
+    {
+      "id": "TouchC",
+      "logical": "tertiary",
+      "gpio": -1,
+      "active": "touch",
+      "face": "front",
+      "shape": "rect",
+      "width_mm": 13.6,
+      "height_mm": 5.1,
+      "center_x_mm": 40.6,
+      "center_y_mm": 44.85
+    },
+    {
+      "id": "Power",
+      "logical": "power",
+      "gpio": -1,
+      "active": "low",
+      "face": "left",
+      "shape": "rect",
+      "width_mm": 2.5,
+      "height_mm": 5.0,
+      "center_x_mm": 0.0,
+      "center_y_mm": 13.0
+    },
+    {
+      "id": "Reset",
+      "logical": "reset",
+      "gpio": -1,
+      "active": "low",
+      "face": "bottom",
+      "shape": "rect",
+      "width_mm": 5.0,
+      "height_mm": 2.0,
+      "center_x_mm": 41.0,
+      "center_y_mm": 54.0
+    }
+  ],
+  "extras": [
+    {
+      "type": "usb-c",
+      "face": "bottom",
+      "center_x_mm": 27.0,
+      "center_y_mm": 54.0
+    },
+    {
+      "type": "microphone",
+      "face": "front",
+      "center_x_mm": 13.07,
+      "center_y_mm": 47.22,
+      "diameter_mm": 1.24
+    },
+    {
+      "type": "microphone",
+      "face": "front",
+      "center_x_mm": 40.93,
+      "center_y_mm": 47.22,
+      "diameter_mm": 1.24
+    },
+    {
+      "type": "label",
+      "text": "< < ○ > >",
+      "face": "front",
+      "center_x_mm": 27.0,
+      "center_y_mm": 46.4,
+      "color": "#B8493E"
+    },
+    {
+      "type": "led",
+      "face": "front",
+      "center_x_mm": 50.0,
+      "center_y_mm": 5.0,
+      "color": "red"
+    }
+  ],
+  "notes": "Full-glass front panel; capacitive touch is the primary input. Under the window the glass carries the red touch print \"< < ○ > >\" (ring 2.58 mm across at 27.0, 46.40 mm) and a microphone hole 13.93 mm either side of it (DUAL MIC), from M5Stack's renders and the CoreS3 Lite drawing (2026-10-19); the SE has no camera and no proximity/light sensor. Power (left edge) and Reset (bottom edge) positions owner-measured 2026-07-15; neither is visible from the front. The whole glass is the pointer (TouchScreen, logical \"pointer\"), and TouchA/B/C are the three bottom-bar zones under it, which carry the fleet's three logical buttons. They are not printed marks: the FT6336U reaches 40 rows below the 240-row display (raw Y up to 278, owner-measured; TOUCH_ZONE_STRIP_BELOW_DISPLAY in the Kleidos firmware's variants/cores3_se/variant.h) and a contact there routes to one of three equal columns of the panel's width (zoneForSample, src/hal/common/m5_touch_button_input.cpp), so each zone is 40.8/3 mm wide by 30.6 x 40/240 mm tall, directly under the active area. The red print is decoration and does not line up with them: its ring marks TouchB, but its two inner chevrons sit across the A/B and B/C boundaries. The same derivation on the Core2 v1.3 lands within 0.25 mm of that board's three printed rings, which is the cross-check.",
+  "sources": [
+    {
+      "kind": "see",
+      "url": "sources.md",
+      "local": "sources.md"
+    }
+  ]
+}

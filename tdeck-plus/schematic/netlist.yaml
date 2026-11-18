@@ -1,0 +1,3497 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# LILYGO T-Deck Plus: every component, every pin and the net it is on, as the
+# vendor's published schematics show them (the mainboard sheet and the two GPS
+# daughterboard sheets). Facts only: what connects where and through what. The
+# drawing in this folder (tdeck-plus.kicad_sch) is generated from this file;
+# README.md says how, and how the two are checked against each other.
+#
+# Conventions:
+# - pins are the vendor's pin numbers (letters for the transistors: G S D, B C E;
+#   ball names for the MIA-M10Q);
+# - net names are the vendor's; a net the vendor left unnamed gets a name of
+#   ours, listed under "renamed"; "ESP_LCD_D/C" is written ESP_LCD_DC;
+# - NC is a pin the schematic leaves unconnected;
+# - the daughterboards reuse the main board's designators, so their parts are
+#   numbered +100 (MIA-M10Q board) and +200 (L76K board), and their nets carry
+#   the prefixes M10_ and L76K_ (see "aliases");
+# - "sheet" says which published sheet a part is on: main, m10 or l76k.
+
+board: tdeck-plus
+source:
+  title: T-Deck mainboard schematic (LilyGO, Altium), dated 2023-06-01
+  url: https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/schematic.pdf
+  commit: 80921c8 (2023-06-01, "Added schematic"), file unchanged since
+  listed_at: https://github.com/Xinyuan-LilyGO/documentation/blob/master/en/products/t-deck-series/t-deck-plus/index.md
+  sha256: c3dcd1de8cc7966c69c5bff182deb41c776ee36d4c3a1e32afbc2a5164269ff4
+  checked: '2026-11-17'
+  pages:
+    1: The whole mainboard on one sheet (title block dated 2023/6/1)
+  read_how: 'The connections were taken from the PDF itself: its wires and junction dots, the pin and net markers Altium writes into the page (PI<ref>0<pin>, NL<net>), the printed net labels and power ports; each block was then checked against the printed page. Values come from the print and the parts'' property pop-ups of the same PDF (where the two differ, the print, noted per part).'
+  not_drawn: 'Three networks on the sheet sit inside compile-mask frames, which Altium leaves out of the design (the PDF carries no part marker for them): two TP_EN networks at the right (D48, D49, C79, R67; D4, D9, R68 and a 22uF/6.3V capacitor), a third below them (Q25 PMBT3906, D30, R49, R70, R74, C73), and a framed D4 1N4148 from TP_EN beside D3. They are not in this file.'
+  daughterboards:
+  - title: T-Deck-GPS V1.0 (MIA-M10Q), dated 24-03-29
+    url: https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/T-Deck-GPS%20V1.0%20%2024-03-29.pdf
+    commit: ba38554 (2025-08-05, "Added gps sch")
+    sha256: 94ba05c69f9fc28634a4dbe56d1bf22c6e0380800ceb0620af8d3448d61add18
+    numbering: designators +100 (U1 -> U101), nets prefixed M10_
+  - title: T-Deck-L76K V1.0, dated 24-08-12
+    url: https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/T-Deck-L76K%20V1.0%20%2024-08-12.pdf
+    commit: ba38554 (2025-08-05, "Added gps sch")
+    sha256: f3fdca3c64ccd8edfd9e29e2cf875e24b592e8407db1100c5f38fa811a81ecc2
+    numbering: designators +200 (U1 -> U201), nets prefixed L76K_
+  also_read:
+  - url: https://github.com/Xinyuan-LilyGO/documentation/blob/master/en/products/t-deck-series/t-deck-plus/index.md
+    used_for: that the T-Deck Plus page links this schematic; the cell (K1), the SX1262 inside U0 (K6), the Grove pins (P8) given to the GPS (K3, with the firmware) and the 2.8-inch ST7789 (K11, with the firmware)
+    checked: '2026-11-17'
+  - url: https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf
+    title: ESP32-S3-WROOM-1 & WROOM-1U datasheet v1.8 (Espressif)
+    used_for: Table 1-1, the one WROOM-1 part number with 16 MB flash and 8 MB Octal PSRAM (K4)
+    checked: '2026-11-17'
+  - url: https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+    title: ESP32-S3 Series datasheet v2.2 (Espressif)
+    used_for: the strapping pins, Table 3-1, and VDD_SPI, Table 3-4 (K5)
+    checked: '2026-11-17'
+  - url: https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf
+    title: ESP32-C3 Series datasheet v2.5 (Espressif)
+    used_for: pins 4 and 5, XTAL_32K_P and XTAL_32K_N (GPIO0, GPIO1), Tables 2-1 and 2-6 (K9, K10)
+    checked: '2026-11-17'
+  - url: https://files.waveshare.com/wiki/common/ES7210_DS.pdf
+    title: ES7210 datasheet revision 21.0, January 2023 (Everest Semiconductor), as Waveshare hosts it
+    used_for: the pin directions (K13, K14) and the I2C address 1000 0 AD1 AD0 (K18)
+    checked: '2026-11-17'
+  - url: https://cdn-shop.adafruit.com/product-files/3006/MAX98357A-MAX98357B.pdf
+    mirror_of: https://www.analog.com/media/en/technical-documentation/data-sheets/MAX98357A-MAX98357B.pdf
+    title: MAX98357A/MAX98357B datasheet 19-6779 Rev 7 (Maxim Integrated), as Adafruit hosts it
+    used_for: SD_MODE (K15), the gain (K16), pin 10 OUTN (K17)
+    checked: '2026-11-17'
+  - url: https://hobbielektronika.hu/forum/getfile.php?id=342341
+    title: TP4065 datasheet Rev 1.2 (Nanjing Top Power ASIC, Chinese), as a forum attachment
+    used_for: the CHRG pin that LED1 hangs on (K2)
+    checked: '2026-11-17'
+  - url: https://files.waveshare.com/wiki/common/GT911_Datasheet.pdf
+    title: GT911 datasheet Rev.10 (Goodix), as Waveshare hosts it
+    used_for: the address latched from INT at power-up (K20)
+    checked: '2026-11-16'
+  firmware: 'The Kleidos firmware, its tdeck_debug build running on the owner''s T-Deck Plus (K3, K4, K7, K8, K11, K12, K19 to K24): each citation names the file''s repository path and the symbol.'
+  bench: bench/ in this folder, one record per probe (K5; the TP_EN edge detector and the GPIO46 strap, README.md)
+renamed:
+  L76K_ANT: unnamed in the print
+  L76K_ANT_IN: unnamed in the print
+  L76K_D1_K: unnamed in the print
+  L76K_RF_IN: unnamed in the print
+  L76K_RST: printed RST
+  L76K_SET: unnamed in the print
+  L76K_VDD_RF: unnamed in the print
+  LED1_A: 'unnamed in the print: LED1.1, RW1.1'
+  M10_ANT: unnamed in the print
+  M10_D1_K: unnamed in the print
+  M10_D2_E2: unnamed in the print
+  M10_F9: unnamed in the print
+  M10_G7: unnamed in the print
+  M10_RF_FEED: unnamed in the print
+  M10_RF_IN: unnamed in the print
+  PWR_GATE: 'unnamed in the print: Q4.G, Q6.G, R26.2, RQ1.1'
+  PWR_ON: 'unnamed in the print: D2.2, D3.2, R27.1'
+  Q7_B: 'unnamed in the print: Q7.B, R27.2, R28.2'
+  Q7_C: 'unnamed in the print: Q7.C, R26.1'
+  SPK_N: 'unnamed in the print: CP1.2, CP2.2, CP3.1, CP4.1, L2.2, P1.2'
+  SPK_P: 'unnamed in the print: CP3.2, CP4.2, CP5.1, CP6.1, L3.2, P1.1'
+  SW1_IN: 'unnamed in the print: D1.1, Q5.S, SW1.1'
+  TF_CLK: 'unnamed in the print: RU2.1, TF.5'
+  TF_CMD: 'unnamed in the print: RU1.1, TF.3'
+  TF_DAT0: 'unnamed in the print: RU3.1, TF.7'
+  U0_ANT: 'unnamed in the print: R50.2, U0.1'
+  U2_AD0: 'unnamed in the print: R2.1, U2.1'
+  U2_AD1: 'unnamed in the print: R1.1, U2.2'
+  U2_MIC1N: 'unnamed in the print: C16.1, U2.15'
+  U2_MIC1P: 'unnamed in the print: C17.1, U2.16'
+  U2_MIC2N: 'unnamed in the print: C22.1, U2.20'
+  U2_MIC2P: 'unnamed in the print: C20.1, U2.19'
+  U2_MIC3N: 'unnamed in the print: CY8.2, U2.32'
+  U2_MIC3P: 'unnamed in the print: CY5.2, U2.31'
+  U2_MIC4N: 'unnamed in the print: CY6.2, U2.27'
+  U2_MIC4P: 'unnamed in the print: CY7.2, U2.28'
+  U2_REFP12: 'unnamed in the print: C18.1, U2.17'
+  U2_REFP34: 'unnamed in the print: C14.2, U2.29'
+  U2_REFQ12: 'unnamed in the print: C19.1, U2.18'
+  U2_REFQ34: 'unnamed in the print: C15.2, U2.30'
+  U2_REFQM: 'unnamed in the print: C12.2, U2.25'
+  U2_SDOUT1: 'unnamed in the print: R7.2, U2.11'
+  U2_SDOUT2: 'unnamed in the print: R8.2, U2.12'
+  U4_XIN: 'unnamed in the print: C27.1, R15.2, U4.1'
+  U5_SPICLK: 'unnamed in the print: R17.1, U5.22'
+  U5_VDD3P3: 'unnamed in the print: C31.1, C32.1, L1.2, U5.2, U5.3'
+  U5_XTAL_N: 'unnamed in the print: C26.1, U4.3, U5.29'
+  U5_XTAL_P: 'unnamed in the print: R15.1, U5.30'
+  U6_GAIN_SLOT: 'unnamed in the print: R20.1, U6.2'
+  U6_OUTN: 'unnamed in the print: L2.1, U6.10'
+  U6_OUTP: 'unnamed in the print: L3.1, U6.9'
+  U6_SD_MODE: 'unnamed in the print: R21.1, U6.4'
+  U6_VDD: 'unnamed in the print: C35.2, C36.2, L4.1, U6.7, U6.8'
+  U7_CC1: 'unnamed in the print: RC5.1, U7.A5'
+  U7_CC2: 'unnamed in the print: RC6.1, U7.B5'
+  U8_EN: 'unnamed in the print: RY1.2, RY2.1, U8.1'
+  U8_FB: 'unnamed in the print: C42.2, R23.2, R24.1, U8.5'
+  U8_LX: 'unnamed in the print: L5.1, U8.3'
+  UP1_CHRG: 'unnamed in the print: LED1.2, UP1.1'
+  UP1_PROG: 'unnamed in the print: R25.1, UP1.5'
+  XX2_FEED: 'unnamed in the print: R50.1, XX2.1'
+aliases:
+  note: A daughterboard's nets carry its prefix here (M10_, L76K_); the vendor names them VDD3V3, GND, GPS_TX, GPS_RX, PPS, VRTC, VCC_RF, RST, as the main board does some of them. No cable between a daughterboard's J2 (5 pins) and the main board's P8 (4 pins) is published, so none of these nets is joined to the main board.
+rails:
+  VBUS:
+    nominal: 5 V
+    from: U7
+    what: USB-C VBUS (A4, A9, B4, B9). Feeds the charger UP1, and the system through D1 (1N5819).
+    pages:
+    - 1
+  VBAT:
+    nominal: Li-ion cell
+    from: P3
+    what: Battery connector P3; charged by UP1 TP4065B from VBUS (R25 2K%1 on PROG). RD1 100K%1 sits across it.
+    pages:
+    - 1
+  +5V:
+    nominal: VBUS or VBAT
+    from: SW1
+    what: 'The power switch SW1 from SW1_IN: VBUS through D1, or VBAT through Q5 SI2307 while VBUS is absent (Q5 gate on VBUS, RD4 100K%1 to GND). Feeds the buck U8 and Q4.'
+    pages:
+    - 1
+    enable: SW1 (slide switch)
+  VDD3V3:
+    nominal: 3.3 V
+    from: U8
+    what: U8 SY8089AAC buck from +5V through the inductor L5 SWPA5020S100MT, with its output set by R23 100K%1 and R24 22K%1. Supplies the ESP32-S3 module, the LCD logic, the touch connector, the 4-pin header P8 and the I2C pull-ups RC2, RC4.
+    pages:
+    - 1
+    enable: 'U8 EN on U8_EN: RY1 100K from +5V, RY2 100K to GND'
+  V3V:
+    nominal: 3.3 V
+    from: Q6
+    what: Q6 SI2301 switch from VDD3V3. Supplies the ESP32-C3 keyboard controller and its flash, the ES7210, the Hall sensors, the LoRa module, the TF card, the backlight driver U9 and the LCD backlight anode, the keyboard backlight anodes (JP1), and the V3V side of the I2C.
+    pages:
+    - 1
+    enable: 'PWR_EN (IO10) high: D3 and R27 turn Q7 on, Q7 pulls PWR_GATE low through R26 1K (RQ1 100K pulls it up to +5V)'
+  BAT:
+    nominal: VBUS or VBAT
+    from: Q4
+    what: Q4 SI2301 switch from +5V. Supplies the speaker amplifier U6 through L4 and the battery divider RD2/RD3 (BAT_ADC).
+    pages:
+    - 1
+    enable: the same PWR_GATE as V3V (PWR_EN, IO10)
+  AGND:
+    nominal: 0 V
+    from: R16
+    what: Ground of the speaker amplifier, joined to GND through R16 0R.
+    pages:
+    - 1
+  ADC_GND:
+    nominal: 0 V
+    from: R9
+    what: Ground of the ES7210 and the microphones, joined to GND through R9 0R.
+    pages:
+    - 1
+  M10_VDD3V3:
+    nominal: 3.3 V
+    from: J102
+    what: 'MIA-M10Q daughterboard: VDD3V3 at its connector J102 pin 4.'
+    pages:
+    - 1
+  M10_VRTC:
+    nominal: backup cell
+    from: J101
+    what: 'MIA-M10Q daughterboard: the MS412FE cell J101, charged from M10_VDD3V3 through D101 and R103 1K.'
+    pages:
+    - 1
+  M10_VCC_RF:
+    nominal: RF supply
+    from: U101
+    what: 'MIA-M10Q daughterboard: the module''s VCC_RF output (C6), which feeds the antenna at J103 through R104 10R and L101 27nH.'
+    pages:
+    - 1
+  L76K_VDD3V3:
+    nominal: 3.3 V
+    from: J202
+    what: 'L76K daughterboard: VDD3V3 at its connector J202 pin 4.'
+    pages:
+    - 1
+  L76K_VRTC:
+    nominal: backup cell
+    from: J201
+    what: 'L76K daughterboard: the MS412FE cell J201, charged from L76K_VDD3V3 through D201 and R203 1K.'
+    pages:
+    - 1
+i2c:
+  bus:
+    sda: II2C_SDA (GPIO18), and I2C_SDA past Q2
+    scl: II2C_SCL (GPIO8), and I2C_SCL past Q1
+    pullups: RC4 (SDA) and RC2 (SCL) 4.7K to VDD3V3; RC3 and RC1 4.7K to V3V on the far side; R14 and R13 4.7k to V3V at the ESP32-C3
+  devices:
+  - ref: U2
+    part: ES7210
+    address: '0x40'
+    source: 'ES7210 datasheet rev. 21.0, p. 6: 1000 0 AD1 AD0, AD1 and AD0 pulled low by R1/R2 (K18)'
+  - ref: U5
+    part: ESP32-C3 keyboard
+    address: '0x55'
+    source: Kleidos firmware and LilyGO's keyboard sketch (K19)
+  - ref: P4
+    part: GT911 (touch panel)
+    address: 0x5D / 0x14
+    source: Kleidos firmware; GT911 datasheet (K20)
+  level_shifter: 'Q1 (SCL) and Q2 (SDA), BSS123 with their gates on V3V, join the VDD3V3 side (II2C_*) to the V3V side (I2C_*: the ES7210 and the ESP32-C3).'
+gpio_maps:
+- title: ESP32-S3 GPIO (U1)
+  map:
+    GPIO0:
+      pin: 27
+      net: GPIO_0
+      what: boot strap; KEY1 (trackball press) to GND, RY31 100K pull-up to VDD3V3 (strapping pin)
+    GPIO1:
+      pin: 39
+      net: G_S4
+      what: 'trackball left: Hall sensor UZ4 output (G_S4)'
+    GPIO2:
+      pin: 38
+      net: G_S2
+      what: 'trackball right: Hall sensor UZ2 output (G_S2)'
+    GPIO3:
+      pin: 15
+      net: G_S1
+      what: 'trackball up: Hall sensor UZ3 output (G_S1) (strapping pin)'
+    GPIO4:
+      pin: 4
+      net: BAT_ADC
+      what: battery voltage, RD2/RD3 divider of BAT (BAT_ADC)
+    GPIO5:
+      pin: 5
+      net: ESP_I2S_WS
+      what: I2S word select to the amplifier U6 (ESP_I2S_WS)
+    GPIO6:
+      pin: 6
+      net: ESP_I2S_DA
+      what: I2S data to the amplifier U6 (ESP_I2S_DA)
+    GPIO7:
+      pin: 7
+      net: ESP_I2S_BCK
+      what: I2S bit clock to the amplifier U6 (ESP_I2S_BCK)
+    GPIO8:
+      pin: 12
+      net: II2C_SCL
+      what: 'I2C SCL, VDD3V3 side (II2C_SCL): touch connector P4, Q1 to the V3V side'
+    GPIO9:
+      pin: 17
+      net: Lora_CS
+      what: LoRa chip select (Lora_CS)
+    GPIO10:
+      pin: 18
+      net: PWR_EN
+      what: 'PWR_EN: switches V3V and BAT on (Q7, Q4, Q6)'
+    GPIO11:
+      pin: 19
+      net: ESP_LCD_DC
+      what: LCD data/command (ESP_LCD_DC)
+    GPIO12:
+      pin: 20
+      net: ESP_LCD_CS
+      what: LCD chip select (ESP_LCD_CS)
+    GPIO13:
+      pin: 21
+      net: Lora_BUSY_GPIO13
+      what: LoRa BUSY
+    GPIO14:
+      pin: 22
+      net: ES7210_SDOUT
+      what: ES7210 SDOUT, through R7/R8 1K (ES7210_SDOUT)
+    GPIO15:
+      pin: 8
+      net: G_S3
+      what: 'trackball down: Hall sensor UZ1 output (G_S3)'
+    GPIO16:
+      pin: 9
+      net: ESP_TP_INT
+      what: touch interrupt, P4 pin 3 (ESP_TP_INT)
+    GPIO17:
+      pin: 10
+      net: Lora_NRSET_GPIO17
+      what: LoRa NRESET
+    GPIO18:
+      pin: 11
+      net: II2C_SDA
+      what: 'I2C SDA, VDD3V3 side (II2C_SDA): touch connector P4, Q2 to the V3V side'
+    GPIO19:
+      pin: 13
+      net: ESP_USB_DM
+      what: USB D- (ESP_USB_DM)
+    GPIO20:
+      pin: 14
+      net: ESP_USB_DP
+      what: USB D+ (ESP_USB_DP)
+    GPIO21:
+      pin: 23
+      net: ES7210_LRCK
+      what: ES7210 LRCK
+    GPIO35:
+      pin: 28
+      net: NC
+      what: serves the in-package Octal PSRAM (the print's note)
+    GPIO36:
+      pin: 29
+      net: NC
+      what: serves the in-package Octal PSRAM (the print's note)
+    GPIO37:
+      pin: 30
+      net: NC
+      what: serves the in-package Octal PSRAM (the print's note)
+    GPIO38:
+      pin: 31
+      net: ESP_MISO
+      what: 'SPI MISO: LCD, TF card (R5 10K to V3V), LoRa (ESP_MISO)'
+    GPIO39:
+      pin: 32
+      net: ESP_SD_CS
+      what: TF card chip select (ESP_SD_CS)
+    GPIO40:
+      pin: 33
+      net: ESP32_CLK
+      what: 'SPI clock: LCD, TF card through RU2, LoRa (ESP32_CLK)'
+    GPIO41:
+      pin: 34
+      net: ESP32_MOSI
+      what: 'SPI MOSI: LCD, TF card through RU1, LoRa (ESP32_MOSI)'
+    GPIO42:
+      pin: 35
+      net: ESP_LCD_EN
+      what: LCD backlight enable, U9 EN (ESP_LCD_EN)
+    GPIO43:
+      pin: 37
+      net: UAR0_TX
+      what: UART0 TX, header P8 pin 3 (UAR0_TX)
+    GPIO44:
+      pin: 36
+      net: UAR0_RX
+      what: UART0 RX, header P8 pin 4 (UAR0_RX)
+    GPIO45:
+      pin: 26
+      net: Lora_DIO1_GPIO45
+      what: LoRa DIO1 (strapping pin)
+    GPIO46:
+      pin: 16
+      net: C3_INT
+      what: 'keyboard controller interrupt (C3_INT), R12 4.7k to V3V (strapping pin; the print''s note: pulled down by default, and GPIO46 high with GPIO0 low is not usable)'
+    GPIO47:
+      pin: 24
+      net: ES7210_SCLK
+      what: ES7210 SCLK
+    GPIO48:
+      pin: 25
+      net: ES7210_MCLK
+      what: ES7210 MCLK
+- title: ESP32-C3 GPIO (U5, keyboard)
+  map:
+    GPIO0:
+      pin: 4
+      net: ROW1
+      what: keyboard ROW1 (XTAL_32K_P, printed XTAL_OUT)
+    GPIO1:
+      pin: 5
+      net: COL1
+      what: keyboard COL1 (XTAL_32K_N, printed XTAL_IN)
+    GPIO2:
+      pin: 6
+      net: I2C_SDA
+      what: I2C SDA, V3V side (I2C_SDA) (strapping pin)
+    GPIO3:
+      pin: 8
+      net: ROW2
+      what: keyboard ROW2
+    GPIO4:
+      pin: 9
+      net: COL2
+      what: keyboard COL2 (MTMS)
+    GPIO5:
+      pin: 10
+      net: COL3
+      what: keyboard COL3 (MTDI)
+    GPIO6:
+      pin: 12
+      net: ROW6
+      what: keyboard ROW6 (MTCK)
+    GPIO7:
+      pin: 13
+      net: ROW7
+      what: keyboard ROW7 (MTDO)
+    GPIO8:
+      pin: 14
+      net: C3_INT
+      what: interrupt to the ESP32-S3 IO46 (C3_INT), R12 4.7k to V3V (strapping pin)
+    GPIO9:
+      pin: 15
+      net: BL_CTRL
+      what: keyboard backlight switch Q3 gate (BL_CTRL), R11 4.7k to V3V, J1 pin 4 (strapping pin)
+    GPIO10:
+      pin: 16
+      net: I2C_SCL
+      what: I2C SCL, V3V side (I2C_SCL)
+    GPIO11:
+      pin: 18
+      net: COL4
+      what: keyboard COL4 (VDD_SPI)
+    GPIO12:
+      pin: 19
+      net: ROW4
+      what: keyboard ROW4 (SPIHD)
+    GPIO13:
+      pin: 20
+      net: COL5
+      what: keyboard COL5 (SPIWP)
+    GPIO14:
+      pin: 21
+      net: SPICS0
+      what: flash chip select (SPICS0)
+    GPIO15:
+      pin: 22
+      net: U5_SPICLK
+      what: flash clock through R17 200R (SPICLK)
+    GPIO16:
+      pin: 23
+      net: SPID
+      what: flash data (SPID)
+    GPIO17:
+      pin: 24
+      net: SPIQ
+      what: flash data (SPIQ)
+    GPIO18:
+      pin: 25
+      net: ROW5
+      what: keyboard ROW5
+    GPIO19:
+      pin: 26
+      net: ROW3
+      what: keyboard ROW3
+    GPIO20:
+      pin: 27
+      net: UART_RX
+      what: UART RX, J1 pin 5 (UART_RX)
+    GPIO21:
+      pin: 28
+      net: UART_TX
+      what: UART TX, J1 pin 6 (UART_TX)
+pulls:
+- signal: U2_AD1
+  down: ADC_GND
+  via: R1
+  value: 100K
+- signal: U2_AD0
+  down: ADC_GND
+  via: R2
+  value: 100K
+- signal: ESP32_MOSI
+  up: V3V
+  via: R3
+  value: 10K
+- signal: ESP_LCD_EN
+  up: V3V
+  via: R3Y
+  value: NC(100K)
+- signal: ESP32_CLK
+  up: V3V
+  via: R4
+  value: 10K
+- signal: ESP_MISO
+  up: V3V
+  via: R5
+  value: 10K
+- signal: CHIP_PU
+  up: VDD3V3
+  via: R6
+  value: 10K
+- signal: SPICS0
+  up: V3V
+  via: R10
+  value: 10K
+- signal: BL_CTRL
+  up: V3V
+  via: R11
+  value: 4.7k
+- signal: C3_INT
+  up: V3V
+  via: R12
+  value: 4.7k
+- signal: I2C_SCL
+  up: V3V
+  via: R13
+  value: 4.7k
+- signal: I2C_SDA
+  up: V3V
+  via: R14
+  value: 4.7k
+- signal: BL_CTRL
+  down: GND
+  via: R18
+  value: NC
+- signal: RESET
+  up: V3V
+  via: R19
+  value: 10K
+- signal: U6_GAIN_SLOT
+  down: AGND
+  via: R20
+  value: 0R
+- signal: ESP_GPIO_MODE
+  up: V3V
+  via: R22
+  value: 100K
+- signal: U8_FB
+  up: VDD3V3
+  via: R23
+  value: 100K%1
+- signal: U8_FB
+  down: GND
+  via: R24
+  value: 22K%1
+- signal: UP1_PROG
+  down: GND
+  via: R25
+  value: 2K%1
+- signal: Q7_B
+  down: GND
+  via: R28
+  value: 100K
+- signal: M10_G7
+  down: M10_GND
+  via: R101
+  value: 0R
+- signal: M10_F9
+  down: M10_GND
+  via: R102
+  value: 0R
+- signal: M10_D1_K
+  up: M10_VRTC
+  via: R103
+  value: 1K
+- signal: M10_RF_FEED
+  up: M10_VCC_RF
+  via: R104
+  value: 10R
+- signal: L76K_RST
+  up: L76K_VDD3V3
+  via: R201
+  value: 10K
+- signal: L76K_SET
+  down: L76K_GND
+  via: R202
+  value: NC
+- signal: L76K_D1_K
+  up: L76K_VRTC
+  via: R203
+  value: 1K
+- signal: I2C_SCL
+  up: V3V
+  via: RC1
+  value: 4.7K
+- signal: II2C_SCL
+  up: VDD3V3
+  via: RC2
+  value: 4.7K
+- signal: I2C_SDA
+  up: V3V
+  via: RC3
+  value: 4.7K
+- signal: II2C_SDA
+  up: VDD3V3
+  via: RC4
+  value: 4.7K
+- signal: U7_CC1
+  down: GND
+  via: RC5
+  value: 5.1K
+- signal: U7_CC2
+  down: GND
+  via: RC6
+  value: 5.1K
+- signal: BAT_ADC
+  up: BAT
+  via: RD2
+  value: 100K%1
+- signal: BAT_ADC
+  down: GND
+  via: RD3
+  value: 100K%1
+- signal: PWR_GATE
+  up: +5V
+  via: RQ1
+  value: 100K
+- signal: LED1_A
+  up: VBUS
+  via: RW1
+  value: 2K
+- signal: U8_EN
+  up: +5V
+  via: RY1
+  value: 100K
+- signal: U8_EN
+  down: GND
+  via: RY2
+  value: 100K
+- signal: GPIO_0
+  up: VDD3V3
+  via: RY31
+  value: 100K
+- signal: ESP_LCD_RES
+  up: VDD3V3
+  via: RY34
+  value: 10K
+- signal: ESP_TP_RESET
+  up: VDD3V3
+  via: RY35
+  value: 10K
+- signal: ADC_MIC1N
+  down: ADC_GND
+  via: Rm1
+  value: 0R
+- signal: ADC_MIC2N
+  down: ADC_GND
+  via: Rm2
+  value: 0R
+- signal: ADC_MIC4N
+  down: ADC_GND
+  via: Rm3
+  value: 0R
+- signal: ADC_MIC3N
+  down: ADC_GND
+  via: Rm4
+  value: 0R
+components:
+  C1:
+    value: 22pF
+    sheet: main
+    pins:
+      '1': ADC_MIC1P
+      '2': ADC_GND
+  C2:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS12
+      '2': ADC_GND
+  C3:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': V3V
+  C4:
+    value: 10uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': V3V
+  C5:
+    value: 22uF/10V
+    sheet: main
+    pins:
+      '1': GND
+      '2': VDD3V3
+  C6:
+    value: 22uF/10V
+    sheet: main
+    pins:
+      '1': GND
+      '2': VDD3V3
+  C7:
+    value: 22pF
+    sheet: main
+    pins:
+      '1': ADC_MIC2P
+      '2': ADC_GND
+  C8:
+    value: 22pF
+    sheet: main
+    pins:
+      '1': ADC_MIC4P
+      '2': ADC_GND
+  C9:
+    value: 1uF/10V
+    sheet: main
+    pins:
+      '1': CHIP_PU
+      '2': GND
+  C10:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C11:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C12:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': U2_REFQM
+  C13:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': ADC_MICBIAS34
+  C14:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': U2_REFP34
+  C15:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': U2_REFQ34
+  C16:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': U2_MIC1N
+      '2': ADC_MIC1N
+  C17:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': U2_MIC1P
+      '2': ADC_MIC1P
+  C18:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': U2_REFP12
+      '2': ADC_GND
+  C19:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': U2_REFQ12
+      '2': ADC_GND
+  C20:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': U2_MIC2P
+      '2': ADC_MIC2P
+  C21:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS12
+      '2': ADC_GND
+  C22:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': U2_MIC2N
+      '2': ADC_MIC2N
+  C23:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': ADC_GND
+  C24:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': ADC_GND
+  C25:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C26:
+    value: 15pF
+    sheet: main
+    pins:
+      '1': U5_XTAL_N
+      '2': GND
+  C27:
+    value: 12pF
+    sheet: main
+    pins:
+      '1': U4_XIN
+      '2': GND
+  C28:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C29:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C31:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': U5_VDD3P3
+      '2': GND
+  C32:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': U5_VDD3P3
+      '2': GND
+  C33:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C34:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C35:
+    value: 10uF/6.3V
+    sheet: main
+    pins:
+      '1': AGND
+      '2': U6_VDD
+  C36:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': AGND
+      '2': U6_VDD
+  C37:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': RESET
+      '2': GND
+  C38:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C39:
+    value: 10uF/10V
+    sheet: main
+    pins:
+      '1': VBUS
+      '2': GND
+  C40:
+    value: 22UF/16V
+    sheet: main
+    pins:
+      '1': +5V
+      '2': GND
+  C41:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': +5V
+      '2': GND
+  C42:
+    value: 22pF
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': U8_FB
+  C43:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': GND
+  C44:
+    value: 22UF/10V
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': GND
+  C45:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': VBAT
+      '2': GND
+  C46:
+    value: 10uF/6.3V
+    sheet: main
+    pins:
+      '1': VBAT
+      '2': GND
+  C50:
+    value: 10uF/6.3V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  C51:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': GND
+      '2': V3V
+  C101:
+    value: 100nF
+    sheet: m10
+    pins:
+      '1': M10_VRTC
+      '2': M10_GND
+  C105:
+    value: 10nF
+    sheet: m10
+    pins:
+      '1': M10_RF_FEED
+      '2': M10_GND
+  C106:
+    value: 47pF
+    sheet: m10
+    pins:
+      '1': M10_RF_IN
+      '2': M10_ANT
+  C107:
+    value: 10uF
+    sheet: m10
+    pins:
+      '1': M10_VDD3V3
+      '2': M10_GND
+  C108:
+    value: 100nF
+    sheet: m10
+    pins:
+      '1': M10_VDD3V3
+      '2': M10_GND
+  C201:
+    value: 100nF
+    sheet: l76k
+    pins:
+      '1': L76K_VRTC
+      '2': L76K_GND
+  C202:
+    value: NC
+    sheet: l76k
+    pins:
+      '1': L76K_ANT_IN
+      '2': L76K_GND
+    note: Not fitted (NC).
+  C203:
+    value: 100pF
+    sheet: l76k
+    pins:
+      '1': L76K_ANT_IN
+      '2': L76K_ANT
+  C204:
+    value: 100nF
+    sheet: l76k
+    pins:
+      '1': L76K_RST
+      '2': L76K_GND
+  C205:
+    value: 100nF
+    sheet: l76k
+    pins:
+      '1': L76K_VDD_RF
+      '2': L76K_GND
+  C206:
+    value: NC
+    sheet: l76k
+    pins:
+      '1': L76K_RF_IN
+      '2': L76K_GND
+    note: Not fitted (NC).
+  C207:
+    value: 10uF
+    sheet: l76k
+    pins:
+      '1': L76K_VDD3V3
+      '2': L76K_GND
+  C208:
+    value: 100nF
+    sheet: l76k
+    pins:
+      '1': L76K_VDD3V3
+      '2': L76K_GND
+  CCE5:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  CCW4:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  CD1:
+    value: 10nF
+    sheet: main
+    pins:
+      '1': GND
+      '2': BAT_ADC
+  CP1:
+    value: 10PF
+    sheet: main
+    pins:
+      '1': AGND
+      '2': SPK_N
+  CP2:
+    value: 33PF
+    sheet: main
+    pins:
+      '1': AGND
+      '2': SPK_N
+  CP3:
+    value: 10PF
+    sheet: main
+    pins:
+      '1': SPK_N
+      '2': SPK_P
+  CP4:
+    value: 33PF
+    sheet: main
+    pins:
+      '1': SPK_N
+      '2': SPK_P
+  CP5:
+    value: 10PF
+    sheet: main
+    pins:
+      '1': SPK_P
+      '2': AGND
+  CP6:
+    value: 33PF
+    sheet: main
+    pins:
+      '1': SPK_P
+      '2': AGND
+  CW1:
+    value: 10uF/10V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  CW2:
+    value: 10uF/10V
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': GND
+  CW3:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': GND
+  CW4:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': VBUS
+      '2': GND
+  CW5:
+    value: 10uF/10V
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  CW6:
+    value: 10uF/10V
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': GND
+  CW7:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': GND
+  CW8:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  CW10:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+  CW22:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': ESP_LCD_RES
+      '2': GND
+  CW24:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': ESP_TP_RESET
+      '2': GND
+  CY1:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS12
+      '2': ADC_GND
+  CY2:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS34
+      '2': ADC_GND
+  CY3:
+    value: 100nF
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS34
+      '2': ADC_GND
+  CY4:
+    value: 22pF
+    sheet: main
+    pins:
+      '1': ADC_MIC3P
+      '2': ADC_GND
+  CY5:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_MIC3P
+      '2': U2_MIC3P
+  CY6:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_MIC4N
+      '2': U2_MIC4N
+  CY7:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_MIC4P
+      '2': U2_MIC4P
+  CY8:
+    value: 1uF/6.3V
+    sheet: main
+    pins:
+      '1': ADC_MIC3N
+      '2': U2_MIC3N
+  D1:
+    value: 1N5819
+    sheet: main
+    pins:
+      '1': SW1_IN
+      '2': VBUS
+    note: Pin 1 is the cathode (the vendor numbers this Schottky 1 = K).
+  D2:
+    value: NC(1N4148)
+    sheet: main
+    pins:
+      '1': VBUS
+      '2': PWR_ON
+    note: 'Designator printed "D2(NC)" with the value 1N4148: drawn here as not fitted.'
+  D3:
+    value: 1N4148
+    sheet: main
+    pins:
+      '1': PWR_EN
+      '2': PWR_ON
+    note: Pin 1 is the anode.
+  D101:
+    value: 1N4148
+    sheet: m10
+    pins:
+      '1': M10_D1_K
+      '2': M10_VDD3V3
+    note: 'Pin numbers are not printed: 1 is the cathode, 2 the anode here.'
+  D201:
+    value: 1N4148
+    sheet: l76k
+    pins:
+      '1': L76K_D1_K
+      '2': L76K_VDD3V3
+    note: 'Pin numbers are not printed: 1 is the cathode, 2 the anode here.'
+  J1:
+    value: 6PIN_2.0
+    sheet: main
+    pins:
+      '1': V3V
+      '2': GND
+      '3': RESET
+      '4': BL_CTRL
+      '5': UART_RX
+      '6': UART_TX
+  J101:
+    value: MS412FE
+    sheet: m10
+    pins:
+      '1': M10_VRTC
+      '2': M10_GND
+    note: Rechargeable backup cell.
+  J102:
+    value: 2.0-5P
+    sheet: m10
+    pins:
+      '1': M10_PPS
+      '2': M10_GPS_TX
+      '3': M10_GPS_RX
+      '4': M10_VDD3V3
+      '5': M10_GND
+  J103:
+    value: IPEX1
+    sheet: m10
+    pins:
+      '1': M10_ANT
+      '2': M10_GND
+      '3': M10_GND
+    note: Antenna connector.
+  J201:
+    value: MS412FE
+    sheet: l76k
+    pins:
+      '1': L76K_VRTC
+      '2': L76K_GND
+    note: Rechargeable backup cell.
+  J202:
+    value: 2.0-5P
+    sheet: l76k
+    pins:
+      '1': L76K_PPS
+      '2': L76K_GPS_TX
+      '3': L76K_GPS_RX
+      '4': L76K_VDD3V3
+      '5': L76K_GND
+  J203:
+    value: IPEX1
+    sheet: l76k
+    pins:
+      '1': L76K_ANT
+      '2': L76K_GND
+      '3': L76K_GND
+    note: Antenna connector.
+  JP1:
+    value: BM14B(0.8)-24DS-0.4V(53)
+    sheet: main
+    pins:
+      '1': GND
+      '2': NC
+      '3': NC
+      '4': GND
+      '5': GND
+      '6': ROW1
+      '7': COL1
+      '8': ROW2
+      '9': COL2
+      '10': COL3
+      '11': GND
+      '12': GND
+      '13': GND
+      '14': GND
+      '15': GND
+      '16': GND
+      '17': COL4
+      '18': ROW3
+      '19': COL5
+      '20': ROW4
+      '21': ROW5
+      '22': ROW6
+      '23': LEDK
+      '24': V3V
+      '25': LEDK
+      '26': V3V
+      '27': ROW7
+      '28': GND
+    note: The PDF's property pop-up says SM_7; the print gives the part number.
+  KEY1:
+    value: TS-1187AB
+    sheet: main
+    pins:
+      '1': GPIO_0
+      '2': GPIO_0
+      '3': GND
+      '4': GND
+    note: 'Pin 4 (B1) is drawn wired to GND in the print, and is on GND here as drawn. The PDF''s net markers, which the rest of the connections were read from, list pin 4 on a net of its own: the wire drawn to it ends about 0.05 pt short of the pin''s end.'
+  L1:
+    value: 2.0nH
+    sheet: main
+    pins:
+      '1': V3V
+      '2': U5_VDD3P3
+  L2:
+    value: 220ohm@100MHZ
+    sheet: main
+    pins:
+      '1': U6_OUTN
+      '2': SPK_N
+  L3:
+    value: 220ohm@100MHZ
+    sheet: main
+    pins:
+      '1': U6_OUTP
+      '2': SPK_P
+  L4:
+    value: 600R/500MA
+    sheet: main
+    pins:
+      '1': U6_VDD
+      '2': BAT
+    note: Printed "600R/500MA" with the note "ferrite bead".
+  L5:
+    value: SWPA5020S100MT
+    sheet: main
+    pins:
+      '1': U8_LX
+      '2': VDD3V3
+  L101:
+    value: 27nH
+    sheet: m10
+    pins:
+      '1': M10_RF_FEED
+      '2': M10_ANT
+  L201:
+    value: 47nH
+    sheet: l76k
+    pins:
+      '1': L76K_VDD_RF
+      '2': L76K_ANT
+  LED1:
+    value: Blue
+    sheet: main
+    pins:
+      '1': LED1_A
+      '2': UP1_CHRG
+  MIC1:
+    value: MSM381A3729H9CP
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS12
+      '2': ADC_MIC1N
+      '3': ADC_MIC1N
+      '4': ADC_MIC1P
+  MIC2:
+    value: MSM381A3729H9CP
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS12
+      '2': ADC_MIC2N
+      '3': ADC_MIC2N
+      '4': ADC_MIC2P
+  MIC3:
+    value: MSM381A3729H9CP
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS34
+      '2': ADC_MIC3N
+      '3': ADC_MIC3N
+      '4': ADC_MIC3P
+  MIC4:
+    value: MSM381A3729H9CP
+    sheet: main
+    pins:
+      '1': ADC_MICBIAS34
+      '2': ADC_MIC4N
+      '3': ADC_MIC4N
+      '4': ADC_MIC4P
+  P1:
+    value: SPEEK
+    sheet: main
+    pins:
+      '1': SPK_P
+      '2': SPK_N
+  P2:
+    value: 2.8in LCD
+    sheet: main
+    pins:
+      '1': GND
+      '2': ESP_LCD_RES
+      '3': ESP32_CLK
+      '4': ESP_LCD_DC
+      '5': ESP_LCD_CS
+      '6': ESP32_MOSI
+      '7': ESP_MISO
+      '8': GND
+      '9': VDD3V3
+      '10': V3V
+      '11': LEDK1
+      '12': LEDK2
+      '13': LEDK3
+      '14': LEDK4
+      '15': NC
+      '16': NC
+      '17': NC
+      '18': NC
+    note: 'Printed "2.8 inch" (Chinese): the LCD connector.'
+  P3:
+    value: Li battery
+    sheet: main
+    pins:
+      '1': VBAT
+      '2': GND
+    note: 'Printed "lithium battery" (Chinese): the battery connector.'
+  P4:
+    value: 6P touch
+    sheet: main
+    pins:
+      '1': GND
+      '2': ESP_TP_RESET
+      '3': ESP_TP_INT
+      '4': II2C_SDA
+      '5': II2C_SCL
+      '6': VDD3V3
+    note: Printed "6P touch connector" (Chinese).
+  P8:
+    value: 4P-2.0MM
+    sheet: main
+    pins:
+      '1': GND
+      '2': VDD3V3
+      '3': UAR0_TX
+      '4': UAR0_RX
+  Q1:
+    value: BSS123
+    sheet: main
+    pins:
+      D: II2C_SCL
+      G: V3V
+      S: I2C_SCL
+  Q2:
+    value: BSS123
+    sheet: main
+    pins:
+      D: II2C_SDA
+      G: V3V
+      S: I2C_SDA
+  Q3:
+    value: BSS138
+    sheet: main
+    pins:
+      D: LEDK
+      G: BL_CTRL
+      S: GND
+    note: Printed BSS138; the PDF's property pop-up says MOSFETP_4.
+  Q4:
+    value: SI2301
+    sheet: main
+    pins:
+      D: BAT
+      G: PWR_GATE
+      S: +5V
+  Q5:
+    value: SI2307
+    sheet: main
+    pins:
+      D: VBAT
+      G: VBUS
+      S: SW1_IN
+  Q6:
+    value: SI2301
+    sheet: main
+    pins:
+      D: V3V
+      G: PWR_GATE
+      S: VDD3V3
+  Q7:
+    value: PMBT3904
+    sheet: main
+    pins:
+      B: Q7_B
+      C: Q7_C
+      E: GND
+  R1:
+    value: 100K
+    sheet: main
+    pins:
+      '1': U2_AD1
+      '2': ADC_GND
+  R2:
+    value: 100K
+    sheet: main
+    pins:
+      '1': U2_AD0
+      '2': ADC_GND
+  R3:
+    value: 10K
+    sheet: main
+    pins:
+      '1': ESP32_MOSI
+      '2': V3V
+  R3Y:
+    value: NC(100K)
+    sheet: main
+    pins:
+      '1': ESP_LCD_EN
+      '2': V3V
+    note: 'Designator printed "R3Y(NC)" with the value 100K: drawn here as not fitted.'
+  R4:
+    value: 10K
+    sheet: main
+    pins:
+      '1': ESP32_CLK
+      '2': V3V
+  R5:
+    value: 10K
+    sheet: main
+    pins:
+      '1': ESP_MISO
+      '2': V3V
+  R6:
+    value: 10K
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': CHIP_PU
+  R7:
+    value: 1K
+    sheet: main
+    pins:
+      '1': ES7210_SDOUT
+      '2': U2_SDOUT1
+  R8:
+    value: 1K
+    sheet: main
+    pins:
+      '1': ES7210_SDOUT
+      '2': U2_SDOUT2
+  R9:
+    value: 0R
+    sheet: main
+    pins:
+      '1': GND
+      '2': ADC_GND
+  R10:
+    value: 10K
+    sheet: main
+    pins:
+      '1': V3V
+      '2': SPICS0
+  R11:
+    value: 4.7k
+    sheet: main
+    pins:
+      '1': BL_CTRL
+      '2': V3V
+  R12:
+    value: 4.7k
+    sheet: main
+    pins:
+      '1': C3_INT
+      '2': V3V
+  R13:
+    value: 4.7k
+    sheet: main
+    pins:
+      '1': I2C_SCL
+      '2': V3V
+  R14:
+    value: 4.7k
+    sheet: main
+    pins:
+      '1': I2C_SDA
+      '2': V3V
+  R15:
+    value: 22NH
+    sheet: main
+    pins:
+      '1': U5_XTAL_P
+      '2': U4_XIN
+    note: 'Printed "22NH (high frequency)": an inductor drawn with a resistor symbol and an R designator.'
+  R16:
+    value: 0R
+    sheet: main
+    pins:
+      '1': GND
+      '2': AGND
+  R17:
+    value: 200R
+    sheet: main
+    pins:
+      '1': U5_SPICLK
+      '2': SPICLK
+  R18:
+    value: NC
+    sheet: main
+    pins:
+      '1': GND
+      '2': BL_CTRL
+    note: Not fitted (NC).
+  R19:
+    value: 10K
+    sheet: main
+    pins:
+      '1': RESET
+      '2': V3V
+    note: Printed 10K; the PDF's property pop-up says "nc".
+  R20:
+    value: 0R
+    sheet: main
+    pins:
+      '1': U6_GAIN_SLOT
+      '2': AGND
+  R21:
+    value: 0R
+    sheet: main
+    pins:
+      '1': U6_SD_MODE
+      '2': ESP_GPIO_MODE
+  R22:
+    value: 100K
+    sheet: main
+    pins:
+      '1': V3V
+      '2': ESP_GPIO_MODE
+  R23:
+    value: 100K%1
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': U8_FB
+  R24:
+    value: 22K%1
+    sheet: main
+    pins:
+      '1': U8_FB
+      '2': GND
+  R25:
+    value: 2K%1
+    sheet: main
+    pins:
+      '1': UP1_PROG
+      '2': GND
+  R26:
+    value: 1K
+    sheet: main
+    pins:
+      '1': Q7_C
+      '2': PWR_GATE
+  R27:
+    value: 10K
+    sheet: main
+    pins:
+      '1': PWR_ON
+      '2': Q7_B
+  R28:
+    value: 100K
+    sheet: main
+    pins:
+      '1': GND
+      '2': Q7_B
+  R50:
+    value: 0R
+    sheet: main
+    pins:
+      '1': XX2_FEED
+      '2': U0_ANT
+  R101:
+    value: 0R
+    sheet: m10
+    pins:
+      '1': M10_G7
+      '2': M10_GND
+  R102:
+    value: 0R
+    sheet: m10
+    pins:
+      '1': M10_F9
+      '2': M10_GND
+  R103:
+    value: 1K
+    sheet: m10
+    pins:
+      '1': M10_D1_K
+      '2': M10_VRTC
+  R104:
+    value: 10R
+    sheet: m10
+    pins:
+      '1': M10_VCC_RF
+      '2': M10_RF_FEED
+  R201:
+    value: 10K
+    sheet: l76k
+    pins:
+      '1': L76K_VDD3V3
+      '2': L76K_RST
+  R202:
+    value: NC
+    sheet: l76k
+    pins:
+      '1': L76K_SET
+      '2': L76K_GND
+    note: Not fitted (NC).
+  R203:
+    value: 1K
+    sheet: l76k
+    pins:
+      '1': L76K_D1_K
+      '2': L76K_VRTC
+  R204:
+    value: 0R
+    sheet: l76k
+    pins:
+      '1': L76K_RF_IN
+      '2': L76K_ANT_IN
+  RC1:
+    value: 4.7K
+    sheet: main
+    pins:
+      '1': I2C_SCL
+      '2': V3V
+  RC2:
+    value: 4.7K
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': II2C_SCL
+  RC3:
+    value: 4.7K
+    sheet: main
+    pins:
+      '1': I2C_SDA
+      '2': V3V
+  RC4:
+    value: 4.7K
+    sheet: main
+    pins:
+      '1': VDD3V3
+      '2': II2C_SDA
+  RC5:
+    value: 5.1K
+    sheet: main
+    pins:
+      '1': U7_CC1
+      '2': GND
+  RC6:
+    value: 5.1K
+    sheet: main
+    pins:
+      '1': U7_CC2
+      '2': GND
+  RD1:
+    value: 100K%1
+    sheet: main
+    pins:
+      '1': VBAT
+      '2': GND
+  RD2:
+    value: 100K%1
+    sheet: main
+    pins:
+      '1': BAT
+      '2': BAT_ADC
+  RD3:
+    value: 100K%1
+    sheet: main
+    pins:
+      '1': BAT_ADC
+      '2': GND
+  RD4:
+    value: 100K%1
+    sheet: main
+    pins:
+      '1': GND
+      '2': VBUS
+  RQ1:
+    value: 100K
+    sheet: main
+    pins:
+      '1': PWR_GATE
+      '2': +5V
+  RU1:
+    value: 22R
+    sheet: main
+    pins:
+      '1': TF_CMD
+      '2': ESP32_MOSI
+  RU2:
+    value: 22R
+    sheet: main
+    pins:
+      '1': TF_CLK
+      '2': ESP32_CLK
+  RU3:
+    value: 22R
+    sheet: main
+    pins:
+      '1': TF_DAT0
+      '2': ESP_MISO
+  RW1:
+    value: 2K
+    sheet: main
+    pins:
+      '1': LED1_A
+      '2': VBUS
+  RY1:
+    value: 100K
+    sheet: main
+    pins:
+      '1': +5V
+      '2': U8_EN
+  RY2:
+    value: 100K
+    sheet: main
+    pins:
+      '1': U8_EN
+      '2': GND
+  RY31:
+    value: 100K
+    sheet: main
+    pins:
+      '1': GPIO_0
+      '2': VDD3V3
+  RY34:
+    value: 10K
+    sheet: main
+    pins:
+      '1': ESP_LCD_RES
+      '2': VDD3V3
+  RY35:
+    value: 10K
+    sheet: main
+    pins:
+      '1': ESP_TP_RESET
+      '2': VDD3V3
+  Rm1:
+    value: 0R
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': ADC_MIC1N
+  Rm2:
+    value: 0R
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': ADC_MIC2N
+  Rm3:
+    value: 0R
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': ADC_MIC4N
+  Rm4:
+    value: 0R
+    sheet: main
+    pins:
+      '1': ADC_GND
+      '2': ADC_MIC3N
+  S1:
+    value: SW-PB
+    sheet: main
+    pins:
+      '2': CHIP_PU
+      '3': GND
+  SW1:
+    value: K3-1391D-5MM
+    sheet: main
+    pins:
+      '1': SW1_IN
+      '2': +5V
+      '3': NC
+  T1:
+    value: Track Ball
+    sheet: main
+    pins:
+      '1': GND
+      '2': GND
+      '3': GND
+      '4': GND
+    note: 'The trackball: its four pins are drawn to GND.'
+  TF:
+    value: MP3T-F
+    sheet: main
+    pins:
+      '1': NC
+      '2': ESP_SD_CS
+      '3': TF_CMD
+      '4': V3V
+      '5': TF_CLK
+      '6': GND
+      '7': TF_DAT0
+      '8': NC
+      '9': GND
+      '10': GND
+      '11': NC
+      '12': GND
+      '13': GND
+    note: Printed "TF CARD (MP3T-F card socket)".
+  U0:
+    value: HPD16A
+    sheet: main
+    pins:
+      '1': U0_ANT
+      '2': GND
+      '3': NC
+      '4': NC
+      '5': V3V
+      '6': Lora_P1.01_GPIO2
+      '7': Lora_DIO1_GPIO45
+      '8': Lora_BUSY_GPIO13
+      '9': GND
+      '10': ESP_MISO
+      '11': ESP32_MOSI
+      '12': ESP32_CLK
+      '13': Lora_CS
+      '14': Lora_NRSET_GPIO17
+      '15': NC
+      '16': GND
+    note: Pin 6 is named NC on the vendor symbol but is wired to the net Lora_P1.01_GPIO2.
+  U1:
+    value: ESP32-S3-WROOM-1
+    sheet: main
+    pins:
+      '1': GND
+      '2': VDD3V3
+      '3': CHIP_PU
+      '4': BAT_ADC
+      '5': ESP_I2S_WS
+      '6': ESP_I2S_DA
+      '7': ESP_I2S_BCK
+      '8': G_S3
+      '9': ESP_TP_INT
+      '10': Lora_NRSET_GPIO17
+      '11': II2C_SDA
+      '12': II2C_SCL
+      '13': ESP_USB_DM
+      '14': ESP_USB_DP
+      '15': G_S1
+      '16': C3_INT
+      '17': Lora_CS
+      '18': PWR_EN
+      '19': ESP_LCD_DC
+      '20': ESP_LCD_CS
+      '21': Lora_BUSY_GPIO13
+      '22': ES7210_SDOUT
+      '23': ES7210_LRCK
+      '24': ES7210_SCLK
+      '25': ES7210_MCLK
+      '26': Lora_DIO1_GPIO45
+      '27': GPIO_0
+      '28': NC
+      '29': NC
+      '30': NC
+      '31': ESP_MISO
+      '32': ESP_SD_CS
+      '33': ESP32_CLK
+      '34': ESP32_MOSI
+      '35': ESP_LCD_EN
+      '36': UAR0_RX
+      '37': UAR0_TX
+      '38': G_S2
+      '39': G_S4
+      '40': GND
+      '41': GND
+    note: The schematic names the module without its ordering code.
+  U2:
+    value: ES7210
+    sheet: main
+    pins:
+      '1': U2_AD0
+      '2': U2_AD1
+      '3': I2C_SDA
+      '4': I2C_SCL
+      '5': ES7210_MCLK
+      '6': V3V
+      '7': V3V
+      '8': ADC_GND
+      '9': ES7210_SCLK
+      '10': ES7210_LRCK
+      '11': U2_SDOUT1
+      '12': U2_SDOUT2
+      '13': ES7210_INT
+      '14': DMIC_CLK
+      '15': U2_MIC1N
+      '16': U2_MIC1P
+      '17': U2_REFP12
+      '18': U2_REFQ12
+      '19': U2_MIC2P
+      '20': U2_MIC2N
+      '21': ADC_GND
+      '22': V3V
+      '23': V3V
+      '24': ADC_MICBIAS12
+      '25': U2_REFQM
+      '26': ADC_MICBIAS34
+      '27': U2_MIC4N
+      '28': U2_MIC4P
+      '29': U2_REFP34
+      '30': U2_REFQ34
+      '31': U2_MIC3P
+      '32': U2_MIC3N
+      '33': ADC_GND
+  U3:
+    value: W25Q32FVSS
+    sheet: main
+    pins:
+      '1': SPICS0
+      '2': SPIQ
+      '3': V3V
+      '4': GND
+      '5': SPID
+      '6': SPICLK
+      '7': V3V
+      '8': V3V
+  U4:
+    value: 40MHz±10ppm
+    sheet: main
+    pins:
+      '1': U4_XIN
+      '2': GND
+      '3': U5_XTAL_N
+      '4': GND
+    note: 40 MHz crystal of the ESP32-C3.
+  U5:
+    value: ESP32-C3
+    sheet: main
+    pins:
+      '1': NC
+      '2': U5_VDD3P3
+      '3': U5_VDD3P3
+      '4': ROW1
+      '5': COL1
+      '6': I2C_SDA
+      '7': RESET
+      '8': ROW2
+      '9': COL2
+      '10': COL3
+      '11': V3V
+      '12': ROW6
+      '13': ROW7
+      '14': C3_INT
+      '15': BL_CTRL
+      '16': I2C_SCL
+      '17': V3V
+      '18': COL4
+      '19': ROW4
+      '20': COL5
+      '21': SPICS0
+      '22': U5_SPICLK
+      '23': SPID
+      '24': SPIQ
+      '25': ROW5
+      '26': ROW3
+      '27': UART_RX
+      '28': UART_TX
+      '29': U5_XTAL_N
+      '30': U5_XTAL_P
+      '31': V3V
+      '32': V3V
+      '33': GND
+  U6:
+    value: MAX98357A
+    sheet: main
+    pins:
+      '1': ESP_I2S_DA
+      '2': U6_GAIN_SLOT
+      '3': AGND
+      '4': U6_SD_MODE
+      '5': NC
+      '6': NC
+      '7': U6_VDD
+      '8': U6_VDD
+      '9': U6_OUTP
+      '10': U6_OUTN
+      '11': AGND
+      '12': NC
+      '13': NC
+      '14': ESP_I2S_WS
+      '15': AGND
+      '16': ESP_I2S_BCK
+    note: The vendor symbol names pins 9 and 10 both OUTP.
+  U7:
+    value: TYPEY-C
+    sheet: main
+    pins:
+      '1': GND
+      '2': GND
+      '3': GND
+      '4': GND
+      '5': NC
+      '6': NC
+      A1: GND
+      A4: VBUS
+      A5: U7_CC1
+      A6: ESP_USB_DP
+      A7: ESP_USB_DM
+      A8: NC
+      A9: VBUS
+      A12: GND
+      B1: GND
+      B4: VBUS
+      B5: U7_CC2
+      B6: ESP_USB_DP
+      B7: ESP_USB_DM
+      B8: NC
+      B9: VBUS
+      B12: GND
+  U8:
+    value: SY8089AAC
+    sheet: main
+    pins:
+      '1': U8_EN
+      '2': GND
+      '3': U8_LX
+      '4': +5V
+      '5': U8_FB
+  U9:
+    value: AW9364DNR
+    sheet: main
+    pins:
+      '1': GND
+      '2': ESP_LCD_EN
+      '3': V3V
+      '4': GND
+      '5': LEDK1
+      '6': LEDK2
+      '7': LEDK3
+      '8': LEDK4
+      '9': GND
+  U101:
+    value: MIA-M10Q
+    sheet: m10
+    pins:
+      A1: M10_GND
+      A2: M10_GND
+      A3: M10_GND
+      A4: NC
+      A5: M10_GND
+      A6: NC
+      A7: M10_PPS
+      A8: M10_GND
+      A9: M10_GND
+      B1: M10_VDD3V3
+      B2: M10_GND
+      B8: M10_GND
+      B9: M10_RF_IN
+      C1: NC
+      C3: M10_GND
+      C4: NC
+      C5: NC
+      C6: M10_VCC_RF
+      C7: NC
+      C9: M10_GND
+      D1: NC
+      D2: M10_D2_E2
+      D9: NC
+      E1: NC
+      E2: M10_D2_E2
+      E3: M10_GND
+      E4: M10_GND
+      E7: NC
+      E9: M10_GND
+      F1: M10_GND
+      F3: M10_GND
+      F4: M10_GND
+      F7: NC
+      F9: M10_F9
+      G1: M10_GPS_TX
+      G3: M10_GND
+      G4: M10_GND
+      G5: M10_GND
+      G6: M10_GND
+      G7: M10_G7
+      G9: NC
+      H1: M10_GPS_RX
+      H8: M10_GND
+      H9: NC
+      J1: NC
+      J2: NC
+      J3: NC
+      J4: M10_VDD3V3
+      J5: M10_VRTC
+      J6: NC
+      J7: NC
+      J8: M10_GND
+      J9: M10_GND
+    note: u-blox MIA-M10Q GNSS module. A5 (RTC_O) is drawn to GND and D2 joined to E2, as printed.
+  U201:
+    value: L76K
+    sheet: l76k
+    pins:
+      '1': L76K_GND
+      '2': L76K_GPS_TX
+      '3': L76K_GPS_RX
+      '4': L76K_PPS
+      '5': NC
+      '6': L76K_VRTC
+      '7': NC
+      '8': L76K_VDD3V3
+      '9': L76K_RST
+      '10': L76K_GND
+      '11': L76K_RF_IN
+      '12': L76K_GND
+      '13': NC
+      '14': L76K_VDD_RF
+      '15': NC
+      '16': NC
+      '17': NC
+      '18': L76K_SET
+    note: Quectel L76K GNSS module.
+  UP1:
+    value: TP4065B
+    sheet: main
+    pins:
+      '1': UP1_CHRG
+      '2': GND
+      '3': VBAT
+      '4': VBUS
+      '5': UP1_PROG
+  UZ1:
+    value: AN48841B
+    sheet: main
+    pins:
+      '1': NC
+      '2': GND
+      '3': NC
+      '4': V3V
+      '5': G_S3
+  UZ2:
+    value: AN48841B
+    sheet: main
+    pins:
+      '1': NC
+      '2': GND
+      '3': NC
+      '4': V3V
+      '5': G_S2
+  UZ3:
+    value: AN48841B
+    sheet: main
+    pins:
+      '1': NC
+      '2': GND
+      '3': NC
+      '4': V3V
+      '5': G_S1
+  UZ4:
+    value: AN48841B
+    sheet: main
+    pins:
+      '1': NC
+      '2': GND
+      '3': NC
+      '4': V3V
+      '5': G_S4
+  XX2:
+    value: TIAN
+    sheet: main
+    pins:
+      '1': XX2_FEED
+      '2': GND
+nets:
+  +5V:
+    pins:
+    - C40.1
+    - C41.1
+    - Q4.S
+    - RQ1.2
+    - RY1.1
+    - SW1.2
+    - U8.4
+  ADC_GND:
+    pins:
+    - C1.2
+    - C2.2
+    - C3.1
+    - C4.1
+    - C7.2
+    - C8.2
+    - C12.1
+    - C13.1
+    - C14.1
+    - C15.1
+    - C18.2
+    - C19.2
+    - C21.2
+    - C23.2
+    - C24.2
+    - CY1.2
+    - CY2.2
+    - CY3.2
+    - CY4.2
+    - R1.2
+    - R2.2
+    - R9.2
+    - Rm1.1
+    - Rm2.1
+    - Rm3.1
+    - Rm4.1
+    - U2.8
+    - U2.21
+    - U2.33
+  ADC_MIC1N:
+    pins:
+    - C16.2
+    - MIC1.2
+    - MIC1.3
+    - Rm1.2
+  ADC_MIC1P:
+    pins:
+    - C1.1
+    - C17.2
+    - MIC1.4
+  ADC_MIC2N:
+    pins:
+    - C22.2
+    - MIC2.2
+    - MIC2.3
+    - Rm2.2
+  ADC_MIC2P:
+    pins:
+    - C7.1
+    - C20.2
+    - MIC2.4
+  ADC_MIC3N:
+    pins:
+    - CY8.1
+    - MIC3.2
+    - MIC3.3
+    - Rm4.2
+  ADC_MIC3P:
+    pins:
+    - CY4.1
+    - CY5.1
+    - MIC3.4
+  ADC_MIC4N:
+    pins:
+    - CY6.1
+    - MIC4.2
+    - MIC4.3
+    - Rm3.2
+  ADC_MIC4P:
+    pins:
+    - C8.1
+    - CY7.1
+    - MIC4.4
+  ADC_MICBIAS12:
+    pins:
+    - C2.1
+    - C21.1
+    - CY1.1
+    - MIC1.1
+    - MIC2.1
+    - U2.24
+  ADC_MICBIAS34:
+    pins:
+    - C13.2
+    - CY2.1
+    - CY3.1
+    - MIC3.1
+    - MIC4.1
+    - U2.26
+  AGND:
+    pins:
+    - C35.1
+    - C36.1
+    - CP1.1
+    - CP2.1
+    - CP5.2
+    - CP6.2
+    - R16.2
+    - R20.2
+    - U6.3
+    - U6.11
+    - U6.15
+  BAT:
+    pins:
+    - L4.2
+    - Q4.D
+    - RD2.1
+  BAT_ADC:
+    pins:
+    - CD1.2
+    - RD2.2
+    - RD3.1
+    - U1.4
+  BL_CTRL:
+    pins:
+    - J1.4
+    - Q3.G
+    - R11.1
+    - R18.2
+    - U5.15
+  C3_INT:
+    pins:
+    - R12.1
+    - U1.16
+    - U5.14
+  CHIP_PU:
+    pins:
+    - C9.1
+    - R6.2
+    - S1.2
+    - U1.3
+  COL1:
+    pins:
+    - JP1.7
+    - U5.5
+  COL2:
+    pins:
+    - JP1.9
+    - U5.9
+  COL3:
+    pins:
+    - JP1.10
+    - U5.10
+  COL4:
+    pins:
+    - JP1.17
+    - U5.18
+  COL5:
+    pins:
+    - JP1.19
+    - U5.20
+  DMIC_CLK:
+    pins:
+    - U2.14
+  ES7210_INT:
+    pins:
+    - U2.13
+  ES7210_LRCK:
+    pins:
+    - U1.23
+    - U2.10
+  ES7210_MCLK:
+    pins:
+    - U1.25
+    - U2.5
+  ES7210_SCLK:
+    pins:
+    - U1.24
+    - U2.9
+  ES7210_SDOUT:
+    pins:
+    - R7.1
+    - R8.1
+    - U1.22
+  ESP32_CLK:
+    pins:
+    - P2.3
+    - R4.1
+    - RU2.2
+    - U0.12
+    - U1.33
+  ESP32_MOSI:
+    pins:
+    - P2.6
+    - R3.1
+    - RU1.2
+    - U0.11
+    - U1.34
+  ESP_GPIO_MODE:
+    pins:
+    - R21.2
+    - R22.2
+  ESP_I2S_BCK:
+    pins:
+    - U1.7
+    - U6.16
+  ESP_I2S_DA:
+    pins:
+    - U1.6
+    - U6.1
+  ESP_I2S_WS:
+    pins:
+    - U1.5
+    - U6.14
+  ESP_LCD_CS:
+    pins:
+    - P2.5
+    - U1.20
+  ESP_LCD_DC:
+    pins:
+    - P2.4
+    - U1.19
+  ESP_LCD_EN:
+    pins:
+    - R3Y.1
+    - U1.35
+    - U9.2
+  ESP_LCD_RES:
+    pins:
+    - CW22.1
+    - P2.2
+    - RY34.1
+  ESP_MISO:
+    pins:
+    - P2.7
+    - R5.1
+    - RU3.2
+    - U0.10
+    - U1.31
+  ESP_SD_CS:
+    pins:
+    - TF.2
+    - U1.32
+  ESP_TP_INT:
+    pins:
+    - P4.3
+    - U1.9
+  ESP_TP_RESET:
+    pins:
+    - CW24.1
+    - P4.2
+    - RY35.1
+  ESP_USB_DM:
+    pins:
+    - U1.13
+    - U7.A7
+    - U7.B7
+  ESP_USB_DP:
+    pins:
+    - U1.14
+    - U7.A6
+    - U7.B6
+  GND:
+    pins:
+    - C5.1
+    - C6.1
+    - C9.2
+    - C10.2
+    - C11.2
+    - C25.2
+    - C26.2
+    - C27.2
+    - C28.2
+    - C29.2
+    - C31.2
+    - C32.2
+    - C33.2
+    - C34.2
+    - C37.2
+    - C38.2
+    - C39.2
+    - C40.2
+    - C41.2
+    - C43.2
+    - C44.2
+    - C45.2
+    - C46.2
+    - C50.2
+    - C51.1
+    - CCE5.2
+    - CCW4.2
+    - CD1.1
+    - CW1.2
+    - CW2.2
+    - CW3.2
+    - CW4.2
+    - CW5.2
+    - CW6.2
+    - CW7.2
+    - CW8.2
+    - CW10.2
+    - CW22.2
+    - CW24.2
+    - J1.2
+    - JP1.1
+    - JP1.4
+    - JP1.5
+    - JP1.11
+    - JP1.12
+    - JP1.13
+    - JP1.14
+    - JP1.15
+    - JP1.16
+    - JP1.28
+    - KEY1.3
+    - KEY1.4
+    - P2.1
+    - P2.8
+    - P3.2
+    - P4.1
+    - P8.1
+    - Q3.S
+    - Q7.E
+    - R9.1
+    - R16.1
+    - R18.1
+    - R24.2
+    - R25.2
+    - R28.1
+    - RC5.2
+    - RC6.2
+    - RD1.2
+    - RD3.2
+    - RD4.1
+    - RY2.2
+    - S1.3
+    - T1.1
+    - T1.2
+    - T1.3
+    - T1.4
+    - TF.6
+    - TF.9
+    - TF.10
+    - TF.12
+    - TF.13
+    - U0.2
+    - U0.9
+    - U0.16
+    - U1.1
+    - U1.40
+    - U1.41
+    - U3.4
+    - U4.2
+    - U4.4
+    - U5.33
+    - U7.1
+    - U7.2
+    - U7.3
+    - U7.4
+    - U7.A1
+    - U7.A12
+    - U7.B1
+    - U7.B12
+    - U8.2
+    - U9.1
+    - U9.4
+    - U9.9
+    - UP1.2
+    - UZ1.2
+    - UZ2.2
+    - UZ3.2
+    - UZ4.2
+    - XX2.2
+  GPIO_0:
+    pins:
+    - KEY1.1
+    - KEY1.2
+    - RY31.1
+    - U1.27
+  G_S1:
+    pins:
+    - U1.15
+    - UZ3.5
+  G_S2:
+    pins:
+    - U1.38
+    - UZ2.5
+  G_S3:
+    pins:
+    - U1.8
+    - UZ1.5
+  G_S4:
+    pins:
+    - U1.39
+    - UZ4.5
+  I2C_SCL:
+    pins:
+    - Q1.S
+    - R13.1
+    - RC1.1
+    - U2.4
+    - U5.16
+  I2C_SDA:
+    pins:
+    - Q2.S
+    - R14.1
+    - RC3.1
+    - U2.3
+    - U5.6
+  II2C_SCL:
+    pins:
+    - P4.5
+    - Q1.D
+    - RC2.2
+    - U1.12
+  II2C_SDA:
+    pins:
+    - P4.4
+    - Q2.D
+    - RC4.2
+    - U1.11
+  L76K_ANT:
+    pins:
+    - C203.2
+    - J203.1
+    - L201.2
+  L76K_ANT_IN:
+    pins:
+    - C202.1
+    - C203.1
+    - R204.2
+  L76K_D1_K:
+    pins:
+    - D201.1
+    - R203.1
+  L76K_GND:
+    pins:
+    - C201.2
+    - C202.2
+    - C204.2
+    - C205.2
+    - C206.2
+    - C207.2
+    - C208.2
+    - J201.2
+    - J202.5
+    - J203.2
+    - J203.3
+    - R202.2
+    - U201.1
+    - U201.10
+    - U201.12
+  L76K_GPS_RX:
+    pins:
+    - J202.3
+    - U201.3
+  L76K_GPS_TX:
+    pins:
+    - J202.2
+    - U201.2
+  L76K_PPS:
+    pins:
+    - J202.1
+    - U201.4
+  L76K_RF_IN:
+    pins:
+    - C206.1
+    - R204.1
+    - U201.11
+  L76K_RST:
+    pins:
+    - C204.1
+    - R201.2
+    - U201.9
+  L76K_SET:
+    pins:
+    - R202.1
+    - U201.18
+  L76K_VDD3V3:
+    pins:
+    - C207.1
+    - C208.1
+    - D201.2
+    - J202.4
+    - R201.1
+    - U201.8
+  L76K_VDD_RF:
+    pins:
+    - C205.1
+    - L201.1
+    - U201.14
+  L76K_VRTC:
+    pins:
+    - C201.1
+    - J201.1
+    - R203.2
+    - U201.6
+  LED1_A:
+    pins:
+    - LED1.1
+    - RW1.1
+  LEDK:
+    pins:
+    - JP1.23
+    - JP1.25
+    - Q3.D
+  LEDK1:
+    pins:
+    - P2.11
+    - U9.5
+  LEDK2:
+    pins:
+    - P2.12
+    - U9.6
+  LEDK3:
+    pins:
+    - P2.13
+    - U9.7
+  LEDK4:
+    pins:
+    - P2.14
+    - U9.8
+  Lora_BUSY_GPIO13:
+    pins:
+    - U0.8
+    - U1.21
+  Lora_CS:
+    pins:
+    - U0.13
+    - U1.17
+  Lora_DIO1_GPIO45:
+    pins:
+    - U0.7
+    - U1.26
+  Lora_NRSET_GPIO17:
+    pins:
+    - U0.14
+    - U1.10
+  Lora_P1.01_GPIO2:
+    pins:
+    - U0.6
+  M10_ANT:
+    pins:
+    - C106.2
+    - J103.1
+    - L101.2
+  M10_D1_K:
+    pins:
+    - D101.1
+    - R103.1
+  M10_D2_E2:
+    pins:
+    - U101.D2
+    - U101.E2
+  M10_F9:
+    pins:
+    - R102.1
+    - U101.F9
+  M10_G7:
+    pins:
+    - R101.1
+    - U101.G7
+  M10_GND:
+    pins:
+    - C101.2
+    - C105.2
+    - C107.2
+    - C108.2
+    - J101.2
+    - J102.5
+    - J103.2
+    - J103.3
+    - R101.2
+    - R102.2
+    - U101.A1
+    - U101.A2
+    - U101.A3
+    - U101.A5
+    - U101.A8
+    - U101.A9
+    - U101.B2
+    - U101.B8
+    - U101.C3
+    - U101.C9
+    - U101.E3
+    - U101.E4
+    - U101.E9
+    - U101.F1
+    - U101.F3
+    - U101.F4
+    - U101.G3
+    - U101.G4
+    - U101.G5
+    - U101.G6
+    - U101.H8
+    - U101.J8
+    - U101.J9
+  M10_GPS_RX:
+    pins:
+    - J102.3
+    - U101.H1
+  M10_GPS_TX:
+    pins:
+    - J102.2
+    - U101.G1
+  M10_PPS:
+    pins:
+    - J102.1
+    - U101.A7
+  M10_RF_FEED:
+    pins:
+    - C105.1
+    - L101.1
+    - R104.2
+  M10_RF_IN:
+    pins:
+    - C106.1
+    - U101.B9
+  M10_VCC_RF:
+    pins:
+    - R104.1
+    - U101.C6
+  M10_VDD3V3:
+    pins:
+    - C107.1
+    - C108.1
+    - D101.2
+    - J102.4
+    - U101.B1
+    - U101.J4
+  M10_VRTC:
+    pins:
+    - C101.1
+    - J101.1
+    - R103.2
+    - U101.J5
+  PWR_EN:
+    pins:
+    - D3.1
+    - U1.18
+  PWR_GATE:
+    pins:
+    - Q4.G
+    - Q6.G
+    - R26.2
+    - RQ1.1
+  PWR_ON:
+    pins:
+    - D2.2
+    - D3.2
+    - R27.1
+  Q7_B:
+    pins:
+    - Q7.B
+    - R27.2
+    - R28.2
+  Q7_C:
+    pins:
+    - Q7.C
+    - R26.1
+  RESET:
+    pins:
+    - C37.1
+    - J1.3
+    - R19.1
+    - U5.7
+  ROW1:
+    pins:
+    - JP1.6
+    - U5.4
+  ROW2:
+    pins:
+    - JP1.8
+    - U5.8
+  ROW3:
+    pins:
+    - JP1.18
+    - U5.26
+  ROW4:
+    pins:
+    - JP1.20
+    - U5.19
+  ROW5:
+    pins:
+    - JP1.21
+    - U5.25
+  ROW6:
+    pins:
+    - JP1.22
+    - U5.12
+  ROW7:
+    pins:
+    - JP1.27
+    - U5.13
+  SPICLK:
+    pins:
+    - R17.2
+    - U3.6
+  SPICS0:
+    pins:
+    - R10.2
+    - U3.1
+    - U5.21
+  SPID:
+    pins:
+    - U3.5
+    - U5.23
+  SPIQ:
+    pins:
+    - U3.2
+    - U5.24
+  SPK_N:
+    pins:
+    - CP1.2
+    - CP2.2
+    - CP3.1
+    - CP4.1
+    - L2.2
+    - P1.2
+  SPK_P:
+    pins:
+    - CP3.2
+    - CP4.2
+    - CP5.1
+    - CP6.1
+    - L3.2
+    - P1.1
+  SW1_IN:
+    pins:
+    - D1.1
+    - Q5.S
+    - SW1.1
+  TF_CLK:
+    pins:
+    - RU2.1
+    - TF.5
+  TF_CMD:
+    pins:
+    - RU1.1
+    - TF.3
+  TF_DAT0:
+    pins:
+    - RU3.1
+    - TF.7
+  U0_ANT:
+    pins:
+    - R50.2
+    - U0.1
+  U2_AD0:
+    pins:
+    - R2.1
+    - U2.1
+  U2_AD1:
+    pins:
+    - R1.1
+    - U2.2
+  U2_MIC1N:
+    pins:
+    - C16.1
+    - U2.15
+  U2_MIC1P:
+    pins:
+    - C17.1
+    - U2.16
+  U2_MIC2N:
+    pins:
+    - C22.1
+    - U2.20
+  U2_MIC2P:
+    pins:
+    - C20.1
+    - U2.19
+  U2_MIC3N:
+    pins:
+    - CY8.2
+    - U2.32
+  U2_MIC3P:
+    pins:
+    - CY5.2
+    - U2.31
+  U2_MIC4N:
+    pins:
+    - CY6.2
+    - U2.27
+  U2_MIC4P:
+    pins:
+    - CY7.2
+    - U2.28
+  U2_REFP12:
+    pins:
+    - C18.1
+    - U2.17
+  U2_REFP34:
+    pins:
+    - C14.2
+    - U2.29
+  U2_REFQ12:
+    pins:
+    - C19.1
+    - U2.18
+  U2_REFQ34:
+    pins:
+    - C15.2
+    - U2.30
+  U2_REFQM:
+    pins:
+    - C12.2
+    - U2.25
+  U2_SDOUT1:
+    pins:
+    - R7.2
+    - U2.11
+  U2_SDOUT2:
+    pins:
+    - R8.2
+    - U2.12
+  U4_XIN:
+    pins:
+    - C27.1
+    - R15.2
+    - U4.1
+  U5_SPICLK:
+    pins:
+    - R17.1
+    - U5.22
+  U5_VDD3P3:
+    pins:
+    - C31.1
+    - C32.1
+    - L1.2
+    - U5.2
+    - U5.3
+  U5_XTAL_N:
+    pins:
+    - C26.1
+    - U4.3
+    - U5.29
+  U5_XTAL_P:
+    pins:
+    - R15.1
+    - U5.30
+  U6_GAIN_SLOT:
+    pins:
+    - R20.1
+    - U6.2
+  U6_OUTN:
+    pins:
+    - L2.1
+    - U6.10
+  U6_OUTP:
+    pins:
+    - L3.1
+    - U6.9
+  U6_SD_MODE:
+    pins:
+    - R21.1
+    - U6.4
+  U6_VDD:
+    pins:
+    - C35.2
+    - C36.2
+    - L4.1
+    - U6.7
+    - U6.8
+  U7_CC1:
+    pins:
+    - RC5.1
+    - U7.A5
+  U7_CC2:
+    pins:
+    - RC6.1
+    - U7.B5
+  U8_EN:
+    pins:
+    - RY1.2
+    - RY2.1
+    - U8.1
+  U8_FB:
+    pins:
+    - C42.2
+    - R23.2
+    - R24.1
+    - U8.5
+  U8_LX:
+    pins:
+    - L5.1
+    - U8.3
+  UAR0_RX:
+    pins:
+    - P8.4
+    - U1.36
+  UAR0_TX:
+    pins:
+    - P8.3
+    - U1.37
+  UART_RX:
+    pins:
+    - J1.5
+    - U5.27
+  UART_TX:
+    pins:
+    - J1.6
+    - U5.28
+  UP1_CHRG:
+    pins:
+    - LED1.2
+    - UP1.1
+  UP1_PROG:
+    pins:
+    - R25.1
+    - UP1.5
+  V3V:
+    pins:
+    - C3.2
+    - C4.2
+    - C10.1
+    - C11.1
+    - C23.1
+    - C24.1
+    - C25.1
+    - C28.1
+    - C29.1
+    - C33.1
+    - C34.1
+    - C38.1
+    - C50.1
+    - C51.2
+    - CCE5.1
+    - CCW4.1
+    - CW1.1
+    - CW5.1
+    - CW8.1
+    - CW10.1
+    - J1.1
+    - JP1.24
+    - JP1.26
+    - L1.1
+    - P2.10
+    - Q1.G
+    - Q2.G
+    - Q6.D
+    - R3.2
+    - R3Y.2
+    - R4.2
+    - R5.2
+    - R10.1
+    - R11.2
+    - R12.2
+    - R13.2
+    - R14.2
+    - R19.2
+    - R22.1
+    - RC1.2
+    - RC3.2
+    - TF.4
+    - U0.5
+    - U2.6
+    - U2.7
+    - U2.22
+    - U2.23
+    - U3.3
+    - U3.7
+    - U3.8
+    - U5.11
+    - U5.17
+    - U5.31
+    - U5.32
+    - U9.3
+    - UZ1.4
+    - UZ2.4
+    - UZ3.4
+    - UZ4.4
+  VBAT:
+    pins:
+    - C45.1
+    - C46.1
+    - P3.1
+    - Q5.D
+    - RD1.1
+    - UP1.3
+  VBUS:
+    pins:
+    - C39.1
+    - CW4.1
+    - D1.2
+    - D2.1
+    - Q5.G
+    - RD4.2
+    - RW1.2
+    - U7.A4
+    - U7.A9
+    - U7.B4
+    - U7.B9
+    - UP1.4
+  VDD3V3:
+    pins:
+    - C5.2
+    - C6.2
+    - C42.1
+    - C43.1
+    - C44.1
+    - CW2.1
+    - CW3.1
+    - CW6.1
+    - CW7.1
+    - L5.2
+    - P2.9
+    - P4.6
+    - P8.2
+    - Q6.S
+    - R6.1
+    - R23.1
+    - RC2.1
+    - RC4.1
+    - RY31.2
+    - RY34.2
+    - RY35.2
+    - U1.2
+  XX2_FEED:
+    pins:
+    - R50.1
+    - XX2.1
+kleidos:   # Kleidos additions to and corrections of the vendor's print: each marked on the drawing and listed
+  # on page 1. A bench path is under this folder; firmware is the Kleidos firmware, by path and symbol;
+  # the datasheets are cited in full under source.also_read and in README.md ("Kleidos additions and
+  # corrections"); improvements.md holds the triage (T-ids).
+  - id: K1
+    kind: addition
+    what: "VBAT: P3 takes a 2000 mAh lithium-polymer cell."
+    element: {rail: VBAT}
+    source:
+      type: vendor-doc
+      cite: "LilyGO docs page, specifications"
+  - id: K2
+    kind: addition
+    what: "UP1_CHRG: LED1 lights while UP1 charges, blinks with no cell."
+    element: {net: UP1_CHRG}
+    source:
+      type: datasheet
+      cite: "TP4065 datasheet Rev 1.2, pp. 4, 9"
+  - id: K3
+    kind: addition
+    what: "VDD3V3 also feeds the GPS board, through P8 pin 2."
+    element: {rail: "VDD3V3"}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: HAS_GPS, PIN_GPS_TX, PIN_GPS_RX"
+  - id: K4
+    kind: addition
+    what: "U1 is the WROOM-1-N16R8 (16 MB flash); IO35-37 serve its 8 MB Octal PSRAM."
+    element: {pin: U1.28}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/tdeck.ini: board_upload.flash_size = 16MB"
+  - id: K5
+    kind: addition
+    what: "GPIO45 (VDD_SPI strap) latched 0 at every reset."
+    element: {gpio: GPIO45}
+    source:
+      type: bench
+      cite: "bench/2026-11-17-gpio46-strap.md"
+  - id: K6
+    kind: addition
+    what: "U0_ANT: U0 (HPD16A) carries a Semtech SX1262."
+    element: {net: U0_ANT}
+    source:
+      type: vendor-doc
+      cite: "LilyGO docs page, specifications"
+  - id: K7
+    kind: addition
+    what: "UAR0_TX reaches the GPS board's GPS_RX (J102.3) through P8 pin 3."
+    element: {net: UAR0_TX}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: HAS_GPS, PIN_GPS_TX, PIN_GPS_RX"
+  - id: K8
+    kind: addition
+    what: "UAR0_RX comes from GPS_TX (J102.2) through P8 pin 4; PPS is not carried."
+    element: {net: UAR0_RX}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: HAS_GPS, PIN_GPS_TX, PIN_GPS_RX"
+  - id: K9
+    kind: correction
+    what: "U5 pin 4 is XTAL_32K_P (GPIO0)."
+    vendor: "pin 4 named XTAL_OUT"
+    element: {pin: U5.4}
+    source:
+      type: datasheet
+      cite: "ESP32-C3 datasheet v2.5, Table 2-1"
+  - id: K10
+    kind: correction
+    what: "U5 pin 5 is XTAL_32K_N (GPIO1)."
+    vendor: "pin 5 named XTAL_IN"
+    element: {pin: U5.5}
+    source:
+      type: datasheet
+      cite: "ESP32-C3 datasheet v2.5, Table 2-1"
+  - id: K11
+    kind: addition
+    what: "ESP_LCD_DC: P2's panel is a 2.8-inch 320x240 ST7789."
+    element: {net: ESP_LCD_DC}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: DISPLAY_TYPE_ST7789, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_DIAGONAL_MM_X10"
+  - id: K12
+    kind: addition
+    what: "ESP_TP_INT: P4's touch controller is a Goodix GT911."
+    element: {net: ESP_TP_INT}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, src/drivers/touch/gt911.h: Gt911::begin (accepts an address only on a GT9xx product id)"
+  - id: K13
+    kind: addition
+    what: "ES7210_INT: U2's interrupt output, used by nothing."
+    element: {net: ES7210_INT}
+    source:
+      type: datasheet
+      cite: "ES7210 datasheet rev. 21.0, p. 4"
+  - id: K14
+    kind: addition
+    what: "DMIC_CLK: U2's digital-mic clock output, used by nothing."
+    element: {net: DMIC_CLK}
+    source:
+      type: datasheet
+      cite: "ES7210 datasheet rev. 21.0, p. 4"
+  - id: K15
+    kind: addition
+    what: "R22 sets SD_MODE near 1.65 V: U6 plays the left channel."
+    element: {pull: R22}
+    source:
+      type: datasheet
+      cite: "MAX98357A datasheet Rev 7, Table 5"
+  - id: K16
+    kind: addition
+    what: "R20 (GAIN_SLOT to AGND) sets U6's gain to 12 dB."
+    element: {pull: R20}
+    source:
+      type: datasheet
+      cite: "MAX98357A datasheet Rev 7, gain AV"
+  - id: K17
+    kind: correction
+    what: "U6 pin 10 is OUTN."
+    vendor: "pins 9 and 10 both named OUTP"
+    element: {pin: U6.10}
+    source:
+      type: datasheet
+      cite: "MAX98357A datasheet Rev 7, pin table"
+  - id: K18
+    kind: addition
+    what: "U2 answers at I2C address 0x40 (AD1, AD0 low)."
+    element: {i2c: U2}
+    source:
+      type: datasheet
+      cite: "ES7210 datasheet rev. 21.0, p. 6"
+  - id: K19
+    kind: addition
+    what: "U5 answers at I2C address 0x55."
+    element: {i2c: U5}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: KEYBOARD_I2C_ADDR"
+  - id: K20
+    kind: addition
+    what: "P4's GT911 answers at 0x5D or 0x14 (INT at power-up)."
+    element: {i2c: P4}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, src/drivers/touch/gt911.h: Gt911::begin, the two-address probe"
+  - id: K21
+    kind: addition
+    what: "GPIO3 (UZ3, G_S1) reads the trackball rolled up."
+    element: {gpio: GPIO3, table: "ESP32-S3 GPIO (U1)"}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: PIN_TRACKBALL_UP; the owner saw it act so on his unit, 2026-11-17"
+  - id: K22
+    kind: addition
+    what: "GPIO15 (UZ1, G_S3) reads the trackball rolled down."
+    element: {gpio: GPIO15, table: "ESP32-S3 GPIO (U1)"}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: PIN_TRACKBALL_DOWN; the owner saw it act so on his unit, 2026-11-17"
+  - id: K23
+    kind: addition
+    what: "GPIO1 (UZ4, G_S4) reads the trackball rolled left."
+    element: {gpio: GPIO1, table: "ESP32-S3 GPIO (U1)"}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: PIN_TRACKBALL_LEFT; the owner saw it act so on his unit, 2026-11-17"
+  - id: K24
+    kind: addition
+    what: "GPIO2 (UZ2, G_S2) reads the trackball rolled right."
+    element: {gpio: GPIO2, table: "ESP32-S3 GPIO (U1)"}
+    source:
+      type: firmware
+      cite: "Kleidos firmware, variants/tdeck/variant.h: PIN_TRACKBALL_RIGHT; the owner saw it act so on his unit, 2026-11-17"

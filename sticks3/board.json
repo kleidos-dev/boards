@@ -1,0 +1,795 @@
+{
+  "$schema": "../_shared/board.schema.json",
+  "id": "sticks3",
+  "identity": {
+    "name": "StickS3",
+    "vendor": "M5Stack",
+    "sku": "K150",
+    "links": {
+      "docs": "https://docs.m5stack.com/en/core/StickS3"
+    },
+    "src": ["m5-docs"]
+  },
+  "physical": {
+    "width_mm": 24.0,
+    "height_mm": 48.0,
+    "depth_mm": 15.0,
+    "weight_g": 20.0,
+    "notes": "The vendor gives the product size as 48.0 x 24.0 x 15.0 mm, the package as 65.0 x 25.0 x 15.0 mm and the gross weight as 22.4 g. The back is magnetic. Operating temperature 0 to 40 °C.",
+    "src": ["m5-docs", "owner-unit-verified"]
+  },
+  "components": [
+    {
+      "id": "soc",
+      "role": "soc",
+      "part": "ESP32-S3-PICO-1-N8R8",
+      "manufacturer": "Espressif",
+      "designator": "U20",
+      "quantity": 1,
+      "specs": {
+        "type": "system in package",
+        "package": "LGA56, 7 x 7 mm",
+        "cpu": "Xtensa dual-core 32-bit LX7 with single-precision FPU, up to 240 MHz",
+        "rom_kb": 384,
+        "sram_kb": 512,
+        "rtc_sram_kb": 16,
+        "flash": "8 MB Quad SPI, in package",
+        "psram": "8 MB Octal SPI, in package",
+        "crystal": "40 MHz, in package",
+        "wifi": "IEEE 802.11b/g/n, 2.4 GHz, 2412 to 2484 MHz",
+        "bluetooth": "Bluetooth 5 (LE), Bluetooth mesh",
+        "usb": "USB 1.1 OTG and USB Serial/JTAG controller",
+        "supply_v": "3.0 to 3.6",
+        "ambient_temp_c": "-40 to 65"
+      },
+      "connects_to": [
+        {
+          "to": "connector-usb-c",
+          "bus": "USB",
+          "pins": {"GPIO19 (pin 25)": "G19_DM -> FT1 -> R45 -> USB_N (J1 A7/B7)", "GPIO20 (pin 26)": "G20_DP -> FT1 -> R44 -> USB_P (J1 A6/B6)"},
+          "notes": "The native USB pins reach the USB-C receptacle through the common-mode filter FT1 and the series resistors R44/R45 (22R/1 % each).",
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "antenna",
+          "bus": "RF",
+          "pins": {"LNA_IN (pin 1)": "J5 ANT_PAD pin 1 through the matching network L3/L5"},
+          "notes": "50 ohm line.",
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "connector-hat2-btb",
+          "pins": {"GPIO1 (pin 6)": "EXT_GPIO1", "GPIO2 (pin 7)": "EXT_GPIO2", "GPIO3 (pin 8)": "EXT_GPIO3", "GPIO4 (pin 9)": "EXT_GPIO4", "GPIO5 (pin 10)": "EXT_GPIO5", "GPIO6 (pin 11)": "EXT_GPIO6", "GPIO7 (pin 12)": "EXT_GPIO7", "GPIO8 (pin 13)": "EXT_GPIO8", "GPIO43/U0TXD (pin 49)": "EXT_GPIO43 through R50 499R", "GPIO44/U0RXD (pin 50)": "EXT_GPIO44"},
+          "notes": "EXT_GPIO43 and EXT_GPIO44 also reach test points TP8 and TP9.",
+          "src": ["k150-schematic"]
+        }
+      ],
+      "notes": "CHIP_PU (pin 4) is the net SOC_RESET: an RC reset of R40 10k pull-up to 3V3_L2 and C50 1 uF to GND, also brought to test point TP6. GPIO0 (pin 5) is G0_BOOT_OUT, pulled up by R46 10k to 3V3_L2 and driven by the PMIC. Pins without a net on the board: GPIO26/SPICS1 (pin 28), GPIO33 to GPIO37 (pins 38 to 42) and the SPI flash pins 29 to 35; on the N8R8 the datasheet gives SPICS1 and GPIO33 to GPIO37 to the in-package Octal PSRAM. XTAL_P/XTAL_N (pins 53, 54) are unconnected. VDD3P3 (pins 2, 3) is fed from 3V3_L2 through L4 2 nH; VDDA, VDD3P3_RTC and VDD3P3_CPU are on 3V3_L2. GPIO15/GPIO16, the 32 kHz crystal pins, carry I2S, so no 32 kHz crystal is fitted.",
+      "src": ["k150-schematic", "esp32-s3-pico-1-datasheet", "m5-docs"]
+    },
+    {
+      "id": "flash",
+      "role": "flash",
+      "quantity": 1,
+      "specs": {"capacity_mb": 8, "interface": "Quad SPI", "location": "inside the ESP32-S3-PICO-1-N8R8 package", "spi_voltage_v": 3.3},
+      "src": ["esp32-s3-pico-1-datasheet", "m5-docs"]
+    },
+    {
+      "id": "psram",
+      "role": "psram",
+      "quantity": 1,
+      "specs": {"capacity_mb": 8, "interface": "Octal SPI", "location": "inside the ESP32-S3-PICO-1-N8R8 package", "uses_pins": "SPICS1, GPIO33 to GPIO37"},
+      "notes": "With the PSRAM ECC function enabled the maximum ambient temperature rises to 85 °C and the usable PSRAM shrinks by 1/16.",
+      "src": ["esp32-s3-pico-1-datasheet", "m5-docs"]
+    },
+    {
+      "id": "pmic",
+      "role": "pmic",
+      "part": "PY32L020F15U6",
+      "designator": "U16",
+      "quantity": 1,
+      "specs": {
+        "name": "M5PM1",
+        "type": "microcontroller running M5Stack's power-management firmware",
+        "package_pins": 20,
+        "supply": "3V3_L0 (always on)",
+        "i2c_address": "0x6E",
+        "i2c_speed": "100 kHz (default) or 400 kHz",
+        "gpio": "5 (PYG0 to PYG4): 2 usable as 12-bit ADC, 2 as PWM, 1 as LED (NeoPixel) output",
+        "adc_inputs": "5VIN_ADC, 5VOUT_ADC, BAT_ADC",
+        "power_levels": "L0 shipping, L1 standby, L2 deep sleep, L3A core active, L3B all active"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "I2C",
+          "address": "0x6E",
+          "pins": {"I2C_SCL_OD (pin 9)": "GPIO48", "I2C_SDA_OD (pin 8)": "GPIO47"},
+          "pulls": [
+            {"signal": "SCL", "direction": "up", "ohms": 2200, "to": "3V3_L2", "designator": "R38"},
+            {"signal": "SDA", "direction": "up", "ohms": 2200, "to": "3V3_L2", "designator": "R39"}
+          ],
+          "src": ["k150-schematic", "m5-docs", "m5pm1-manual"]
+        },
+        {
+          "to": "soc",
+          "pins": {"G1_IRQout_ADC (pin 17, PYG1_IRQ)": "GPIO13"},
+          "notes": "No pull resistor on this line.",
+          "src": ["k150-schematic", "m5-docs"]
+        },
+        {
+          "to": "soc",
+          "pins": {"BOOT_OUT_OD (pin 15)": "GPIO0 (G0_BOOT_OUT)"},
+          "pulls": [{"signal": "G0_BOOT_OUT", "direction": "up", "ohms": 10000, "to": "3V3_L2", "designator": "R46"}],
+          "notes": "Open-drain output that holds the strapping pin GPIO0 low to enter download mode. G0_BOOT_OUT also reaches the Hat2 bus (Boot) and test point TP3.",
+          "src": ["k150-schematic", "m5pm1-manual"]
+        },
+        {
+          "to": "regulator-ldo-cm1801",
+          "pins": {"LDO3V3_EN_PP (pin 18)": "3V3_L1_EN (U4 EN)", "G2_WAKEin_IRQout_ADC (pin 20, PYG2_L3B_EN)": "U1 EN"},
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "regulator-buck",
+          "pins": {"DCDC3V3_EN_PP (pin 14)": "3V3_L2_EN (U2 EN)"},
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "regulator-boost",
+          "pins": {"BOOST5V_EN_PP (pin 10)": "EXT_5V_EN (U9 EN, U8 EN, Q1 gate)"},
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "load-switch-aw35122",
+          "pins": {"G2_WAKEin_IRQout_ADC (pin 20, PYG2_L3B_EN)": "U5 EN"},
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "charger",
+          "pins": {"CHG_EN_PP (pin 2)": "CHG_EN (U15 CE)", "G0_WAKEin_IRQout_NEOPIXEL (pin 3, PYG0_CHG_STAT)": "U15 CHRG"},
+          "pulls": [{"signal": "PYG0_CHG_STAT", "direction": "up", "ohms": 100000, "to": "3V3_L0", "designator": "R16"}],
+          "src": ["k150-schematic", "m5-docs"]
+        },
+        {
+          "to": "imu",
+          "pins": {"G4_WAKEin_IRQout_PWM (pin 12, PYG4_IMU_INT)": "BMI270 INT1"},
+          "src": ["k150-schematic", "m5-docs"]
+        },
+        {
+          "to": "audio-amp",
+          "pins": {"G3_WAKEin_IRQout_PWM (pin 13, PYG3_SPK_Pulse)": "AW8737A SHDN"},
+          "src": ["k150-schematic", "m5-docs"]
+        },
+        {
+          "to": "led-status",
+          "pins": {"LED_EN_PP (pin 5, PY_STATUS_LED)": "Q3 gate through R29 0R"},
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "button-power",
+          "pins": {"BTN_PU (pin 7)": "PWR_BTN"},
+          "pulls": [{"signal": "PWR_BTN", "direction": "up", "ohms": 10000, "to": "3V3_L0", "designator": "R17"}],
+          "notes": "C27 10 nF/50 V from PWR_BTN to GND.",
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "battery",
+          "pins": {"BAT_ADC_IN (pin 11)": "VBAT_ADC", "BAT_ADC_EN_OD (pin 1)": "VBAT_ADC_EN"},
+          "notes": "VBAT_ADC_EN drives Q2A, which switches Q2B (CJ3439KDW) to connect VBAT_L0 to the R23/R24 1k/1k divider (C30 100 nF), so the divider draws nothing while sampling is off. R15 100k sits between VBAT_L0 and Q2B's gate, R9 10k from VBAT_ADC_EN to GND. The schematic names pin 1 BAT_ADC_EN_OD (open drain); the M5PM1 manual V1.9 (Table 1, p. 2) calls it a push-pull output. The two vendor documents disagree; this file keeps both.",
+          "src": ["k150-schematic", "m5pm1-manual"]
+        },
+        {
+          "to": "connector-grove",
+          "pins": {"5VOUT_ADC_IN (pin 19)": "EXT_5V_ADC: GROVE_5V through R21/R22 10k/10k, C28 100 nF", "5VIN_ADC_IN (pin 16)": "5VIN_ADC: 5VIN_L0 through R19/R20 10k/10k, C29 100 nF"},
+          "src": ["k150-schematic"]
+        }
+      ],
+      "notes": "The schematic's power-mode diagram: power-up turns L1 on; a single click of the power key or the IMU interrupt makes the PMIC turn L2 on (L3A); a double click or an I2C command from the ESP32-S3 turns L2, L3A and L3B off again (back to L1), and an I2C L0 command drops to L0; PYG2 turns L3B on and off (the LCD SPI off first); the ESP32-S3 goes from L3A to L2 by entering sleep in software, and comes back on its own IO, its RTC, or the PMIC pulling the IRQ line low, the diagram listing as triggers a single click of KEY1/KEY2, the IMU interrupt and a CHG_STAT change; a double click of the power key also turns L2 off. Vendor power figures at 4.2 V: power off 14.02 uA, L1 52.47 uA, L2 102.40 uA, L3A 36.69 mA, full load 519.02 mA. A single click of the power key powers on or resets, a double click powers off, holding it until the green LED blinks enters download mode. The page-1 audio block of the schematic names PYG2 as SPK_EN and PYG1 as L3B_EN; the detailed sheets and the vendor PinMap give PYG2 = L3B enable and PYG3 = speaker pulse, which this file follows. Test points: TP1 GND, TP2 PY_STATUS_LED, TP4 3V3_L2, TP5 3V3_L0.",
+      "src": ["k150-schematic", "m5-docs", "m5pm1-manual"]
+    },
+    {
+      "id": "charger",
+      "role": "charger",
+      "part": "LGS4056",
+      "designator": "U15",
+      "quantity": 1,
+      "specs": {"charge_current_ma": 190, "prog_resistor": "R12 4.7k/1 %", "input": "Internal_5V (VCC, C22 22 uF)", "output": "VBAT_L0 (BAT)"},
+      "connects_to": [
+        {"to": "battery", "pins": {"BAT (pin 5)": "VBAT_L0"}},
+        {
+          "to": "pmic",
+          "pins": {"CHRG (pin 7)": "PYG0_CHG_STAT", "CE (pin 8)": "CHG_EN"},
+          "pulls": [
+            {"signal": "CHRG", "direction": "up", "ohms": 100000, "to": "3V3_L0", "designator": "R16"},
+            {"signal": "CE", "direction": "down", "ohms": 1000000, "designator": "R18"}
+          ],
+          "notes": "PYG0 reads 0 while U15 charges and 1 when it does not (charging stopped, or the cell full), measured with USB in.",
+          "src": ["k150-schematic", "bench-charge-status"]
+        }
+      ],
+      "notes": "DONE (pin 6) is unconnected; TEMP (pin 1) is tied to GND. The schematic notes the charge current as 190 mA.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "usb-ovp",
+      "role": "other",
+      "part": "AW32901FCR",
+      "designator": "U7",
+      "quantity": 1,
+      "specs": {"function": "input over-voltage protection switch", "ovp_v": 5.95, "input": "VUSBIN_L0 (C13 22 uF)", "output": "5VIN_L0 (C19 22 uF)"},
+      "connects_to": [
+        {"to": "connector-usb-c", "pins": {"IN (B3, C2, C3)": "VUSBIN_L0 (VBUS)"}}
+      ],
+      "notes": "nEN is tied to GND (always enabled); OVLO goes to GND through R8 0R and R7, from IN to OVLO, is not fitted; nACOK is unconnected. With OVLO on GND the AW32901 uses its internal threshold, 5.95 V rising (5.83 to 6.07 V, 130 mV hysteresis; datasheet V1.1, p. 1, p. 2 and p. 4 note 2); the schematic writes OVP = 5V.",
+      "src": ["k150-schematic", "aw32901-datasheet"]
+    },
+    {
+      "id": "power-path-diodes",
+      "role": "other",
+      "part": "CH213K",
+      "designator": "U6, U11, U13, U14",
+      "quantity": 4,
+      "specs": {"function": "power-path diode (VIN to VOUT), drawn as a diode on the power network"},
+      "notes": "U6: 5VIN_L0 (USB) to Internal_5V. U11: HAT2_5VIN (Hat2 bus 5V_IN) to Internal_5V. U13: Internal_5V to VBUS_L0. U14: VBAT_L0 to VBUS_L0. VBUS_L0, the system rail every regulator draws from, is fed from either the 5 V input or the battery.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "schottky-d10",
+      "role": "other",
+      "part": "RB162VAM-20TR",
+      "designator": "D10",
+      "quantity": 1,
+      "specs": {"function": "diode from the U12 output to Internal_5V"},
+      "notes": "Lets 5 V brought in on the Grove port or the Hat2 EXT_5V pin reach Internal_5V (the charger input) through U12; C25 22 uF on the anode side.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "regulator-ldo-cm1801",
+      "role": "regulator",
+      "part": "CM1801F33",
+      "designator": "U1, U3, U4",
+      "quantity": 3,
+      "specs": {"type": "LDO", "output_v": 3.3, "max_current_ma": 500, "quiescent_current_ua": 0.8, "input": "VBUS_L0"},
+      "connects_to": [
+        {"to": "pmic", "pins": {"U3 OUT": "3V3_L0", "U3 EN": "tied to VIN (always on)"}, "notes": "L0 rail: powers the PMIC, the power-key and LED pull-ups and the charge-status pull-up. C5/C10 1 uF."},
+        {"to": "imu", "pins": {"U4 OUT": "3V3_L1", "U4 EN": "3V3_L1_EN"}, "pulls": [{"signal": "3V3_L1_EN", "direction": "down", "ohms": 1000000, "designator": "R5"}], "notes": "L1 rail: the BMI270 only. C4/C8 1 uF."},
+        {"to": "audio-codec", "pins": {"U1 OUT": "3V3_L3B_AU", "U1 EN": "PYG2_L3B_EN"}, "pulls": [{"signal": "PYG2_L3B_EN", "direction": "down", "ohms": 100000, "designator": "R1"}], "notes": "L3B audio rail: the ES8311, the microphone and the audio-side I2C pull-ups. C1/C6 1 uF."}
+      ],
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "regulator-buck",
+      "role": "regulator",
+      "part": "JW5712",
+      "designator": "U2",
+      "quantity": 1,
+      "specs": {"type": "DC-DC buck", "output_v": 3.3, "max_current_ma": 600, "input": "VBUS_L0 (C2/C3 22 uF)", "output": "3V3_L2 (C11/C12 22 uF)", "inductor": "L1 2.2 uH FTC121065S2R2MBCA"},
+      "connects_to": [
+        {"to": "soc", "pins": {"VOS/SW": "3V3_L2"}, "notes": "L2 rail: the ESP32-S3, its keys, reset and I2C pull-ups, the U5 LCD switch and the Hat2 bus 3V3 pin."},
+        {"to": "pmic", "pins": {"EN (B1)": "3V3_L2_EN"}, "pulls": [{"signal": "3V3_L2_EN", "direction": "down", "ohms": 1000000, "designator": "R2"}]}
+      ],
+      "notes": "VSEL1 to VSEL3 are tied to VBUS_L0. C9 1 nF/50 V on the switch node side.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "regulator-boost",
+      "role": "regulator",
+      "part": "SY7088",
+      "designator": "U9",
+      "quantity": 1,
+      "specs": {"type": "DC-DC boost", "input": "VBUS_L0 (C16/C17/C18 22 uF)", "input_current_max_a": 1.0, "output": "BOOST_OUT (C23/C24 22 uF)", "output_current_max_a": 0.6, "inductor": "L2 2.2 uH", "feedback": "R13 147k/1 % over R14 46.4k/1 %"},
+      "connects_to": [
+        {"to": "pmic", "pins": {"EN (pin 3)": "EXT_5V_EN"}, "pulls": [{"signal": "EXT_5V_EN", "direction": "down", "ohms": 100000, "designator": "R10"}]},
+        {"to": "load-switch-tps22916", "pins": {"OUT (pins 7, 8)": "BOOST_OUT"}}
+      ],
+      "notes": "The schematic gives the divider rule Rd = 1.2 V / (Vout - 1.2) x Ru; with R13 147k and R14 46.4k that is Vout = 1.2 x (1 + 147/46.4) = 5.0 V. The vendor states the Grove load capacity as 5 V with no load and 4.88 V at 0.38 A.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "load-switch-tps22916",
+      "role": "other",
+      "part": "TPS22916CNYFPR",
+      "designator": "U8",
+      "quantity": 1,
+      "specs": {"function": "load switch, BOOST_OUT to GROVE_5V (C15/C20 22 uF)"},
+      "connects_to": [
+        {"to": "regulator-boost", "pins": {"IN (A2)": "BOOST_OUT"}},
+        {"to": "connector-grove", "pins": {"OUT (A1)": "GROVE_5V"}},
+        {"to": "pmic", "pins": {"EN (B2)": "EXT_5V_EN"}}
+      ],
+      "notes": "Output mode of the 5 V port: with EXT_5V_EN high the boost and this switch drive GROVE_5V, which feeds the Grove port, the Hat2 EXT_5V pin and the IR emitter and receiver.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "load-switch-aw35122",
+      "role": "other",
+      "part": "AW35122FDR",
+      "designator": "U5, U12",
+      "quantity": 2,
+      "specs": {"function": "load switch"},
+      "connects_to": [
+        {"to": "display-panel", "pins": {"U5 IN (A2)": "3V3_L2", "U5 OUT (A1)": "3V3_L3B (C14 1 uF; C7 1 uF is on the input, 3V3_L2)", "U5 EN (B2)": "PYG2_L3B_EN"}, "notes": "L3B LCD rail."},
+        {"to": "connector-grove", "pins": {"U12 IN (A2)": "GROVE_5V", "U12 OUT (A1)": "D10 anode", "U12 EN (B2)": "R11 100k to GROVE_5V, pulled low by Q1 (2N7002T) when EXT_5V_EN is high"}, "pulls": [{"signal": "U12 EN", "direction": "up", "ohms": 100000, "to": "GROVE_5V", "designator": "R11"}], "notes": "Input mode of the 5 V port: with EXT_5V_EN low, 5 V applied to GROVE_5V reaches Internal_5V through U12 and D10. C21 22 uF on GROVE_5V."}
+      ],
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "mosfet-2n7002t",
+      "role": "other",
+      "part": "2N7002T",
+      "designator": "Q1, Q3, Q6",
+      "quantity": 3,
+      "specs": {"type": "N-channel MOSFET"},
+      "notes": "Q1 pulls U12's EN low when EXT_5V_EN is high. Q3 sinks the status LED (gate PY_STATUS_LED through R29 0R, R28 10k gate pull-down). Q6 sinks the LCD backlight (gate G38_LCD_BL, R43 5.1k gate pull-down). The IR emitter's driver on the IR/speaker board is also called Q1 (Q101 in this repository's schematic) but its part is not named.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "mosfet-cj3439kdw",
+      "role": "other",
+      "part": "CJ3439KDW",
+      "designator": "Q2",
+      "quantity": 1,
+      "specs": {"type": "dual MOSFET: Q2A N-channel (pins 1 S, 2 G, 6 D), Q2B P-channel (pins 3 D, 4 S, 5 G)"},
+      "notes": "Battery-voltage sampling switch: Q2A, driven by VBAT_ADC_EN, turns Q2B on to connect VBAT_L0 to the R23/R24 divider. The channels and pins are the CJ3439KDW datasheet's (rev D, p. 1, equivalent circuit), which the schematic agrees with.",
+      "src": ["k150-schematic", "cj3439kdw-datasheet"]
+    },
+    {
+      "id": "i2c-isolator",
+      "role": "other",
+      "part": "2N7002DW",
+      "designator": "Q4, Q5",
+      "quantity": 2,
+      "specs": {"type": "dual N-channel MOSFET", "function": "I2C hot-plug isolation between the main bus (3V3_L2) and the audio bus (3V3_L3B_AU)"},
+      "connects_to": [
+        {
+          "to": "audio-codec",
+          "bus": "I2C",
+          "pins": {"Q4A/Q4B": "G48_SCL <-> AUDIO_I2C_SCL", "Q5A/Q5B": "G47_SDA <-> AUDIO_I2C_SDA"},
+          "pulls": [
+            {"signal": "AUDIO_I2C_SCL", "direction": "up", "ohms": 2200, "to": "3V3_L3B_AU", "designator": "R33"},
+            {"signal": "AUDIO_I2C_SDA", "direction": "up", "ohms": 2200, "to": "3V3_L3B_AU", "designator": "R34"}
+          ]
+        }
+      ],
+      "notes": "One gate of each pair is on 3V3_L3B_AU and the other on 3V3_L2, so the codec's bus is cut from the main bus while the L3B audio rail is off.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "display-panel",
+      "role": "display_panel",
+      "quantity": 1,
+      "specs": {"technology": "IPS TFT LCD", "diagonal_in": 1.14, "resolution_px": [135, 240], "supply": "3V3_L3B"},
+      "connects_to": [
+        {"to": "connector-lcd-btb", "notes": "The panel plugs into the 12-pin board-to-board connector."}
+      ],
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "display-controller",
+      "role": "display_controller",
+      "part": "ST7789P3",
+      "quantity": 1,
+      "specs": {"interface": "SPI, write only (no MISO line), with a separate RS (data/command) line", "resolution_px": [135, 240]},
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "SPI",
+          "pins": {"MOSI": "GPIO39", "SCK": "GPIO40 through R51 22R", "RS": "GPIO45", "CS": "GPIO41", "RST": "GPIO21", "BL": "GPIO38 (gate of Q6)"},
+          "pulls": [
+            {"signal": "CS", "direction": "up", "ohms": 10000, "to": "3V3_L3B", "designator": "R41"},
+            {"signal": "BL (Q6 gate)", "direction": "down", "ohms": 5100, "designator": "R43"}
+          ],
+          "src": ["k150-schematic", "m5-docs"]
+        }
+      ],
+      "notes": "The controller sits on the panel. The backlight is lit from 3V3_L3B through R27 10R into LCD connector pin 10 and sunk by Q6 (2N7002T) on pin 12, so GPIO38 switches or dims it only while L3B is on. The schematic's page-1 overview draws a PMOS for LCD_BL; the detailed sheet has the N-channel Q6.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "connector-lcd-btb",
+      "role": "connector",
+      "part": "AXE512127D",
+      "quantity": 1,
+      "specs": {"type": "board-to-board, 12 signal pins + 4 mounting pins", "pinout": {"1": "G41_LCD_CS", "2": "GND", "3": "3V3_L3B", "4": "not connected", "5": "G40_SCK", "6": "G48_SCL", "7": "G39_MOSI", "8": "G47_SDA", "9": "G45_LCD_RS", "10": "3V3_L3B through R27 10R (backlight anode)", "11": "G21_LCD_RST", "12": "Q6 drain (backlight cathode)", "13-16": "mounting pins, GND"}},
+      "notes": "The connector also carries the main I2C bus (pins 6 and 8). C51 1 uF on 3V3_L3B.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "imu",
+      "role": "imu",
+      "part": "BMI270",
+      "designator": "U17",
+      "quantity": 1,
+      "specs": {"axes": "6 (3-axis accelerometer + 3-axis gyroscope)", "interface": "I2C", "i2c_address": "0x68", "supply": "3V3_L1 (VDD and VDDIO, C33/C35 100 nF)"},
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "I2C",
+          "address": "0x68",
+          "pins": {"SCx (pin 13)": "GPIO48", "SDx (pin 14)": "GPIO47"},
+          "src": ["k150-schematic", "m5-docs"]
+        },
+        {
+          "to": "pmic",
+          "pins": {"INT1 (pin 4)": "PYG4_IMU_INT"},
+          "pulls": [{"signal": "INT1", "direction": "up", "ohms": 100000, "to": "3V3_L1", "designator": "R6"}],
+          "src": ["k150-schematic", "m5-docs"]
+        }
+      ],
+      "notes": "CSB (pin 12) is tied to 3V3_L1 (I2C mode) and SDO (pin 1) to GND; INT2, ASDx, ASCx, OCSB and OSDO are unconnected. INT1 does not reach an ESP32-S3 pin directly: the PMIC can pass it on as its IRQ line.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "audio-codec",
+      "role": "audio_codec",
+      "part": "ES8311",
+      "designator": "U18",
+      "quantity": 1,
+      "specs": {"channels": "mono", "resolution_bits": 24, "interface": "I2S + I2C", "i2c_address": "0x18", "supply": "3V3_L3B_AU (PVDD, DVDD, AVDD; C32/C34 10 uF, C44 1 uF)"},
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "I2S",
+          "pins": {"MCLK (pin 2)": "GPIO18 through R47 22R", "SCLK (pin 6)": "GPIO17", "LRCK (pin 8)": "GPIO15", "ASDOUT (pin 7)": "GPIO16 (I2S_DADC, codec to ESP32-S3)", "DSDIN (pin 9)": "GPIO14 (I2S_DDAC, ESP32-S3 to codec)"},
+          "src": ["k150-schematic", "m5-docs"]
+        },
+        {
+          "to": "i2c-isolator",
+          "bus": "I2C",
+          "address": "0x18",
+          "pins": {"CCLK (pin 1)": "AUDIO_I2C_SCL", "CDATA (pin 19)": "AUDIO_I2C_SDA"},
+          "notes": "Reaches the ESP32-S3's GPIO48/GPIO47 through the isolation MOSFETs.",
+          "src": ["k150-schematic", "m5-docs"]
+        },
+        {
+          "to": "microphone",
+          "pins": {"MIC1P (pin 18)": "MIC1_P through C38 1 uF", "MIC1N (pin 17)": "MIC1_N through C39 1 uF"},
+          "src": ["k150-schematic"]
+        },
+        {
+          "to": "audio-amp",
+          "pins": {"OUTN (pin 13)": "DAC_L_N through C43 33 nF", "OUTP (pin 12)": "DAC_L_P through C45 33 nF"},
+          "src": ["k150-schematic"]
+        }
+      ],
+      "notes": "CE (pin 20) is tied to AGND. VMID, ADCVREF and DACVREF are decoupled with 1 uF to AGND (C40, C41, C42). AGND joins GND at one point through R35 0R.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "microphone",
+      "role": "microphone",
+      "part": "MSM381A3729H9BPC",
+      "designator": "U21",
+      "quantity": 1,
+      "specs": {"type": "MEMS, analog output", "snr_db": 65, "supply": "3V3_L3B_AU through R52 100R, C65 100 nF"},
+      "connects_to": [
+        {"to": "audio-codec", "pins": {"OUT (pin 4)": "MIC1_P through R48 0R", "GND (pin 3)": "MIC1_N through R49 0R"}, "src": ["k150-schematic"]}
+      ],
+      "notes": "MIC1_N reaches AGND through two 0R in series: R49 from MIC1_N to the microphone's GND pin 3 (net U21_GND3), and R26 from there to AGND.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "audio-amp",
+      "role": "audio_amp",
+      "part": "AW8737A",
+      "designator": "U19",
+      "quantity": 1,
+      "specs": {"supply": "VBUS_L0 (VDD, A3 and B3; C36 22 uF)", "pvdd": "D3 PVDD is the charge pump's output, on its own net U19_PVDD with C37 22 uF (AW8737A datasheet V1.2, p. 3)", "charge_pump_caps": "C46, C47 2.2 uF", "inputs": "differential, DAC_L_P/DAC_L_N through R31/R32 10k"},
+      "connects_to": [
+        {"to": "pmic", "pins": {"SHDN (A4)": "PYG3_SPK_Pulse"}, "pulls": [{"signal": "SHDN", "direction": "down", "ohms": 100000, "designator": "R30"}], "src": ["k150-schematic"]},
+        {"to": "speaker", "pins": {"VOP (B4)": "SPK_P through FB1 120R@100MHz", "VON (D4)": "SPK_N through FB2 120R@100MHz"}, "notes": "C48/C49 100 pF/50 V to GND after the ferrites. SPK_P/SPK_N cross to the IR/speaker board on the J2 board-to-board connector (pins 11, 13).", "src": ["k150-schematic"]}
+      ],
+      "notes": "The M5PM1 manual describes PWM-based AW8737A control of the signal amplitude on the SHDN line. The vendor recommends staying below 75 % volume on battery to avoid an unexpected reboot, and the speaker amplifier must be off for the IR receiver to work.",
+      "src": ["k150-schematic", "m5-docs", "m5pm1-manual", "aw8737a-datasheet"]
+    },
+    {
+      "id": "speaker",
+      "role": "speaker",
+      "designator": "U4 (IR/speaker board)",
+      "quantity": 1,
+      "specs": {"impedance_ohm": 8, "power_w": 1, "type": "2011 cavity speaker"},
+      "notes": "Connects to SPK_P (pin 2) and SPK_N (pin 1) of U4 on the IR/speaker board. The schematic in this repository numbers the IR/speaker board's parts +100 (U4 is U104 there), and the vendor's page 1 prints the rating, SPK 8 ohm @ 1 W.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "ir-emitter",
+      "role": "ir_led",
+      "part": "IR928-6C/F1(6-1)",
+      "designator": "U3 (IR/speaker board)",
+      "quantity": 1,
+      "specs": {"supply": "5V_VBUS (the GROVE_5V / EXT_5V rail)", "series_resistor": "R2 10R"},
+      "connects_to": [
+        {
+          "to": "soc",
+          "pins": {"LED_TX (driver Q1 gate through R3 22R)": "GPIO46 (G46_IR_TX, J2 pin 15)"},
+          "pulls": [{"signal": "Q1 gate", "direction": "down", "ohms": 10000, "designator": "R1 (IR/speaker board)"}],
+          "notes": "Active high: GPIO46 high turns Q1 on and the emitter conducts from 5V_VBUS through R2 to GND.",
+          "src": ["k150-schematic", "m5-docs"]
+        }
+      ],
+      "notes": "Needs the 5 V port powered, either from EXT_5V_EN output mode or from an external 5 V input. The schematic in this repository numbers the IR/speaker board's parts +100: U3 is U103, Q1 Q101, R1 R101, R2 R102, R3 R103.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "ir-receiver",
+      "role": "other",
+      "part": "VSOP38338",
+      "designator": "U1 (IR/speaker board)",
+      "quantity": 1,
+      "specs": {"function": "infrared receiver", "supply": "5V_VBUS (VCC, C2 10 uF)"},
+      "connects_to": [
+        {
+          "to": "soc",
+          "pins": {"OUT (pin 3)": "GPIO42 (G42_IR_RX, J2 pin 17) through R6 10k, with R5 20k to GND"},
+          "notes": "R6 10k and R5 20k divide the 5 V output down for the 3.3 V GPIO. The VSOP38338's output has an internal pull-up of about 33 kohm to VS (datasheet doc 82748 rev 1.6, p. 1), so its idle high reaches GPIO42 at about 5 V x 20/63, about 1.6 V, below the ESP32-S3's input-high threshold of 0.75 x 3.3 V; on the bench GPIO42 read low in 150 of 150 reads at idle with GROVE_5V at 5.1 V, which a fitted receiver and an absent one both give.",
+          "src": ["k150-schematic", "m5-docs", "vsop383-datasheet", "esp32-s3-pico-1-datasheet", "bench-ir-rx"]
+        }
+      ],
+      "notes": "The schematic draws a part U2 with a photodiode symbol between U1's IN (pin 7) and GND; it names no part number. The VSOP383.. datasheet describes the part for use with an outside photo PIN diode on IN (pin 7), and gives pins 1, 4 and 5 as N.C., 2 VS, 3 OUT, 6 and 8 GND, as drawn. The schematic in this repository numbers the IR/speaker board's parts +100: U1 is U101, U2 U102, R5 R105, R6 R106, C2 C102. The vendor states the receiver must be decoded with the ESP32 RMT peripheral, needs the speaker amplifier off, and needs at least 30 cm to the transmitter.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "led-status",
+      "role": "led",
+      "designator": "LED1",
+      "quantity": 1,
+      "specs": {"color": "green", "location": "inside the case", "driver": "Q3 2N7002T low side", "series_resistor": "R25 1k from 3V3_L0"},
+      "connects_to": [
+        {"to": "pmic", "pins": {"Q3 gate": "PY_STATUS_LED (LED_EN_PP, pin 5) through R29 0R"}, "pulls": [{"signal": "Q3 gate", "direction": "down", "ohms": 10000, "designator": "R28"}], "src": ["k150-schematic"]}
+      ],
+      "notes": "Driven by the PMIC, not by an ESP32-S3 GPIO. The vendor docs call it a green LED (it blinks when the power key is held into download mode); the schematic prints no color. On the owner's unit it is green and sits inside the case (owner observed on his unit, 2026-11-17).",
+      "src": ["k150-schematic", "m5-docs", "m5pm1-manual", "owner-unit"]
+    },
+    {
+      "id": "button-power",
+      "role": "button",
+      "designator": "S1",
+      "quantity": 1,
+      "specs": {"function": "power key", "active": "low (to GND)"},
+      "connects_to": [
+        {"to": "pmic", "pins": {"S1": "PWR_BTN (BTN_PU, pin 7)"}, "pulls": [{"signal": "PWR_BTN", "direction": "up", "ohms": 10000, "to": "3V3_L0", "designator": "R17"}]}
+      ],
+      "notes": "Read by the PMIC only. Single click: power on / reset; double click: power off; hold until the green LED blinks: download mode.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "button-key1",
+      "role": "button",
+      "designator": "S2",
+      "quantity": 1,
+      "specs": {"function": "KEY1", "active": "low (to GND)", "debounce_cap": "C52 1 nF/25 V"},
+      "connects_to": [
+        {"to": "soc", "pins": {"S2": "GPIO11 (G11_KEY1)"}, "pulls": [{"signal": "G11_KEY1", "direction": "up", "ohms": 10000, "to": "3V3_L2", "designator": "R37"}]}
+      ],
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "button-key2",
+      "role": "button",
+      "designator": "S3",
+      "quantity": 1,
+      "specs": {"function": "KEY2", "active": "low (to GND)", "debounce_cap": "C53 1 nF/25 V"},
+      "connects_to": [
+        {"to": "soc", "pins": {"S3": "GPIO12 (G12_KEY2)"}, "pulls": [{"signal": "G12_KEY2", "direction": "up", "ohms": 10000, "to": "3V3_L2", "designator": "R36"}]}
+      ],
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "battery",
+      "role": "battery",
+      "quantity": 1,
+      "specs": {"chemistry": "lithium", "capacity_mah": 250},
+      "connects_to": [
+        {"to": "connector-battery", "pins": {"+": "VBAT_L0 (J4 pin 1)", "-": "GND (J4 pin 2)"}}
+      ],
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "connector-battery",
+      "role": "connector",
+      "designator": "J4",
+      "quantity": 1,
+      "specs": {"pins": 2, "pinout": {"1": "VBAT_L0", "2": "GND"}},
+      "notes": "C26 22 uF/16 V across the battery.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "connector-usb-c",
+      "role": "connector",
+      "part": "USB_C_16P_Horizontal",
+      "designator": "J1",
+      "quantity": 1,
+      "specs": {"type": "USB Type-C receptacle, 16 pins, horizontal", "input": "DC 5 V", "data": "USB 2.0 D+/D- to the ESP32-S3 native USB", "sbu": "not connected"},
+      "connects_to": [
+        {
+          "to": "usb-ovp",
+          "pins": {"VBUS (A4/B9, B4/A9)": "VUSBIN_L0"},
+          "pulls": [
+            {"signal": "CC1", "direction": "down", "ohms": 5100, "designator": "R3"},
+            {"signal": "CC2", "direction": "down", "ohms": 5100, "designator": "R4"}
+          ],
+          "notes": "5.1k on each CC line: the board presents itself as a sink."
+        },
+        {"to": "esd", "pins": {"DP1/DP2 (USB_P)": "D2 ESD5311", "DM1/DM2 (USB_N)": "D1 ESD5311"}}
+      ],
+      "notes": "The vendor's PinMap and labels call it the download port as well as the power input.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "usb-common-mode-filter",
+      "role": "other",
+      "part": "SDMM0806H-2-900T",
+      "designator": "FT1",
+      "quantity": 1,
+      "specs": {"function": "common-mode filter on the USB data pair"},
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "esd",
+      "role": "esd",
+      "part": "ESD5311",
+      "designator": "D1, D2, TVS1, TVS2",
+      "quantity": 4,
+      "specs": {"function": "ESD protection diodes to GND"},
+      "notes": "D1 on USB_N and D2 on USB_P at the USB-C receptacle; TVS1 on GROVE_G10 and TVS2 on GROVE_G9 at the Grove port.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "connector-grove",
+      "role": "connector",
+      "part": "HY2.0-4P",
+      "designator": "J3",
+      "quantity": 1,
+      "specs": {"name": "PORT.A (vendor label PORT.CUSTOM)", "pinout": {"1": "GND (black)", "2": "GROVE_5V (red)", "3": "GPIO9 (yellow)", "4": "GPIO10 (white)"}, "load_capacity": "5 V no load, 4.88 V at 0.38 A"},
+      "connects_to": [
+        {"to": "soc", "pins": {"3": "GPIO9 (GROVE_G9)", "4": "GPIO10 (GROVE_G10)"}, "src": ["k150-schematic", "m5-docs"]}
+      ],
+      "notes": "GROVE_5V is an output while the PMIC drives EXT_5V_EN high (boost U9 through U8) and an input while it is low (through U12 and D10 to the charger). The vendor's default library initialization leaves it in input mode. In output mode power may only come in over USB or the Hat2 bus 5V_IN pin.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "connector-hat2-btb",
+      "role": "connector",
+      "designator": "J2 (main board), CN1 AXE524124 (IR/speaker board)",
+      "quantity": 1,
+      "specs": {
+        "type": "board-to-board, 24 signal pins + 4 mounting pins, between the main board and the IR/speaker board",
+        "pinout_j2": {"1, 3": "VBAT_L0", "2, 4": "HAT2_5VIN", "5, 7": "GND", "6, 8": "GROVE_5V", "9": "3V3_L2", "10": "G0_BOOT_OUT", "11": "SPK_P", "12": "EXT_GPIO4", "13": "SPK_N", "14": "EXT_GPIO5", "15": "G46_IR_TX", "16": "EXT_GPIO6", "17": "G42_IR_RX", "18": "EXT_GPIO7", "19": "EXT_GPIO1", "20": "EXT_GPIO8", "21": "EXT_GPIO2", "22": "EXT_GPIO43", "23": "EXT_GPIO3", "24": "EXT_GPIO44", "25-28": "mounting pins, GND"}
+      },
+      "notes": "On the IR/speaker board the same nets are named EXT_BAT (VBAT_L0), 5V_IN (HAT2_5VIN), 5V_VBUS (GROVE_5V), SYS_3V3 (3V3_L2), BOOT_OUT, LED_TX and LED_RX. The schematic in this repository numbers the IR/speaker board's parts +100: CN1 is CN101 there.",
+      "src": ["k150-schematic"]
+    },
+    {
+      "id": "connector-hat2",
+      "role": "connector",
+      "designator": "CN2 (IR/speaker board)",
+      "quantity": 1,
+      "specs": {
+        "name": "Hat2-Bus",
+        "type": "2 x 8 female header, 2.54 mm pitch, 8.5 mm plastic height",
+        "pinout": {"1": "GND", "2": "GPIO5", "3": "EXT_5V", "4": "GPIO4", "5": "Boot (GPIO0, G0_BOOT_OUT)", "6": "GPIO6", "7": "GPIO1", "8": "GPIO7", "9": "GPIO8", "10": "GPIO43", "11": "BAT", "12": "GPIO44", "13": "3V3_L2", "14": "GPIO2", "15": "5V_IN", "16": "GPIO3"},
+        "gpio_count": 11
+      },
+      "connects_to": [
+        {"to": "connector-hat2-btb", "notes": "Every pin reaches the main board through CN1/J2."}
+      ],
+      "notes": "Pin numbers follow the vendor's PinMap (odd pins in the left column, even in the right); the schematic numbers the same header 1 to 8 down one side and 9 to 16 up the other (schematic 1 GND, 2 5V_VBUS, 3 BOOT_OUT, 4 EXT_GPIO1, 5 EXT_GPIO8, 6 EXT_BAT, 7 SYS_3V3, 8 5V_IN, 9 EXT_GPIO3, 10 EXT_GPIO2, 11 EXT_GPIO44, 12 EXT_GPIO43, 13 EXT_GPIO7, 14 EXT_GPIO6, 15 EXT_GPIO4, 16 EXT_GPIO5). The schematic's feature table describes it as a 2 x 8 female header with 11 GPIO, 5V in, 5V out and 3V3. The vendor states the StickS3 is structurally incompatible with Hat Mini JoyC (U156), Hat Mini EncoderC (U157) and Hat 18650C (U080). The schematic in this repository numbers the IR/speaker board's parts +100: CN2 is CN102 there.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "antenna",
+      "role": "antenna",
+      "designator": "J5 (ANT_PAD)",
+      "quantity": 1,
+      "specs": {"band": "2.4 GHz", "feed": "50 ohm line to LNA_IN", "matching": "L3, L5 0R (TBD) in series; C56, C69, C60, C63 not fitted (TBD) to GND"},
+      "notes": "The antenna attaches at a two-pad feed (pin 1 RF, pin 2 GND). The vendor warns that opening the enclosure can damage the antenna's flexible circuit.",
+      "src": ["k150-schematic", "m5-docs"]
+    },
+    {
+      "id": "test-points",
+      "role": "other",
+      "designator": "TP1-TP9",
+      "quantity": 9,
+      "specs": {"nets": {"TP1": "GND", "TP2": "PY_STATUS_LED", "TP3": "G0_BOOT_OUT", "TP4": "3V3_L2", "TP5": "3V3_L0", "TP6": "SOC_RESET", "TP8": "EXT_GPIO43", "TP9": "EXT_GPIO44"}},
+      "notes": "TP7 does not appear on the schematic.",
+      "src": ["k150-schematic"]
+    }
+  ],
+  "absent": [
+    {"role": "rtc", "notes": "No RTC chip on the schematic; no 32 kHz crystal either (GPIO15/GPIO16 carry I2S).", "src": ["k150-schematic"]},
+    {"role": "crystal", "notes": "No discrete crystal: XTAL_P/XTAL_N are unconnected and the SiP integrates a 40 MHz crystal.", "src": ["k150-schematic", "esp32-s3-pico-1-datasheet"]},
+    {"role": "fuel_gauge", "notes": "The battery is read as a voltage by the PMIC's ADC through a switched divider; no gauge IC.", "src": ["k150-schematic", "m5pm1-manual"]},
+    {"role": "touch_controller", "src": ["k150-schematic"]},
+    {"role": "keyboard_controller", "src": ["k150-schematic"]},
+    {"role": "io_expander", "src": ["k150-schematic"]},
+    {"role": "usb_uart_bridge", "notes": "USB goes straight to the ESP32-S3's native USB pins.", "src": ["k150-schematic"]},
+    {"role": "sd_slot", "src": ["k150-schematic"]},
+    {"role": "gps", "src": ["k150-schematic"]},
+    {"role": "lora", "src": ["k150-schematic"]},
+    {"role": "magnetometer", "src": ["k150-schematic"]},
+    {"role": "buzzer", "notes": "Sound comes from the speaker through the codec and amplifier.", "src": ["k150-schematic"]}
+  ],
+  "notes": "Power rails, by the schematic's names: VUSBIN_L0 (USB VBUS) -> U7 OVP -> 5VIN_L0 -> U6 -> Internal_5V (also from HAT2_5VIN through U11, and from GROVE_5V through U12 and D10); Internal_5V feeds the charger and, through U13, VBUS_L0; the battery VBAT_L0 also feeds VBUS_L0 through U14. From VBUS_L0: 3V3_L0 (U3, always on: PMIC), 3V3_L1 (U4: IMU), 3V3_L2 (U2 buck: ESP32-S3), 3V3_L3B_AU (U1: codec, microphone), the AW8737A and the boost U9 (BOOST_OUT -> U8 -> GROVE_5V); 3V3_L3B (LCD) is switched from 3V3_L2 by U5. The main I2C bus (GPIO47 SDA, GPIO48 SCL) carries the M5PM1 (0x6E), the BMI270 (0x68) and, through the isolation MOSFETs, the ES8311 (0x18); it also reaches the LCD connector. The IR emitter and receiver, the speaker and the Hat2 header are on a second board joined to the main board by a 24-pin board-to-board connector.",
+  "sources": {
+    "m5-docs": {
+      "url": "https://docs.m5stack.switch-science.com/en/core/StickS3",
+      "mirror_of": "https://docs.m5stack.com/en/core/StickS3",
+      "title": "StickS3 (K150), M5Stack documentation",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "notes": "Read at Switch Science's mirror of docs.m5stack.com: the original host refused or timed out from the machine that wrote this file on 2026-11-16."
+    },
+    "k150-schematic": {
+      "url": "https://web.archive.org/web/20260308045411/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1207/K150_Stick_S3_PRJ_V0.6_20251111_2025_11_17_16_10_24.pdf",
+      "mirror_of": "https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1207/K150_Stick_S3_PRJ_V0.6_20251111_2025_11_17_16_10_24.pdf",
+      "title": "K150 StickS3 schematic, project V0.6, dated 2025-11-11 (4 pages: functions and power network, power, core, IR/speaker board)",
+      "kind": "schematic",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "The address the docs page links timed out from the machine that wrote this file; the file was read from the Internet Archive's capture of 2026-03-08 of that address."
+    },
+    "esp32-s3-pico-1-datasheet": {
+      "url": "https://documentation.espressif.com/esp32-s3-pico-1_datasheet_en.pdf",
+      "title": "ESP32-S3-PICO-1 Series Datasheet v1.2 (Espressif)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "m5pm1-manual": {
+      "url": "https://github.com/m5stack/M5PM1/blob/main/docs/M5PM1_Datasheet_EN.pdf",
+      "title": "M5PM1 Chip User Manual V1.9, 2026-01-22 (M5Stack)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "aw32901-datasheet": {
+      "url": "https://datasheet.lcsc.com/datasheet/pdf/a6e12bc064a50d5a017e9740df82b571.pdf",
+      "title": "Awinic AW329XX (AW32901) over-voltage protection switch datasheet V1.1, September 2018",
+      "kind": "datasheet",
+      "checked": "2026-11-17",
+      "notes": "LCSC's copy (part C401023); SHA-256 of the file read e44d055edf7a46f6a3fe935f898637785299c64036838fe64fd448f3c4c17e48."
+    },
+    "cj3439kdw-datasheet": {
+      "url": "https://datasheet.lcsc.com/datasheet/pdf/1300ae41d9efc3741e3098a9a42c762d.pdf",
+      "title": "JCET CJ3439KDW dual MOSFET datasheet, revision D, March 2016",
+      "kind": "datasheet",
+      "checked": "2026-11-17",
+      "notes": "LCSC's copy (part C99824); SHA-256 of the file read 41cb3b3374616678b096dfab449a544e165c1878e2b6d7b2f0fbf1c70effcb66."
+    },
+    "aw8737a-datasheet": {
+      "url": "https://www.ickey.cn/static-pf/datasheet/32/b8/e731/32b8e731bcfd31639095bdc5f4bfa1d4.pdf",
+      "title": "Awinic AW8737A audio amplifier datasheet V1.2, July 2022",
+      "kind": "datasheet",
+      "checked": "2026-11-17",
+      "notes": "A distributor's copy; Awinic lists the datasheet at https://www.awinic.com/en/productDetail/AW8737AFCR."
+    },
+    "vsop383-datasheet": {
+      "url": "https://www.vishay.com/docs/82748/vsop383.pdf",
+      "title": "Vishay VSOP383.. IR receiver modules datasheet, document 82748, revision 1.6, 2026-02-09",
+      "kind": "datasheet",
+      "checked": "2026-11-17"
+    },
+    "bench-charge-status": {
+      "title": "PYG0 against the charge state on an open StickS3 (probe B3, 2026-11-17)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Kleidos sticks3_debug console over USB, case closed: the cell run down to about 4.0 V with VBUS cut at the hub, then USB in and the M5PM1's GPIO_INPUT register read against its own ADC's cell and VIN readings; recorded in schematic/bench/2026-11-17-charge-status-pyg0.md."
+    },
+    "bench-ir-rx": {
+      "title": "GPIO42 idle level with GROVE_5V up on an open StickS3 (probe B4, 2026-11-17)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Kleidos sticks3_debug console over USB, case closed: EXT_5V_EN on, GROVE_5V read by the M5PM1's ADC, GPIO42 read as an input 150 times with no remote; recorded in schematic/bench/2026-11-17-ir-rx-gpio42.md."
+    },
+    "owner-unit": {
+      "title": "Owner observed on his unit, 2026-11-17",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Seen by the owner on his own StickS3 and reported on 2026-11-17: the status LED's color and where it sits. By eye, no instrument."
+    },
+    "owner-unit-verified": {
+      "title": "Verified against the owner's physical unit, 2026-11-18",
+      "kind": "measured",
+      "checked": "2026-11-18",
+      "method": "The owner compared his own StickS3 with this repository's front drawing (svg/front.svg) and 3D model (model/) on 2026-11-18: the model and the drawing match the real board. A check by eye, no instrument. The original source of the measurement was not recorded (sources.md)."
+    }
+  }
+}

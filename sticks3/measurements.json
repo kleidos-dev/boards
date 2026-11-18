@@ -1,0 +1,89 @@
+{
+  "device_id": "sticks3",
+  "display_name": "M5StickS3",
+  "vendor": "M5Stack",
+  "sku": "K150",
+  "theme": "sticks3_black",
+  "case": {
+    "width": 24.0,
+    "height": 48.0,
+    "depth": 15.0,
+    "corner_radius": 3.2,
+    "color": "#4A4A4C",
+    "material": "PC+ABS",
+    "note": "The front draws R3.2 corners (photos 3.1; the K150 drawing R3). color is the front's case color at the top (photos #4b4b4c)."
+  },
+  "display": {
+    "tech": "TFT-IPS",
+    "controller": "ST7789P3",
+    "active_w_mm": 14.86,
+    "active_h_mm": 24.91,
+    "resolution_w_px": 135,
+    "resolution_h_px": 240,
+    "origin_x_mm": 4.57,
+    "origin_y_mm": 4.65,
+    "native_orientation": "portrait",
+    "firmware_rotation_deg": 180,
+    "note": "Active area datasheet-verified 2026-07-15: 14.86 x 24.91 mm (1.14\", ~241 PPI, pixel pitch 0.1101 x 0.1038 mm, ~6% non-square); was 21.7 x 13.0 mm (~272 PPI, assumed square pixels). Origin photo-measured 2026-10-19: the vendor photo's lit boot screen spans 4.57-19.41 x 4.64-29.58 mm (14.84 x 24.94, the panel's size). Window opening in the case 3.92-20.08 x 4.08-30.18 mm."
+  },
+  "buttons": [
+    {
+      "id": "BtnA",
+      "logical": "primary",
+      "gpio": 11,
+      "active": "low",
+      "face": "front",
+      "shape": "rect",
+      "width_mm": 11.6,
+      "height_mm": 2.1,
+      "center_x_mm": 12.05,
+      "center_y_mm": 37.55,
+      "note": "Blue pill with round ends: its cap spans 6.25-17.86 x 36.50-38.60 mm on the vendor photos."
+    },
+    {
+      "id": "BtnB",
+      "logical": "secondary",
+      "gpio": 12,
+      "active": "low",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 3.5,
+      "height_mm": 8.58,
+      "center_x_mm": 24.0,
+      "center_y_mm": 23.93,
+      "note": "KEY2: its cap on the vendor's straight view of the right side."
+    },
+    {
+      "id": "Power",
+      "logical": "power",
+      "gpio": -1,
+      "active": "low",
+      "face": "left",
+      "shape": "rect",
+      "width_mm": 3.0,
+      "height_mm": 5.0,
+      "center_x_mm": 0.0,
+      "center_y_mm": 42.0,
+      "note": "M5PM1 power key, next to the USB end; read off two angled vendor views, about 0.5 mm uncertain."
+    }
+  ],
+  "extras": [
+    {
+      "type": "led",
+      "face": "front",
+      "color": "red"
+    },
+    {
+      "type": "usb-c",
+      "face": "bottom"
+    }
+  ],
+  "notes": "Portrait front view, 24 x 48 mm, the frame of svg/front.svg: x across the case, y down from the end above the screen. Dark grey case; the blue BtnA pill below the screen, KEY2 (BtnB) on the right edge, the power key on the left edge near the USB end, measured on the vendor photos (2026-10-19). The face has no print below the pill. width_mm of an edge button is not measured; height_mm is its length along the edge. extras[] carry no positions: the earlier estimates were in a landscape frame that did not match the photos, and the front draws none of these parts.",
+  "sources": [
+    {
+      "kind": "see",
+      "url": "sources.md",
+      "local": "sources.md"
+    }
+  ]
+}

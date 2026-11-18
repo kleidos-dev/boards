@@ -1,0 +1,226 @@
+{
+  "schema": 1,
+  "board": "sticks3",
+  "node_name": "StickS3",
+  "output": "sticks3/model/sticks3.glb",
+  "generator": "kleidos build_sticks3_glb.py",
+  "copyright": "Case geometry (front cap, back shell, BtnA): M5Stack, M5_Hardware Products/K150_StickS3/Structures/StickS3.stl @48baa75a, MIT License, Copyright (c) 2021 M5Stack. Display, connectors, filler, label and materials: Kleidos (MIT).",
+  "notes": "The STL holds the assembled device three times over (one assembly plus an exploded copy); only the assembly at x = 0..24 mm is kept: front cap, back shell, BtnA pill. It is a shell only: no display, no connectors, an open back and an empty inside, so everything else is added here from measurements.json and the vendor photos. The STL's own frame is already the build frame (+Y towards the HAT2 end, +Z out of the screen, +X towards BtnB), so there is no transform. The model's origin is the center of the 24 x 48 x 14 mm body; the pill stands 1 mm proud. The output keeps the generator name of the script that first wrote it, so this spec rebuilds sticks3/model/sticks3.glb byte for byte.",
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "file": "StickS3.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K150_StickS3/Structures/StickS3.stl",
+    "commit": "48baa75a9476f4070dd5f107c1c28e2c9f383a96",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/48baa75a9476f4070dd5f107c1c28e2c9f383a96/Products/K150_StickS3/Structures/StickS3.stl",
+    "sha256": "cadfa88716cb74a85d0d76dc866d83dbd627d6f5c310b528d43e588dab37ecec",
+    "bytes": 734884,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "transform": [],
+  "split": true,
+  "select": {"max_le": [24.5, null, null]},
+  "parts": [
+    {"name": "back", "match": {"extent_gt": [23, null, 10.3]}},
+    {"name": "front", "match": {"extent_gt": [23, null, null]}},
+    {
+      "name": "pill",
+      "match": {},
+      "ops": [{"slice": {"normal": [0, 0, 1], "origin": [0, 0, -1.05], "cap": true}}],
+      "note": "Only the pill's cap: the carrier below the front wall is never seen."
+    }
+  ],
+  "volumes": {
+    "fill": [
+      [1.95, 22.05, 8.2, 46.55, -12.3, -1.35],
+      [1.95, 7.30, 1.6, 8.2, -9.9, -1.35],
+      [16.70, 22.05, 1.6, 8.2, -9.9, -1.35],
+      [7.30, 16.70, 1.6, 8.2, -2.45, -1.35]
+    ],
+    "lcd": [
+      [3.25, 20.75, 13.95, 45.55, -2.6, -1.12]
+    ],
+    "note": "fill: the opaque interior every opening shows (main interior; beside the USB-C, left and right; above the USB-C). lcd: the LCD module."
+  },
+  "cull": {"parts": ["front", "back"], "volumes": ["fill", "lcd"], "margin": 0.06},
+  "center_mm": [12.0, 24.06, -7.077],
+  "front_frame": {"left_x": 0.0, "top_y": 48.06},
+  "face_frames": {"left": {"back_z": -14.077, "top_y": 48.06, "note": "The left side's drawing: x from the case's back (z -14.077, the body's 14 mm about center_mm) towards the front, y down from its top edge."}},
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "planar_min_area": 1.5,
+  "materials": [
+    {"name": "case", "rgb": [74, 74, 76], "rough": 0.62},
+    {"name": "button_blue", "rgb": [12, 96, 232], "rough": 0.5},
+    {"name": "lcd_black", "rgb": [10, 10, 12], "rough": 0.14},
+    {"name": "screen", "rgb": [8, 8, 10], "rough": 1.0, "unlit": true},
+    {"name": "glass", "rgb": [0, 0, 0], "rough": 0.04, "alpha": 0.06},
+    {"name": "internal", "rgb": [16, 16, 18], "rough": 0.95},
+    {"name": "usb_metal", "rgb": [196, 196, 200], "rough": 0.32, "metal": 1.0},
+    {"name": "black_plastic", "rgb": [26, 26, 28], "rough": 0.55},
+    {"name": "hole", "rgb": [3, 3, 4], "rough": 1.0},
+    {"name": "white_plastic", "rgb": [234, 232, 224], "rough": 0.55},
+    {"name": "brass", "rgb": [200, 158, 84], "rough": 0.38, "metal": 1.0},
+    {"name": "screw", "rgb": [52, 52, 56], "rough": 0.45, "metal": 0.8},
+    {"name": "back_label", "rgb": [238, 239, 238], "rough": 0.55},
+    {"name": "ir_package", "rgb": [196, 196, 198], "rough": 0.35},
+    {"name": "header_black", "rgb": [17, 17, 18], "rough": 0.5},
+    {"name": "header_funnel", "rgb": [8, 8, 9], "rough": 0.7}
+  ],
+  "meshes": [
+    {"name": "case_front", "part": "front", "material": "case", "smooth_deg": 40.0},
+    {"name": "case_back", "part": "back", "material": "case", "smooth_deg": 40.0},
+    {"name": "button_a", "part": "pill", "material": "button_blue", "smooth_deg": 50},
+    {
+      "name": "lcd",
+      "material": "lcd_black",
+      "shapes": [{"prism": {"axis": "z", "volume": "lcd", "profile": {"rounded": 0.6}}}]
+    },
+    {"name": "screen", "material": "screen", "screen": {"z": -1.10}},
+    {"name": "glass", "material": "glass", "glass": {"rect": [4.49, 19.51, 18.42, 43.52], "z": -1.085}},
+    {"name": "internal", "material": "internal", "shapes": [{"volume": "fill"}]},
+    {
+      "name": "usb_c_shell",
+      "note": "The USB-C receptacle in the bottom end (opening x 7.42..16.58, z -2.59..-5.88).",
+      "material": "usb_metal",
+      "smooth_deg": 40,
+      "shapes": [
+        {"prism": {"axis": "y", "range": [0.40, 7.4],
+                   "profile": {"stadium": [12.0, -4.235, 8.94, 3.26], "inner": ["8.94 - 0.5", "3.26 - 0.5"]}}}
+      ]
+    },
+    {
+      "name": "usb_c_inside",
+      "material": "black_plastic",
+      "shapes": [
+        {"prism": {"axis": "y", "range": [6.6, 7.0],
+                   "profile": {"stadium": [12.0, -4.235, "8.94 - 0.5", "3.26 - 0.5"]}}},
+        {"prism": {"axis": "y", "range": [1.30, 6.7],
+                   "profile": {"rect": ["12.0 - 3.3", "12.0 + 3.3", "-4.235 - 0.35", "-4.235 + 0.35"]}}}
+      ]
+    },
+    {
+      "name": "grove",
+      "note": "The HY2.0-4P (Grove) housing in the back recess at the bottom end: floor towards the front, left, right, end and inner walls (0.55 mm).",
+      "material": "white_plastic",
+      "shapes": [
+        {"box": [6.10, 17.90, 0.45, 5.60, -9.0, -6.90]},
+        {"box": [6.10, "6.10 + 0.55", 0.45, 5.60, -12.0, -9.0]},
+        {"box": ["17.90 - 0.55", 17.90, 0.45, 5.60, -12.0, -9.0]},
+        {"box": ["6.10 + 0.55", "17.90 - 0.55", 0.45, "0.45 + 0.55", -12.0, -9.0]},
+        {"box": ["6.10 + 0.55", "17.90 - 0.55", "5.60 - 0.55", 5.60, -12.0, -9.0]}
+      ]
+    },
+    {
+      "name": "grove_pins",
+      "material": "brass",
+      "shapes": [
+        {"box": ["9.0 - 0.32", "9.0 + 0.32", 2.75, 3.39, -11.2, -9.0]},
+        {"box": ["11.0 - 0.32", "11.0 + 0.32", 2.75, 3.39, -11.2, -9.0]},
+        {"box": ["13.0 - 0.32", "13.0 + 0.32", 2.75, 3.39, -11.2, -9.0]},
+        {"box": ["15.0 - 0.32", "15.0 + 0.32", 2.75, 3.39, -11.2, -9.0]}
+      ]
+    },
+    {
+      "name": "header",
+      "note": "The 2x8 HAT2 female header at the top end, its face flush with the end.",
+      "material": "header_black",
+      "shapes": [{"box": [1.66, 22.34, 40.0, 47.98, -13.86, -8.92]}]
+    },
+    {
+      "name": "header_funnels",
+      "note": "Each contact: a funneled 1.5 mm entry around a 0.8 mm dark hole.",
+      "material": "header_funnel",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "47.98 + 0.010", "facing": 1, "u_center": 12.0,
+                                "v_center": "(-13.86 + -8.92) / 2", "cols": 8, "rows": 2,
+                                "pitch": 2.54, "size": 1.5}}]
+    },
+    {
+      "name": "header_holes",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "47.98 + 0.020", "facing": 1, "u_center": 12.0,
+                                "v_center": "(-13.86 + -8.92) / 2", "cols": 8, "rows": 2,
+                                "pitch": 2.54, "size": 0.8}}]
+    },
+    {
+      "name": "ir_parts",
+      "note": "The IR receiver (left notch, x 4.08..7.42) and the IR LED's bed (right notch, x 16.78..20.12) at the top end, as the vendor photos place them.",
+      "material": "black_plastic",
+      "shapes": [
+        {"box": [4.12, 7.38, 45.6, 47.85, -8.86, -6.86]},
+        {"box": [16.82, 20.08, 45.6, 47.55, -8.86, -6.86]}
+      ]
+    },
+    {"name": "ir_led", "material": "ir_package", "shapes": [{"box": [17.50, 19.40, 47.20, 47.82, -8.50, -7.20]}]},
+    {
+      "name": "ir_led_lens",
+      "material": "hole",
+      "smooth_deg": 40,
+      "shapes": [{"cylinder": {"axis": "y", "c": [18.45, -7.85], "r": 0.36, "range": [47.80, 47.86], "sections": 16}}]
+    },
+    {
+      "name": "back_label",
+      "note": "The sticker's paper in the back's recess, as M5Stack's back photo shows it: x 1.66..22.34, y 10.68..47.78 (back frame x 1.66..22.34, y 0.28..37.38; the print stops 0.02 mm inside it), its bottom corners rounded 1.2 mm, its top edge straight across the open HAT2 end, over the header's back; what is printed on it is label_legends.",
+      "material": "back_label",
+      "shapes": [{"prism": {"axis": "z", "range": [-14.017, -13.887],
+                            "profile": {"polygon": [[1.66, 47.78], [1.66, 11.88], [1.701, 11.569], [1.821, 11.28], [2.011, 11.031], [2.26, 10.841], [2.549, 10.721], [2.86, 10.68], [21.14, 10.68], [21.451, 10.721], [21.74, 10.841], [21.989, 11.031], [22.179, 11.28], [22.299, 11.569], [22.34, 11.88], [22.34, 47.78]]}}}]
+    },
+    {
+      "name": "label_legends",
+      "note": "What back.svg prints on the sticker (its back-label group): the two rows of HAT2 cells, the power tree and its parts, the LCD and codec pins, the marks, KEY1 and KEY2, PORT.A, 0.03 mm out of the paper's face (z -14.017, on the model's grid about center_mm) towards the back's viewer.",
+      "legends": {"drawing": "../svg/back.svg", "face": "back", "plane": "label", "on": "back_label", "z": "-14.017 - 0.03", "flatness": 0.004, "rough": 0.55}
+    },
+    {
+      "name": "side_strip",
+      "note": "The black strip in the front cap's pocket on the left side (the vendor's file cuts it 0.35 mm deep at y 14.66..34.86, z -5.68..-1.48), 0.05 mm inside the pocket's walls, its face 0.25 mm in from the side; what is printed on it is strip_legends.",
+      "material": "black_plastic",
+      "shapes": [{"prism": {"axis": "x", "range": [0.25, 0.35], "profile": {"rect": [14.71, 34.81, -5.627, -1.527]}}}]
+    },
+    {
+      "name": "strip_legends",
+      "note": "What left.svg prints on the strip (its stick-s3 group): STICK in white, then S3 in white on its blue tile, 0.03 mm out of the strip's face (x 0.25) towards the left side's viewer.",
+      "legends": {"drawing": "../svg/left.svg", "face": "left", "plane": "strip", "on": "side_strip", "x": "0.25 - 0.03", "flatness": 0.004, "rough": 0.55}
+    },
+    {
+      "name": "inserts",
+      "note": "Brass inserts (upper pair) and screws (lower pair) on the back.",
+      "material": "brass",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [3.0, 8.56], "r": 0.97, "range": [-13.97, -12.2]}},
+        {"cylinder": {"axis": "z", "c": [21.0, 8.56], "r": 0.97, "range": [-13.97, -12.2]}}
+      ]
+    },
+    {
+      "name": "insert_holes",
+      "material": "hole",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [3.0, 8.56], "r": 0.5, "range": [-13.985, -13.975], "sections": 16}},
+        {"cylinder": {"axis": "z", "c": [21.0, 8.56], "r": 0.5, "range": [-13.985, -13.975], "sections": 16}}
+      ]
+    },
+    {
+      "name": "screws",
+      "material": "screw",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [3.0, 3.06], "r": 1.85, "range": [-11.45, -10.08]}},
+        {"cylinder": {"axis": "z", "c": [21.0, 3.06], "r": 1.85, "range": [-11.45, -10.08]}}
+      ]
+    },
+    {
+      "name": "screw_slots",
+      "material": "hole",
+      "shapes": [
+        {"box": ["3.0 - 1.1", "3.0 + 1.1", 2.86, 3.26, -11.47, -11.44]},
+        {"box": ["21.0 - 1.1", "21.0 + 1.1", 2.86, 3.26, -11.47, -11.44]},
+        {"box": ["3.0 - 0.2", "3.0 + 0.2", 1.96, 4.16, -11.47, -11.44]},
+        {"box": ["21.0 - 0.2", "21.0 + 0.2", 1.96, 4.16, -11.47, -11.44]}
+      ]
+    }
+  ]
+}

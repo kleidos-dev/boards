@@ -1,0 +1,497 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# How the StickS3 schematic is drawn: the symbol each part takes, our own
+# symbols, and the sheets, blocks and rows the parts sit in. The facts (values,
+# pins, nets) are in netlist.yaml; _shared/kicad_schematic.py joins the two.
+#
+# parts: a part takes the symbol its prefix names under _by_prefix unless it has
+# a row of its own. "pins" maps our symbol's pin number to the vendor's pin
+# (a list when one of our pins stands for several of the vendor's, "-" when the
+# vendor has no such pin). "angle" turns the symbol (90: a vertical two-pin part
+# lies flat).
+# rows: each row of a block is laid left to right; an item is a reference
+# ("Q2:A" for one unit), {col: [...]} for a column of two-pin parts,
+# {cols: [[...], [...]]} for several, or {text: ...}.
+# sheets: "summary" and "parts" fill the sheet's box on the contents page; a
+# sheet with "index" (power, nets, parts) is a page of tables the generator
+# writes from netlist.yaml, after the drawing.
+# root: the contents page's heading and the panels of its right-hand column;
+# revisions: the history the contents page prints (the last one is in every
+# title block). short: what a part is, in the parts list and the power
+# tree (the part's "short", else its symbol's, else the symbol's description
+# or the KiCad symbol's kind).
+# power_tree: its boxes, [column, row], and arrows, each a connection
+# netlist.yaml has (the generator refuses any other); "NET@2" draws a net twice.
+
+paper: A3
+title_block:
+  title: M5StickS3 (K150)
+  company: "Kleidos boards: connectivity documented from the vendor's public documentation"
+  comments:
+    - "Sources: M5Stack K150 StickS3 schematic V0.6 (2025-11-11) and docs; README.md"
+    - "Values as documented. Layout and symbols: Kleidos boards"
+    - "License: MIT. github.com/kleidos-dev/boards"
+
+revisions:
+  - {rev: 1, date: "2026-11-16", change: "First drawing: every part, pin and net, from the vendor's public documentation."}
+  - {rev: 2, date: "2026-11-17", change: "Contents page, page links and bookmarks; the Kleidos dark theme."}
+  - {rev: 3, date: "2026-11-17", change: "Page/zone cross-references that land on the label; power tree, nets and signals, parts list; DNP marks; no script in the PDF."}
+  - {rev: 4, date: "2026-11-17", change: "Kleidos additions and corrections K1-K11 above; U104's rating; J3 as printed."}
+  - {rev: 5, date: "2026-11-17", change: "An entry is marked wherever an index page shows its element again; a pin on no net says what it is on the nets page; the title block says the drawing carries entries."}
+
+grounds:
+  GND: kleidos:GND
+  AGND: kleidos:GNDA
+
+parts:
+  _by_prefix:
+    R: {symbol: "kleidos:R", angle: 90, stub: 0}
+    C: {symbol: "kleidos:C", angle: 90, stub: 0}
+    L: {symbol: "kleidos:L", angle: 90, stub: 0}
+    FB: {symbol: "kleidos:FerriteBead_Small", angle: 90, stub: 0}
+    TVS: {symbol: "kleidos:D_TVS", stub: 0}
+    S: {symbol: "kleidos:SW_Push", stub: 0}
+    TP: {symbol: "kleidos:TestPoint", stub: 0}
+  D1: {symbol: "kleidos:D_TVS", stub: 0}
+  D2: {symbol: "kleidos:D_TVS", stub: 0}
+  D10: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "2", "2": "1"}}
+  LED1: {symbol: "kleidos:LED", stub: 0, pins: {"1": "2", "2": "1"}}
+  Q1: {symbol: "kleidos:Q_NMOS"}
+  Q3: {symbol: "kleidos:Q_NMOS"}
+  Q6: {symbol: "kleidos:Q_NMOS"}
+  Q101: {symbol: "kleidos:Q_NMOS", pins: {G: "1", S: "2", D: "3"}}
+  Q2: {symbol: "sticks3:CJ3439KDW"}
+  Q4: {symbol: "sticks3:2N7002DW"}
+  Q5: {symbol: "sticks3:2N7002DW"}
+  U102: {symbol: "kleidos:D_Photo", stub: 0}
+  U103: {symbol: "kleidos:LED", stub: 0, short: IR LED}
+  U104: {symbol: "kleidos:Conn_01x02", short: Speaker}
+  J1:
+    symbol: "kleidos:USB_C_Receptacle_USB2.0_16P"
+    pins: {A1: "A1/B12", B12: "A1/B12", B1: "B1/A12", A12: "B1/A12", A4: "A4/B9", B9: "A4/B9",
+           B4: "B4/A9", A9: "B4/A9", SH: [MH1, MH2, MH3, MH4]}
+  J2: {symbol: "sticks3:HAT2_BTB_28"}
+  J3: {symbol: "kleidos:Conn_01x04", short: Grove connector}
+  J4: {symbol: "kleidos:Conn_01x02", short: Battery connector}
+  J5: {symbol: "kleidos:Conn_01x02", short: Antenna pad}
+  J6: {symbol: "sticks3:LCD_BTB_16"}
+  CN101: {symbol: "sticks3:HAT2_PLUG_24"}
+  CN102: {symbol: "kleidos:Conn_02x08_Counter_Clockwise", short: HAT2 header}
+  FT1: {symbol: "sticks3:SDMM0806H-2-900T"}
+  U1: {symbol: "sticks3:CM1801F33"}
+  U3: {symbol: "sticks3:CM1801F33"}
+  U4: {symbol: "sticks3:CM1801F33"}
+  U2: {symbol: "sticks3:JW5712"}
+  U5: {symbol: "sticks3:AW35122FDR"}
+  U12: {symbol: "sticks3:AW35122FDR"}
+  U8: {symbol: "sticks3:TPS22916C"}
+  U6: {symbol: "sticks3:CH213K"}
+  U11: {symbol: "sticks3:CH213K"}
+  U13: {symbol: "sticks3:CH213K"}
+  U14: {symbol: "sticks3:CH213K"}
+  U7: {symbol: "sticks3:AW32901FCR"}
+  U9: {symbol: "sticks3:SY7088"}
+  U15: {symbol: "sticks3:LGS4056"}
+  U16: {symbol: "sticks3:M5PM1"}
+  U17: {symbol: "sticks3:BMI270"}
+  U18: {symbol: "sticks3:ES8311"}
+  U19: {symbol: "sticks3:AW8737A"}
+  U20: {symbol: "sticks3:ESP32-S3-PICO-1"}
+  U21: {symbol: "sticks3:MSM381A3729H9BPC"}
+  U101: {symbol: "sticks3:VSOP38338"}
+
+symbols:
+  CM1801F33:
+    description: 3.3 V LDO
+    left: ["4 VIN", "3 EN"]
+    right: ["1 OUT"]
+    bottom: ["2 GND", "0 GND_EP"]
+  JW5712:
+    short: Buck converter
+    description: Synchronous buck converter
+    left: ["A2 VIN", "B1 EN", "C1 VSEL1", "D1 VSEL2", "D2 VSEL3"]
+    right: ["A1 SW", "C2 VOS"]
+    bottom: ["B2 GND"]
+  AW35122FDR:
+    description: Load switch
+    left: ["A2 IN", "B2 EN"]
+    right: ["A1 OUT"]
+    bottom: ["B1 GND"]
+  TPS22916C:
+    description: Load switch
+    left: ["A2 IN", "B2 EN"]
+    right: ["A1 OUT"]
+    bottom: ["B1 GND"]
+  CH213K:
+    description: Ideal diode
+    left: ["3 VIN"]
+    right: ["2 VOUT"]
+    bottom: ["1 GND"]
+  AW32901FCR:
+    short: OVP switch
+    description: Over-voltage protection switch
+    left: ["B3 IN", "C2 IN", "C3 IN", "-", "C1 OVLO", "A1 nEN"]
+    right: ["A2 OUT", "A3 OUT", "B2 OUT", "-", "B1 nACOK"]
+    bottom: ["A4 GND", "B4 GND", "C4 GND"]
+  SY7088:
+    short: Boost converter
+    description: Synchronous boost converter
+    left: ["6 IN", "1 LX", "2 LX", "3 EN"]
+    right: ["7 OUT", "8 OUT", "5 FB"]
+    bottom: ["4 SGND", "9 PGND"]
+  LGS4056:
+    short: Li-ion charger
+    description: Li-ion linear charger
+    left: ["4 VCC", "8 CE", "2 PROG", "1 TEMP"]
+    right: ["5 BAT", "7 CHRG", "6 DONE"]
+    bottom: ["3 GND", "9 EP"]
+  M5PM1:
+    short: Power-management MCU
+    description: M5PM1 power-management MCU (PY32L020F15U6)
+    left: ["6 VCC", "9 I2C_SCL_OD", "8 I2C_SDA_OD", "17 G1_IRQout_ADC", "7 BTN_PU", "15 BOOT_OUT_OD",
+           "5 LED_EN_PP", "-", "1 BAT_ADC_EN_OD", "11 BAT_ADC_IN", "16 5VIN_ADC_IN", "19 5VOUT_ADC_IN",
+           ]
+    bottom: ["4 GND", "21 GND"]
+    right: ["18 LDO3V3_EN_PP", "14 DCDC3V3_EN_PP", "10 BOOST5V_EN_PP", "2 CHG_EN_PP", "-",
+            "3 G0_WAKE/IRQ/NEOPIXEL", "20 G2_WAKE/IRQ/ADC", "13 G3_WAKE/IRQ/PWM", "12 G4_WAKE/IRQ/PWM"]
+  BMI270:
+    description: 6-axis IMU
+    left: ["8 VDD", "5 VDDIO", "12 CSB", "1 SDO"]
+    bottom: ["7 GND", "6 GNDIO"]
+    right: ["13 SCx", "14 SDx", "4 INT1", "9 INT2", "2 ASDx", "3 ASCx", "10 OCSB", "11 OSDO"]
+  ES8311:
+    description: Audio codec
+    left: ["3 PVDD", "4 DVDD", "11 AVDD", "-", "1 CCLK", "19 CDATA", "20 CE", "-", "2 MCLK",
+           "6 SCLK/DMIC_SCL", "8 LRCK", "9 DSDIN", "7 ASDOUT"]
+    bottom: ["5 DGND", "10 AGND", "0 EPAD"]
+    right: ["18 MIC1P/DMIC_SDA", "17 MIC1N", "-", "16 VMID", "15 ADCVREF", "14 DACVREF", "-",
+            "12 OUTP", "13 OUTN"]
+  AW8737A:
+    short: Audio amplifier
+    description: Class-K audio amplifier
+    left: ["A1 INP", "A2 INN", "A4 ~{SHDN}", "-", "A3 VDD", "B3 VDD"]
+    bottom: ["C2 GND", "C3 GND", "C4 GND"]
+    right: ["B4 VOP", "D4 VON", "-", "D2 C1P", "C1 C1N", "D1 C2P", "B1 C2N", "B2 C2N", "D3 PVDD"]
+  MSM381A3729H9BPC:
+    short: MEMS microphone
+    description: Analog MEMS microphone
+    left: ["1 VDD", "4 OUT"]
+    right: ["2 GND", "3 GND"]
+  VSOP38338:
+    short: IR receiver
+    description: IR receiver module (pins as the vendor draws them)
+    left: ["2 VCC", "7 IN"]
+    bottom: ["6 GND", "8 GND"]
+    right: ["3 OUT", "1 NC", "4 NC", "5 NC"]
+  SDMM0806H-2-900T:
+    ref: FT
+    description: Common-mode choke
+    left: ["1 A_IN", "2 B_IN"]
+    right: ["3 A_OUT", "4 B_OUT"]
+  ESP32-S3-PICO-1:
+    short: ESP32-S3 SiP module
+    description: ESP32-S3 SiP module, 8 MB flash, 8 MB octal PSRAM
+    left: ["2 VDD3P3", "3 VDD3P3", "-", "20 VDD3P3_RTC", "46 VDD3P3_CPU", "55 VDDA", "56 VDDA", "29 VDD_SPI",
+           "-", "1 LNA_IN", "-", "4 CHIP_PU", "-", "53 XTAL_N", "54 XTAL_P", "-",
+           "30 SPIHD", "31 SPIWP", "32 SPICS0", "33 SPICLK", "34 SPIQ", "35 SPID"]
+    bottom: ["0 GND_PAD"]
+    right: ["5 GPIO0", "6 GPIO1", "7 GPIO2", "8 GPIO3", "9 GPIO4", "10 GPIO5", "11 GPIO6", "12 GPIO7",
+            "13 GPIO8", "14 GPIO9", "15 GPIO10", "16 GPIO11", "17 GPIO12", "18 GPIO13", "19 GPIO14",
+            "21 GPIO15", "22 GPIO16", "23 GPIO17", "24 GPIO18", "25 GPIO19", "26 GPIO20", "27 GPIO21",
+            "28 GPIO26", "38 GPIO33", "39 GPIO34", "40 GPIO35", "41 GPIO36", "42 GPIO37", "43 GPIO38",
+            "44 GPIO39", "45 GPIO40", "47 GPIO41", "48 GPIO42", "49 GPIO43/U0TXD", "50 GPIO44/U0RXD",
+            "51 GPIO45", "52 GPIO46", "37 GPIO47", "36 GPIO48"]
+  HAT2_BTB_28:
+    short: HAT2 socket
+    ref: J
+    description: HAT2 board-to-board socket, 24 contacts + 4 mounting tabs
+    left: ["1 1", "3 3", "5 5", "7 7", "9 9", "11 11", "13 13", "15 15", "17 17", "19 19", "21 21", "23 23", "25 MP", "27 MP"]
+    right: ["2 2", "4 4", "6 6", "8 8", "10 10", "12 12", "14 14", "16 16", "18 18", "20 20", "22 22", "24 24", "26 MP", "28 MP"]
+  LCD_BTB_16:
+    short: LCD connector
+    ref: J
+    description: LCD board-to-board connector AXE512127D, 12 contacts + 4 mounting tabs
+    left: ["1 1", "3 3", "5 5", "7 7", "9 9", "11 11", "13 MP", "15 MP"]
+    right: ["2 2", "4 4", "6 6", "8 8", "10 10", "12 12", "14 MP", "16 MP"]
+  HAT2_PLUG_24:
+    short: HAT2 plug
+    ref: CN
+    description: HAT2 board-to-board plug AXE524124 on the daughterboard (mates with J2)
+    left: ["2 2", "4 4", "6 6", "8 8", "10 10", "12 12", "14 14", "16 16", "18 18", "20 20", "22 22", "24 24", "TH TH"]
+    right: ["1 1", "3 3", "5 5", "7 7", "9 9", "11 11", "13 13", "15 15", "17 17", "19 19", "21 21", "23 23"]
+  CJ3439KDW:
+    short: "Dual MOSFET, N + P"
+    kind: mosfet_pair
+    ref: Q
+    description: Dual MOSFET, N-channel (unit A) and P-channel (unit B), as the vendor draws it
+    units:
+      - {type: N, g: "2", d: "6", s: "1"}
+      - {type: P, g: "5", d: "3", s: "4"}
+  2N7002DW:
+    short: Dual N-MOSFET
+    kind: mosfet_pair
+    ref: Q
+    description: Dual N-channel MOSFET
+    units:
+      - {type: N, g: "2", d: "6", s: "1"}
+      - {type: N, g: "5", d: "3", s: "4"}
+
+root:
+  title: Contents
+  heading: "M5StickS3 (K150) schematic"
+  subheading: "Kleidos boards: every part, pin and net, connectivity documented from the vendor's public documentation"
+  panels:
+    - title: How to read it
+      text: |
+        Click a box on the left to open its page. "Contents" and the page
+        numbers at the bottom right of every page lead back here and to each page.
+
+        Cyan lines are connections: wires and pin ends, all one width.
+        A dot joins lines; a cross on a pin end means the pin is not connected.
+        Pins connect by net labels (the boxed names): pins whose labels carry
+        the same name are on one net, on any page.
+        [3/C4] after a label: page 3 carries that net too, its label in zone C4
+        (column 4, row C of the border). Click it to land on that label.
+        No [page/zone]: the net is on this page only.
+        Click a part's reference to find its row in the parts list; the row's
+        page/zone leads back. A part crossed out in red is not fitted (DNP).
+        White: parts and their references. Grey: values, pin names, pin numbers.
+        A dashed frame is a block of the circuit, titled at its top left.
+        An amber K3 marks a Kleidos addition or correction: it leads to its row below.
+    - title: Notes
+      text: |
+        Every part, pin and net of the M5StickS3, with the values the vendor
+        documents: connectivity documented from the vendor's public documentation,
+        with Kleidos additions and corrections listed on page 1
+        (M5Stack's K150 StickS3 schematic V0.6, 2025-11-11, and its docs page,
+        cited in README.md and netlist.yaml beside this file). Layout and
+        symbols are this project's. No footprints, no PCB, no part numbers
+        beyond the documented ones.
+        Values are as the vendor prints them (10K/1%, 22uF/10V). A value of NC
+        means not fitted: those parts are marked DNP.
+        Reference designators are the vendor's, not renumbered. The daughterboard
+        reuses the main board's, so its parts are numbered +100 here (its U1 is
+        U101); J6, the LCD connector, carries no designator in the print.
+        Nets the vendor left unnamed carry names of ours (U12_EN, SCL_ISO...).
+        Zones: columns 1-8 and rows A-F, 50 mm apart, printed in the border.
+
+sheets:
+  - file: power_input.kicad_sch
+    name: Power input and charging
+    summary: "USB-C input, over-voltage switch, charger and battery, the ideal-diode power path, the voltage dividers to the M5PM1 ADC, the power key and the status LED."
+    parts: "J1 USB-C, U7 AW32901FCR, U15 LGS4056 charger, J4 battery, U6 U11 U13 U14 CH213K, U12 AW35122FDR, Q2 CJ3439KDW, S1 power key, LED1"
+    blocks:
+      - title: USB-C input
+        rows:
+          - [J1, {col: [R3, R4, D1, D2]}]
+      - title: Over-voltage switch
+        rows:
+          - [U7, {col: [R7, R8, C13, C19]}]
+          - [U6]
+      - title: Charger and battery
+        rows:
+          - [U15, {col: [C22, R12, R16, R18]}]
+          - [J4, {col: [C26]}]
+      - title: Power path (ideal diodes)
+        rows:
+          - [U13, U14, U11]
+          - [U12, Q1, {col: [R11, C21, C25]}, {col: [D10]}]
+      - title: Voltage sensing (to the M5PM1 ADC)
+        rows:
+          - ["Q2:A", "Q2:B", {cols: [[R9, R15], [R23, R24, C30]]}]
+          - [{cols: [[R19, R20, C29], [R21, R22, C28]]}]
+      - title: Power key and status LED
+        rows:
+          - [S1, {col: [R17, C27]}]
+          - [LED1, Q3, {col: [R25, R28, R29]}]
+  - file: rails_pmic.kicad_sch
+    name: Rails and power management
+    summary: "The M5PM1 power-management MCU, the 3.3 V rails L0, L1, L2, L3B and L3B_AU, and the 5 V boost and switch for the Grove port."
+    parts: "U16 M5PM1 (PY32L020F15U6), U1 U3 U4 CM1801F33, U2 JW5712, U5 AW35122FDR, U9 SY7088, U8 TPS22916C"
+    pwr_flags: [GND]
+    blocks:
+      - title: M5PM1 power-management MCU
+        rows:
+          - [U16, {col: [C31, C58]}]
+      - title: L0 and L1 (3.3 V LDOs)
+        rows:
+          - [U3, {col: [C5, C10]}]
+          - [U4, {col: [C4, C8, R5]}]
+      - title: L2 (3.3 V buck)
+        rows:
+          - [U2, {cols: [[C2, C3, R2], [L1, C9, C11, C12]]}]
+      - title: L3B (LCD and audio)
+        rows:
+          - [U1, {col: [C1, C6, R1]}]
+          - [U5, {col: [C7, C14]}]
+      - title: 5 V boost and Grove output
+        rows:
+          - [U9, {cols: [[L2, C16, C17, C18], [R10, R13, R14, C23, C24]]}]
+          - [U8, {col: [C15, C20]}]
+  - file: soc.kicad_sch
+    name: ESP32-S3
+    summary: "The ESP32-S3 module with its supply decoupling, RF path, reset, boot strap, USB, I2C pull-ups, the two keys and the test points."
+    parts: "U20 ESP32-S3-PICO-1-N8R8, J5 antenna pad, FT1 SDMM0806H-2-900T, S2 S3 keys, test points TP1-TP6, TP8, TP9"
+    blocks:
+      - title: ESP32-S3-PICO-1-N8R8
+        rows:
+          - [U20]
+      - title: Supply decoupling
+        rows:
+          - [{cols: [[C57, C54, C55, L4, C61], [C59, C62, C64, C66, C67, C68]]}]
+      - title: RF path
+        rows:
+          - [J5, {cols: [[L3, L5], [C56, C69, C60, C63]]}]
+      - title: Reset, boot strap, I2C pull-ups
+        rows:
+          - [{cols: [[R40, C50, R46], [R38, R39]]}]
+      - title: USB
+        rows:
+          - [{col: [R45, R44]}, FT1]
+      - title: Series resistors and test points
+        rows:
+          - [{cols: [[R47, R50, R51], [TP8, TP9]]}]
+      - title: Keys
+        rows:
+          - [{cols: [[S2, S3], [R37, R36, C52, C53]]}]
+      - title: Power-side test points
+        rows:
+          - [{cols: [[TP1, TP2, TP3], [TP4, TP5, TP6]]}]
+  - file: hmi_audio.kicad_sch
+    name: Display, IMU and audio
+    summary: "The LCD connector and backlight switch, the BMI270 IMU, the I2C isolator, the ES8311 codec, the microphone and the speaker amplifier."
+    parts: "J6 LCD connector, Q6 2N7002T, U17 BMI270, Q4 Q5 2N7002DW, U18 ES8311, U21 MSM381A3729H9BPC, U19 AW8737A"
+    pwr_flags: [AGND]
+    blocks:
+      - title: Audio codec
+        rows:
+          - [U18, {cols: [[C32, C34, C44, R35], [C38, C39, C40, C41], [C42, C43, C45]]}]
+      - title: IMU
+        rows:
+          - [U17, {col: [R6, C33, C35]}]
+      - title: Speaker amplifier
+        rows:
+          - [U19, {cols: [[R30, R31, R32, C36, C37], [C46, C47, FB1, FB2, C48, C49]]}]
+      - title: LCD connector and backlight
+        rows:
+          - [J6, Q6, {col: [R41, C51, R27, R43]}]
+      - title: I2C isolator (codec side joins with L3B)
+        rows:
+          - ["Q4:A", "Q4:B", {col: [R33, R34]}]
+          - ["Q5:B", "Q5:A"]
+      - title: Microphone
+        rows:
+          - [U21, {cols: [[R48, R49, R26], [R52, C65]]}]
+  - file: hat2.kicad_sch
+    name: Connectors and HAT2 daughterboard
+    summary: "The HAT2 socket and the Grove port on the main board; the daughterboard with its plug, the HAT2 header, the IR receiver and transmitter and the speaker."
+    parts: "J2 HAT2 socket, J3 Grove; daughterboard: CN101 plug, CN102 HAT2 header, U101 VSOP38338, U103 IR LED, Q101, U104 speaker"
+    blocks:
+      - title: HAT2 socket (main board)
+        rows:
+          - [J2]
+      - title: Grove port
+        rows:
+          - [J3, {col: [TVS1, TVS2]}]
+      - title: "Daughterboard: plug (mates with J2)"
+        rows:
+          - [CN101]
+      - title: "Daughterboard: HAT2 header"
+        rows:
+          - [CN102]
+      - title: "Daughterboard: IR receiver"
+        rows:
+          - [U101, U102, {col: [C102, R106, R105]}]
+      - title: "Daughterboard: IR transmitter"
+        rows:
+          - [U103, Q101, {col: [R102, R103, R101]}]
+      - title: "Daughterboard: speaker"
+        rows:
+          - [U104]
+  - file: power.kicad_sch
+    name: Power tree and rails
+    index: power
+    summary: "How power flows from the USB-C, HAT2 and Grove inputs and the battery to every rail, and each rail's nominal voltage, source and enable. Every box leads to where it is drawn."
+  - file: nets.kicad_sch
+    name: Nets and signals
+    index: nets
+    summary: "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32-S3 and M5PM1 GPIO, the I2C addresses and the test points."
+  - file: parts.kicad_sch
+    name: Parts
+    index: parts
+    summary: "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A reference on the drawing leads to its row, the row back to it."
+
+power_tree:
+  title: Power tree
+  pitch: [27.94, 17.78]
+  nodes:
+    J1: [0, 0]
+    VUSBIN_L0: [1, 0]
+    U7: [2, 0]
+    5VIN_L0: [3, 0]
+    U6: [4, 0]
+    J2: [0, 1]
+    HAT2_5VIN: [1, 1]
+    U11: [4, 1]
+    Internal_5V: [5, 1]
+    U13: [6, 1]
+    J3: [0, 2]
+    GROVE_5V@in: [1, 2]
+    U12: [2, 2]
+    D10: [3, 2]
+    VBUS_L0: [9, 2]
+    U15: [6, 3]
+    VBAT_L0: [7, 3]
+    U14: [8, 3]
+    J4: [6, 4]
+    U3: [10, 0]
+    3V3_L0: [11, 0]
+    U4: [10, 1]
+    3V3_L1: [11, 1]
+    U2: [10, 2]
+    3V3_L2: [11, 2]
+    U5: [12, 2]
+    3V3_L3B: [13, 2]
+    U1: [10, 3]
+    3V3_L3B_AU: [11, 3]
+    U9: [10, 4]
+    BOOST_OUT: [11, 4]
+    U8: [12, 4]
+    GROVE_5V: [13, 4]
+  edges:
+    - [J1, VUSBIN_L0]
+    - [VUSBIN_L0, U7]
+    - [U7, 5VIN_L0]
+    - [5VIN_L0, U6]
+    - [U6, Internal_5V]
+    - [J2, HAT2_5VIN]
+    - [HAT2_5VIN, U11]
+    - [U11, Internal_5V]
+    - [J2, GROVE_5V@in]
+    - [J3, GROVE_5V@in]
+    - [GROVE_5V@in, U12]
+    - [U12, D10]
+    - [D10, Internal_5V]
+    - [Internal_5V, U13]
+    - [Internal_5V, U15]
+    - [U15, VBAT_L0]
+    - [J4, VBAT_L0]
+    - [VBAT_L0, U14]
+    - [U13, VBUS_L0]
+    - [U14, VBUS_L0]
+    - [VBUS_L0, U3]
+    - [VBUS_L0, U4]
+    - [VBUS_L0, U2]
+    - [VBUS_L0, U1]
+    - [VBUS_L0, U9]
+    - [U3, 3V3_L0]
+    - [U4, 3V3_L1]
+    - [U2, 3V3_L2]
+    - [U1, 3V3_L3B_AU]
+    - [U9, BOOST_OUT]
+    - [3V3_L2, U5]
+    - [U5, 3V3_L3B]
+    - [BOOST_OUT, U8]
+    - [U8, GROVE_5V]
+  note: "GROVE_5V is drawn twice: U8 drives it from BOOST_OUT, and 5 V fed in at the Grove port (J3) or at HAT2 (J2 pins 6, 8) reaches Internal_5V through U12 and D10."

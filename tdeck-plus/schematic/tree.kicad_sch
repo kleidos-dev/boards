@@ -1,0 +1,2342 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "e4bc84e3-06f8-52e3-bd18-aca1cf3c01eb")
+	(paper "A3")
+	(title_block
+		(title "LILYGO T-Deck Plus: Power tree and rails")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: LilyGO T-Deck schematic 2023-06-01, GPS sheets; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols)
+	(text "Power tree and rails"
+		(exclude_from_sim no)
+		(at 15.24 20.32 0)
+		(effects
+			(font
+				(size 3 3)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "8aa5f4ed-0ac0-57d5-b8ef-3efc29b5e94c")
+	)
+	(text "Power tree"
+		(exclude_from_sim no)
+		(at 15.24 33.02 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "125a0337-9913-5991-9384-747b2870554d")
+	)
+	(rectangle
+		(start 15.24 34.7)
+		(end 39.37 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "1bf71811-5371-570d-8562-388239de5f93")
+	)
+	(text "U7 USB-C receptacle"
+		(exclude_from_sim no)
+		(at 16.51 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "ad49e8ce-9cd3-5c16-9755-c70b445c0039")
+	)
+	(text "TYPEY-C"
+		(exclude_from_sim no)
+		(at 16.51 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "604ff2c9-7170-5b26-980d-79b6e7dbdd96")
+	)
+	(rectangle
+		(start 43.18 34.7)
+		(end 67.31 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "b9546420-f4d9-5254-98a1-62606b9ca68f")
+	)
+	(text "VBUS"
+		(exclude_from_sim no)
+		(at 44.45 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "c67c9134-f93b-5297-a150-20f48f0a9837")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 44.45 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "befb10d7-4263-58ab-8d62-6dbe51cf93cd")
+	)
+	(rectangle
+		(start 71.12 34.7)
+		(end 95.25 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "40ddc91d-58ab-5416-9403-1c9d5a3edcb4")
+	)
+	(text "D1 Schottky diode"
+		(exclude_from_sim no)
+		(at 72.39 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "f235f58b-34bc-55da-861e-f36733cffda7")
+	)
+	(text "1N5819"
+		(exclude_from_sim no)
+		(at 72.39 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "e6e2bb5e-f9a7-5fdc-831b-c9c5d2696f0c")
+	)
+	(rectangle
+		(start 71.12 52.48)
+		(end 95.25 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "883dae87-ae87-5e35-8c5c-2e69f8946bf6")
+	)
+	(text "UP1 Li-ion charger"
+		(exclude_from_sim no)
+		(at 72.39 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "f8775c74-0b55-5e20-b900-5f360ded26f1")
+	)
+	(text "TP4065B"
+		(exclude_from_sim no)
+		(at 72.39 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "e0261d75-8a9d-5cd5-b8ab-1c4f463688fb")
+	)
+	(rectangle
+		(start 71.12 70.26)
+		(end 95.25 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "df704a88-6170-5cda-a1cc-c33ec8ca6bac")
+	)
+	(text "P3 Battery connector"
+		(exclude_from_sim no)
+		(at 72.39 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "bf0b9781-89d7-59a3-a7f5-64e300e61b06")
+	)
+	(text "Li battery"
+		(exclude_from_sim no)
+		(at 72.39 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "2aec61ec-fcf4-571b-9a16-d973dfcad70c")
+	)
+	(rectangle
+		(start 99.06 70.26)
+		(end 123.19 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "19dd38cc-4bd6-5876-9d9e-7c58aba9b7c4")
+	)
+	(text "VBAT"
+		(exclude_from_sim no)
+		(at 100.33 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "594eb692-4be1-532c-9ad2-a9960d73c16c")
+	)
+	(text "Li-ion cell"
+		(exclude_from_sim no)
+		(at 100.33 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "1e9a94bb-a6fe-57ff-bc80-8899890acfda")
+	)
+	(text "K1"
+		(exclude_from_sim no)
+		(at 120.99 69.16 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "a9936166-d517-5241-adbe-4fa2a5d01360")
+	)
+	(rectangle
+		(start 127 70.26)
+		(end 151.13 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4cf2da66-9755-577c-aaa1-6d5cedd42b84")
+	)
+	(text "Q5 P-MOSFET"
+		(exclude_from_sim no)
+		(at 128.27 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "673c9388-1907-56d5-be1a-4dc73503983e")
+	)
+	(text "SI2307"
+		(exclude_from_sim no)
+		(at 128.27 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "27490e8f-7810-56b1-92b0-3ebd3f49ded5")
+	)
+	(rectangle
+		(start 154.94 34.7)
+		(end 179.07 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d2b01282-82b5-57fc-abc0-40fc9d4fbdf1")
+	)
+	(text "SW1_IN"
+		(exclude_from_sim no)
+		(at 156.21 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "d001f5a6-6e2c-5262-86f9-3d4ca042be37")
+	)
+	(rectangle
+		(start 182.88 34.7)
+		(end 207.01 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "12dcaf29-7d8b-5420-a593-2d1f26773f33")
+	)
+	(text "SW1 Power switch"
+		(exclude_from_sim no)
+		(at 184.15 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "afce74a7-88b9-5d9b-b912-b6cd5922b214")
+	)
+	(text "K3-1391D-5MM"
+		(exclude_from_sim no)
+		(at 184.15 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "4d84f060-3ae0-5dc4-9f6c-f45b89f3a4b5")
+	)
+	(rectangle
+		(start 210.82 34.7)
+		(end 234.95 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d55c1fdc-d249-5dc0-b4d8-0bd911201363")
+	)
+	(text "+5V"
+		(exclude_from_sim no)
+		(at 212.09 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "21dfc7a8-ceb2-57ec-bf0a-6f376f5f4609")
+	)
+	(text "VBUS or VBAT"
+		(exclude_from_sim no)
+		(at 212.09 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "19570178-4325-5a18-8516-125c36adbb00")
+	)
+	(rectangle
+		(start 238.76 33.55)
+		(end 262.89 42.65)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "cd446be7-cc63-5af1-a96d-747049d85e3f")
+	)
+	(text "U8 Buck converter"
+		(exclude_from_sim no)
+		(at 240.03 35.85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "f8ea8264-37a5-5356-bf9d-1486b54b215b")
+	)
+	(text "SY8089AAC"
+		(exclude_from_sim no)
+		(at 240.03 38.15 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "2b27a7fb-ad36-59dc-88ba-d090876523c8")
+	)
+	(text "EN U8_EN"
+		(exclude_from_sim no)
+		(at 240.03 40.45 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "7ce15a2c-43e9-597e-857b-49f75315a326")
+	)
+	(rectangle
+		(start 266.7 34.7)
+		(end 290.83 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "58d86f18-db1d-5b24-8d26-11af45e9237b")
+	)
+	(text "L5 Inductor"
+		(exclude_from_sim no)
+		(at 267.97 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "b7d16e85-2f58-584a-b046-24d303a3f9f6")
+	)
+	(text "SWPA5020S100MT"
+		(exclude_from_sim no)
+		(at 267.97 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "8968ecd8-916f-59f6-b09e-7e99f54f5b6b")
+	)
+	(rectangle
+		(start 294.64 34.7)
+		(end 318.77 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "dfd1ad5e-e0ff-5473-aa4c-6edd099c5a71")
+	)
+	(text "VDD3V3"
+		(exclude_from_sim no)
+		(at 295.91 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "7363e63e-39d9-50db-93ca-c358fea58bac")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 295.91 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "a5290498-3742-5d4c-8da9-f075555f84d2")
+	)
+	(text "K3"
+		(exclude_from_sim no)
+		(at 316.57 33.6 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "d6ba2930-ac16-53d0-8a3c-889b5df95890")
+	)
+	(rectangle
+		(start 322.58 34.7)
+		(end 346.71 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "98a5711a-8807-5c72-8eb3-6d7ef39b93bb")
+	)
+	(text "Q6 P-MOSFET"
+		(exclude_from_sim no)
+		(at 323.85 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "2e8301f8-0e34-5b63-bf9b-82df8c357657")
+	)
+	(text "SI2301"
+		(exclude_from_sim no)
+		(at 323.85 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "c6142ed2-745d-540d-a682-53498cfcbd1e")
+	)
+	(rectangle
+		(start 350.52 34.7)
+		(end 374.65 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "31bdd0a6-f8e0-56e6-a42a-915805737346")
+	)
+	(text "V3V"
+		(exclude_from_sim no)
+		(at 351.79 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "97ffced5-7c39-5992-b4a9-fb6d5a6c1bc3")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 351.79 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "a9c95c59-106d-5ddf-a50b-68d8af737d2f")
+	)
+	(rectangle
+		(start 238.76 52.48)
+		(end 262.89 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "60300bdb-c65f-5ae8-b668-57b69fcb11e5")
+	)
+	(text "Q4 P-MOSFET"
+		(exclude_from_sim no)
+		(at 240.03 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "f6d327c5-56f7-52a3-9e29-a2061cdca491")
+	)
+	(text "SI2301"
+		(exclude_from_sim no)
+		(at 240.03 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "2e6f61a7-cd1e-50bd-bfcc-6fa0ac5f1d70")
+	)
+	(rectangle
+		(start 266.7 52.48)
+		(end 290.83 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "95976b61-4578-547e-a229-b5f6c4ad6d16")
+	)
+	(text "BAT"
+		(exclude_from_sim no)
+		(at 267.97 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "dcf53909-91f2-5638-842a-ae9f7dc44019")
+	)
+	(text "VBUS or VBAT"
+		(exclude_from_sim no)
+		(at 267.97 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "35ba9991-ad6f-5d57-bc4f-58c435a77d6d")
+	)
+	(polyline
+		(pts
+			(xy 39.37 38.1)
+			(xy 41.91 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d7dc8fa3-91ad-5538-9fe7-da56cd7b1fc0")
+	)
+	(polyline
+		(pts
+			(xy 41.91 37.465)
+			(xy 43.18 38.1)
+			(xy 41.91 38.735)
+			(xy 41.91 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "aa70477e-3cab-5075-baa8-d0e2d8ef0f01")
+	)
+	(polyline
+		(pts
+			(xy 67.31 38.1)
+			(xy 69.85 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "8e7ba36a-2d16-5801-b4fd-0e2733c28add")
+	)
+	(polyline
+		(pts
+			(xy 69.85 37.465)
+			(xy 71.12 38.1)
+			(xy 69.85 38.735)
+			(xy 69.85 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "b55c5271-8550-5dee-89b5-912a190dbe2d")
+	)
+	(polyline
+		(pts
+			(xy 67.31 38.1)
+			(xy 69.215 38.1)
+			(xy 69.215 55.88)
+			(xy 69.85 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "eed71287-146e-5293-997a-31d64999bc33")
+	)
+	(polyline
+		(pts
+			(xy 69.85 55.245)
+			(xy 71.12 55.88)
+			(xy 69.85 56.515)
+			(xy 69.85 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "caf79b34-764e-5186-8e69-1a199d2f78b0")
+	)
+	(polyline
+		(pts
+			(xy 95.25 55.88)
+			(xy 97.155 55.88)
+			(xy 97.155 73.66)
+			(xy 97.79 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "49c80cd0-5eec-5408-b3a1-ae7e61974c94")
+	)
+	(polyline
+		(pts
+			(xy 97.79 73.025)
+			(xy 99.06 73.66)
+			(xy 97.79 74.295)
+			(xy 97.79 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "3e8f32ed-e386-5a72-a97f-2b12332125a8")
+	)
+	(polyline
+		(pts
+			(xy 95.25 73.66)
+			(xy 97.79 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d7707cd8-2b05-5f1a-8b71-baf8ef66e238")
+	)
+	(polyline
+		(pts
+			(xy 97.79 73.025)
+			(xy 99.06 73.66)
+			(xy 97.79 74.295)
+			(xy 97.79 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "b2107707-af60-5db8-aa86-b48324a5d205")
+	)
+	(polyline
+		(pts
+			(xy 123.19 73.66)
+			(xy 125.73 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "640fcf4e-4b06-5085-b1f9-c04694b74d3c")
+	)
+	(polyline
+		(pts
+			(xy 125.73 73.025)
+			(xy 127 73.66)
+			(xy 125.73 74.295)
+			(xy 125.73 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "1536d688-7034-51fe-8084-9da938ba4cb8")
+	)
+	(polyline
+		(pts
+			(xy 95.25 38.1)
+			(xy 153.67 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "2da6a194-3f1f-55b6-ac94-b2a08e336347")
+	)
+	(polyline
+		(pts
+			(xy 153.67 37.465)
+			(xy 154.94 38.1)
+			(xy 153.67 38.735)
+			(xy 153.67 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "b69add0e-c99a-5673-a7c0-a9eaa1f33080")
+	)
+	(polyline
+		(pts
+			(xy 151.13 73.66)
+			(xy 153.035 73.66)
+			(xy 153.035 38.1)
+			(xy 153.67 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "dca01fee-7db2-5452-8679-b4223ac38cd2")
+	)
+	(polyline
+		(pts
+			(xy 153.67 37.465)
+			(xy 154.94 38.1)
+			(xy 153.67 38.735)
+			(xy 153.67 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "1ba26eea-a9bf-5d0b-b6b4-c7c8242f0137")
+	)
+	(polyline
+		(pts
+			(xy 179.07 38.1)
+			(xy 181.61 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "1944ae9b-c563-53a6-a91e-088542af263c")
+	)
+	(polyline
+		(pts
+			(xy 181.61 37.465)
+			(xy 182.88 38.1)
+			(xy 181.61 38.735)
+			(xy 181.61 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "a5047756-1bd9-57bd-ba42-b2e9f8f956ac")
+	)
+	(polyline
+		(pts
+			(xy 207.01 38.1)
+			(xy 209.55 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "e0757c44-c5b8-5462-9e1a-bc4a2d3a24ba")
+	)
+	(polyline
+		(pts
+			(xy 209.55 37.465)
+			(xy 210.82 38.1)
+			(xy 209.55 38.735)
+			(xy 209.55 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "0b50554b-062d-5af3-9c94-d8cf75a67540")
+	)
+	(polyline
+		(pts
+			(xy 234.95 38.1)
+			(xy 237.49 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "09b59a9d-d3f9-5239-a546-b35ac908abd8")
+	)
+	(polyline
+		(pts
+			(xy 237.49 37.465)
+			(xy 238.76 38.1)
+			(xy 237.49 38.735)
+			(xy 237.49 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "0da10ee2-d5b0-5e0c-9ee6-8c4cda5886e8")
+	)
+	(polyline
+		(pts
+			(xy 234.95 38.1)
+			(xy 236.855 38.1)
+			(xy 236.855 55.88)
+			(xy 237.49 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "2ecc41f7-4060-54c2-afc9-1adc4efd80ba")
+	)
+	(polyline
+		(pts
+			(xy 237.49 55.245)
+			(xy 238.76 55.88)
+			(xy 237.49 56.515)
+			(xy 237.49 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "9a8b6ad8-f09f-53e2-ba7d-8e30e3becb8d")
+	)
+	(polyline
+		(pts
+			(xy 262.89 38.1)
+			(xy 265.43 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "1f55a2fa-8da0-58f9-b519-1730a6c71707")
+	)
+	(polyline
+		(pts
+			(xy 265.43 37.465)
+			(xy 266.7 38.1)
+			(xy 265.43 38.735)
+			(xy 265.43 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "0c584bd6-3c03-518e-a562-beb30d29d899")
+	)
+	(polyline
+		(pts
+			(xy 290.83 38.1)
+			(xy 293.37 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "24abb303-cc18-538a-8877-fc72322342d1")
+	)
+	(polyline
+		(pts
+			(xy 293.37 37.465)
+			(xy 294.64 38.1)
+			(xy 293.37 38.735)
+			(xy 293.37 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "2cf76a86-7d95-589d-9d6b-fe1870e05ae4")
+	)
+	(polyline
+		(pts
+			(xy 262.89 55.88)
+			(xy 265.43 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d3194b8f-055a-5bd2-adc8-a59e12319a42")
+	)
+	(polyline
+		(pts
+			(xy 265.43 55.245)
+			(xy 266.7 55.88)
+			(xy 265.43 56.515)
+			(xy 265.43 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "7d4f8576-fd46-53ec-950d-58b0aa12b61d")
+	)
+	(polyline
+		(pts
+			(xy 318.77 38.1)
+			(xy 321.31 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "cc332151-ca06-5815-bf32-d220d80a4bc3")
+	)
+	(polyline
+		(pts
+			(xy 321.31 37.465)
+			(xy 322.58 38.1)
+			(xy 321.31 38.735)
+			(xy 321.31 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "dcaad5e3-7a9b-5524-8217-124ca61660f6")
+	)
+	(polyline
+		(pts
+			(xy 346.71 38.1)
+			(xy 349.25 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "fc230705-b69d-58dd-b1a4-1ddb3aff361d")
+	)
+	(polyline
+		(pts
+			(xy 349.25 37.465)
+			(xy 350.52 38.1)
+			(xy 349.25 38.735)
+			(xy 349.25 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "f4e4a250-13fd-5ae8-944b-463d55a68c43")
+	)
+	(text "Q5 conducts while VBUS is absent (its gate is on VBUS). Q4 and Q6 share PWR_GATE, which Q7 pulls low while PWR_EN (IO10) is high. The GPS daughterboard takes VDD3V3 from P8 (K3); its own nets stay apart, as no cable is published."
+		(exclude_from_sim no)
+		(at 15.24 82.14 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c597a17b-a6ee-5170-bde1-4a965b360675")
+	)
+	(text "Rails"
+		(exclude_from_sim no)
+		(at 15.24 92.3 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "8e2a2aea-6002-5a32-8e27-76a5daf0db2d")
+	)
+	(text "Rail"
+		(exclude_from_sim no)
+		(at 15.24 96.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "8503b0e2-b0e7-5c0e-9d0a-7c8226ec6543")
+	)
+	(text "Nominal"
+		(exclude_from_sim no)
+		(at 30.48 96.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "0d109dbc-f970-5683-8460-d340d7b65b28")
+	)
+	(text "What feeds it, and what it supplies"
+		(exclude_from_sim no)
+		(at 46.99 96.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "1a7fe9ca-c4eb-5b61-96d2-b3d280da6c40")
+	)
+	(text "Enable"
+		(exclude_from_sim no)
+		(at 128.27 96.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "4b5e0b61-53e6-530e-ae35-b89e4ccbb3c8")
+	)
+	(text "Drawn at"
+		(exclude_from_sim no)
+		(at 179.07 96.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "dfc09e97-f057-5dee-b8cd-46490485f710")
+	)
+	(polyline
+		(pts
+			(xy 15.24 98.345)
+			(xy 195.58 98.345)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4e58b063-0c03-53d7-b201-75d35d850616")
+	)
+	(text "VBUS"
+		(exclude_from_sim no)
+		(at 15.24 100.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1dba9205-28ac-5a41-8ed4-bbdbca8044e5")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 30.48 100.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e06857a7-a5fc-576f-94f3-685a16fd92a5")
+	)
+	(text "USB-C VBUS (A4, A9, B4, B9). Feeds the charger UP1, and the system"
+		(exclude_from_sim no)
+		(at 46.99 100.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3e8467bf-fe0c-59cd-abf2-ca3de5ca1ce7")
+	)
+	(text "through D1 (1N5819)."
+		(exclude_from_sim no)
+		(at 46.99 102.625 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "61cdd3cb-1ed9-57c9-adc7-599eb4834764")
+	)
+	(text "3/A1"
+		(exclude_from_sim no)
+		(at 179.07 100.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "86445bc0-82c0-552f-8feb-8115970bec1c")
+	)
+	(text "VBAT"
+		(exclude_from_sim no)
+		(at 15.24 105.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "82f8089e-e4ae-52a8-a785-b893c8976a40")
+	)
+	(text "Li-ion cell"
+		(exclude_from_sim no)
+		(at 30.48 105.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "98f0a7b2-1091-591f-9a26-3d7cb137233b")
+	)
+	(text "Battery connector P3; charged by UP1 TP4065B from VBUS (R25 2K%1 on"
+		(exclude_from_sim no)
+		(at 46.99 105.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cdf5fc05-9ebf-502a-9156-8bcafe72518e")
+	)
+	(text "PROG). RD1 100K%1 sits across it."
+		(exclude_from_sim no)
+		(at 46.99 107.705 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "47ec0493-194e-53f0-bc5a-2476e1ae84e2")
+	)
+	(text "3/B3"
+		(exclude_from_sim no)
+		(at 179.07 105.165 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "6c411873-b1e5-5d79-a875-fa93e2bfcc26")
+	)
+	(text "+5V"
+		(exclude_from_sim no)
+		(at 15.24 110.245 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b4f8e6ef-dbeb-5ba6-944c-24bd4de61de8")
+	)
+	(text "VBUS or VBAT"
+		(exclude_from_sim no)
+		(at 30.48 110.245 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "17598e01-0ade-5ae1-96ec-bef254e896bf")
+	)
+	(text "The power switch SW1 from SW1_IN: VBUS through D1, or VBAT through Q5"
+		(exclude_from_sim no)
+		(at 46.99 110.245 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "40d172ef-41f1-500d-979f-6ca466edaab5")
+	)
+	(text "SI2307 while VBUS is absent (Q5 gate on VBUS, RD4 100K%1 to GND)."
+		(exclude_from_sim no)
+		(at 46.99 112.785 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "92581e93-e701-5beb-b127-c9fd62ed5cdb")
+	)
+	(text "Feeds the buck U8 and Q4."
+		(exclude_from_sim no)
+		(at 46.99 115.325 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8b2edd5b-9261-51c9-a874-fbf736b648c8")
+	)
+	(text "SW1 (slide switch)"
+		(exclude_from_sim no)
+		(at 128.27 110.245 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b10f5d27-99f9-5e0a-904d-c66869b8f4e5")
+	)
+	(text "3/A7"
+		(exclude_from_sim no)
+		(at 179.07 110.245 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "ef9e30ed-cd2a-50ac-8884-b6a458fa02a8")
+	)
+	(text "VDD3V3"
+		(exclude_from_sim no)
+		(at 15.24 117.865 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d95bd25e-60d1-5f7a-91cd-0d36162cab01")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 30.48 117.865 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e5856841-34c1-5c70-8244-56a6320b1e10")
+	)
+	(text "U8 SY8089AAC buck from +5V through the inductor L5 SWPA5020S100MT,"
+		(exclude_from_sim no)
+		(at 46.99 117.865 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "804ebbf3-6895-5b00-9335-80a9605f43f2")
+	)
+	(text "with its output set by R23 100K%1 and R24 22K%1. Supplies the ESP32-S3"
+		(exclude_from_sim no)
+		(at 46.99 120.405 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1e72b972-fd11-5b22-a31f-4054d17f70ae")
+	)
+	(text "module, the LCD logic, the touch connector, the 4-pin header P8 and"
+		(exclude_from_sim no)
+		(at 46.99 122.945 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f8818206-cd9a-5dd9-97e1-105022292739")
+	)
+	(text "the I2C pull-ups RC2, RC4."
+		(exclude_from_sim no)
+		(at 46.99 125.485 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c986b3cd-03c0-5c0f-a621-9378635de477")
+	)
+	(text "U8 EN on U8_EN: RY1 100K from +5V, RY2 100K"
+		(exclude_from_sim no)
+		(at 128.27 117.865 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cfbdddd3-a2f3-530c-872e-b6f7be145269")
+	)
+	(text "to GND"
+		(exclude_from_sim no)
+		(at 128.27 120.405 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b5ac8339-9354-585d-be4b-9478cee86ef1")
+	)
+	(text "3/B7"
+		(exclude_from_sim no)
+		(at 179.07 117.865 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "d1d36d59-7137-544c-aacb-1ddde371abf2")
+	)
+	(text "4/A3"
+		(exclude_from_sim no)
+		(at 184.82 117.865 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "0cd2f7a9-a885-58dd-a827-8855029b2c7d")
+	)
+	(text "5/A7"
+		(exclude_from_sim no)
+		(at 190.57 117.865 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "5cd4dfc9-7d6b-5e5e-87ae-bc3cccd4b8e1")
+	)
+	(text "6/E4"
+		(exclude_from_sim no)
+		(at 179.07 120.405 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "b65c347f-748b-53e0-9b43-3d7e4f40c66e")
+	)
+	(text "V3V"
+		(exclude_from_sim no)
+		(at 15.24 128.025 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3d7e85ee-5708-519e-be8a-e58da780ace5")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 30.48 128.025 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "72cf18e9-21be-56e6-bbe8-59ec6dab0566")
+	)
+	(text "Q6 SI2301 switch from VDD3V3. Supplies the ESP32-C3 keyboard"
+		(exclude_from_sim no)
+		(at 46.99 128.025 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "757b71dd-3065-56c7-acbb-da7497a583b7")
+	)
+	(text "controller and its flash, the ES7210, the Hall sensors, the LoRa"
+		(exclude_from_sim no)
+		(at 46.99 130.565 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fb52536b-dfe5-5214-9c05-04088b79da27")
+	)
+	(text "module, the TF card, the backlight driver U9 and the LCD backlight"
+		(exclude_from_sim no)
+		(at 46.99 133.105 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d01ea41d-cb74-53b1-baf2-467f670ac71c")
+	)
+	(text "anode, the keyboard backlight anodes (JP1), and the V3V side of the"
+		(exclude_from_sim no)
+		(at 46.99 135.645 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6c26761b-d849-593e-88c4-872ca75fd8a9")
+	)
+	(text "I2C."
+		(exclude_from_sim no)
+		(at 46.99 138.185 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "541813ed-caa8-58d8-98b6-1f335e3be530")
+	)
+	(text "PWR_EN (IO10) high: D3 and R27 turn Q7 on,"
+		(exclude_from_sim no)
+		(at 128.27 128.025 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "77fef3d6-bf52-5e3c-b330-48464cfcce4e")
+	)
+	(text "Q7 pulls PWR_GATE low through R26 1K (RQ1"
+		(exclude_from_sim no)
+		(at 128.27 130.565 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d2581dd9-7973-5dd9-9ea9-44e307079331")
+	)
+	(text "100K pulls it up to +5V)"
+		(exclude_from_sim no)
+		(at 128.27 133.105 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "79a6f149-e159-57cd-aac9-8bcc6bed20ab")
+	)
+	(text "3/B7"
+		(exclude_from_sim no)
+		(at 179.07 128.025 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "0fd07514-6ff4-56c3-9dc9-918e3aa1ef19")
+	)
+	(text "4/A8"
+		(exclude_from_sim no)
+		(at 184.82 128.025 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "9b6516c6-fa4e-5b2b-abd4-be1e80f8d11e")
+	)
+	(text "5/A3"
+		(exclude_from_sim no)
+		(at 190.57 128.025 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "9196202d-0d97-5ab6-8ef1-1dd0d58e072c")
+	)
+	(text "6/A3"
+		(exclude_from_sim no)
+		(at 179.07 130.565 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "c9677fde-716d-54a0-98ac-057b4aef255a")
+	)
+	(text "BAT"
+		(exclude_from_sim no)
+		(at 15.24 140.725 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "379daa7e-b3de-55d9-a4c0-12be4d971ec0")
+	)
+	(text "VBUS or VBAT"
+		(exclude_from_sim no)
+		(at 30.48 140.725 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "130af083-77b1-516b-a995-cffa723a728c")
+	)
+	(text "Q4 SI2301 switch from +5V. Supplies the speaker amplifier U6 through"
+		(exclude_from_sim no)
+		(at 46.99 140.725 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "02191950-4089-53a5-8519-06c0af1a079e")
+	)
+	(text "L4 and the battery divider RD2/RD3 (BAT_ADC)."
+		(exclude_from_sim no)
+		(at 46.99 143.265 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f23e210e-df5d-5520-b90a-22bff13ffee7")
+	)
+	(text "the same PWR_GATE as V3V (PWR_EN, IO10)"
+		(exclude_from_sim no)
+		(at 128.27 140.725 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d9864b3f-8b3c-5b77-829c-ed836c845a4f")
+	)
+	(text "3/B6"
+		(exclude_from_sim no)
+		(at 179.07 140.725 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "29a8d11d-6df5-5997-bf19-1acdcece5ee2")
+	)
+	(text "6/C3"
+		(exclude_from_sim no)
+		(at 184.82 140.725 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "2fff2adf-865b-595f-8f9e-d2670e56066a")
+	)
+	(text "M10_VDD3V3"
+		(exclude_from_sim no)
+		(at 15.24 145.805 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "32cea1c3-2f35-57ca-b9ec-320ea3f94aa9")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 30.48 145.805 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0aadf47f-934a-5b72-b00e-24024ed91a55")
+	)
+	(text "MIA-M10Q daughterboard: VDD3V3 at its connector J102 pin 4."
+		(exclude_from_sim no)
+		(at 46.99 145.805 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1b62a698-2119-58e1-b66d-9a0bb296d187")
+	)
+	(text "7/C4"
+		(exclude_from_sim no)
+		(at 179.07 145.805 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "fbea7d5f-b432-593b-96c1-00f71ee91329")
+	)
+	(text "M10_VRTC"
+		(exclude_from_sim no)
+		(at 15.24 148.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a74ee284-3531-5719-b1af-84e6712e5b32")
+	)
+	(text "backup cell"
+		(exclude_from_sim no)
+		(at 30.48 148.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "57b149f7-e356-5107-aab2-618709f923cb")
+	)
+	(text "MIA-M10Q daughterboard: the MS412FE cell J101, charged from M10_VDD3V3"
+		(exclude_from_sim no)
+		(at 46.99 148.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "75b42d17-fa3f-5aaa-a0c7-bacd2af63f4e")
+	)
+	(text "through D101 and R103 1K."
+		(exclude_from_sim no)
+		(at 46.99 150.885 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fd88d80f-033f-587f-9706-577bc9101d94")
+	)
+	(text "7/B2"
+		(exclude_from_sim no)
+		(at 179.07 148.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "17809d58-db8d-58bc-bd31-f25fc2ff8a74")
+	)
+	(text "M10_VCC_RF"
+		(exclude_from_sim no)
+		(at 15.24 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f9fc8f33-5e8d-5f06-849c-308a6ec27548")
+	)
+	(text "RF supply"
+		(exclude_from_sim no)
+		(at 30.48 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4e2ff3e0-8516-5fe4-a945-649fbc0a5fa1")
+	)
+	(text "MIA-M10Q daughterboard: the module's VCC_RF output (C6), which feeds"
+		(exclude_from_sim no)
+		(at 46.99 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "550cf17b-ec08-5049-990b-f183d22f324a")
+	)
+	(text "the antenna at J103 through R104 10R and L101 27nH."
+		(exclude_from_sim no)
+		(at 46.99 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d00c75e7-dc58-5f39-96d2-32cc823a094c")
+	)
+	(text "7/A1"
+		(exclude_from_sim no)
+		(at 179.07 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "64086294-92e3-5844-b172-8c03723446f6")
+	)
+	(text "L76K_VDD3V3"
+		(exclude_from_sim no)
+		(at 15.24 158.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8a4b1043-430e-5868-9e5d-1024853cdfa6")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 30.48 158.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b478d804-08dc-556d-b31f-ec8fc7cad4d3")
+	)
+	(text "L76K daughterboard: VDD3V3 at its connector J202 pin 4."
+		(exclude_from_sim no)
+		(at 46.99 158.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "df11b607-360d-5e20-bb49-e72b83afa39b")
+	)
+	(text "7/B7"
+		(exclude_from_sim no)
+		(at 179.07 158.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "e11f1ba4-946b-5eaa-b03b-7f3f524421f0")
+	)
+	(text "L76K_VRTC"
+		(exclude_from_sim no)
+		(at 15.24 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "332ab837-feed-5f8d-8669-10a8868e16ef")
+	)
+	(text "backup cell"
+		(exclude_from_sim no)
+		(at 30.48 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "87106b31-77e2-5b8a-9869-bb7a598f429e")
+	)
+	(text "L76K daughterboard: the MS412FE cell J201, charged from L76K_VDD3V3"
+		(exclude_from_sim no)
+		(at 46.99 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "355d3aa5-db7d-5fb7-83ac-34eaa4d3730e")
+	)
+	(text "through D201 and R203 1K."
+		(exclude_from_sim no)
+		(at 46.99 163.585 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5a5a574c-0205-560d-b612-b834c7c04dcd")
+	)
+	(text "7/B6"
+		(exclude_from_sim no)
+		(at 179.07 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "827e7f3c-a8bd-5113-a725-23464f819a24")
+	)
+	(text "K1"
+		(exclude_from_sim no)
+		(at 196.85 105.165 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "c1e2a0ac-26c4-5c4a-8d46-09a197e2ff64")
+	)
+	(text "K3"
+		(exclude_from_sim no)
+		(at 196.85 117.865 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "042880a7-525a-5993-a241-e9a114c7808e")
+	)
+	(text "Contents"
+		(exclude_from_sim no)
+		(at 308 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "e950194e-1b01-5d55-a0b6-45551a1accd6")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 321.5827 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "a81c849d-dab1-5411-99af-4023fa0e1099")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 331.0197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "121415a7-4052-526f-8c51-796e738eb608")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 336.4947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "7506d8b4-d48a-59f3-8071-662344303bc5")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 341.9697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "297ab9c0-f0e2-5fc7-80be-6baae81c1592")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 347.4447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "33e25e57-5862-5105-9ee5-f69db1275013")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 352.9197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "5fdc27b7-e801-599a-bc27-fdf56afad5ea")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 358.3947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "642e3c09-7105-5fae-83fb-df1b5f9326a1")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 363.8697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "6766c5ab-0776-5ae6-a0e4-2cfc36111aef")
+	)
+	(text "[8]"
+		(exclude_from_sim no)
+		(at 369.3447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "070aaaf8-badc-5fd0-81fc-dd262b49a8a5")
+	)
+	(text "[9]"
+		(exclude_from_sim no)
+		(at 374.8197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "4fb8f4dc-2e84-58ac-a63d-518891712a1a")
+	)
+	(text "[10]"
+		(exclude_from_sim no)
+		(at 380.2947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#10")
+		)
+		(uuid "49e425f6-7c4f-5817-8377-85481ec11336")
+	)
+	(embedded_fonts no)
+)
