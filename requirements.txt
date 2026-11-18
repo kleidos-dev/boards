@@ -4,13 +4,13 @@
 # model/source.json records it was built with (builder.packages), and the
 # tools the checks run. Install into a virtual environment:
 #   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-# Python 3.14 (the version source.json records); numpy 2.5.4 needs 3.12+.
+# Python 3.15 (the version source.json records); numpy 2.5.5 needs 3.12+.
 
 # Model builder and model checks (_shared/build_board_glb.py,
 # check_board_model.py, legend_placement.py, model_raster.py, legend_mesh.py)
-numpy==2.5.4
+numpy==2.5.5
 shapely==2.2.0
-trimesh==5.2.0
+trimesh==5.2.1
 mapbox_earcut==2.1.0
 scipy==1.18.1
 networkx==3.7
@@ -28,7 +28,7 @@ pillow==13.0.0
 # kicad-cli, which pip does not install (no KiCad library is read)
 pyyaml==6.0.3
 # check_schematic_links.py reads the PDF's links and bookmarks with it
-pypdf==7.1.0
+pypdf==7.1.1
 
 # Checks
 pytest==9.2.0

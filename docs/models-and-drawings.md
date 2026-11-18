@@ -22,7 +22,7 @@ See [`../_shared/schema.md`](../_shared/schema.md) for the drawing and measureme
 | `_shared/check_board_model.py` output | nothing in the tree: its views and report go to `--out` (a temporary directory by default) |
 | `<board>/schematic/netlist.yaml`, `<board>/schematic/layout.yaml` | maintained by hand: every part, pin and net with its source (the vendor's published schematic, page and version), and how to draw them ("Schematics", below) |
 | `<board>/schematic/*.kicad_sch`, `<board>.kicad_sym`, `<board>.kicad_pro`, `sym-lib-table`, `links.json` | `_shared/kicad_schematic.py <board>`, from `netlist.yaml` and `layout.yaml` |
-| `<board>/schematic/<board>.pdf` | `_shared/export_schematic.py <board>` (kicad-cli 10.0.7, then `_shared/schematic_pdf.py` for the links, named destinations and bookmarks) |
+| `<board>/schematic/<board>.pdf` | `_shared/export_schematic.py <board>` (kicad-cli 10.0.8, then `_shared/schematic_pdf.py` for the links, named destinations and bookmarks) |
 | `<board>/schematic/svg/` | `_shared/export_schematic.py <board>`, one SVG per page, written when it runs and ignored by git (`.gitignore`): the PDF is the kept form |
 | `models-contact-sheet.png` | `_shared/models_contact_sheet.py`, from the nine models: every board at one scale, three-quarter over front, shaded and tone mapped as the Kleidos site's own renderer tone maps a case (`_shared/model_raster.py`, Khronos PBR Neutral), so a face toward the viewer shows the model's base color |
 
@@ -88,7 +88,7 @@ The deviation is `check_board_model.py`'s `worst_mm`: the front silhouette again
 
 ### Rebuilding
 
-The builder's Python libraries are pinned in its docstring (`numpy==2.5.4 shapely==2.2.0 trimesh==5.2.0 mapbox_earcut==2.1.0 scipy==1.18.1 networkx==3.7 rtree==1.4.1`, plus `cascadio==0.1.1` for a STEP (no model reads one now; `check_board_model.py` still imports it), `fast-simplification==0.2.0` for the specs that decimate and `fonttools==4.68.0` for a spec with printed legends); with them, the same spec and source build the same bytes. To rebuild one model, or check it against the committed file without writing it:
+The builder's Python libraries are pinned in its docstring (`numpy==2.5.5 shapely==2.2.0 trimesh==5.2.1 mapbox_earcut==2.1.0 scipy==1.18.1 networkx==3.7 rtree==1.4.1`, plus `cascadio==0.1.1` for a STEP (no model reads one now; `check_board_model.py` still imports it), `fast-simplification==0.2.0` for the specs that decimate and `fonttools==4.68.0` for a spec with printed legends); with them, the same spec and source build the same bytes. To rebuild one model, or check it against the committed file without writing it:
 
 ```bash
 python -I _shared/build_board_glb.py \
