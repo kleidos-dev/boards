@@ -2829,8 +2829,8 @@ def gen_cardputer(device_id: str, name: str,
 # ---------------------------------------------------------------------------
 # Every T-Deck Plus value is in mm in the case frame: x from the case's left
 # edge, y down from its top edge. The outline and the side rails come from
-# LilyGO's T-Deck Plus shell STEP. Everything on the face is measured on two
-# vendor front photos (the shop front photo and LilyGO's 3000 px pinmap photo),
+# LILYGO's T-Deck Plus shell STEP. Everything on the face is measured on two
+# vendor front photos (the shop front photo and LILYGO's 3000 px pinmap photo),
 # each registered onto that STEP outline through a homography fitted on the
 # photo's silhouette (0.08 mm rms); the two photos agree within 0.05 mm.
 
@@ -3063,7 +3063,7 @@ def append_tdeck_plus_case(out: List[str], device_id: str,
     out.append(f'<path d="{tdeck_plus_path(glass)}" fill="#111113"/>\n')
     # Keyboard plate: bright translucent edge, dark print inside it. Its
     # outer edge (photo, half-intensity crossings averaged over the key rows)
-    # is at x 2.88 and 70.16: 67.3 wide (the PMMA plate of LilyGO's T-Deck 3D
+    # is at x 2.88 and 70.16: 67.3 wide (the PMMA plate of LILYGO's T-Deck 3D
     # model is 67.2) and 0.1 mm left of the body's center line; 1.7 mm in
     # from the bottom.
     plate = tdeck_plus_clip_y(
@@ -3547,7 +3547,7 @@ DEVICES: List[DeviceSpec] = [
                gen_cores3_se),
     DeviceSpec("coreink", "M5Stack CoreInk", 40.0, 56.0, gen_coreink),
     DeviceSpec("cardputer", "M5Stack Cardputer ADV", 84.0, 54.0, gen_cardputer),
-    DeviceSpec("tdeck-plus", "LilyGO T-Deck Plus", 73.14, 114.98,
+    DeviceSpec("tdeck-plus", "LILYGO T-Deck Plus", 73.14, 114.98,
                gen_tdeck_plus),
 ]
 

@@ -50,7 +50,7 @@ Legend: ✅ an official file for this SKU, ⚠️ proxy from a related SKU, ❌ 
 | M5Stack CoreS3 SE  | ✅ | ✅ | ✅ CoreS3 SE STL + renders; ⚠️ CoreS3 Lite drawing (the same shell) |
 | M5Stack CoreInk    | ✅ | ✅ | ✅ M5Stack dimension render + schematic             |
 | M5Stack Cardputer ADV | ✅ | ✅ | ✅ M5Stack K132-Adv drawing + front photo     |
-| LilyGO T-Deck Plus | ✅ | ✅ | ✅ LILYGO shell STEP + PINMAP image + shop photo (measured); the model's case: LILYGO's product pictures (measured) |
+| LILYGO T-Deck Plus | ✅ | ✅ | ✅ LILYGO shell STEP + PINMAP image + shop photo (measured); the model's case: LILYGO's product pictures (measured) |
 
 Nine boards, one folder each, named as the Kleidos site names them. The Plus2 is dimensionally identical to the Plus 1.1 (one chassis, a different interior), and so is the Plus SE: M5Stack's own drawings of the Plus and of the Plus SE agree within 0.02 mm on the outline, the window, the BtnA slot and the "M5".
 
@@ -64,7 +64,7 @@ Nine boards, one folder each, named as the Kleidos site names them. The Plus2 is
 | Core2 v1.3     | M5Stack K010-V13 drawing                 | 54 × 54 × 16.5 (R5; the white frame is 1.5 mm wide around a 51 × 51 mm glass front with R3.6 corners) |
 | CoreS3 SE      | M5Stack specification table, drawing and STL | 54 × 54 × 15.5 (R5; the frame, 16.5 over the back cover; the owner's hand measurement of 2026-07-15, 15.0 and 22.0 with the battery base, was taken without a caliper and is not used) |
 | CoreInk        | M5Stack dimension render                 | **40 × 56 × 16**       |
-| T-Deck Plus    | LilyGO `T-Deck-Plus-Shell.stp` (measured; the model is built from no vendor file) | 73.14 × 114.98 × 20.40 |
+| T-Deck Plus    | LILYGO `T-Deck-Plus-Shell.stp` (measured; the model is built from no vendor file) | 73.14 × 114.98 × 20.40 |
 
 ## 3D models
 
@@ -230,7 +230,7 @@ The CoreS3 SE is built from two files: its frame, and the M5GO Battery Bottom3 i
 
 The Cardputer ADV prints on three faces besides its front: the sticker over its whole back (`back_legends` on `back_label`, `face: back`), the one along its top edge (`top_legends` on `top_label`, `face: top`, its height `y`) and the one round its Grove port (`side_legends` on `side_label`, `face: left`, its height `x`), each paper in the shell's own 0.2 mm pocket and its outline the pocket's, 0.05 mm in (`_shared/cardputer_faces.py` draws the three, and its docstring says what they were measured on). Its spec places the top and left drawings with `face_frames` (`"top": {"left_x": -42.0, "back_z": -9.0}`, `"left": {"back_z": -9.0, "top_y": 27.0}`).
 
-The T-Deck Plus prints on its back: four prints in one light-grey ink, tone on tone on the case's flat back face (z -19.0), `T-DECK` in the top frame and a thin outline round it that follows the frame, LilyGO's mascot (the figure of its logo) and a small `T-DECK` on the badge's inner panel, and `LILYGO®` at the bottom end, each on a plane of its own so each keeps its own `stroke_mm` (`_shared/back_tdeck_plus.py`, which `emit_back_svg.py` calls; the spec's `frame_legends`, `frame_line_legends`, `badge_legends` and `base_legends`). They were measured on LilyGO's straight-on photo of the back, registered through the two screw holes and the nut seat, with the badge's two prints placed against the trapezoid round them. Every letter is Inter Bold scaled to the box the photo prints it in: the real faces are LilyGO's own, a square, chamfered face with heavier stems for `T-DECK`. The mascot is the print's outline traced on the same photo.
+The T-Deck Plus prints on its back: four prints in one light-grey ink, tone on tone on the case's flat back face (z -19.0), `T-DECK` in the top frame and a thin outline round it that follows the frame, LILYGO's mascot (the figure of its logo) and a small `T-DECK` on the badge's inner panel, and `LILYGO®` at the bottom end, each on a plane of its own so each keeps its own `stroke_mm` (`_shared/back_tdeck_plus.py`, which `emit_back_svg.py` calls; the spec's `frame_legends`, `frame_line_legends`, `badge_legends` and `base_legends`). They were measured on LILYGO's straight-on photo of the back, registered through the two screw holes and the nut seat, with the badge's two prints placed against the trapezoid round them. Every letter is Inter Bold scaled to the box the photo prints it in: the real faces are LILYGO's own, a square, chamfered face with heavier stems for `T-DECK`. The mascot is the print's outline traced on the same photo.
 
 ### The T-Deck Plus's case
 
@@ -283,7 +283,7 @@ The models follow the vendor files and photos. `measurements.json` and `front.sv
 - **CoreS3 SE**: 16.5 mm deep with its own cover (a 15.5 mm frame, M5Stack's published figure, which `case.depth` carries since 2026-11-17 in place of the owner's hand-measured 15.0, and a 1.0 mm cover). The model stands on the M5GO Battery Bottom3 the owner uses, which replaces the cover: 23.5 mm from the frame's front rim to the base's floor (the 15.5 mm frame and the base's 8.0 mm body) and 23.8 mm to the feet, against the owner's 22.0 mm with the base on, the same 1.5 mm the bare board differs by. The USB-C is on the left face at y 27, not on the bottom face. The power key is centered at y 14.0, not 13.0, and the reset key at x 40.0 in an opening centered at 41.7, against 41.0. There is no front LED at (50, 5).
 - **Core2 v1.3**: the USB-C is on the left face at y 27, not on the bottom face. The power key's opening is centered at y 14.0, not 13.0, and both keys are larger than listed. There is no front LED at (50, 3). The glass recess is R3.5, against R3.6.
 - **Cardputer ADV**: the top corners are square with a 1 mm chamfer; only the bottom ones are about R4. The photos show the top a little darker than its `#F4F4F6` (the case-colored region of the registered photo averages `#E3E3E3`, 3.9 away in CIEDE2000), over a dark gray base (`#4A4A4C`) the file does not record. The model's top takes the measured `#F4F4F6`, as every other board's case takes its own measured color. The STL's key pitch is 5.80 mm (5.77 listed) and its legend-strip pockets sit up to 0.44 mm from the notes. The STL has no USB-C opening on the left face at y 27, so the side controls could not be confirmed.
-- **T-Deck Plus** (as measured on LilyGO's shell STEP before the model became this project's own; the model keeps these places): the power slide is on the right face at y 61.5 to 67.0, not at y 20; the left face has a 6.4 by 3.8 mm button at y 41.8 to 48.2 and a 12.3 by 5.3 mm opening at y 23.0 to 35.3, not a reset hole at y 20. The USB-C opening is centered at x 37.11 (0.61 mm off). There is no microphone opening on the front at (8, 110); the bottom end has six 2 mm holes. The 73.14 mm width includes the left button: the shell is 73.02.
+- **T-Deck Plus** (as measured on LILYGO's shell STEP before the model became this project's own; the model keeps these places): the power slide is on the right face at y 61.5 to 67.0, not at y 20; the left face has a 6.4 by 3.8 mm button at y 41.8 to 48.2 and a 12.3 by 5.3 mm opening at y 23.0 to 35.3, not a reset hole at y 20. The USB-C opening is centered at x 37.11 (0.61 mm off). There is no microphone opening on the front at (8, 110); the bottom end has six 2 mm holes. The 73.14 mm width includes the left button: the shell is 73.02.
 
 The status table above records what the fronts were measured on; the models are built from each SKU's own vendor file, which those measurements did not use for the CoreInk, the Core2 v1.3 and the CoreS3 SE.
 
@@ -351,7 +351,7 @@ Several `pwr_flags` on one sheet are stacked upwards from the first, clear of th
 
 `tests/` holds three kinds of test, told apart by pytest markers (`tests/conftest.py`):
 
-- the contracts of the drawings, the specifications and the schematics, with no marker: fast, on every push and pull request;
+- the contracts of the drawings, the specifications and the schematics, and the vendor names spelled as the boards print them (`tests/test_vendor_names.py`), with no marker: fast, on every push and pull request;
 - `models`: every model held to what builds it as it is now (built from its drawings and spec as they are, its legends where its drawings print them, its materials at separate depths and within the readers' table, its web level the master less what a reader cannot see, its OBJ and MTL what its GLB gives, `tests/test_board_model_obj.py`), on every push and pull request that touches a model's inputs (a board's `model/`, `svg/` or `measurements.json`, `_shared/`, `fonts/`, `requirements.txt` or these tests);
 - `selftest` (also `models`): the checkers' own tests, each planting defects in a model or a drawing that the checker must catch, and the face fixture rebuilt byte for byte. They are slow, each planted defect a whole placement of a board, so CI runs them only when a checker's code (`_shared/*.py` but the schematic and specification scripts) or the fixtures change, every Monday and on demand.
 

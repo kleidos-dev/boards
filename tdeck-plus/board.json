@@ -3,8 +3,7 @@
   "id": "tdeck-plus",
   "identity": {
     "name": "T-Deck Plus",
-    "aka": ["LILYGO T-Deck Plus"],
-    "vendor": "LilyGO",
+    "vendor": "LILYGO",
     "sku": "T-Deck-Plus",
     "revision": "V1.0",
     "links": {
@@ -18,7 +17,7 @@
     "width_mm": 73.14,
     "height_mm": 114.98,
     "depth_mm": 20.4,
-    "notes": "Outline of the shell: width and height of the front face, depth front to back. LilyGO's documentation states 100 x 68 x 11 mm, which differs from the shell model; no source states a weight.",
+    "notes": "Outline of the shell: width and height of the front face, depth front to back. LILYGO's documentation states 100 x 68 x 11 mm, which differs from the shell model; no source states a weight.",
     "src": ["shell-step-measured", "owner-unit-verified"]
   },
   "components": [
@@ -54,7 +53,7 @@
           "pins": {"IO19": "D- (A7, B7)", "IO20": "D+ (A6, B6)"}
         }
       ],
-      "notes": "The schematic names the module ESP32-S3-WROOM-1 without its ordering code; N16R8 is the one WROOM-1 code with 16 MB of Quad SPI flash and 8 MB of Octal SPI PSRAM, the memory LilyGO states, and its datasheet places an ESP32-S3R8 inside it. LilyGO's pages call the MCU 'ESP32-S3FN16R8', a name that is not in Espressif's ESP32-S3 series table. Notes on the sheet: IO35, IO36 and IO37 serve the in-package Octal PSRAM and cannot be used for anything else; GPIO46 is pulled down by default, and GPIO46 high with GPIO0 low is not a usable strap combination.",
+      "notes": "The schematic names the module ESP32-S3-WROOM-1 without its ordering code; N16R8 is the one WROOM-1 code with 16 MB of Quad SPI flash and 8 MB of Octal SPI PSRAM, the memory LILYGO states, and its datasheet places an ESP32-S3R8 inside it. LILYGO's pages call the MCU 'ESP32-S3FN16R8', a name that is not in Espressif's ESP32-S3 series table. Notes on the sheet: IO35, IO36 and IO37 serve the in-package Octal PSRAM and cannot be used for anything else; GPIO46 is pulled down by default, and GPIO46 high with GPIO0 low is not a usable strap combination.",
       "src": ["tdeck-schematic", "lilygo-wiki", "esp32-s3-wroom-1-datasheet", "esp32-s3-datasheet"]
     },
     {
@@ -62,7 +61,7 @@
       "role": "flash",
       "quantity": 1,
       "specs": {"capacity_mb": 16, "interface": "Quad SPI", "location": "inside the ESP32-S3-WROOM-1 module"},
-      "notes": "The flash of the module; LilyGO states 16 MB and its board definition sets 80 MHz QIO.",
+      "notes": "The flash of the module; LILYGO states 16 MB and its board definition sets 80 MHz QIO.",
       "src": ["lilygo-wiki", "esp32-s3-wroom-1-datasheet", "tdeck-board-definition"]
     },
     {
@@ -117,7 +116,7 @@
       "manufacturer": "Sitronix",
       "quantity": 1,
       "specs": {"interface": "SPI with a D/C line", "location": "on the display panel"},
-      "notes": "LilyGO revised its ST7789 initialization sequence on 2024-07-26 (commit 6adb888 of the T-Deck repository).",
+      "notes": "LILYGO revised its ST7789 initialization sequence on 2024-07-26 (commit 6adb888 of the T-Deck repository).",
       "src": ["lilygo-wiki", "lilygo-spec-image"]
     },
     {
@@ -232,7 +231,7 @@
           "notes": "C37 (1 uF) from CHIP_EN to GND."
         }
       ],
-      "notes": "Powered from the switched V3V (VDD3P3, VDD3P3_RTC, VDD3P3_CPU, VDDA). Its stock firmware (LilyGO's Keyboard_ESP32C3 sketch) answers at 0x55; the INT line on GPIO8 is wired to the S3's IO46.",
+      "notes": "Powered from the switched V3V (VDD3P3, VDD3P3_RTC, VDD3P3_CPU, VDDA). Its stock firmware (LILYGO's Keyboard_ESP32C3 sketch) answers at 0x55; the INT line on GPIO8 is wired to the S3's IO46.",
       "src": ["tdeck-schematic", "tdeck-keyboard-sketch", "esp32-c3-datasheet"]
     },
     {
@@ -293,7 +292,7 @@
       "id": "keyboard-matrix",
       "role": "other",
       "quantity": 1,
-      "specs": {"function": "QWERTY keyboard (LilyGO T-Keyboard)", "keys": 35, "matrix": "7 rows x 5 columns", "backlight": "LEDs between V3V and LEDK, switched by Q3", "colors": ["black", "white"]},
+      "specs": {"function": "QWERTY keyboard (LILYGO T-Keyboard)", "keys": 35, "matrix": "7 rows x 5 columns", "backlight": "LEDs between V3V and LEDK, switched by Q3", "colors": ["black", "white"]},
       "notes": "On a separate board joined through JP1; its LED count and switch part are not published.",
       "src": ["tdeck-schematic", "tdeck-keyboard-sketch", "lilygo-pinmap-image"]
     },
@@ -346,7 +345,7 @@
         "function": "trackball, read by four Hall sensors (UZ1 to UZ4) and a press switch (KEY1)",
         "directions": {"up": "IO3 (UZ3, G_S1)", "down": "IO15 (UZ1, G_S3)", "left": "IO1 (UZ4, G_S4)", "right": "IO2 (UZ2, G_S2)", "press": "IO0 (KEY1)"}
       },
-      "notes": "Directions, as the Kleidos firmware maps them (PIN_TRACKBALL_UP, _DOWN, _LEFT, _RIGHT and _CLICK in variants/tdeck/variant.h) and as the owner verified on his unit on 2026-11-17, each direction acting as the ball is rolled: UP IO3 (UZ3, G_S1), DOWN IO15 (UZ1, G_S3), LEFT IO1 (UZ4, G_S4), RIGHT IO2 (UZ2, G_S2), press IO0 (KEY1, BOOT). LilyGO's pin map image names them otherwise (UP IO2, DOWN IO3, LEFT IO1, RIGHT IO15, press IO0) and agrees only on LEFT and the press; the sheet names no direction. Its four pads are drawn to GND.",
+      "notes": "Directions, as the Kleidos firmware maps them (PIN_TRACKBALL_UP, _DOWN, _LEFT, _RIGHT and _CLICK in variants/tdeck/variant.h) and as the owner verified on his unit on 2026-11-17, each direction acting as the ball is rolled: UP IO3 (UZ3, G_S1), DOWN IO15 (UZ1, G_S3), LEFT IO1 (UZ4, G_S4), RIGHT IO2 (UZ2, G_S2), press IO0 (KEY1, BOOT). LILYGO's pin map image names them otherwise (UP IO2, DOWN IO3, LEFT IO1, RIGHT IO15, press IO0) and agrees only on LEFT and the press; the sheet names no direction. Its four pads are drawn to GND.",
       "src": ["tdeck-schematic", "owner-unit", "lilygo-pinmap-image"]
     },
     {
@@ -380,7 +379,7 @@
           "pulls": [{"signal": "GPIO_0", "direction": "up", "ohms": 100000, "to": "VDD3V3", "designator": "RY31"}]
         }
       ],
-      "notes": "LilyGO: with the microphone in use, the GPIO0 button is not available.",
+      "notes": "LILYGO: with the microphone in use, the GPIO0 button is not available.",
       "src": ["tdeck-schematic", "tdeck-readme", "lilygo-wiki"]
     },
     {
@@ -433,7 +432,7 @@
           "pulls": [{"signal": "gates", "direction": "up", "ohms": 100000, "to": "+5V", "designator": "RQ1"}]
         }
       ],
-      "notes": "LilyGO: on battery, GPIO10 must be set high before the peripherals work.",
+      "notes": "LILYGO: on battery, GPIO10 must be set high before the peripherals work.",
       "src": ["tdeck-schematic", "lilygo-wiki"]
     },
     {
@@ -586,11 +585,11 @@
           "to": "soc-module",
           "bus": "SPI (shared with the display and the TF card)",
           "pins": {"NSS (13)": "IO9", "SCK (12)": "IO40", "MOSI (11)": "IO41", "MISO (10)": "IO38", "NRESET (14)": "IO17", "BUSY (8)": "IO13", "DIO1 (7)": "IO45", "VCC (5)": "V3V", "DIO3 (3)": "not connected"},
-          "notes": "C50 (10 uF) and C51 (100 nF) decouple VCC. LilyGO: only one SPI device may be selected at a time, so the other chip selects must be high before talking to the radio."
+          "notes": "C50 (10 uF) and C51 (100 nF) decouple VCC. LILYGO: only one SPI device may be selected at a time, so the other chip selects must be high before talking to the radio."
         },
         {"to": "lora-antenna", "pins": {"ANT (1)": "XX2 through R50 (0 ohm)"}}
       ],
-      "notes": "LilyGO sells the board with a 433, 868 or 915 MHz radio, or none. The current figures are design notes written on the schematic beside the module (the supply must deliver at least 200 mA), not datasheet values.",
+      "notes": "LILYGO sells the board with a 433, 868 or 915 MHz radio, or none. The current figures are design notes written on the schematic beside the module (the supply must deliver at least 200 mA), not datasheet values.",
       "src": ["tdeck-schematic", "lilygo-spec-image", "lilygo-pinmap-image", "lilygo-wiki"]
     },
     {
@@ -605,7 +604,7 @@
         "gain_dbi": [-1.43, -0.7],
         "efficiency_percent": [19.8, 22.7]
       },
-      "notes": "Figures from LilyGO's T-Deck Plus antenna report (860 to 920 MHz); its repository also holds T-Deck antenna sheets for 433 MHz and 868-915 MHz, so the antenna follows the radio band ordered. The case has an AUX opening for an extended antenna.",
+      "notes": "Figures from LILYGO's T-Deck Plus antenna report (860 to 920 MHz); its repository also holds T-Deck antenna sheets for 433 MHz and 868-915 MHz, so the antenna follows the radio band ordered. The case has an AUX opening for an extended antenna.",
       "src": ["tdeck-plus-antenna-report", "tdeck-schematic", "lilygo-pinmap-image"]
     },
     {
@@ -627,12 +626,12 @@
           "to": "soc-module",
           "bus": "UART0 through the Grove seat P8",
           "pins": {"RX": "IO43 (U0TXD)", "TX": "IO44 (U0RXD)", "VCC, V_IO": "VDD3V3", "TIMEPULSE": "not carried: PPS (J2.1 of the GPS board) reaches no mainboard pin"},
-          "notes": "No cable is published: the connection is known by function. The GPS board's own 5-pin connector J2 carries PPS, GPS_TX, GPS_RX, VDD3V3 and GND; the mainboard's P8 has four pins (GND, VDD3V3, UAR0_TX, UAR0_RX) and no PPS. On the owner's unit (MIA-M10Q board) the Kleidos firmware reads NMEA and UBX on IO44 and its UBX commands sent on IO43 take effect, and LilyGO gives the Grove pins (P8) to the GPS module; the GPS board's one connector J2 brings its supply, so it is fed from the always-on VDD3V3, the one supply P8 carries."
+          "notes": "No cable is published: the connection is known by function. The GPS board's own 5-pin connector J2 carries PPS, GPS_TX, GPS_RX, VDD3V3 and GND; the mainboard's P8 has four pins (GND, VDD3V3, UAR0_TX, UAR0_RX) and no PPS. On the owner's unit (MIA-M10Q board) the Kleidos firmware reads NMEA and UBX on IO44 and its UBX commands sent on IO43 take effect, and LILYGO gives the Grove pins (P8) to the GPS module; the GPS board's one connector J2 brings its supply, so it is fed from the always-on VDD3V3, the one supply P8 carries."
         },
         {"to": "gps-backup-cell", "pins": {"V_BCKP": "VRTC"}},
         {"to": "gps-antenna-connector", "pins": {"RF_IN": "J3 through C6 (47 pF)"}, "notes": "The active-antenna feed runs from VCC_RF through R4 (10 ohm) and L1 (27 nH) with C5 (10 nF) to GND. The Kleidos schematic numbers the GPS board's parts +100 (J103, C106, R104, L101, C105), since they repeat the mainboard's designators."}
       ],
-      "notes": "LilyGO also publishes a T-Deck-L76K V1.0 board (Quectel L76K, RESET_N pulled up by 10 kOhm R1 with C4 100 nF, VBACKUP from VRTC, the same 5-pin J2 and MS412FE backup cell). The GPS takes the Grove seat's pins, so the Grove connector cannot be used for anything else on the Plus.",
+      "notes": "LILYGO also publishes a T-Deck-L76K V1.0 board (Quectel L76K, RESET_N pulled up by 10 kOhm R1 with C4 100 nF, VBACKUP from VRTC, the same 5-pin J2 and MS412FE backup cell). The GPS takes the Grove seat's pins, so the Grove connector cannot be used for anything else on the Plus.",
       "src": ["gps-schematic", "l76k-schematic", "lilygo-wiki", "mia-m10q-datasheet", "tdeck-readme", "kleidos-gps-run"]
     },
     {
@@ -706,7 +705,7 @@
       "designator": "MIC1, MIC2, MIC3, MIC4",
       "quantity": 4,
       "specs": {"type": "MEMS microphone, differential output"},
-      "notes": "The schematic draws four; LilyGO's back view labels two openings, Mic1 and Mic2. Each one's ground goes through a 0 ohm resistor (Rm1 to Rm4).",
+      "notes": "The schematic draws four; LILYGO's back view labels two openings, Mic1 and Mic2. Each one's ground goes through a 0 ohm resistor (Rm1 to Rm4).",
       "src": ["tdeck-schematic", "lilygo-wiki", "lilygo-spec-image"]
     },
     {
@@ -735,7 +734,7 @@
       "designator": "P1",
       "quantity": 1,
       "specs": {"connector": "P1 (SPEEK), 2 pins", "location": "bottom-right corner, behind the PCB", "grille": null, "case_openings": "six holes on the lower side edge"},
-      "notes": "The case has no speaker grille: six holes on the lower side edge, and the speaker sits at the bottom-right corner, behind the PCB (owner observed on his unit, 2026-11-17; he did not say from which side right is taken). LilyGO's specification image labels 'BAT&SPK' on the back. Its part and impedance are not published.",
+      "notes": "The case has no speaker grille: six holes on the lower side edge, and the speaker sits at the bottom-right corner, behind the PCB (owner observed on his unit, 2026-11-17; he did not say from which side right is taken). LILYGO's specification image labels 'BAT&SPK' on the back. Its part and impedance are not published.",
       "src": ["tdeck-schematic", "lilygo-spec-image", "owner-unit"]
     },
     {
@@ -769,7 +768,7 @@
     {"role": "usb_uart_bridge", "notes": "USB goes straight to the ESP32-S3's native USB pins.", "src": ["tdeck-schematic"]},
     {"role": "esd", "notes": "No protection part is drawn on the USB lines.", "src": ["tdeck-schematic"]}
   ],
-  "notes": "LilyGO publishes one mainboard schematic for the T-Deck family (dated 2023-06-01) and links it from the T-Deck Plus page; the GNSS parts come from its separate GPS daughterboard sheets (T-Deck-GPS V1.0, T-Deck-L76K V1.0). Three rails: VDD3V3 from the buck while SW1 is on, V3V and BAT switched from it by PWR_EN (IO10). Designators are the schematic's. The case has no speaker grille (owner observed on his unit, 2026-11-17): six holes on the lower side edge, the speaker behind the PCB at the bottom-right corner. The slot above the screen, drawn by measurements.json, svg/front.svg and the model, is of undocumented purpose: LILYGO's specification and pin-map images draw it without a label, and its documentation page and repository name nothing there.",
+  "notes": "LILYGO publishes one mainboard schematic for the T-Deck family (dated 2023-06-01) and links it from the T-Deck Plus page; the GNSS parts come from its separate GPS daughterboard sheets (T-Deck-GPS V1.0, T-Deck-L76K V1.0). Three rails: VDD3V3 from the buck while SW1 is on, V3V and BAT switched from it by PWR_EN (IO10). Designators are the schematic's. The case has no speaker grille (owner observed on his unit, 2026-11-17): six holes on the lower side edge, the speaker behind the PCB at the bottom-right corner. The slot above the screen, drawn by measurements.json, svg/front.svg and the model, is of undocumented purpose: LILYGO's specification and pin-map images draw it without a label, and its documentation page and repository name nothing there.",
   "sources": {
     "lilygo-wiki": {
       "url": "https://github.com/Xinyuan-LilyGO/documentation/blob/master/en/products/t-deck-series/t-deck-plus/index.md",
@@ -777,7 +776,7 @@
       "kind": "vendor_docs",
       "checked": "2026-11-16",
       "mirror_of": "https://wiki.lilygo.cc/products/t-deck-series/t-deck-plus/",
-      "notes": "Read as the Markdown source in LilyGO's documentation repository, which builds wiki.lilygo.cc; the page's old address under get_started/ answers 404 since the site moved (2026-11-17)."
+      "notes": "Read as the Markdown source in LILYGO's documentation repository, which builds wiki.lilygo.cc; the page's old address under get_started/ answers 404 since the site moved (2026-11-17)."
     },
     "lilygo-spec-image": {
       "url": "https://raw.githubusercontent.com/Xinyuan-LilyGO/documentation/master/public/products/t-deck-series/t-deck-plus/index/image/t-deck-info-en.jpg",
@@ -795,7 +794,7 @@
     },
     "tdeck-schematic": {
       "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/schematic.pdf",
-      "title": "T-Deck mainboard schematic (LilyGO, Altium, dated 2023-06-01)",
+      "title": "T-Deck mainboard schematic (LILYGO, Altium, dated 2023-06-01)",
       "kind": "schematic",
       "checked": "2026-11-16",
       "found_via": "lilygo-wiki"
@@ -814,19 +813,19 @@
     },
     "tdeck-readme": {
       "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/README.MD",
-      "title": "T-Deck repository README (LilyGO)",
+      "title": "T-Deck repository README (LILYGO)",
       "kind": "vendor_docs",
       "checked": "2026-11-16"
     },
     "tdeck-keyboard-sketch": {
       "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/examples/Keyboard_ESP32C3/Keyboard_ESP32C3.ino",
-      "title": "Keyboard_ESP32C3, the keyboard controller's stock firmware (LilyGO)",
+      "title": "Keyboard_ESP32C3, the keyboard controller's stock firmware (LILYGO)",
       "kind": "vendor_docs",
       "checked": "2026-11-16"
     },
     "tdeck-board-definition": {
       "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/boards/T-Deck.json",
-      "title": "T-Deck PlatformIO board definition (LilyGO)",
+      "title": "T-Deck PlatformIO board definition (LILYGO)",
       "kind": "vendor_docs",
       "checked": "2026-11-16"
     },
@@ -838,10 +837,10 @@
     },
     "shell-step-measured": {
       "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/shell/T-Deck-Plus-Shell.stp",
-      "title": "Outline of LilyGO's T-Deck Plus shell model",
+      "title": "Outline of LILYGO's T-Deck Plus shell model",
       "kind": "measured",
       "checked": "2026-11-16",
-      "method": "Bounding outline of the shell measured in LilyGO's T-Deck-Plus-Shell.stp for the Kleidos front drawing (svg/front.svg, measurements.json)."
+      "method": "Bounding outline of the shell measured in LILYGO's T-Deck-Plus-Shell.stp for the Kleidos front drawing (svg/front.svg, measurements.json)."
     },
     "esp32-s3-wroom-1-datasheet": {
       "url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",

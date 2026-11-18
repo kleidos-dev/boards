@@ -1,4 +1,4 @@
-# LilyGO T-Deck Plus — sources
+# LILYGO T-Deck Plus — sources
 
 What `measurements.json` and `svg/front.svg` were measured on, and what the model's case figures were read off. The vendor files themselves are not kept here: product photos, drawings and CAD files stay the property of LILYGO and are cited by address only (`NOTICE.md`). The numbers taken from them are in `measurements.json`, in the T-Deck Plus block of `_shared/emit_front_svg.py` and in the docstring of `_shared/tdeck_plus_case.py`, which say which figure came from which view.
 

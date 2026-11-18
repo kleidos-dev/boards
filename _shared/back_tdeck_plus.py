@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-"""What the LilyGO T-Deck Plus prints on its back, for ``emit_back_svg.py``
+"""What the LILYGO T-Deck Plus prints on its back, for ``emit_back_svg.py``
 
 The shell's back carries no sticker: four prints in one light-grey ink, all
 on its flat outer face (the STEP's z -19.0 in the build frame), tone on tone:
@@ -8,7 +8,7 @@ on its flat outer face (the STEP's z -19.0 in the build frame), tone on tone:
   a thin outline (plane ``frame-line``) that follows the frame: a run over
   the name, a chamfer and a short drop at each end, and a tail out under
   each screw hole;
-* on the trapezoid's inner panel, LilyGO's mascot (the figure of its logo:
+* on the trapezoid's inner panel, LILYGO's mascot (the figure of its logo:
   one hand raised in a V, a bracelet on the wrist, a tablet held at her
   side) over the panel's small hole, and a small ``T-DECK`` under the hole
   (plane ``badge``);
@@ -19,7 +19,7 @@ Each plane holds prints of one weight, so a reader that leaves out the
 prints too thin for its scale keeps the large name after the outline and
 the badge are gone.
 
-Measured on LilyGO's straight-on back photo (the T-Deck Plus pinmap sheet,
+Measured on LILYGO's straight-on back photo (the T-Deck Plus pinmap sheet,
 3000 px), registered on the model's back through the two screw holes and the
 nut seat, 15.99 px a mm: every letter's ink box at half its contrast, read on
 profiles across its strokes, the cap height from the flat letters. That unit
@@ -29,7 +29,7 @@ their place in the trapezoid round them rather than against the screws: once
 the screws are matched, the photo's grooves either side of the small word lie
 0.48 mm left of the STEP's, so both prints move 0.48 mm right.
 
-The real faces are LilyGO's: ``T-DECK`` is a square face with chamfered
+The real faces are LILYGO's: ``T-DECK`` is a square face with chamfered
 corners and 1.5 mm stems, LILYGO its own wordmark. Each letter is set in
 Inter Bold, the one face the models carry, scaled to the box the photo prints
 it in, so the letters' places and sizes are the photo's and their shapes are
