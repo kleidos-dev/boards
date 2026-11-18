@@ -126,7 +126,7 @@ PLANTED = {
     "two components with one id": lambda d: d["components"][1].update(id="soc"),
     "another folder's id": lambda d: d.update(id="cardputer"),
     "a vendor measurements.json disagrees with": lambda d: d["identity"]
-        .update(vendor="LilyGO"),
+        .update(vendor="LILYGO"),
     "a SKU measurements.json disagrees with": lambda d: d["identity"].update(sku="K016"),
     "a display controller measurements.json disagrees with": lambda d: d["components"][3]
         .update(part="ILI9342C"),

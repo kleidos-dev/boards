@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-"""Write the LilyGO T-Deck Plus case into its model's spec, from this repository's own data
+"""Write the LILYGO T-Deck Plus case into its model's spec, from this repository's own data
 
 The T-Deck Plus's model draws its case from no vendor file: every part of the
 shell, the front frame round the face, the side key and the power slide is a

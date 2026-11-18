@@ -20,7 +20,7 @@
 
 board: tdeck-plus
 source:
-  title: T-Deck mainboard schematic (LilyGO, Altium), dated 2023-06-01
+  title: T-Deck mainboard schematic (LILYGO, Altium), dated 2023-06-01
   url: https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/schematic.pdf
   commit: 80921c8 (2023-06-01, "Added schematic"), file unchanged since
   listed_at: https://github.com/Xinyuan-LilyGO/documentation/blob/master/en/products/t-deck-series/t-deck-plus/index.md
@@ -236,7 +236,7 @@ i2c:
   - ref: U5
     part: ESP32-C3 keyboard
     address: '0x55'
-    source: Kleidos firmware and LilyGO's keyboard sketch (K19)
+    source: Kleidos firmware and LILYGO's keyboard sketch (K19)
   - ref: P4
     part: GT911 (touch panel)
     address: 0x5D / 0x14
@@ -3330,7 +3330,7 @@ kleidos:   # Kleidos additions to and corrections of the vendor's print: each ma
     element: {rail: VBAT}
     source:
       type: vendor-doc
-      cite: "LilyGO docs page, specifications"
+      cite: "LILYGO docs page, specifications"
   - id: K2
     kind: addition
     what: "UP1_CHRG: LED1 lights while UP1 charges, blinks with no cell."
@@ -3365,7 +3365,7 @@ kleidos:   # Kleidos additions to and corrections of the vendor's print: each ma
     element: {net: U0_ANT}
     source:
       type: vendor-doc
-      cite: "LilyGO docs page, specifications"
+      cite: "LILYGO docs page, specifications"
   - id: K7
     kind: addition
     what: "UAR0_TX reaches the GPS board's GPS_RX (J102.3) through P8 pin 3."

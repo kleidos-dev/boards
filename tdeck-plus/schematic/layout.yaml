@@ -21,7 +21,7 @@ title_block:
   title: LILYGO T-Deck Plus
   company: "Kleidos boards: connectivity documented from the vendor's public documentation"
   comments:
-    - "Sources: LilyGO T-Deck schematic 2023-06-01, GPS sheets; README.md"
+    - "Sources: LILYGO T-Deck schematic 2023-06-01, GPS sheets; README.md"
     - "Values as documented. Layout and symbols: Kleidos boards"
     - "License: MIT. github.com/kleidos-dev/boards"
 
@@ -290,7 +290,7 @@ root:
         Every part, pin and net of the T-Deck Plus mainboard and of its two GPS
         daughterboards, with the values the vendor documents: connectivity
         documented from the vendor's public documentation, with Kleidos additions and
-        corrections listed on page 1 (LilyGO's T-Deck schematic of 2023-06-01 and
+        corrections listed on page 1 (LILYGO's T-Deck schematic of 2023-06-01 and
         its T-Deck-GPS V1.0 and T-Deck-L76K V1.0 sheets, cited in README.md and
         netlist.yaml). Layout and symbols are this project's. No footprints, no PCB.
         Values are as the vendor prints them (100K%1, 1uF/6.3V). A value of NC
@@ -413,7 +413,7 @@ sheets:
           - [{cols: [[RC1, RC2], [RC3, RC4]]}]
   - file: gps.kicad_sch
     name: GPS daughterboards
-    summary: "The two GPS daughterboards LilyGO publishes for the T-Deck: the MIA-M10Q board (parts +100) and the L76K board (parts +200), each with its backup cell, antenna connector and 5-pin connector."
+    summary: "The two GPS daughterboards LILYGO publishes for the T-Deck: the MIA-M10Q board (parts +100) and the L76K board (parts +200), each with its backup cell, antenna connector and 5-pin connector."
     parts: "U101 MIA-M10Q, J101 J201 MS412FE, J102 J202, J103 J203 IPEX, U201 L76K"
     pwr_flags: [M10_GND, L76K_GND]
     blocks:
