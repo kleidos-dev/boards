@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="StickC-Plus icon">
+<img src="icon.svg" width="96" height="96" alt="StickC-Plus icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="226" height="320" alt="StickC-Plus front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # StickC-Plus
 

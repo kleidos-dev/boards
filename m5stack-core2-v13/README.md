@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="Core2 v1.3 icon">
+<img src="icon.svg" width="96" height="96" alt="Core2 v1.3 icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="337" height="320" alt="Core2 v1.3 front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # Core2 v1.3
 

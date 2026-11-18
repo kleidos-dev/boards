@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="CoreS3-SE icon">
+<img src="icon.svg" width="96" height="96" alt="CoreS3-SE icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="337" height="320" alt="CoreS3-SE front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # CoreS3-SE
 

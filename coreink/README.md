@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="CoreInk icon">
+<img src="icon.svg" width="96" height="96" alt="CoreInk icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="269" height="320" alt="CoreInk front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # CoreInk
 

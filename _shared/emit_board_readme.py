@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -38,6 +39,10 @@ GROUPS = [
     ("Protection", ["esd"]),
     ("Other parts", ["other"]),
 ]
+
+#: How tall the front drawing is shown at the top of a page, in CSS pixels: tall
+#: enough that its legends read on GitHub, its width following its viewBox.
+FRONT_HEIGHT_PX = 320
 
 KINDS = {"vendor_docs": "vendor docs", "datasheet": "datasheet", "schematic": "schematic",
          "product_page": "product page", "measured": "measured", "teardown": "teardown"}
@@ -129,10 +134,23 @@ class Page:
             return f"{label(c['role'])} {c['designator']}"
         return label(c["role"]) if sum(1 for o in self.comps if o["role"] == c["role"]) == 1 else cid
 
+    def pictures(self) -> str:
+        """The icon, and beside it the front drawing linked to the file, sized to read."""
+        name = self.data["identity"]["name"]
+        out = f'<img src="icon.svg" width="96" height="96" alt="{name} icon">'
+        front = ROOT / self.board / "svg" / "front.svg"
+        if front.is_file():
+            box = re.search(r'<svg\b[^>]*\bviewBox="([^"]+)"', front.read_text(encoding="utf-8"))
+            _x, _y, w, h = (float(v) for v in box.group(1).split())
+            width = round(FRONT_HEIGHT_PX * w / h)
+            out += (f' <a href="svg/front.svg"><img src="svg/front.svg" width="{width}" '
+                    f'height="{FRONT_HEIGHT_PX}" alt="{name} front drawing, true to scale: the case, '
+                    f'the screen, the controls and the printed legends"></a>')
+        return out
+
     def lines(self) -> list[str]:
         d, ident = self.data, self.data["identity"]
-        out = [f'<img src="icon.svg" width="96" height="96" alt="{ident["name"]} icon">', "",
-               f'# {ident["name"]}', ""]
+        out = [self.pictures(), "", f'# {ident["name"]}', ""]
         head = f'{ident["vendor"]} · SKU **{ident["sku"]}**'
         if ident.get("revision"):
             head += f' · revision {ident["revision"]}'

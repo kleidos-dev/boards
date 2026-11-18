@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="StickS3 icon">
+<img src="icon.svg" width="96" height="96" alt="StickS3 icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="226" height="320" alt="StickS3 front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # StickS3
 

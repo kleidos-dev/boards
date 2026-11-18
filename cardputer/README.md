@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="Cardputer-Adv icon">
+<img src="icon.svg" width="96" height="96" alt="Cardputer-Adv icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="467" height="320" alt="Cardputer-Adv front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # Cardputer-Adv
 

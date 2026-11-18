@@ -1,4 +1,4 @@
-<img src="icon.svg" width="96" height="96" alt="T-Deck Plus icon">
+<img src="icon.svg" width="96" height="96" alt="T-Deck Plus icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="230" height="320" alt="T-Deck Plus front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # T-Deck Plus
 
