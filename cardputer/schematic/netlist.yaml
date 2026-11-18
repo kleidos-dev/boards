@@ -1,0 +1,2354 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# M5Stack Cardputer-Adv (K132-Adv): every component, every pin and the net it is
+# on, as the vendor's published schematics show them. Facts only: what connects
+# where and through what. The drawing in this folder (cardputer.kicad_sch) is
+# generated from this file; README.md says how, and how the two are checked
+# against each other.
+#
+# The product is two boards with a schematic each: the Cardputer-Adv carrier
+# (four sheets) and the Stamp-S3A core module (one sheet, the Stamp-S3 schematic
+# v0.3.3 both docs pages link). Read from their printed pages and from the
+# netlist Altium wrote into each PDF's bookmarks (Nets -> Pins, per sheet),
+# which every connection here matches. Values come from the printed pages, except
+# where a Kleidos addition or correction (the "kleidos" list, each marked on the
+# drawing and listed on page 1 with its source) adds what a primary source makes
+# certain: a datasheet, the vendor's other documents or a bench record in bench/.
+#
+# Conventions:
+# - pins are the vendor's pin numbers;
+# - net names are the vendor's; a net the vendor left unnamed gets a name of
+#   ours, listed under "renamed" with the name Altium generated for it;
+# - NC is a pin the schematic connects to nothing else;
+# - both schematics number their parts from 1, so the module's parts are
+#   numbered +100 here (its U1 is U101, M1 is M101, JP2 is JP102...);
+# - the module's pins (M101, STAMP-S3M) land on the carrier's sockets P1 and P2,
+#   which the carrier sheet draws wired pin for pin to the module's footprint
+#   (M1, STAMP-S3-DIP-1.27): P1 pin n is module pin n (1-17), P2 pin n is module
+#   pin 29 - n (18-28). A net the module and the carrier share takes the
+#   carrier's name; the module's own name for it is under "aliases";
+# - the carrier sheets join by net name across sheets (the bookmarks list G3 on
+#   P1 of page 1 and on P3 of page 4, and so on).
+
+board: cardputer
+source:
+  title: Cardputer-Adv schematic v1.0 (2025-06-20) and Stamp-S3 schematic v0.3.3
+  documents:
+    - title: Cardputer-Adv schematic, v1.0 (Altium output created 2025-06-12; file dated 2025-06-20)
+      url: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1178/Sch_M5CardputerAdv_v1.0_2025_06_20_17_19_58.pdf
+      listed_at: https://docs.m5stack.com/en/core/Cardputer-Adv
+      read_from: https://web.archive.org/web/20260717140556id_/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1178/Sch_M5CardputerAdv_v1.0_2025_06_20_17_19_58.pdf
+      sha256: 9553f5ee22b6e5f29a385388192e42c5ff76f16281b6f7ea9418f7b62a2d48b0
+      pages:
+        1: "Power, the module's sockets, buttons, microSD, Grove, IR, FPC1 (M5CardputerAdv.SchDoc)"
+        2: Keyboard scanner and the 56 keys (KeyScan.SchDoc)
+        3: Motion sensor, codec, microphone, amplifier, headphone jack (IMU.SchDoc)
+        4: EXT 2.54-14P header (HAT.SchDoc)
+    - title: Stamp-S3 schematic, v0.3.3 (Altium output created 2024-09-11), the Stamp-S3A module inside the Cardputer-Adv
+      url: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1150/Sch_StampS3_v0.3.3.pdf
+      listed_at: [https://docs.m5stack.com/en/core/Cardputer-Adv, https://docs.m5stack.com/en/core/Stamp-S3A]
+      read_from: https://web.archive.org/web/20261030120518id_/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1150/Sch_StampS3_v0.3.3.pdf
+      sha256: 2f9610aecc5a5d2ee51b33c75df31cf90c7639d2997e7a2bb147ba8d46b46966
+      pages:
+        1: "ESP32, DCDC, LCD, RGB LED, BTN-USER, Type-A USB blocks and the STAMP-S3M pins (StampS3_v0.3.3.SchDoc)"
+  read_note: The vendor host timed out from the machine that wrote this file on 2026-11-17; the Internet Archive's copies were read instead (the same addresses the boards' board.json cites).
+  checked: 2026-11-17
+  not_drawn: "Carrier page 1 also holds R3 (1KΩ) and D3 (an LED) greyed out on VBAT_OUT: Altium's netlist leaves them out (their designators are taken by the Grove pull-up R3 and the headphone-detect diode D3), so they are not in this file. The carrier sheet's M1 (the module's footprint STAMP-S3-DIP-1.27) has no pins in that netlist either; the module's own pins are M101."
+  also_read:
+    - url: https://github.com/m5stack/M5Unified/blob/96576a14247ddc935149145aa6b51943464120f1/src/M5Unified.inl
+      used_for: "the ES8311's I2C address, which the sheet does not print (es8311_i2c_addr0 = 0x18), as board.json records it"
+      checked: 2026-11-16
+    - url: https://docs.m5stack.switch-science.com/en/core/Stamp-S3A
+      mirror_of: https://docs.m5stack.com/en/core/Stamp-S3A
+      used_for: the module's antenna (2.4 GHz 3D antenna) and RGB LED part (WS2812B-2020), which the sheet does not print, as board.json records them (K10, K11); USB Type-C (K12)
+      checked: 2026-11-16
+    - url: https://docs.m5stack.switch-science.com/en/core/Cardputer-Adv
+      mirror_of: https://docs.m5stack.com/en/core/Cardputer-Adv
+      used_for: the USB port is a USB Type-C (K12)
+      checked: 2026-11-16
+    - url: https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf
+      title: ESP32-S3 Series Datasheet v2.2 (Espressif)
+      used_for: "the strapping pins and their pulls at reset (Table 3-1, p. 32), the boot modes (Table 3-3, p. 33), VDD_SPI's voltage (Table 1-1, p. 13; Table 3-4, p. 34) (K13, K14, K16 to K18)"
+      checked: 2026-11-17
+    - url: https://static.chipdip.ru/lib/495/DOC013495055.pdf
+      title: LP3218DT1G datasheet, Rev.B, May 2017 (Leshan Radio), a distributor's copy
+      used_for: "the DFN2020-6S pinout, 1, 2, 5, 6 drain, 3 gate, 4 source; a 12 V P-channel MOSFET (p. 1) (K1 to K3)"
+      checked: 2026-11-17
+    - url: https://static.chipdip.ru/lib/180/DOC014180357.pdf
+      title: CN803/809/810 datasheet, Rev 0 (Consonance), a distributor's copy
+      used_for: "CN809J: 4.00 V (3.89-4.11 V) threshold, active-low push-pull RESET, held 140 ms minimum (pp. 1, 2, 4) (K4)"
+      checked: 2026-11-17
+    - url: https://atta.szlcsc.com/upload/public/pdf/source/20140228/1457706997013.pdf
+      title: TP4057 datasheet (NanJing Top Power), a distributor's copy
+      used_for: "RPROG = 1000 / IBAT, 3 kΩ for 300 mA; VFLOAT 4.2 V (p. 7 and the electrical table) (K5)"
+      checked: 2026-11-17
+    - url: https://static.chipdip.ru/lib/930/DOC012930027.pdf
+      title: AN_SY8089/SY8089A, Rev 0.9A (Silergy), a distributor's copy
+      used_for: "VREF 0.6 V and Vout = 0.6 × (1 + R1/R2); EN pulled high to turn on (p. 4 and the pin table) (K6)"
+      checked: 2026-11-17
+    - url: https://www.ti.com/lit/ds/symlink/tca8418.pdf
+      title: TCA8418 datasheet, SCPS215G (Texas Instruments, revised June 2018)
+      used_for: "the 105 kΩ internal pull-ups on ROW0-7 and COL0-9, enabled at reset (pp. 5, 34); ~INT open drain, active low (p. 3, pin 24) (K7, K15)"
+      checked: 2026-11-17
+    - url: https://dl.espressif.com/dl/schematics/NS4150B.pdf
+      title: NS4150 user manual V1.0 (Nsiway, May 2011), as Espressif hosts it
+      used_for: "CTRL high turns the amplifier on, low shuts it down, VIH 1.2 V minimum (Section 9.6, Table 4, p. 11) (K8)"
+      checked: 2026-11-17
+    - url: https://dl.espressif.com/dl/schematics/Audio_ES8311.pdf
+      title: ES8311 datasheet, Revision 7.0 (Everest, January 2020), as Espressif hosts it
+      used_for: "the chip address 0011 00x with x = CE (p. 5): CE on AGND gives 0x18 (K9)"
+      checked: 2026-11-17
+    - path: bench/2026-11-17-i2c-scan.md
+      used_for: "only 0x18, 0x34 and 0x69 answer on G8/G9, the ES8311's chip ID reads 0x83 0x11; the TCA8418's pull-ups read enabled and its unused ROW7, COL8, COL9 read high (K7, K9)"
+      checked: 2026-11-17
+    - url: https://www.espressif.com/sites/default/files/documentation/esp32-s3_technical_reference_manual_en.pdf
+      title: ESP32-S3 Technical Reference Manual v1.8 (Espressif)
+      used_for: "GPIO_STRAPPING's bits (Register 6.15 GPIO_STRAP_REG, p. 506: bit 2 GPIO46, bit 3 GPIO0, bit 4 GPIO45, bit 5 GPIO3); reset 0x15 is a Core Reset (Table 7.1-1, p. 528) and the straps latch at Chip Reset (Section 8.1, p. 534) (K17)"
+      checked: 2026-11-17
+    - path: bench/2026-11-17-boot-strap.md
+      used_for: "the ROM's boot:0x2b, decoded with the TRM: GPIO0 latched 1, GPIO45 and GPIO46 latched 0 with the codec attached (K13, K16 to K18)"
+      checked: 2026-11-17
+    - path: bench/2026-11-17-gpio-levels.md
+      used_for: "G0, G1 and G2 idle high with neither internal pull on (R18/R104, R10, R3); G11 idles high with the firmware's own pull-up on (K15 rests on the datasheet)"
+      checked: 2026-11-17
+
+renamed:   # our name -> the name Altium generated (with the vendor's designators) and the sheet it is on
+  ANT_FEED: "NetANT1_1 (Stamp-S3 sheet)"
+  BAT_SW: "NetQ2_4 (Cardputer-Adv page 1)"
+  BOOST_OUT: "NetC3_2 (Cardputer-Adv page 1)"
+  COL0: "NetR27_1 (Cardputer-Adv page 2)"
+  COL1: "NetR28_1 (Cardputer-Adv page 2)"
+  COL2: "NetR29_1 (Cardputer-Adv page 2)"
+  COL3: "NetR30_1 (Cardputer-Adv page 2)"
+  COL4: "NetR31_1 (Cardputer-Adv page 2)"
+  COL5: "NetR32_1 (Cardputer-Adv page 2)"
+  COL6: "NetR33_1 (Cardputer-Adv page 2)"
+  COL7: "NetR34_1 (Cardputer-Adv page 2)"
+  D3_A: "NetD3_1 (Cardputer-Adv page 3)"
+  IR_K: "NetIR1_2 (Cardputer-Adv page 1)"
+  JACK_DET: "NetJ7_7 (Cardputer-Adv page 3)"
+  JACK_OUT: "NetJ7_4 (Cardputer-Adv page 3)"
+  Q1_GATE: "NetQ1_3 (Cardputer-Adv page 1)"
+  Q3_GATE: "NetQ3_3 (Cardputer-Adv page 1)"
+  RF_MATCH: "NetC2_1 (Stamp-S3 sheet)"
+  SD_CLK: "NetD10_1 (Cardputer-Adv page 1)"
+  SD_CS: "NetD12_1 (Cardputer-Adv page 1)"
+  SD_MISO: "NetD9_1 (Cardputer-Adv page 1)"
+  SD_MOSI: "NetD11_1 (Cardputer-Adv page 1)"
+  SPK_N: "NetC19_2 (Cardputer-Adv page 3)"
+  SPK_P: "NetC20_2 (Cardputer-Adv page 3)"
+  SW1_2: "NetR9_2 (Cardputer-Adv page 1)"
+  U101_CHIP_PU: "NetC24_2 (Stamp-S3 sheet)"
+  U101_U0TXD: "NetR5_1 (Stamp-S3 sheet)"
+  U101_VDD3P3: "NetL2_1 (Stamp-S3 sheet)"
+  U104_EN: "NetR16_2 (Stamp-S3 sheet)"
+  U104_SW: "NetC15_1 (Stamp-S3 sheet)"
+  U1_PROG: "NetR5_2 (Cardputer-Adv page 1)"
+  U1_VCC: "NetC1_2 (Cardputer-Adv page 1)"
+  U2_FB: "NetR4_1 (Cardputer-Adv page 1)"
+  U2_IN: "NetC4_2 (Cardputer-Adv page 1)"
+  U2_LX: "NetL1_2 (Cardputer-Adv page 1)"
+  U4_FB: "NetR11_1 (Cardputer-Adv page 1)"
+  U4_LX: "NetL2_1 (Cardputer-Adv page 1)"
+  U5_BYPASS: "NetC16_1 (Cardputer-Adv page 3)"
+  U5_INN: "NetC15_1 (Cardputer-Adv page 3)"
+  U5_INN_R: "NetC15_2 (Cardputer-Adv page 3)"
+  U5_INP: "NetC13_1 (Cardputer-Adv page 3)"
+  U5_INP_R: "NetC13_2 (Cardputer-Adv page 3)"
+  U5_VCC: "NetC17_2 (Cardputer-Adv page 3)"
+  U5_VON: "NetFB2_1 (Cardputer-Adv page 3)"
+  U5_VOP: "NetFB1_1 (Cardputer-Adv page 3)"
+  U6_ADCVREF: "NetC28_2 (Cardputer-Adv page 3)"
+  U6_DACVREF: "NetC29_2 (Cardputer-Adv page 3)"
+  U6_MIC1N: "NetC23_2 (Cardputer-Adv page 3)"
+  U6_MIC1P: "NetC22_2 (Cardputer-Adv page 3)"
+  U6_OUTP: "NetC30_1 (Cardputer-Adv page 3)"
+  U6_VMID: "NetC24_2 (Cardputer-Adv page 3)"
+  U7_SDO: "NetR43_2 (Cardputer-Adv page 3)"
+  U7_VDD: "NetC25_2 (Cardputer-Adv page 3)"
+  U8_VDD: "NetC33_2 (Cardputer-Adv page 3)"
+  U9_RESET: "NetR38_2 (Cardputer-Adv page 2)"
+  USB_CC1: "NetJ2_A5 (Stamp-S3 sheet)"
+  USB_CC2: "NetJ2_B5 (Stamp-S3 sheet)"
+  USB_VBUS: "NetF1_1 (Stamp-S3 sheet)"
+  X101_1: "NetC9_1 (Stamp-S3 sheet)"
+
+aliases:   # the module's net name -> the carrier net it is mated to through M101 and P1/P2
+  GPIO0: G0
+  GPIO1: GI
+  GPIO2: GO
+  GPIO3: G3
+  GPIO4: G4
+  GPIO5: G5
+  GPIO6: G6
+  GPIO7: G7
+  GPIO8: G8
+  GPIO9: G9
+  GPIO10: G10
+  GPIO11: G11
+  GPIO12: G12
+  GPIO13: G13
+  GPIO14: G14
+  GPIO15: G15
+  GPIO39: G39
+  GPIO40: G40
+  GPIO41: G41
+  GPIO42: G42
+  GPIO46: G46
+  RX: G44
+  TX: G43
+  VDD_3V3: "+3.3V"
+  VIN_5V: "+5VIN"
+
+rails:   # nominal: the voltage the net's name states (3V3, 5V), USB's 5 V for VBUS, the
+         # printed divider for BOOST_OUT, the cell for BAT and the two VBAT nets
+  USB_VBUS:
+    nominal: "5 V"
+    from: J102
+    what: "USB-C VBUS on the module (J102), into the fuse F101 6V/1A/PPTC."
+  "+5VIN":
+    nominal: "5 V"
+    from: F101
+    what: "USB VBUS after F101 (the module's VIN_5V, on M101 pin 13 / P1 pin 13). Feeds the module's buck U104 and its LCD connector J101 pin 12, and on the carrier the charger U1 (through R1 0.8Ω), the supervisor U3, D1 into VBAT_OUT, SW2 and EXT P3 pin 14."
+  BAT:
+    nominal: "Li-ion cell"
+    from: "J1, J8"
+    what: "The battery connectors J1 (BAT+ pin 2, BAT- pin 1) and J8 (pin 1, pin 2 GND); to Q2."
+  VBAT_IN:
+    nominal: "Li-ion cell"
+    from: "U1, Q3"
+    what: "U1 TP4057 charger output (BAT, PROG R5 3.3KΩ); joined to BAT through Q2 and Q3, back to back (Q2's gate on GND; SW1 sets Q3's through R9). Divided by R8 / R12 100KΩ to G10."
+  VBAT_OUT:
+    nominal: "VBAT_IN or +5VIN"
+    from: "Q1, D1"
+    what: "Q1 from VBAT_IN, its gate held by the CN809J U3 (RESET, watching +5VIN: low below 4.00 V, so Q1 conducts only without USB) and R7 100KΩ to GND; D1 SS34 from +5VIN. Feeds the boost U2 (through R2 0Ω) and the buck U4."
+    enable: "Q1 gate: U3 RESET"
+  BOOST_OUT:
+    nominal: "5.29 V"
+    from: U2
+    what: "U2 SY7088 boost from VBAT_OUT through L1 3015 1.5uH; R4 75KΩ over R6 22KΩ on FB, by the printed formula Vout = 1.2V*(R1/R2+1): 5.29 V. To D2."
+  "+5VOUT":
+    nominal: "5 V"
+    from: D2
+    what: "BOOST_OUT through D2 SS34. To SW2 (Grove), FPC1 pin 4 and EXT P3 pin 12."
+  "+5VGrove":
+    nominal: "5 V"
+    from: SW2
+    what: "SW2 picks +5VOUT (pin 1) or +5VIN (pin 3) for the Grove port J2 pin 3."
+  "+3.3V":
+    nominal: "3.3 V"
+    from: "U4, U104"
+    what: "U4 SY8089 buck from VBAT_OUT through L2 3015 4.7uH (R11 68KΩ over R13 15KΩ on FB: 0.6 V × (1 + 68K/15K) = 3.32 V); and the module's U104 JW5712 buck from +5VIN through L104 (\"IOUT: 0~0.6A\" printed), the module's VDD_3V3, joined through M101 pin 28 / P2 pin 1. Supplies the ESP32-S3, the keyboard scanner U9, the motion sensor (through FB7), the codec (through R24), the amplifier U5 (through FB3), the microphone (through R41), the microSD card, the LCD connectors J101 / J103 (pin 2) and the backlight switch U102, FPC1 pin 2 and the pull-ups."
+    enable: "U4: EN tied to IN; U104: EN pulled up to +5VIN by R116 100K/1%"
+  BL_3V3:
+    nominal: "3.3 V"
+    from: U102
+    what: "U102 AW35122FDR load switch from +3.3V. Supplies the LCD backlight (J101 and J103 pin 8) and the RGB LED U103."
+    enable: "DISP_BL (GPIO38)"
+  FLASH_VCC:
+    nominal: "3.3 V"
+    from: U101
+    what: "The ESP32-S3FN8's VDD_SPI pin (29), decoupled by C104 and C126: the supply of the flash in the package, 3.3 V (the FN8's VDD_SPI voltage) from VDD3P3_RTC through RSPI; GPIO45, unconnected, latches low, which selects 3.3 V unless an eFuse forces VDD_SPI."
+  AVDD:
+    nominal: "3.3 V"
+    from: R24
+    what: "From +3.3V through R24 33R/1%. The ES8311's PVDD, DVDD and AVDD."
+  AGND:
+    nominal: "0 V"
+    from: R26
+    what: "Audio ground, joined to GND at one point through R26 0Ω."
+
+i2c:
+  bus: {sda: G8 (GPIO8), scl: G9 (GPIO9), pullups: "R35 (SDA) and R36 (SCL), 3.3KΩ to +3.3V"}
+  devices:
+    - {ref: U9, part: TCA8418RTWR, address: "0x34", source: "\"7-bit Address 34H\" printed beside U9 (carrier page 2)"}
+    - {ref: U7, part: BMI270, address: "0x69", source: "\"7-bit Address 69H\" printed beside U7 (carrier page 3); SDO (pin 1) pulled up by R43"}
+    - {ref: U6, part: ES8311, address: "0x18", source: "not printed; Kleidos addition K9: the ES8311 datasheet's address 0011 00x with x = CE, and CE (pin 20) is on AGND; M5Unified es8311_i2c_addr0 = 0x18 and the bench scan (see source.also_read) agree"}
+  also_on_bus: "FPC1 pins 6 (IO2, SDA) and 7 (IO3, SCL); EXT P3 pins 11 (SDA) and 10 (SCL)"
+  grove: "A second pair, GI (GPIO1) and GO (GPIO2), goes to the Grove port J2 (IIC_SCL pin 1, IIC_SDA pin 2) with R10 and R3 10KΩ up to +3.3V; no device on the board sits on it."
+
+esp32_gpio:   # U101 (ESP32-S3FN8) pin -> GPIO, net, what it does
+  GPIO0: {pin: 5, net: G0, what: "Boot strap, weak pull-up at reset; low at reset, with GPIO46 low, selects download boot. R104 (module) and R18 (carrier) 10K up to +3.3V; S101 (module) and BTN2 (carrier) to GND"}
+  GPIO1: {pin: 6, net: GI, what: "Grove J2 pin 1 (IIC_SCL), R10 10KΩ up"}
+  GPIO2: {pin: 7, net: GO, what: "Grove J2 pin 2 (IIC_SDA), R3 10KΩ up"}
+  GPIO3: {pin: 8, net: G3, what: "EXT P3 pin 1 (RESET); strap (JTAG signal source), floating at reset"}
+  GPIO4: {pin: 9, net: G4, what: "EXT P3 pin 2 (INT)"}
+  GPIO5: {pin: 10, net: G5, what: "EXT P3 pin 7 (CS)"}
+  GPIO6: {pin: 11, net: G6, what: "EXT P3 pin 3 (BUSY)"}
+  GPIO7: {pin: 12, net: G7, what: "FPC1 pin 5 (IO1)"}
+  GPIO8: {pin: 13, net: G8, what: "I2C SDA: U9 TCA8418, U7 BMI270, U6 ES8311 (CDATA); FPC1 pin 6, EXT P3 pin 11; R35 3.3KΩ up"}
+  GPIO9: {pin: 14, net: G9, what: "I2C SCL: U9, U7, U6 (CCLK); FPC1 pin 7, EXT P3 pin 10; R36 3.3KΩ up"}
+  GPIO10: {pin: 15, net: G10, what: "Battery voltage: R8 / R12 100KΩ divider from VBAT_IN, C10 100nF"}
+  GPIO11: {pin: 16, net: G11, what: "U9 TCA8418 ~INT: open drain, active low; R37 3.3KΩ up"}
+  GPIO12: {pin: 17, net: G12, what: "microSD CS through R19 33Ω"}
+  GPIO13: {pin: 18, net: G13, what: "EXT P3 pin 9 (GPS-RX)"}
+  GPIO14: {pin: 19, net: G14, what: "microSD MOSI through R20 33Ω; EXT P3 pin 5 (MOSI)"}
+  GPIO15: {pin: 21, net: G15, what: "XTAL_32K_P pin; EXT P3 pin 8 (GPS-TX)"}
+  GPIO16: {pin: 22, net: GPIO16, what: "XTAL_32K_N pin; LCD FPC J101 pin 9"}
+  GPIO17: {pin: 23, net: GPIO17, what: "LCD FPC J101 pin 10"}
+  GPIO18: {pin: 24, net: GPIO18, what: "LCD FPC J101 pin 11"}
+  GPIO19: {pin: 25, net: USB_DU_N, what: "USB D- through the choke L105"}
+  GPIO20: {pin: 26, net: USB_DU_P, what: "USB D+ through the choke L105"}
+  GPIO21: {pin: 27, net: GPIO21, what: "RGB LED U103 DI (label SK_DIN)"}
+  GPIO26: {pin: 28, net: "NC"}
+  GPIO33: {pin: 38, net: DISP_RST, what: "LCD reset (J101 / J103 pin 6)"}
+  GPIO34: {pin: 39, net: DISP_RS, what: "LCD data/command (pin 5)"}
+  GPIO35: {pin: 40, net: DISP_MOSI, what: "LCD SPI data (pin 4)"}
+  GPIO36: {pin: 41, net: DISP_SCK, what: "LCD SPI clock (pin 3)"}
+  GPIO37: {pin: 42, net: DISP_CS, what: "LCD chip select (pin 1)"}
+  GPIO38: {pin: 43, net: DISP_BL, what: "U102 EN: switches BL_3V3 (backlight and RGB LED)"}
+  GPIO39: {pin: 44, net: G39, what: "MTCK pin; microSD MISO through R22 33Ω; EXT P3 pin 6 (MISO)"}
+  GPIO40: {pin: 45, net: G40, what: "MTDO pin; microSD CLK through R21 33Ω; EXT P3 pin 4 (SCK)"}
+  GPIO41: {pin: 47, net: G41, what: "MTDI pin; ES8311 SCLK (pin 6)"}
+  GPIO42: {pin: 48, net: G42, what: "MTMS pin; ES8311 DSDIN (pin 9)"}
+  GPIO43: {pin: 49, net: U101_U0TXD, what: "U0TXD pin; through R105 510R/1% to G43 (module TX): ES8311 LRCK (pin 8)"}
+  GPIO44: {pin: 50, net: G44, what: "U0RXD pin (module RX); IR emitter IR1 anode"}
+  GPIO45: {pin: 51, net: "NC", what: "strap, weak pull-down: low at reset selects 3.3 V for VDD_SPI (FLASH_VCC) unless an eFuse forces it"}
+  GPIO46: {pin: 52, net: G46, what: "ES8311 ASDOUT (pin 7); strap, weak pull-down: with G0 picks the boot mode, low for download boot"}
+  GPIO47: {pin: 37, net: "NC", what: "SPICLK_P pin"}
+  GPIO48: {pin: 36, net: "NC", what: "SPICLK_N pin"}
+
+pulls:   # every resistor with one end on a rail or ground and the other on a signal
+  - {signal: U1_VCC, up: "+5VIN", via: R1, value: "0.8Ω"}
+  - {signal: U2_IN, up: VBAT_OUT, via: R2, value: "0Ω"}
+  - {signal: GO, up: "+3.3V", via: R3, value: "10KΩ"}
+  - {signal: U2_FB, up: BOOST_OUT, via: R4, value: "75KΩ"}
+  - {signal: U1_PROG, down: GND, via: R5, value: "3.3KΩ"}
+  - {signal: U2_FB, down: GND, via: R6, value: "22KΩ"}
+  - {signal: Q1_GATE, down: GND, via: R7, value: "100KΩ"}
+  - {signal: G10, up: VBAT_IN, via: R8, value: "100KΩ"}
+  - {signal: GI, up: "+3.3V", via: R10, value: "10KΩ"}
+  - {signal: U4_FB, up: "+3.3V", via: R11, value: "68KΩ"}
+  - {signal: G10, down: GND, via: R12, value: "100KΩ"}
+  - {signal: U4_FB, down: GND, via: R13, value: "15KΩ"}
+  - {signal: IR_K, down: GND, via: R14, value: "22R/1%"}
+  - {signal: EN, up: "+3.3V", via: R15, value: "10KΩ"}
+  - {signal: U5_INN_R, down: AGND, via: R17, value: "100K/1%"}
+  - {signal: G0, up: "+3.3V", via: R18, value: "10KΩ"}
+  - {signal: AMP_EN, up: "+3.3V", via: R23, value: "10K/1%"}
+  - {signal: G8, up: "+3.3V", via: R35, value: "3.3KΩ"}
+  - {signal: G9, up: "+3.3V", via: R36, value: "3.3KΩ"}
+  - {signal: G11, up: "+3.3V", via: R37, value: "3.3KΩ"}
+  - {signal: U9_RESET, up: "+3.3V", via: R38, value: "10KΩ"}
+  - {signal: D3_A, up: "+3.3V", via: R39, value: "100K/1%"}
+  - {signal: U8_VDD, up: "+3.3V", via: R41, value: "100R/1%"}
+  - {signal: JACK_OUT, down: AGND, via: R42, value: 1K}
+  - {signal: U7_SDO, up: "+3.3V", via: R43, value: "3.3KΩ"}
+  - {signal: USB_CC1, down: GND, via: R101, value: "5.1K/1%"}
+  - {signal: USB_CC2, down: GND, via: R102, value: "5.1K/1%"}
+  - {signal: G0, up: "+3.3V", via: R104, value: "10K/1%"}
+  - {signal: EN, up: "+3.3V", via: R107, value: "10K/1%"}
+  - {signal: U104_EN, up: "+5VIN", via: R116, value: "100K/1%"}
+
+kleidos:   # Kleidos additions to and corrections of the vendor's print: each marked on the drawing and listed
+  # on page 1. The datasheets and documents are cited in full under source.also_read; a bench path is under
+  # this folder; improvements.md holds the triage (T-ids) and README.md lists what is still open.
+  - id: K1
+    kind: addition
+    what: "Q1_GATE drives Q1, a 12 V P-channel MOSFET: drain on VBAT_IN, source on VBAT_OUT."
+    element: {net: Q1_GATE}
+    source:
+      type: datasheet
+      cite: "LP3218DT1G datasheet Rev.B, p. 1, pin configuration: 1, 2, 5, 6 drain, 3 gate, 4 source"
+  - id: K2
+    kind: addition
+    what: "BAT_SW joins the sources of Q2 (drain on BAT, gate on GND) and Q3, back to back."
+    element: {net: BAT_SW}
+    source:
+      type: datasheet
+      cite: "LP3218DT1G datasheet Rev.B, p. 1, pin configuration"
+  - id: K3
+    kind: addition
+    what: "Q3_GATE drives Q3, P-channel: drain on VBAT_IN, source on BAT_SW."
+    element: {net: Q3_GATE}
+    source:
+      type: datasheet
+      cite: "LP3218DT1G datasheet Rev.B, p. 1, pin configuration"
+  - id: K4
+    kind: addition
+    what: "VBAT_OUT takes the cell through Q1 only while +5VIN is under 4.00 V: U3 holds RESET low there (push-pull, 140 ms min.)."
+    element: {rail: VBAT_OUT}
+    source:
+      type: datasheet
+      cite: "CN803/809/810 datasheet Rev 0, pp. 2, 4 (CN809J: 4.00 V, active low)"
+  - id: K5
+    kind: addition
+    what: "R5 3.3KΩ sets U1's charge current, about 0.30 A (float 4.2 V)."
+    element: {pull: R5}
+    source:
+      type: datasheet
+      cite: "TP4057 datasheet, p. 7: RPROG = 1000 / IBAT; VFLOAT 4.2 V"
+  - id: K6
+    kind: addition
+    what: "+3.3V from U4 is 0.6 V × (1 + 68K/15K) = 3.32 V."
+    element: {rail: "+3.3V"}
+    source:
+      type: datasheet
+      cite: "AN_SY8089 Rev 0.9A, p. 2 (pin table: Vout = 0.6 × (1 + R1/R2)), p. 4 (VREF 0.6 V)"
+  - id: K7
+    kind: addition
+    what: "U9's ROW0-7 and COL0-9 have 105 kΩ pull-ups, on from reset: they hold the unconnected ROW7 (pin 1), COL8 and COL9."
+    element: {pin: U9.1}
+    source:
+      type: datasheet
+      cite: "TCA8418 SCPS215G, pp. 5, 34; bench/2026-11-17-i2c-scan.md"
+  - id: K8
+    kind: addition
+    what: "AMP_EN high runs U5, low shuts it down: on unless a plug is in."
+    element: {net: AMP_EN}
+    source:
+      type: datasheet
+      cite: "NS4150 user manual V1.0, Section 9.6, Table 4, p. 11; Cardputer-Adv docs page: a 3.5 mm plug disables the amplifier"
+  - id: K9
+    kind: addition
+    what: "The ES8311 U6 answers at I2C address 0x18 (CE on AGND)."
+    element: {i2c: U6}
+    source:
+      type: datasheet
+      cite: "ES8311 datasheet Rev 7.0, p. 5: 0011 00x, x = CE; bench/2026-11-17-i2c-scan.md"
+  - id: K10
+    kind: addition
+    what: "ANT101, on ANT_FEED, is a 2.4 GHz 3D antenna."
+    element: {net: ANT_FEED}
+    source:
+      type: vendor-doc
+      cite: "Stamp-S3A docs page, specifications"
+  - id: K11
+    kind: addition
+    what: "U103, the RGB LED GPIO21 drives, is a WS2812B-2020."
+    element: {net: GPIO21}
+    source:
+      type: vendor-doc
+      cite: "Stamp-S3A docs page, specifications"
+  - id: K12
+    kind: correction
+    what: "J102's block is a USB-C port: its part is USB-TYPEC, with CC pull-downs."
+    vendor: "the block is titled Type-A USB"
+    element: {part: J102}
+    source:
+      type: vendor-doc
+      cite: "Cardputer-Adv and Stamp-S3A docs pages (USB Type-C); the sheet's part USB-TYPEC, R101, R102"
+  - id: K13
+    kind: addition
+    what: "GPIO0 is a strap, weak pull-up at reset: low, with GPIO46 low, selects download boot."
+    element: {gpio: GPIO0}
+    source:
+      type: datasheet
+      cite: "ESP32-S3 datasheet v2.2, Tables 3-1, 3-3, pp. 32-33; bench/2026-11-17-boot-strap.md"
+  - id: K14
+    kind: addition
+    what: "GPIO3 is a strap (JTAG signal source), floating at reset."
+    element: {gpio: GPIO3}
+    source:
+      type: datasheet
+      cite: "ESP32-S3 datasheet v2.2, Table 3-1, p. 32"
+  - id: K15
+    kind: addition
+    what: "GPIO11, U9 ~INT, is open drain and active low."
+    element: {gpio: GPIO11}
+    source:
+      type: datasheet
+      cite: "TCA8418 SCPS215G, p. 3, pin 24"
+  - id: K16
+    kind: addition
+    what: "GPIO45, unconnected, is a strap with a weak pull-down: low selects VDD_SPI 3.3 V unless an eFuse forces it."
+    element: {gpio: GPIO45}
+    source:
+      type: datasheet
+      cite: "ESP32-S3 datasheet v2.2, Tables 3-1, 3-4, pp. 32, 34; bench/2026-11-17-boot-strap.md"
+  - id: K17
+    kind: addition
+    what: "GPIO46 is a strap, weak pull-down; it latches low with the codec attached."
+    element: {gpio: GPIO46}
+    source:
+      type: bench
+      cite: "bench/2026-11-17-boot-strap.md (boot:0x2b, bit 2 = GPIO46 by ESP32-S3 TRM v1.8, Register 6.15); ESP32-S3 datasheet v2.2, Tables 3-1, 3-3"
+  - id: K18
+    kind: addition
+    what: "FLASH_VCC is 3.3 V, the FN8's VDD_SPI voltage, from VDD3P3_RTC through RSPI."
+    element: {rail: FLASH_VCC}
+    source:
+      type: datasheet
+      cite: "ESP32-S3 datasheet v2.2, Table 1-1, p. 13, Table 3-4, p. 34; bench/2026-11-17-boot-strap.md"
+  - id: K19
+    kind: correction
+    what: "C114 is 12pF, X101's second load capacitor beside C109."
+    vendor: "the value printed twice, 12pF 12pF"
+    element: {part: C114}
+    source:
+      type: vendor-doc
+      cite: "Stamp-S3 schematic v0.3.3, p. 1: both printed fields read 12pF, as C109 on X101's other pin does"
+
+components:
+  ANT101:
+    value: "2.4 GHz 3D antenna"
+    page: "Stamp-S3 p1"
+    note: "The sheet prints no value; Kleidos addition K10: the Stamp-S3A documentation names a 2.4 GHz 3D antenna. Pin 1 the feed, pin 2 GND."
+    pins:
+      "1": ANT_FEED
+      "2": GND
+  BTN1:
+    value: "SW-PB"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": EN
+      "3": GND
+  BTN2:
+    value: "SW-PB"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G0
+      "3": GND
+  C1:
+    value: 10uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": U1_VCC
+  C2:
+    value: 10uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": VBAT_OUT
+  C3:
+    value: 22uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": BOOST_OUT
+  C4:
+    value: 22uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": U2_IN
+  C5:
+    value: 1uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": U2_IN
+  C6:
+    value: 10uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": VBAT_IN
+  C7:
+    value: 100nF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": BAT
+      "2": GND
+  C8:
+    value: 22uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C9:
+    value: 100nF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C10:
+    value: 100nF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G10
+      "2": GND
+  C11:
+    value: 100nF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": VBAT_OUT
+  C12:
+    value: 22uF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": VBAT_OUT
+  C13:
+    value: 100nF/50V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U5_INP
+      "2": U5_INP_R
+  C14:
+    value: 100nF
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": "+5VGrove"
+  C15:
+    value: 100nF/50V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U5_INN
+      "2": U5_INN_R
+  C16:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U5_BYPASS
+      "2": GND
+  C17:
+    value: 10uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": GND
+      "2": U5_VCC
+  C18:
+    value: "100nF 0402 10% 16V"
+    page: "Cardputer-Adv p1"
+    note: "Value printed on four lines: 100nF, 0402, 10%, 16V."
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C19:
+    value: 100pF/50V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": GND
+      "2": SPK_N
+  C20:
+    value: 100pF/50V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": GND
+      "2": SPK_P
+  C21:
+    value: 100nF
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C22:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": MIC_P
+      "2": U6_MIC1P
+  C23:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": MIC_N
+      "2": U6_MIC1N
+  C24:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AGND
+      "2": U6_VMID
+  C25:
+    value: 10uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": GND
+      "2": U7_VDD
+  C26:
+    value: 10uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AGND
+      "2": AVDD
+  C27:
+    value: 100nF
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": GND
+      "2": U7_VDD
+  C28:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AGND
+      "2": U6_ADCVREF
+  C29:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AGND
+      "2": U6_DACVREF
+  C30:
+    value: 22uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U6_OUTP
+      "2": DAC_P
+  C31:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AGND
+      "2": AVDD
+  C32:
+    value: 1uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": GND
+      "2": HP_DET
+  C33:
+    value: 10uF/10V
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AGND
+      "2": U8_VDD
+  C101:
+    value: 1.8pF
+    page: "Stamp-S3 p1"
+    pins:
+      "1": ESP_LNA
+      "2": GND
+  C102:
+    value: 2.2pF
+    page: "Stamp-S3 p1"
+    pins:
+      "1": RF_MATCH
+      "2": GND
+  C103:
+    value: 100nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  C104:
+    value: 1uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": FLASH_VCC
+  C105:
+    value: 10uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C106:
+    value: 1uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C107:
+    value: 100nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  C108:
+    value: 3pF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  C109:
+    value: 12pF
+    page: "Stamp-S3 p1"
+    pins:
+      "1": X101_1
+      "2": GND
+  C110:
+    value: 100nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  C111:
+    value: 100nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  C112:
+    value: 1uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C113:
+    value: 1nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  C114:
+    value: 12pF
+    page: "Stamp-S3 p1"
+    note: "Printed \"12pF 12pF\" (the value twice); Kleidos correction K19."
+    pins:
+      "1": XTAL_40M_N
+      "2": GND
+  C115:
+    value: 1nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": U104_SW
+      "2": GND
+  C116:
+    value: 10uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": "+5VIN"
+  C117:
+    value: 10uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": BL_3V3
+  C118:
+    value: 100nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+5VIN"
+      "2": GND
+  C119:
+    value: 4.3nH
+    page: "Stamp-S3 p1"
+    note: "A capacitor symbol whose value reads 4.3nH, as printed."
+    pins:
+      "1": ANT_FEED
+      "2": GND
+  C120:
+    value: "NC"
+    page: "Stamp-S3 p1"
+    note: "Not fitted (NC)."
+    pins:
+      "1": RF_MATCH
+      "2": GND
+  C121:
+    value: 10uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C122:
+    value: 10uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C123:
+    value: 1uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": EN
+      "2": GND
+  C124:
+    value: 3pF
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": U101_CHIP_PU
+  C125:
+    value: 10uF/10V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": "+3.3V"
+  C126:
+    value: 100nF/25V
+    page: "Stamp-S3 p1"
+    pins:
+      "1": FLASH_VCC
+      "2": GND
+  D1:
+    value: SS34
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": "+5VIN"
+      "2": VBAT_OUT
+  D2:
+    value: SS34
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": BOOST_OUT
+      "2": "+5VOUT"
+  D3:
+    value: 1N4148WT
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": D3_A
+      "2": HP_DET
+  D4:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": EN
+      "2": GND
+  D5:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G0
+      "2": GND
+  D6:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": GI
+  D7:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": GO
+  D8:
+    value: PESDNC2FD5VB
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": "+5VGrove"
+      "2": GND
+  D9:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": SD_MISO
+      "2": GND
+  D10:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": SD_CLK
+      "2": GND
+  D11:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": SD_MOSI
+      "2": GND
+  D12:
+    value: PESDNC2FD3V3B
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": SD_CS
+      "2": GND
+  D13:
+    value: PESDNC2FD5VB
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  D101:
+    value: PESDNC2FD3V3B
+    page: "Stamp-S3 p1"
+    pins:
+      "1": G0
+      "2": GND
+  D102:
+    value: PESDNC2FD3V3B
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+3.3V"
+      "2": GND
+  D103:
+    value: PESDNC2FD3V3B
+    page: "Stamp-S3 p1"
+    pins:
+      "1": USB_D_P
+      "2": GND
+  D104:
+    value: PESDNC2FD3V3B
+    page: "Stamp-S3 p1"
+    pins:
+      "1": USB_D_N
+      "2": GND
+  D114:
+    value: PESDNC2FD5VB
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+5VIN"
+      "2": GND
+  F101:
+    value: 6V/1A/PPTC
+    page: "Stamp-S3 p1"
+    pins:
+      "1": USB_VBUS
+      "2": "+5VIN"
+  FB1:
+    value: FB
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U5_VOP
+      "2": SPK_P
+  FB2:
+    value: FB
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U5_VON
+      "2": SPK_N
+  FB3:
+    value: FB
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U5_VCC
+      "2": "+3.3V"
+  FB7:
+    value: "120Ω/MB"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U7_VDD
+      "2": "+3.3V"
+  FPC1:
+    value: "FPC-8P-0.5"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND   # GND
+      "2": "+3.3V"   # 3V3
+      "3": GND   # GND
+      "4": "+5VOUT"   # 5V
+      "5": G7   # IO1
+      "6": G8   # IO2
+      "7": G9   # IO3
+      "8": GND   # GND
+  IR1:
+    value: IR
+    page: "Cardputer-Adv p1"
+    note: "IR emitter: pin 1 (anode) on G44, pin 2 (cathode) through R14 to GND."
+    pins:
+      "1": G44
+      "2": IR_K
+  J1:
+    value: Header 2
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": BAT
+  J2:
+    value: "HY-2.0_IIC"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GI   # IIC_SCL
+      "2": GO   # IIC_SDA
+      "3": "+5VGrove"   # VCC
+      "4": GND   # GND
+  J3:
+    value: "TF-015"
+    page: "Cardputer-Adv p1"
+    pins:
+      "0": GND   # GPAD
+      "2": SD_CS   # CS
+      "3": SD_MOSI   # MOSI
+      "4": "+3.3V"   # VCC
+      "5": SD_CLK   # CLK
+      "6": GND   # GND
+      "7": SD_MISO   # MISO
+  J4:
+    value: Header 2
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": SPK_N
+      "2": SPK_P
+  J5:
+    value: "pad (no value printed)"
+    page: "Cardputer-Adv p1"
+    note: "One-pin pad on GND."
+    pins:
+      "1": GND
+  J6:
+    value: "pad (no value printed)"
+    page: "Cardputer-Adv p1"
+    note: "One-pin pad on GND."
+    pins:
+      "1": GND
+  J7:
+    value: "PJ-342"
+    page: "Cardputer-Adv p3"
+    note: "3.5 mm jack; pin 6 is drawn with nothing else on it."
+    pins:
+      "2": AGND
+      "3": AGND
+      "4": JACK_OUT
+      "5": JACK_OUT
+      "6": "NC"
+      "7": JACK_DET
+  J8:
+    value: Header 2
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": BAT
+      "2": GND
+  J101:
+    value: "HDGC/0.5K-HX-12PWB/NC"
+    page: "Stamp-S3 p1"
+    note: "LCD FPC, 0.5 mm, 12 contacts; the printed part carries a /NC suffix (the vendor's; its meaning is not printed)."
+    pins:
+      "1": DISP_CS
+      "2": "+3.3V"
+      "3": DISP_SCK
+      "4": DISP_MOSI
+      "5": DISP_RS
+      "6": DISP_RST
+      "7": GND
+      "8": BL_3V3
+      "9": GPIO16
+      "10": GPIO17
+      "11": GPIO18
+      "12": "+5VIN"
+  J102:
+    value: "USB-TYPEC"
+    page: "Stamp-S3 p1"
+    note: "USB-C receptacle; the sheet's block is titled \"Type-A USB\" but the part is USB-TYPEC: Kleidos correction K12."
+    pins:
+      "A5": USB_CC1   # CC1
+      "A6": USB_D_P   # DP1
+      "A7": USB_D_N   # DN1
+      "B5": USB_CC2   # CC2
+      "B6": USB_D_P   # DP2
+      "B7": USB_D_N   # DN2
+      "GND": GND   # GND
+      "SHELL": GND   # SHELL
+      "VBUS": USB_VBUS   # VCC
+  J103:
+    value: "HDGC/0.5K-HX-8PWB/NC"
+    page: "Stamp-S3 p1"
+    note: "LCD FPC, 0.5 mm, 8 contacts; the printed part carries a /NC suffix (the vendor's; its meaning is not printed)."
+    pins:
+      "1": DISP_CS   # PIN1
+      "2": "+3.3V"   # PIN2
+      "3": DISP_SCK   # PIN3
+      "4": DISP_MOSI   # PIN4
+      "5": DISP_RS   # PIN5
+      "6": DISP_RST   # PIN6
+      "7": GND   # PIN7
+      "8": BL_3V3   # PIN8
+  JP102:
+    value: "pad (no value printed)"
+    page: "Stamp-S3 p1"
+    note: "One-pin pad on USB_DU_N."
+    pins:
+      "1": USB_DU_N
+  JP103:
+    value: "pad (no value printed)"
+    page: "Stamp-S3 p1"
+    note: "One-pin pad on USB_DU_P."
+    pins:
+      "1": USB_DU_P
+  L1:
+    value: 3015 1.5uH
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": U2_IN
+      "2": U2_LX
+  L2:
+    value: 3015 4.7uH
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": U4_LX
+      "2": "+3.3V"
+  L101:
+    value: 2.7nH
+    page: "Stamp-S3 p1"
+    pins:
+      "1": ESP_LNA
+      "2": RF_MATCH
+  L102:
+    value: 2nH
+    page: "Stamp-S3 p1"
+    pins:
+      "1": U101_VDD3P3
+      "2": "+3.3V"
+  L103:
+    value: 10nH
+    page: "Stamp-S3 p1"
+    pins:
+      "1": XTAL_40M_P
+      "2": X101_1
+  L104:
+    value: MWTC201608S2R2
+    page: "Stamp-S3 p1"
+    note: The sheet prints the part number MWTC201608S2R2 beside L4 and no other value.
+    pins:
+      "1": "+3.3V"
+      "2": U104_SW
+  L105:
+    value: "common-mode choke (no value printed)"
+    page: "Stamp-S3 p1"
+    note: "USB data-line choke: pins 1-2 and 4-3 are its two windings, as drawn."
+    pins:
+      "1": USB_DU_P
+      "2": USB_D_P
+      "3": USB_D_N
+      "4": USB_DU_N
+  L106:
+    value: 0R
+    page: "Stamp-S3 p1"
+    pins:
+      "1": RF_MATCH
+      "2": ANT_FEED
+  L107:
+    value: 0R
+    page: "Stamp-S3 p1"
+    pins:
+      "1": U101_CHIP_PU
+      "2": EN
+  M101:
+    value: "STAMP-S3M"
+    page: "Stamp-S3 p1"
+    note: "The module's own castellated pins (STAMP-S3M); they land on the carrier's sockets P1 (pins 1-17) and P2 (pins 18-28, P2 pin 1 = module pin 28)."
+    pins:
+      "1": GI   # G1
+      "2": GO   # G2
+      "3": G3   # G3
+      "4": G4   # G4
+      "5": G5   # G5
+      "6": G6   # G6
+      "7": G7   # G7
+      "8": G8   # G8
+      "9": G9   # G9
+      "10": G10   # G10
+      "11": GND   # GND
+      "12": G11   # G11
+      "13": "+5VIN"   # 5V
+      "14": G12   # G12
+      "15": G13   # G13
+      "16": G14   # G14
+      "17": G15   # G15
+      "18": GND   # GND
+      "19": G39   # G39/MTCK
+      "20": G0   # G0/Boot
+      "21": G40   # G40/MTDO
+      "22": EN   # EN
+      "23": G41   # G41/MTDI
+      "24": G44   # G44/Rx
+      "25": G42   # G42/MTMS
+      "26": G43   # G43/Tx
+      "27": G46   # G46
+      "28": "+3.3V"   # 3V3
+  P1:
+    value: Header 17
+    page: "Cardputer-Adv p1"
+    note: "Socket for the module's pins 1-17 (carrier sheet: drawn wired pin for pin to M1, footprint STAMP-S3-DIP-1.27)."
+    pins:
+      "1": GI
+      "2": GO
+      "3": G3
+      "4": G4
+      "5": G5
+      "6": G6
+      "7": G7
+      "8": G8
+      "9": G9
+      "10": G10
+      "11": GND
+      "12": G11
+      "13": "+5VIN"
+      "14": G12
+      "15": G13
+      "16": G14
+      "17": G15
+  P2:
+    value: Header 11
+    page: "Cardputer-Adv p1"
+    note: "Socket for the module's pins 18-28 (P2 pin n = module pin 29 - n)."
+    pins:
+      "1": "+3.3V"
+      "2": G46
+      "3": G43
+      "4": G42
+      "5": G44
+      "6": G41
+      "7": EN
+      "8": G40
+      "9": G0
+      "10": G39
+      "11": GND
+  P3:
+    value: "HDR-SMD_14P-P2.54"
+    page: "Cardputer-Adv p4"
+    pins:
+      "1": G3   # RESET
+      "2": G4   # INT
+      "3": G6   # BUSY
+      "4": G40   # SCK
+      "5": G14   # MOSI
+      "6": G39   # MISO
+      "7": G5   # CS
+      "8": G15   # GPS-TX
+      "9": G13   # GPS-RX
+      "10": G9   # SCL
+      "11": G8   # SDA
+      "12": "+5VOUT"   # 5VOUT
+      "13": GND   # GND
+      "14": "+5VIN"   # 5VIN
+  PHD101:
+    value: phd_3mm
+    page: "Stamp-S3 p1"
+    note: "One-pin plated hole on GND."
+    pins:
+      "1": GND
+  Q1:
+    value: LP3218DT1G
+    page: "Cardputer-Adv p1"
+    note: "8-pin symbol; pins 1, 2, 5, 6, 8 on VBAT_IN, 4 and 7 on VBAT_OUT, 3 the gate. Kleidos addition K1: a 12 V P-channel MOSFET (LP3218DT1G datasheet, DFN2020-6S: 1, 2, 5, 6 drain, 3 gate, 4 source), so 8 is the drain pad and 7 the source pad, the one assignment that fits the nets."
+    pins:
+      "1": VBAT_IN
+      "2": VBAT_IN
+      "3": Q1_GATE
+      "4": VBAT_OUT
+      "5": VBAT_IN
+      "6": VBAT_IN
+      "7": VBAT_OUT
+      "8": VBAT_IN
+  Q2:
+    value: LP3218DT1G
+    page: "Cardputer-Adv p1"
+    note: "8-pin symbol; pins 1, 2, 5, 6, 8 on BAT, 4 and 7 on BAT_SW, 3 the gate (on GND). Kleidos addition K2: drain on BAT, source on BAT_SW (LP3218DT1G datasheet)."
+    pins:
+      "1": BAT
+      "2": BAT
+      "3": GND
+      "4": BAT_SW
+      "5": BAT
+      "6": BAT
+      "7": BAT_SW
+      "8": BAT
+  Q3:
+    value: LP3218DT1G
+    page: "Cardputer-Adv p1"
+    note: "8-pin symbol; pins 1, 2, 5, 6, 8 on VBAT_IN, 4 and 7 on BAT_SW, 3 the gate. Kleidos addition K3: drain on VBAT_IN, source on BAT_SW, back to back with Q2 (LP3218DT1G datasheet)."
+    pins:
+      "1": VBAT_IN
+      "2": VBAT_IN
+      "3": Q3_GATE
+      "4": BAT_SW
+      "5": VBAT_IN
+      "6": VBAT_IN
+      "7": BAT_SW
+      "8": VBAT_IN
+  Q4:
+    value: 2N7002T
+    page: "Cardputer-Adv p3"
+    pins:
+      "D": AMP_EN   # D
+      "G": HP_DET   # G
+      "S": GND   # S
+  R1:
+    value: "0.8Ω"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": U1_VCC
+      "2": "+5VIN"
+  R2:
+    value: "0Ω"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": VBAT_OUT
+      "2": U2_IN
+  R3:
+    value: "10KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GO
+      "2": "+3.3V"
+  R4:
+    value: "75KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": U2_FB
+      "2": BOOST_OUT
+  R5:
+    value: "3.3KΩ"
+    page: "Cardputer-Adv p1"
+    note: "U1's PROG resistor. Kleidos addition K5: about 0.30 A of charge current (TP4057 datasheet, RPROG = 1000 / IBAT)."
+    pins:
+      "1": GND
+      "2": U1_PROG
+  R6:
+    value: "22KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": U2_FB
+  R7:
+    value: "100KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": Q1_GATE
+  R8:
+    value: "100KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G10
+      "2": VBAT_IN
+  R9:
+    value: "100KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": Q3_GATE
+      "2": SW1_2
+  R10:
+    value: "10KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GI
+      "2": "+3.3V"
+  R11:
+    value: "68KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": U4_FB
+      "2": "+3.3V"
+  R12:
+    value: "100KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": G10
+  R13:
+    value: "15KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": GND
+      "2": U4_FB
+  R14:
+    value: "22R/1%"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": IR_K
+      "2": GND
+  R15:
+    value: "10KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": EN
+      "2": "+3.3V"
+  R16:
+    value: "100K/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": DAC_P
+      "2": U5_INP_R
+  R17:
+    value: "100K/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AGND
+      "2": U5_INN_R
+  R18:
+    value: "10KΩ"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G0
+      "2": "+3.3V"
+  R19:
+    value: "33Ω"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G12
+      "2": SD_CS
+  R20:
+    value: "33Ω"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G14
+      "2": SD_MOSI
+  R21:
+    value: "33Ω"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G40
+      "2": SD_CLK
+  R22:
+    value: "33Ω"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": G39
+      "2": SD_MISO
+  R23:
+    value: "10K/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": "+3.3V"
+      "2": AMP_EN
+  R24:
+    value: "33R/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": "+3.3V"
+      "2": AVDD
+  R25:
+    value: "10R/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": DAC_P
+      "2": JACK_OUT
+  R26:
+    value: "0Ω"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": GND
+      "2": AGND
+  R27:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL0
+      "2": Y7
+  R28:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL1
+      "2": Y6
+  R29:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL2
+      "2": Y5
+  R30:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL3
+      "2": Y4
+  R31:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL4
+      "2": Y3
+  R32:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL5
+      "2": Y2
+  R33:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL6
+      "2": Y1
+  R34:
+    value: "22R/1%"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": COL7
+      "2": Y0
+  R35:
+    value: "3.3KΩ"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": "+3.3V"
+      "2": G8
+  R36:
+    value: "3.3KΩ"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": "+3.3V"
+      "2": G9
+  R37:
+    value: "3.3KΩ"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": "+3.3V"
+      "2": G11
+  R38:
+    value: "10KΩ"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": "+3.3V"
+      "2": U9_RESET
+  R39:
+    value: "100K/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": "+3.3V"
+      "2": D3_A
+  R40:
+    value: "1K/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": HP_DET
+      "2": JACK_DET
+  R41:
+    value: "100R/1%"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": "+3.3V"
+      "2": U8_VDD
+  R42:
+    value: 1K
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": JACK_OUT
+      "2": AGND
+  R43:
+    value: "3.3KΩ"
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": "+3.3V"
+      "2": U7_SDO
+  R101:
+    value: "5.1K/1%"
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": USB_CC1
+  R102:
+    value: "5.1K/1%"
+    page: "Stamp-S3 p1"
+    pins:
+      "1": GND
+      "2": USB_CC2
+  R104:
+    value: "10K/1%"
+    page: "Stamp-S3 p1"
+    pins:
+      "1": G0
+      "2": "+3.3V"
+  R105:
+    value: "510R/1%"
+    page: "Stamp-S3 p1"
+    pins:
+      "1": U101_U0TXD
+      "2": G43
+  R107:
+    value: "10K/1%"
+    page: "Stamp-S3 p1"
+    pins:
+      "1": EN
+      "2": "+3.3V"
+  R116:
+    value: "100K/1%"
+    page: "Stamp-S3 p1"
+    pins:
+      "1": "+5VIN"
+      "2": U104_EN
+  S1:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y7
+      "2": ROW0
+  S2:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y3
+      "2": ROW0
+  S3:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y7
+      "2": ROW1
+  S4:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y3
+      "2": ROW1
+  S5:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y7
+      "2": ROW2
+  S6:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y3
+      "2": ROW2
+  S7:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y7
+      "2": ROW3
+  S8:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y3
+      "2": ROW3
+  S9:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y7
+      "2": ROW4
+  S10:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y3
+      "2": ROW4
+  S11:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y7
+      "2": ROW5
+  S12:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y3
+      "2": ROW5
+  S13:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y7
+      "2": ROW6
+  S14:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y3
+      "2": ROW6
+  S15:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y6
+      "2": ROW0
+  S16:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y2
+      "2": ROW0
+  S17:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y6
+      "2": ROW1
+  S18:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y2
+      "2": ROW1
+  S19:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y6
+      "2": ROW2
+  S20:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y2
+      "2": ROW2
+  S21:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y6
+      "2": ROW3
+  S22:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y2
+      "2": ROW3
+  S23:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y6
+      "2": ROW4
+  S24:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y2
+      "2": ROW4
+  S25:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y6
+      "2": ROW5
+  S26:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y2
+      "2": ROW5
+  S27:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y6
+      "2": ROW6
+  S28:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y2
+      "2": ROW6
+  S29:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y5
+      "2": ROW0
+  S30:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y1
+      "2": ROW0
+  S31:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y5
+      "2": ROW1
+  S32:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y1
+      "2": ROW1
+  S33:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y5
+      "2": ROW2
+  S34:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y1
+      "2": ROW2
+  S35:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y5
+      "2": ROW3
+  S36:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y1
+      "2": ROW3
+  S37:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y5
+      "2": ROW4
+  S38:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y1
+      "2": ROW4
+  S39:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y5
+      "2": ROW5
+  S40:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y1
+      "2": ROW5
+  S41:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y5
+      "2": ROW6
+  S42:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y1
+      "2": ROW6
+  S43:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y4
+      "2": ROW0
+  S44:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y0
+      "2": ROW0
+  S45:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y4
+      "2": ROW1
+  S46:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y0
+      "2": ROW1
+  S47:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y4
+      "2": ROW2
+  S48:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y0
+      "2": ROW2
+  S49:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y4
+      "2": ROW3
+  S50:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y0
+      "2": ROW3
+  S51:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y4
+      "2": ROW4
+  S52:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y0
+      "2": ROW4
+  S53:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y4
+      "2": ROW5
+  S54:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y0
+      "2": ROW5
+  S55:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y4
+      "2": ROW6
+  S56:
+    value: "SW-PB"
+    page: "Cardputer-Adv p2"
+    pins:
+      "1": Y0
+      "2": ROW6
+  S101:
+    value: SMT_SW_1TS026A
+    page: "Stamp-S3 p1"
+    note: Pin 3 is drawn with nothing else on it.
+    pins:
+      "1": G0
+      "2": GND
+      "3": "NC"
+      "4": GND
+  SW1:
+    value: "SW-SPDT"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": BAT_SW
+      "2": SW1_2
+      "3": GND
+  SW2:
+    value: "SW-SPDT"
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": "+5VOUT"
+      "2": "+5VGrove"
+      "3": "+5VIN"
+  U1:
+    value: TP4057
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": "NC"   # ~CHRG
+      "2": GND   # GND
+      "3": VBAT_IN   # BAT
+      "4": U1_VCC   # VCC
+      "5": "NC"   # ~STDBY
+      "6": U1_PROG   # PROG
+  U2:
+    value: SY7088
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": U2_LX   # LX
+      "2": U2_LX   # LX
+      "3": U2_IN   # EN
+      "4": GND   # GND
+      "5": U2_FB   # FB
+      "6": U2_IN   # IN
+      "7": BOOST_OUT   # OUT
+      "8": BOOST_OUT   # OUT
+      "9": GND   # PGND
+  U3:
+    value: CN809J
+    page: "Cardputer-Adv p1"
+    note: "Its RESET output drives Q1's gate. Kleidos addition K4: CN809J, 4.00 V (3.89-4.11 V), active-low push-pull, held at least 140 ms (typ. 240) after +5VIN rises (CN803/809/810 datasheet). So Q1 joins VBAT_IN to VBAT_OUT only while +5VIN is below 4 V; with USB present VBAT_OUT comes through D1."
+    pins:
+      "1": GND   # GND
+      "2": Q1_GATE   # RESET
+      "3": "+5VIN"   # VCC
+  U4:
+    value: SY8089
+    page: "Cardputer-Adv p1"
+    pins:
+      "1": VBAT_OUT   # EN
+      "2": GND   # GND
+      "3": U4_LX   # LX
+      "4": VBAT_OUT   # IN
+      "5": U4_FB   # FB
+  U5:
+    value: NS4150B
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": AMP_EN   # CTRL
+      "2": U5_BYPASS   # BYPASS
+      "3": U5_INP   # INP
+      "4": U5_INN   # INN
+      "5": U5_VON   # VON
+      "6": U5_VCC   # VCC
+      "7": GND   # GND
+      "8": U5_VOP   # VOP
+  U6:
+    value: ES8311
+    page: "Cardputer-Adv p3"
+    pins:
+      "0": AGND   # EPAD
+      "1": G9   # CCLK
+      "2": "NC"   # MCLK
+      "3": AVDD   # PVDD
+      "4": AVDD   # DVDD
+      "5": AGND   # DGND
+      "6": G41   # SCLK/DMIC_SCL
+      "7": G46   # ASDOUT
+      "8": G43   # LRCK
+      "9": G42   # DSDIN
+      "10": AGND   # AGND
+      "11": AVDD   # AVDD
+      "12": U6_OUTP   # OUTP
+      "13": "NC"   # OUTN
+      "14": U6_DACVREF   # DACVREF
+      "15": U6_ADCVREF   # ADCVREF
+      "16": U6_VMID   # VMID
+      "17": U6_MIC1N   # MIC1N
+      "18": U6_MIC1P   # MIC1P/DMIC_SDA
+      "19": G8   # CDATA
+      "20": AGND   # CE
+  U7:
+    value: BMI270
+    page: "Cardputer-Adv p3"
+    note: "\"7-bit Address 69H\" printed beside it."
+    pins:
+      "1": U7_SDO   # SDO
+      "2": "NC"   # ASDX
+      "3": "NC"   # ASCX
+      "4": "NC"   # INT1
+      "5": U7_VDD   # VDDIO
+      "6": GND   # GNDIO
+      "7": GND   # GND
+      "8": U7_VDD   # VDD
+      "9": "NC"   # INT2
+      "10": "NC"   # OCSB
+      "11": "NC"   # OSDO
+      "12": U7_VDD   # CSB
+      "13": G9   # SCX
+      "14": G8   # SDX
+  U8:
+    value: MSM381A3729H9BPC
+    page: "Cardputer-Adv p3"
+    pins:
+      "1": U8_VDD   # VDD
+      "2": AGND   # GND
+      "3": MIC_N   # GND
+      "4": MIC_P   # OUT
+  U9:
+    value: TCA8418RTWR
+    page: "Cardputer-Adv p2"
+    note: "\"7-bit Address 34H\" printed beside it. Kleidos addition K7: ROW0-7 and COL0-9 have 105 kΩ internal pull-ups, enabled at reset (TCA8418 SCPS215G pp. 5, 34), which hold the unconnected ROW7, COL8 and COL9."
+    pins:
+      "1": "NC"   # ROW7
+      "2": ROW6   # ROW6
+      "3": ROW5   # ROW5
+      "4": ROW4   # ROW4
+      "5": ROW3   # ROW3
+      "6": ROW2   # ROW2
+      "7": ROW1   # ROW1
+      "8": ROW0   # ROW0
+      "9": COL0   # COL0
+      "10": COL1   # COL1
+      "11": COL2   # COL2
+      "12": COL3   # COL3
+      "13": COL4   # COL4
+      "14": COL5   # COL5
+      "15": COL6   # COL6
+      "16": COL7   # COL7
+      "17": "NC"   # COL8
+      "18": "NC"   # COL9
+      "19": GND   # GND
+      "20": U9_RESET   # RESET
+      "21": "+3.3V"   # VCC
+      "22": G8   # SDA
+      "23": G9   # SCL
+      "24": G11   # ~INT
+      "25": GND   # EP
+  U101:
+    value: "ESP32-S3FN8"
+    page: "Stamp-S3 p1"
+    note: "ESP32-S3FN8 chip (8 MB flash in package, no PSRAM)."
+    pins:
+      "1": ESP_LNA   # LNA_IN
+      "2": U101_VDD3P3   # VDD3P3
+      "3": U101_VDD3P3   # VDD3P3
+      "4": U101_CHIP_PU   # CHIP_PU
+      "5": G0   # GPIO0
+      "6": GI   # GPIO1
+      "7": GO   # GPIO2
+      "8": G3   # GPIO3
+      "9": G4   # GPIO4
+      "10": G5   # GPIO5
+      "11": G6   # GPIO6
+      "12": G7   # GPIO7
+      "13": G8   # GPIO8
+      "14": G9   # GPIO9
+      "15": G10   # GPIO10
+      "16": G11   # GPIO11
+      "17": G12   # GPIO12
+      "18": G13   # GPIO13
+      "19": G14   # GPIO14
+      "20": "+3.3V"   # VDD3P3_RTC
+      "21": G15   # XTAL_32K_P
+      "22": GPIO16   # XTAL_32K_N
+      "23": GPIO17   # GPIO17
+      "24": GPIO18   # GPIO18
+      "25": USB_DU_N   # GPIO19
+      "26": USB_DU_P   # GPIO20
+      "27": GPIO21   # GPIO21
+      "28": "NC"   # SPICS1
+      "29": FLASH_VCC   # VDD_SPI
+      "30": "NC"   # SPIHD
+      "31": "NC"   # SPIWP
+      "32": "NC"   # SPICS0
+      "33": "NC"   # SPICLK
+      "34": "NC"   # SPIQ
+      "35": "NC"   # SPID
+      "36": "NC"   # SPICLK_N
+      "37": "NC"   # SPICLK_P
+      "38": DISP_RST   # GPIO33
+      "39": DISP_RS   # GPIO34
+      "40": DISP_MOSI   # GPIO35
+      "41": DISP_SCK   # GPIO36
+      "42": DISP_CS   # GPIO37
+      "43": DISP_BL   # GPIO38
+      "44": G39   # MTCK
+      "45": G40   # MTDO
+      "46": "+3.3V"   # VDD3P3_CPU
+      "47": G41   # MTDI
+      "48": G42   # MTMS
+      "49": U101_U0TXD   # U0TXD
+      "50": G44   # U0RXD
+      "51": "NC"   # GPIO45
+      "52": G46   # GPIO46
+      "53": XTAL_40M_N   # XTAL_N
+      "54": XTAL_40M_P   # XTAL_P
+      "55": "+3.3V"   # VDDA1
+      "56": "+3.3V"   # VDDA2
+      "57": GND   # GND
+  U102:
+    value: AW35122FDR
+    page: "Stamp-S3 p1"
+    pins:
+      "A1": BL_3V3   # VOUT
+      "A2": "+3.3V"   # VIN
+      "B1": GND   # GND
+      "B2": DISP_BL   # EN
+  U103:
+    value: WS2812B-2020
+    page: "Stamp-S3 p1"
+    note: "Kleidos addition K11: the module page names the part WS2812B-2020; the sheet prints WS2812. DO (pin 1) carries a label SK_DOUT that reaches no other pin: drawn unconnected."
+    pins:
+      "1": "NC"   # DO
+      "2": GND   # GND
+      "3": GPIO21   # DI
+      "4": BL_3V3   # VDD
+  U104:
+    value: JW5712
+    page: "Stamp-S3 p1"
+    pins:
+      "A1": U104_SW   # SW
+      "A2": "+5VIN"   # VIN
+      "B1": U104_EN   # EN
+      "B2": GND   # GND
+      "C1": "+5VIN"   # VSEL1
+      "C2": "+3.3V"   # VOS
+      "D1": "+5VIN"   # VSEL2
+      "D2": "+5VIN"   # VSEL3
+  X101:
+    value: 40Mhz
+    page: "Stamp-S3 p1"
+    note: "40 MHz crystal; pins 2 and 4 on GND."
+    pins:
+      "1": X101_1
+      "2": GND
+      "3": XTAL_40M_N
+      "4": GND
+
+nets:   # every named net and the pins on it
+  "+3.3V": {pins: [C8.2, C9.2, C18.2, C21.2, C103.1, C105.2, C106.2, C107.1, C108.1, C110.1, C111.1, C112.2, C113.1, C121.2, C122.2, C125.2, D13.1, D102.1, FB3.2, FB7.2, FPC1.2, J3.4, J101.2, J103.2, L2.2, L102.2, L104.1, M101.28, P2.1, R3.2, R10.2, R11.2, R15.2, R18.2, R23.1, R24.1, R35.1, R36.1, R37.1, R38.1, R39.1, R41.1, R43.1, R104.2, R107.2, U9.21, U101.20, U101.46, U101.55, U101.56, U102.A2, U104.C2]}
+  "+5VGrove": {pins: [C14.2, D8.1, J2.3, SW2.2]}
+  "+5VIN": {pins: [C116.2, C118.1, D1.1, D114.1, F101.2, J101.12, M101.13, P1.13, P3.14, R1.2, R116.1, SW2.3, U3.3, U104.A2, U104.C1, U104.D1, U104.D2]}
+  "+5VOUT": {pins: [D2.2, FPC1.4, P3.12, SW2.1]}
+  AGND: {pins: [C24.1, C26.1, C28.1, C29.1, C31.1, C33.1, J7.2, J7.3, R17.1, R26.2, R42.2, U6.0, U6.5, U6.10, U6.20, U8.2]}
+  AMP_EN: {pins: [Q4.D, R23.2, U5.1]}
+  ANT_FEED: {pins: [ANT101.1, C119.1, L106.2]}
+  AVDD: {pins: [C26.2, C31.2, R24.2, U6.3, U6.4, U6.11]}
+  BAT: {pins: [C7.1, J1.2, J8.1, Q2.1, Q2.2, Q2.5, Q2.6, Q2.8]}
+  BAT_SW: {pins: [Q2.4, Q2.7, Q3.4, Q3.7, SW1.1]}
+  BL_3V3: {pins: [C117.2, J101.8, J103.8, U102.A1, U103.4]}
+  BOOST_OUT: {pins: [C3.2, D2.1, R4.2, U2.7, U2.8]}
+  COL0: {pins: [R27.1, U9.9]}
+  COL1: {pins: [R28.1, U9.10]}
+  COL2: {pins: [R29.1, U9.11]}
+  COL3: {pins: [R30.1, U9.12]}
+  COL4: {pins: [R31.1, U9.13]}
+  COL5: {pins: [R32.1, U9.14]}
+  COL6: {pins: [R33.1, U9.15]}
+  COL7: {pins: [R34.1, U9.16]}
+  D3_A: {pins: [D3.1, R39.2]}
+  DAC_P: {pins: [C30.2, R16.1, R25.1]}
+  DISP_BL: {pins: [U101.43, U102.B2]}
+  DISP_CS: {pins: [J101.1, J103.1, U101.42]}
+  DISP_MOSI: {pins: [J101.4, J103.4, U101.40]}
+  DISP_RS: {pins: [J101.5, J103.5, U101.39]}
+  DISP_RST: {pins: [J101.6, J103.6, U101.38]}
+  DISP_SCK: {pins: [J101.3, J103.3, U101.41]}
+  EN: {pins: [BTN1.1, C123.1, D4.1, L107.2, M101.22, P2.7, R15.1, R107.1]}
+  ESP_LNA: {pins: [C101.1, L101.1, U101.1]}
+  FLASH_VCC: {pins: [C104.2, C126.1, U101.29]}
+  G0: {pins: [BTN2.1, D5.1, D101.1, M101.20, P2.9, R18.1, R104.1, S101.1, U101.5]}
+  G10: {pins: [C10.1, M101.10, P1.10, R8.1, R12.2, U101.15]}
+  G11: {pins: [M101.12, P1.12, R37.2, U9.24, U101.16]}
+  G12: {pins: [M101.14, P1.14, R19.1, U101.17]}
+  G13: {pins: [M101.15, P1.15, P3.9, U101.18]}
+  G14: {pins: [M101.16, P1.16, P3.5, R20.1, U101.19]}
+  G15: {pins: [M101.17, P1.17, P3.8, U101.21]}
+  G3: {pins: [M101.3, P1.3, P3.1, U101.8]}
+  G39: {pins: [M101.19, P2.10, P3.6, R22.1, U101.44]}
+  G4: {pins: [M101.4, P1.4, P3.2, U101.9]}
+  G40: {pins: [M101.21, P2.8, P3.4, R21.1, U101.45]}
+  G41: {pins: [M101.23, P2.6, U6.6, U101.47]}
+  G42: {pins: [M101.25, P2.4, U6.9, U101.48]}
+  G43: {pins: [M101.26, P2.3, R105.2, U6.8]}
+  G44: {pins: [IR1.1, M101.24, P2.5, U101.50]}
+  G46: {pins: [M101.27, P2.2, U6.7, U101.52]}
+  G5: {pins: [M101.5, P1.5, P3.7, U101.10]}
+  G6: {pins: [M101.6, P1.6, P3.3, U101.11]}
+  G7: {pins: [FPC1.5, M101.7, P1.7, U101.12]}
+  G8: {pins: [FPC1.6, M101.8, P1.8, P3.11, R35.2, U6.19, U7.14, U9.22, U101.13]}
+  G9: {pins: [FPC1.7, M101.9, P1.9, P3.10, R36.2, U6.1, U7.13, U9.23, U101.14]}
+  GI: {pins: [D6.2, J2.1, M101.1, P1.1, R10.1, U101.6]}
+  GND: {pins: [ANT101.2, BTN1.3, BTN2.3, C1.1, C2.1, C3.1, C4.1, C5.1, C6.1, C7.2, C8.1, C9.1, C10.2, C11.1, C12.1, C14.1, C16.2, C17.1, C18.1, C19.1, C20.1, C21.1, C25.1, C27.1, C32.1, C101.2, C102.2, C103.2, C104.1, C105.1, C106.1, C107.2, C108.2, C109.2, C110.2, C111.2, C112.1, C113.2, C114.2, C115.2, C116.1, C117.1, C118.2, C119.2, C120.2, C121.1, C122.1, C123.2, C124.1, C125.1, C126.2, D4.2, D5.2, D6.1, D7.1, D8.2, D9.2, D10.2, D11.2, D12.2, D13.2, D101.2, D102.2, D103.2, D104.2, D114.2, FPC1.1, FPC1.3, FPC1.8, J1.1, J2.4, J3.0, J3.6, J5.1, J6.1, J8.2, J101.7, J102.GND, J102.SHELL, J103.7, M101.11, M101.18, P1.11, P2.11, P3.13, PHD101.1, Q2.3, Q4.S, R5.1, R6.1, R7.1, R12.1, R13.1, R14.2, R26.1, R101.1, R102.1, S101.2, S101.4, SW1.3, U1.2, U2.4, U2.9, U3.1, U4.2, U5.7, U7.6, U7.7, U9.19, U9.25, U101.57, U102.B1, U103.2, U104.B2, X101.2, X101.4]}
+  GO: {pins: [D7.2, J2.2, M101.2, P1.2, R3.1, U101.7]}
+  GPIO16: {pins: [J101.9, U101.22]}
+  GPIO17: {pins: [J101.10, U101.23]}
+  GPIO18: {pins: [J101.11, U101.24]}
+  GPIO21: {pins: [U101.27, U103.3]}
+  HP_DET: {pins: [C32.2, D3.2, Q4.G, R40.1]}
+  IR_K: {pins: [IR1.2, R14.1]}
+  JACK_DET: {pins: [J7.7, R40.2]}
+  JACK_OUT: {pins: [J7.4, J7.5, R25.2, R42.1]}
+  MIC_N: {pins: [C23.1, U8.3]}
+  MIC_P: {pins: [C22.1, U8.4]}
+  Q1_GATE: {pins: [Q1.3, R7.2, U3.2]}
+  Q3_GATE: {pins: [Q3.3, R9.1]}
+  RF_MATCH: {pins: [C102.1, C120.1, L101.2, L106.1]}
+  ROW0: {pins: [S1.2, S2.2, S15.2, S16.2, S29.2, S30.2, S43.2, S44.2, U9.8]}
+  ROW1: {pins: [S3.2, S4.2, S17.2, S18.2, S31.2, S32.2, S45.2, S46.2, U9.7]}
+  ROW2: {pins: [S5.2, S6.2, S19.2, S20.2, S33.2, S34.2, S47.2, S48.2, U9.6]}
+  ROW3: {pins: [S7.2, S8.2, S21.2, S22.2, S35.2, S36.2, S49.2, S50.2, U9.5]}
+  ROW4: {pins: [S9.2, S10.2, S23.2, S24.2, S37.2, S38.2, S51.2, S52.2, U9.4]}
+  ROW5: {pins: [S11.2, S12.2, S25.2, S26.2, S39.2, S40.2, S53.2, S54.2, U9.3]}
+  ROW6: {pins: [S13.2, S14.2, S27.2, S28.2, S41.2, S42.2, S55.2, S56.2, U9.2]}
+  SD_CLK: {pins: [D10.1, J3.5, R21.2]}
+  SD_CS: {pins: [D12.1, J3.2, R19.2]}
+  SD_MISO: {pins: [D9.1, J3.7, R22.2]}
+  SD_MOSI: {pins: [D11.1, J3.3, R20.2]}
+  SPK_N: {pins: [C19.2, FB2.2, J4.1]}
+  SPK_P: {pins: [C20.2, FB1.2, J4.2]}
+  SW1_2: {pins: [R9.2, SW1.2]}
+  U101_CHIP_PU: {pins: [C124.2, L107.1, U101.4]}
+  U101_U0TXD: {pins: [R105.1, U101.49]}
+  U101_VDD3P3: {pins: [L102.1, U101.2, U101.3]}
+  U104_EN: {pins: [R116.2, U104.B1]}
+  U104_SW: {pins: [C115.1, L104.2, U104.A1]}
+  U1_PROG: {pins: [R5.2, U1.6]}
+  U1_VCC: {pins: [C1.2, R1.1, U1.4]}
+  U2_FB: {pins: [R4.1, R6.2, U2.5]}
+  U2_IN: {pins: [C4.2, C5.2, L1.1, R2.2, U2.3, U2.6]}
+  U2_LX: {pins: [L1.2, U2.1, U2.2]}
+  U4_FB: {pins: [R11.1, R13.2, U4.5]}
+  U4_LX: {pins: [L2.1, U4.3]}
+  U5_BYPASS: {pins: [C16.1, U5.2]}
+  U5_INN: {pins: [C15.1, U5.4]}
+  U5_INN_R: {pins: [C15.2, R17.2]}
+  U5_INP: {pins: [C13.1, U5.3]}
+  U5_INP_R: {pins: [C13.2, R16.2]}
+  U5_VCC: {pins: [C17.2, FB3.1, U5.6]}
+  U5_VON: {pins: [FB2.1, U5.5]}
+  U5_VOP: {pins: [FB1.1, U5.8]}
+  U6_ADCVREF: {pins: [C28.2, U6.15]}
+  U6_DACVREF: {pins: [C29.2, U6.14]}
+  U6_MIC1N: {pins: [C23.2, U6.17]}
+  U6_MIC1P: {pins: [C22.2, U6.18]}
+  U6_OUTP: {pins: [C30.1, U6.12]}
+  U6_VMID: {pins: [C24.2, U6.16]}
+  U7_SDO: {pins: [R43.2, U7.1]}
+  U7_VDD: {pins: [C25.2, C27.2, FB7.1, U7.5, U7.8, U7.12]}
+  U8_VDD: {pins: [C33.2, R41.2, U8.1]}
+  U9_RESET: {pins: [R38.2, U9.20]}
+  USB_CC1: {pins: [J102.A5, R101.2]}
+  USB_CC2: {pins: [J102.B5, R102.2]}
+  USB_D_N: {pins: [D104.1, J102.A7, J102.B7, L105.3]}
+  USB_D_P: {pins: [D103.1, J102.A6, J102.B6, L105.2]}
+  USB_DU_N: {pins: [JP102.1, L105.4, U101.25]}
+  USB_DU_P: {pins: [JP103.1, L105.1, U101.26]}
+  USB_VBUS: {pins: [F101.1, J102.VBUS]}
+  VBAT_IN: {pins: [C6.2, Q1.1, Q1.2, Q1.5, Q1.6, Q1.8, Q3.1, Q3.2, Q3.5, Q3.6, Q3.8, R8.2, U1.3]}
+  VBAT_OUT: {pins: [C2.2, C11.2, C12.2, D1.2, Q1.4, Q1.7, R2.1, U4.1, U4.4]}
+  X101_1: {pins: [C109.1, L103.2, X101.1]}
+  XTAL_40M_N: {pins: [C114.1, U101.53, X101.3]}
+  XTAL_40M_P: {pins: [L103.1, U101.54]}
+  Y0: {pins: [R34.2, S44.1, S46.1, S48.1, S50.1, S52.1, S54.1, S56.1]}
+  Y1: {pins: [R33.2, S30.1, S32.1, S34.1, S36.1, S38.1, S40.1, S42.1]}
+  Y2: {pins: [R32.2, S16.1, S18.1, S20.1, S22.1, S24.1, S26.1, S28.1]}
+  Y3: {pins: [R31.2, S2.1, S4.1, S6.1, S8.1, S10.1, S12.1, S14.1]}
+  Y4: {pins: [R30.2, S43.1, S45.1, S47.1, S49.1, S51.1, S53.1, S55.1]}
+  Y5: {pins: [R29.2, S29.1, S31.1, S33.1, S35.1, S37.1, S39.1, S41.1]}
+  Y6: {pins: [R28.2, S15.1, S17.1, S19.1, S21.1, S23.1, S25.1, S27.1]}
+  Y7: {pins: [R27.2, S1.1, S3.1, S5.1, S7.1, S9.1, S11.1, S13.1]}

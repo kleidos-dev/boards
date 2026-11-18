@@ -1,0 +1,100 @@
+{
+  "device_id": "m5stickc-plus2",
+  "display_name": "M5StickC Plus2",
+  "vendor": "M5Stack",
+  "sku": "K016-P2",
+  "theme": "stick_yellow",
+  "case": {
+    "width": 24.0,
+    "height": 48.0,
+    "depth": 13.5,
+    "corner_radius": 3.0,
+    "color": "#FEB722",
+    "material": "PC",
+    "note": "24 x 48 mm with R3 corners: M5Stack's dimension drawing and its published 48.0 x 24.0 x 13.5 mm (one chassis for the Plus 1.1 and the Plus2). depth and material are the vendor's figures, not measured: its specification table gives 13.5 mm and a plastic (PC) shell, and its StickC-Plus.stl is 13.5 mm deep. depth was 13.7 until 2026-11-17, the figure M5Stack's 2021 StickC-Plus page gave (48.2 x 25.5 x 13.7 mm) before its current pages and its drawing; material was PC+ABS, with no source. color is the front's case color at the top."
+  },
+  "display": {
+    "tech": "TFT-IPS",
+    "controller": "ST7789v2",
+    "active_w_mm": 14.86,
+    "active_h_mm": 24.91,
+    "resolution_w_px": 135,
+    "resolution_h_px": 240,
+    "origin_x_mm": 4.57,
+    "origin_y_mm": 3.535,
+    "native_orientation": "portrait",
+    "firmware_rotation_deg": 180,
+    "note": "Active area datasheet-verified 2026-07-15: 14.86 x 24.91 mm (1.14\", ~241 PPI, pixel pitch 0.1101 x 0.1038 mm, ~6% non-square); was 21.7 x 13.0 mm (~272 PPI, assumed square pixels). Origin = the front's screen-active: centered across the 24 mm case, its top 3.535 mm below the case top. M5Stack dimensions the active rectangle on both drawings of this mold as 14.8 x 24.86, drawn at 4.602-19.401 x 3.566-28.421 on the Plus 1.1's and 4.598-19.396 x 3.562-28.417 on the Plus SE's (the same mold), so both center it on (12.00, 15.99); the front draws the datasheet 14.86 x 24.91 centered on that same point. On the registered straight-on photos the lit area reads 3.39-3.46 at the top and 28.29-28.42 at the bottom (two Plus 1.1 and two Plus2 shop images and the Plus SE's), center 15.84-15.93. The drawing gives the window opening in the case as 3.99-19.99 x 2.96-29.02 mm; the front builds the window outwards from the active area instead (0.60 mm of case wall, then 0.08 mm of glass margin), so at this origin it draws the opening at 3.97-20.03 x 2.935-29.045 mm and the visible glass at 4.49-19.51 x 3.455-28.525 mm."
+  },
+  "buttons": [
+    {
+      "id": "BtnA",
+      "logical": "primary",
+      "gpio": 37,
+      "active": "low",
+      "face": "front",
+      "shape": "circle",
+      "diameter_mm": 7.0,
+      "center_x_mm": 12.05,
+      "center_y_mm": 38.81,
+      "label_on_case": "M5",
+      "note": "Press point on the debossed M5 (x 6.44-17.66, y 35.24-42.38), the tongue of an inverted-U flex slot (outer edge x 4.61-19.43, top 33.49, legs down to 41.79), as drawn on the front. One chassis with the Plus 1.1."
+    },
+    {
+      "id": "BtnB",
+      "logical": "secondary",
+      "gpio": 39,
+      "active": "low",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 3.5,
+      "height_mm": 3.69,
+      "center_x_mm": 24.0,
+      "center_y_mm": 15.805
+    },
+    {
+      "id": "BtnC",
+      "logical": "power",
+      "gpio": 35,
+      "active": "low",
+      "face": "left",
+      "shape": "rect",
+      "width_mm": 3.0,
+      "height_mm": 5.22,
+      "center_x_mm": 0.0,
+      "center_y_mm": 38.58,
+      "note": "Power key (PIN_POWER_BUTTON, GPIO35 in the Kleidos firmware's variants/m5stickc_plus2/variant.h); BtnB is GPIO39."
+    }
+  ],
+  "extras": [
+    {
+      "type": "led",
+      "face": "front",
+      "color": "red"
+    },
+    {
+      "type": "ir",
+      "face": "front"
+    },
+    {
+      "type": "microphone",
+      "face": "front"
+    },
+    {
+      "type": "usb-c",
+      "face": "bottom"
+    },
+    {
+      "type": "grove",
+      "face": "bottom"
+    }
+  ],
+  "notes": "Portrait front view, 24 x 48 mm, the frame of svg/front.svg: x across the case, y down from the end above the screen. BtnA is the flex tongue below the screen, BtnB on the right edge, the power key on the left edge, all from M5Stack's dimension drawing of the M5StickC Plus checked on the vendor and Adafruit front photos (2026-10-19). width_mm of an edge button is not measured; height_mm is its length along the edge. extras[] carry no positions: the earlier estimates were in a landscape frame that matched neither the drawing nor the photos, and the front draws none of these parts.",
+  "sources": [
+    {
+      "kind": "see",
+      "url": "sources.md",
+      "local": "sources.md"
+    }
+  ]
+}

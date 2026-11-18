@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "board": "m5stickc-plus1",
+  "node_name": "StickCPlus11",
+  "output": "m5stickc-plus1/model/m5stickc-plus1.glb",
+  "copyright": "Case geometry (front cap with the M5 key, back shell with the side keys): M5Stack, M5_Hardware Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl @48baa75a, MIT License, Copyright (c) 2021 M5Stack. Display, connectors, header, LEDs, label, inserts, screws, filler and materials: Kleidos (MIT). Printed legends (the back label's): the legends of Kleidos's own back drawing, their glyphs outlines of Inter 4.1 (SIL Open Font License 1.1, Copyright (c) 2016 The Inter Project Authors).",
+  "notes": "The STL holds the device twice (the assembly at x -12..12 mm and a copy further along -x), each as two pieces: the front cap (24 x 48 x 8.4 mm: screen window with its lip, the M5 key as a flexure tongue, the power key's flexure on the left wall) and the back shell (24 x 48 x 10.5 mm: BtnB's flexure on the right wall, the label recess, the header pocket at the top, the stepped bottom with the Grove notch and the screw pockets). Its front faces -Z with +Y up the screen, so the transform turns it 180 degrees about Y and moves the assembly to x 0..24, y 0..48, z -13.5..0, the front at z = 0. There is no display, connector, header, LED, label, insert or screw in it: those are added here from measurements.json, M5Stack's dimension drawing (header pitch, Grove and USB-C on the bottom end, screws 16 mm apart 4.5 mm from the bottom, inserts 9.4 mm) and the vendor photos (label print, screw finish). The window's lip opening is 14.8 x 24.86 mm (x 4.6..19.4, y 19.575..44.435), M5Stack's drawn active rectangle; the screen quad is the datasheet's 14.86 x 24.91 mm on the same center, so the lip covers 0.03 mm of it at each side. The case is 13.5 mm deep, as M5Stack's drawing and published size give it. The model's origin is the center of the 24 x 48 x 13.5 mm body.",
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "file": "StickC-Plus.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl",
+    "commit": "48baa75a9476f4070dd5f107c1c28e2c9f383a96",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/48baa75a9476f4070dd5f107c1c28e2c9f383a96/Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl",
+    "sha256": "56dcfd382032d177ea049f890f59db965a56c161a8db588e80dd45e66576685a",
+    "bytes": 616284,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "transform": [
+    {"rotate": {"axis": "y", "deg": 180}},
+    {"translate": [12.0, 24.0, -6.5]}
+  ],
+  "split": true,
+  "select": {"min_ge": [-0.5, null, null], "max_le": [24.5, null, null]},
+  "parts": [
+    {"name": "front", "match": {"max_ge": [null, null, -0.5]}},
+    {"name": "back", "match": {"max_le": [null, null, -2.5]}}
+  ],
+  "volumes": {
+    "fill": [
+      [1.95, 22.05, 9.8, 38.55, -11.85, -1.75],
+      [1.95, 22.05, 38.55, 45.3, -10.85, -1.75],
+      [1.95, 22.05, 7.05, 9.8, -9.9, -1.75],
+      [1.95, 7.3, 2.0, 7.05, -9.0, -1.75],
+      [16.7, 22.05, 2.0, 7.05, -9.0, -1.75]
+    ],
+    "lcd": [
+      [3.25, 20.75, 17.2, 45.95, -2.6, -1.23]
+    ],
+    "note": "fill: the opaque interior every opening shows (the M5 key's slot, the side slots, the keys' slits, the ends); above y 38.55 it stops short of the header pocket, and below y 9.8 short of the stepped bottom (above the screw pockets' floor at z -9.05), the USB-C receptacle and the Grove housing. lcd: the LCD module in the window's pocket, behind the lip."
+  },
+  "cull": {"parts": ["front", "back"], "volumes": ["fill", "lcd"], "margin": 0.06},
+  "center_mm": [12.0, 24.0, -6.75],
+  "front_frame": {"left_x": 0.0, "top_y": 48.0},
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "planar_min_area": 1.5,
+  "materials": [
+    {"name": "case", "hex": "#FE3D1E", "rough": 0.55},
+    {"name": "lcd_black", "rgb": [10, 10, 12], "rough": 0.14},
+    {"name": "screen", "rgb": [8, 8, 10], "rough": 1.0, "unlit": true},
+    {"name": "glass", "rgb": [0, 0, 0], "rough": 0.04, "alpha": 0.06},
+    {"name": "internal", "rgb": [16, 16, 18], "rough": 0.95},
+    {"name": "usb_metal", "rgb": [196, 196, 200], "rough": 0.32, "metal": 1.0},
+    {"name": "black_plastic", "rgb": [26, 26, 28], "rough": 0.55},
+    {"name": "hole", "rgb": [3, 3, 4], "rough": 1.0},
+    {"name": "white_plastic", "rgb": [234, 232, 224], "rough": 0.55},
+    {"name": "brass", "rgb": [200, 158, 84], "rough": 0.38, "metal": 1.0},
+    {"name": "screw", "rgb": [178, 178, 182], "rough": 0.35, "metal": 0.9},
+    {"name": "header_black", "rgb": [17, 17, 18], "rough": 0.5},
+    {"name": "header_funnel", "rgb": [8, 8, 9], "rough": 0.7},
+    {"name": "led_package", "rgb": [196, 196, 198], "rough": 0.35},
+    {"name": "label_white", "rgb": [252, 252, 250], "rough": 0.6}
+  ],
+  "meshes": [
+    {"name": "case_front", "part": "front", "material": "case", "smooth_deg": 40.0},
+    {"name": "case_back", "part": "back", "material": "case", "smooth_deg": 40.0},
+    {
+      "name": "lcd",
+      "material": "lcd_black",
+      "shapes": [{"prism": {"axis": "z", "volume": "lcd", "profile": {"rounded": 0.6}}}]
+    },
+    {"name": "screen", "material": "screen", "screen": {"z": -1.215}},
+    {
+      "name": "glass",
+      "note": "The visible glass of front.svg (x 4.49..19.51, y 3.455..28.525 down from the top), just behind the window's 14.8 x 24.86 mm inner edge.",
+      "material": "glass",
+      "glass": {"rect": [4.49, 19.51, 3.455, 28.525], "frame": "front", "z": -1.205}
+    },
+    {"name": "internal", "material": "internal", "shapes": [{"volume": "fill"}]},
+    {
+      "name": "usb_c_shell",
+      "note": "The USB-C receptacle in the bottom end, towards the front (opening x 7.42..16.58, z -1.08..-4.50).",
+      "material": "usb_metal",
+      "smooth_deg": 40,
+      "shapes": [
+        {"prism": {"axis": "y", "range": [0.30, 7.0],
+                   "profile": {"stadium": [12.0, -2.79, 8.94, 3.26], "inner": ["8.94 - 0.5", "3.26 - 0.5"]}}}
+      ]
+    },
+    {
+      "name": "usb_c_inside",
+      "material": "black_plastic",
+      "shapes": [
+        {"prism": {"axis": "y", "range": [6.6, 7.0],
+                   "profile": {"stadium": [12.0, -2.79, "8.94 - 0.5", "3.26 - 0.5"]}}},
+        {"prism": {"axis": "y", "range": [1.30, 6.7],
+                   "profile": {"rect": ["12.0 - 3.3", "12.0 + 3.3", "-2.79 - 0.35", "-2.79 + 0.35"]}}}
+      ]
+    },
+    {
+      "name": "grove",
+      "note": "The HY2.0-4P (Grove) housing in the bottom end, towards the back, its back face flush with the stepped back (notch x 5.92..18.08 to z -9.05, x 6.9..17.1 to z -11.1): front, back, left and right walls around the socket, the socket floor, and the ears that fill the notch beside it (towards the back only behind the screw pockets' walls, y 3.35..6.8).",
+      "material": "white_plastic",
+      "shapes": [
+        {"box": [6.93, 17.07, 0.45, 6.8, -5.40, -4.58]},
+        {"box": [6.93, 17.07, 0.45, 6.8, -11.08, -10.20]},
+        {"box": [6.93, 7.60, 0.45, 6.8, -10.20, -5.40]},
+        {"box": [16.40, 17.07, 0.45, 6.8, -10.20, -5.40]},
+        {"box": [7.60, 16.40, 4.50, 6.8, -10.20, -5.40]},
+        {"box": [5.95, 6.93, 0.45, 6.8, -9.05, -4.58]},
+        {"box": [17.07, 18.05, 0.45, 6.8, -9.05, -4.58]},
+        {"box": [5.95, 6.93, 3.35, 6.8, -11.08, -9.05]},
+        {"box": [17.07, 18.05, 3.35, 6.8, -11.08, -9.05]}
+      ]
+    },
+    {
+      "name": "grove_pins",
+      "material": "brass",
+      "shapes": [
+        {"box": ["9.0 - 0.32", "9.0 + 0.32", 1.6, 4.5, "-7.8 - 0.32", "-7.8 + 0.32"]},
+        {"box": ["11.0 - 0.32", "11.0 + 0.32", 1.6, 4.5, "-7.8 - 0.32", "-7.8 + 0.32"]},
+        {"box": ["13.0 - 0.32", "13.0 + 0.32", 1.6, 4.5, "-7.8 - 0.32", "-7.8 + 0.32"]},
+        {"box": ["15.0 - 0.32", "15.0 + 0.32", 1.6, 4.5, "-7.8 - 0.32", "-7.8 + 0.32"]}
+      ]
+    },
+    {
+      "name": "header",
+      "note": "The 1x8 female header (2.54 mm pitch) lying in the pocket at the back of the top end, its contacts facing the end and its back under the label.",
+      "material": "header_black",
+      "shapes": [{"box": [1.84, 22.16, 38.65, 47.85, -13.28, -10.92]}]
+    },
+    {
+      "name": "header_funnels",
+      "note": "Each contact: a funneled 1.5 mm entry around a 0.8 mm dark hole.",
+      "material": "header_funnel",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "47.85 + 0.010", "facing": 1, "u_center": 12.0,
+                                "v_center": "(-13.28 + -10.92) / 2", "cols": 8, "rows": 1,
+                                "pitch": 2.54, "size": 1.5}}]
+    },
+    {
+      "name": "header_holes",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "47.85 + 0.020", "facing": 1, "u_center": 12.0,
+                                "v_center": "(-13.28 + -10.92) / 2", "cols": 8, "rows": 1,
+                                "pitch": 2.54, "size": 0.8}}]
+    },
+    {
+      "name": "led_slots",
+      "note": "The two slits in the top end at the joint of the shells (x 4.42..5.78 and 7.50..8.90, z -4.00..-4.96), each closed by a black bed: behind them sit the IR LED and the red LED.",
+      "material": "black_plastic",
+      "shapes": [
+        {"box": [4.46, 5.74, 45.9, 47.3, -4.92, -4.04]},
+        {"box": [7.54, 8.86, 45.9, 47.3, -4.92, -4.04]}
+      ]
+    },
+    {
+      "name": "leds",
+      "material": "led_package",
+      "shapes": [
+        {"box": [4.62, 5.58, 47.0, 47.4, -4.80, -4.16]},
+        {"box": [7.72, 8.68, 47.0, 47.4, -4.80, -4.16]}
+      ]
+    },
+    {
+      "name": "back_label",
+      "note": "The label's paper: in the back's 0.2 mm recess (x 1.45..22.55, y 7.4..38.6) 21.0 mm wide, as the vendor's back photo measures it, its bottom edge just clear of the inserts, square below; over the header, up to the top end, 20.76 mm wide and rounded at the top corners. What is printed on it is label_legends.",
+      "material": "label_white",
+      "shapes": [
+        {"prism": {"axis": "z", "range": [-13.46, -13.30],
+                   "profile": {"rounded_rect": [1.5, 22.5, 10.25, 44.0], "r": 0.4}}},
+        {"prism": {"axis": "z", "range": [-13.46, -13.30],
+                   "profile": {"rounded_rect": [1.62, 22.38, 40.0, 47.88], "r": 1.2}}}
+      ]
+    },
+    {
+      "name": "label_legends",
+      "note": "What back.svg prints on the label (its label group): the pin row over the header, the M5STICK CPlus 1.1 title, the colored fields, the FCC, CE, WEEE and Japan radio marks, the serial speeds, the maker's mark, the Grove port and PWR, three position steps out from the label's face (z -13.46).",
+      "legends": {"drawing": "../svg/back.svg", "face": "back", "plane": "label", "on": "back_label", "z": "-13.46 - 0.03", "flatness": 0.004, "rough": 0.55}
+    },
+    {
+      "name": "inserts",
+      "note": "Brass inserts in the two holes below the label (16 mm apart, 9.4 mm from the bottom).",
+      "material": "brass",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [4.005, 9.379], "r": 0.78, "range": [-13.44, -11.2]}},
+        {"cylinder": {"axis": "z", "c": [19.995, 9.379], "r": 0.78, "range": [-13.44, -11.2]}}
+      ]
+    },
+    {
+      "name": "insert_holes",
+      "material": "hole",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [4.005, 9.379], "r": 0.42, "range": [-13.455, -13.445], "sections": 16}},
+        {"cylinder": {"axis": "z", "c": [19.995, 9.379], "r": 0.42, "range": [-13.455, -13.445], "sections": 16}}
+      ]
+    },
+    {
+      "name": "screws",
+      "note": "The two pan-head screws in the pockets of the stepped bottom (16 mm apart, 4.5 mm from the bottom).",
+      "material": "screw",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [4.0, 4.5], "r": 1.7, "range": [-10.25, -9.05]}},
+        {"cylinder": {"axis": "z", "c": [20.0, 4.5], "r": 1.7, "range": [-10.25, -9.05]}}
+      ]
+    },
+    {
+      "name": "screw_slots",
+      "material": "hole",
+      "shapes": [
+        {"box": ["4.0 - 1.0", "4.0 + 1.0", "4.5 - 0.2", "4.5 + 0.2", -10.27, -10.24]},
+        {"box": ["20.0 - 1.0", "20.0 + 1.0", "4.5 - 0.2", "4.5 + 0.2", -10.27, -10.24]},
+        {"box": ["4.0 - 0.2", "4.0 + 0.2", "4.5 - 1.0", "4.5 + 1.0", -10.27, -10.24]},
+        {"box": ["20.0 - 0.2", "20.0 + 0.2", "4.5 - 1.0", "4.5 + 1.0", -10.27, -10.24]}
+      ]
+    }
+  ]
+}

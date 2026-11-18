@@ -1,0 +1,109 @@
+{
+  "device_id": "m5stickc-plus-se",
+  "display_name": "M5StickC Plus SE",
+  "vendor": "M5Stack",
+  "sku": "K016-P-SE",
+  "theme": "stick_orange_translucent",
+  "case": {
+    "width": 24.0,
+    "height": 48.0,
+    "depth": 13.52,
+    "corner_radius": 3.0,
+    "color": "#F2633E",
+    "material": "PC (translucent)",
+    "note": "24 x 48 mm with R3 corners, from M5Stack's dimension drawing of the SE (K016-P-SE, 7016 x 4961 px at 23.62 px/mm): the same chassis as the M5StickC Plus 1.1, whose drawing gives the same outline, window, BtnA slot and M5 within 0.02 mm. depth is that drawing's 13.52 mm (the shop's 8.4 mm matches nothing on it). color is the shell's tone at the top of the front, sampled on the registered front photo; the shell is translucent, so what shows through it (LCD module, PCB, USB-C, bosses, side keys) is drawn on the front."
+  },
+  "display": {
+    "tech": "TFT-IPS",
+    "controller": "ST7789v2",
+    "active_w_mm": 14.86,
+    "active_h_mm": 24.91,
+    "resolution_w_px": 135,
+    "resolution_h_px": 240,
+    "origin_x_mm": 4.57,
+    "origin_y_mm": 3.535,
+    "native_orientation": "portrait",
+    "firmware_rotation_deg": 180,
+    "note": "Active area 14.86 x 24.91 mm (1.14\", pixel pitch 0.1101 x 0.1038 mm, ~6% non-square), the datasheet size shared with the Plus 1.1 and the Plus2. Origin = the front's screen-active: centered across the 24 mm case, its top 3.535 mm below the case top. M5Stack dimensions the active rectangle as 14.8 x 24.86, drawn at 4.598-19.396 x 3.562-28.417 on the SE's drawing (23.624 px/mm from its \"24\" and \"48\" extension lines) and at 4.602-19.401 x 3.566-28.421 on the Plus 1.1's, so both center it on (12.00, 15.99); the datasheet rectangle drawn here is 0.06 wider and 0.05 taller and shares that center. On the registered front photo the lit area reads 3.455-28.397 (center 15.93), on the four registered Plus photos 3.39-3.46 and 28.29-28.42. The window opening in the case is the active area plus 0.60 mm of wall all round (drawing 3.99-19.99 x 2.96-29.02; at this origin the front draws 3.97-20.03 x 2.935-29.045), and the whole window follows this origin."
+  },
+  "buttons": [
+    {
+      "id": "BtnA",
+      "logical": "primary",
+      "gpio": 37,
+      "active": "low",
+      "face": "front",
+      "shape": "circle",
+      "diameter_mm": 7.0,
+      "center_x_mm": 12.05,
+      "center_y_mm": 38.81,
+      "label_on_case": "M5",
+      "note": "Press point on the raised M5 (x 6.44-17.66, y 35.24-42.38), which sits on the flap of a U-shaped flex slot open at the bottom (slot center line x 4.90 / 19.10, top 33.72, legs down to 41.45; the flap inside it x 5.20-18.80 from y 34.02). One chassis with the Plus 1.1, whose drawing gives the same slot and the same glyph."
+    },
+    {
+      "id": "BtnB",
+      "logical": "secondary",
+      "gpio": 39,
+      "active": "low",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 3.5,
+      "height_mm": 3.79,
+      "center_x_mm": 24.0,
+      "center_y_mm": 15.745,
+      "note": "Cap 13.85-17.64 along the edge, in the opening the drawing's right-side view frames at 13.12-18.37; the front's side mark spans that opening. Flush with the front outline, which shows no bump."
+    },
+    {
+      "id": "Power",
+      "logical": "power",
+      "gpio": -1,
+      "active": "low",
+      "face": "left",
+      "shape": "rect",
+      "width_mm": 3.0,
+      "height_mm": 5.23,
+      "center_x_mm": 0.0,
+      "center_y_mm": 38.485,
+      "note": "AXP192 PEK, no GPIO: a press powers the board on, a long press off. Opening 35.87-41.10 along the edge (cap 36.62-40.39), near the USB end, as the drawing's left-side view and M5Stack's render callout both place it."
+    }
+  ],
+  "extras": [
+    {
+      "type": "led",
+      "face": "top",
+      "color": "red"
+    },
+    {
+      "type": "ir",
+      "face": "top"
+    },
+    {
+      "type": "microphone",
+      "face": "left"
+    },
+    {
+      "type": "buzzer",
+      "face": "internal"
+    },
+    {
+      "type": "usb-c",
+      "face": "bottom"
+    },
+    {
+      "type": "grove",
+      "face": "bottom"
+    },
+    {
+      "type": "magnet",
+      "face": "back"
+    }
+  ],
+  "notes": "Portrait front view, 24 x 48 mm, the frame of svg/front.svg: x across the case, y down from the end above the screen. The SE is the Plus 1.1 without the IMU, in a translucent orange shell. Geometry is M5Stack's dimension drawing of the SE, checked on its one straight-on front photo registered onto the case (2026-10-19); everything the front draws through the shell is measured on that photo. The IR transmitter and the status LED show on the top end face, not the front, so the front draws neither. extras[] carry no positions. width_mm of an edge button is not measured; height_mm is its length along the edge.",
+  "sources": [
+    {
+      "kind": "see",
+      "url": "https://docs.m5stack.com/en/core/StickC-Plus_SE",
+      "local": "sources.md"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "_about": "The graphite treatment of each drawn front (scripts/site/graphite.py). The case body takes the site's --case graphite; every other color keeps its lightness distance from the vendor's case color, scaled by `contrast`, so a key stays a key and a legend stays legible. A light-bodied board inverts that distance (its dark keys become the light ones on a dark body). `glass` lists the colors that belong to the front glass and its print: those keep their own polarity around `glass_base`, whatever the body does, because the glass of a white board is still black. Only the captured screen is ever in color.",
+  "body": "#1c1c1c",
+  "contrast": 0.8,
+  "floor": 3.0,
+  "ceiling": 72.0,
+  "boards": {
+    "sticks3": {},
+    "m5stickc-plus2": {
+      "glass_base": "#050506",
+      "glass": ["#050506", "#101015", "#020203"]
+    },
+    "m5stickc-plus1": {
+      "glass_base": "#050506",
+      "glass": ["#050506", "#101015", "#020203"]
+    },
+    "m5stickc-plus-se": {
+      "glass_base": "#3a2118",
+      "glass": ["#3a2118", "#101015", "#020203", "#5e2918", "#7a4232"]
+    },
+    "coreink": {},
+    "cardputer": {
+      "glass_base": "#050507",
+      "glass": ["#050507", "#1a2336", "#05060c"]
+    },
+    "tdeck-plus": {},
+    "cores3-se": {
+      "glass_base": "#0a0a0c",
+      "glass": ["#0a0a0c", "#000000", "#05060c", "#1a2336", "#b8493e", "#36363a", "#ffffff"]
+    },
+    "m5stack-core2-v13": {
+      "glass_base": "#030304",
+      "glass": ["#030304", "#000000", "#05060c", "#1a2336", "#2c2626", "#58433c", "#6b645f", "#0d0d0f", "#ffffff"]
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "device_id": "m5stack-core2-v13",
+  "display_name": "M5Stack Core2 v1.3",
+  "vendor": "M5Stack",
+  "sku": "K010-V13",
+  "theme": "core2_black",
+  "case": {
+    "width": 54.0,
+    "height": 54.0,
+    "depth": 16.5,
+    "corner_radius": 5.0,
+    "color": "#FDFDFD",
+    "material": "PC+ABS",
+    "note": "White case: a 1.5 mm frame (R5 outline, the K010-V13 drawing) around one black glass front (#030304, 51 x 51 mm, R3.6 corners). color is the frame's."
+  },
+  "display": {
+    "tech": "TFT-IPS-CapTouch",
+    "controller": "ILI9342C / ILI9342E",
+    "active_w_mm": 40.8,
+    "active_h_mm": 30.6,
+    "resolution_w_px": 320,
+    "resolution_h_px": 240,
+    "origin_x_mm": 6.75,
+    "origin_y_mm": 11.72,
+    "native_orientation": "landscape",
+    "firmware_rotation_deg": 90,
+    "note": "Active area datasheet-verified 2026-07-15: 40.80 x 30.60 mm (2.0\", ~199 PPI, pixel pitch 0.1275 mm square); was 48.0 x 36.0 mm (~169 PPI). Origin photo-measured 2026-10-18: the active area centered in the glass print's window (6.71, 11.72, 40.86 x 30.6 mm), measured on the vendor front photo registered through its glass outline onto the 51 x 51 mm glass inside the 1.5 mm frame."
+  },
+  "buttons": [
+    {
+      "id": "TouchA",
+      "logical": "primary",
+      "gpio": -1,
+      "active": "touch",
+      "face": "front",
+      "shape": "circle",
+      "diameter_mm": 2.08,
+      "center_x_mm": 13.54,
+      "center_y_mm": 45.11,
+      "label_on_case": "○"
+    },
+    {
+      "id": "TouchB",
+      "logical": "secondary",
+      "gpio": -1,
+      "active": "touch",
+      "face": "front",
+      "shape": "circle",
+      "diameter_mm": 2.08,
+      "center_x_mm": 27.04,
+      "center_y_mm": 45.11,
+      "label_on_case": "○"
+    },
+    {
+      "id": "TouchC",
+      "logical": "tertiary",
+      "gpio": -1,
+      "active": "touch",
+      "face": "front",
+      "shape": "circle",
+      "diameter_mm": 2.08,
+      "center_x_mm": 40.51,
+      "center_y_mm": 45.11,
+      "label_on_case": "○"
+    },
+    {
+      "id": "Power",
+      "logical": "power",
+      "gpio": -1,
+      "active": "low",
+      "face": "left",
+      "shape": "rect",
+      "width_mm": 2.5,
+      "height_mm": 5.0,
+      "center_x_mm": 0.0,
+      "center_y_mm": 13.0
+    },
+    {
+      "id": "Reset",
+      "logical": "reset",
+      "gpio": -1,
+      "active": "low",
+      "face": "bottom",
+      "shape": "rect",
+      "width_mm": 5.0,
+      "height_mm": 2.0,
+      "center_x_mm": 41.0,
+      "center_y_mm": 54.0
+    }
+  ],
+  "extras": [
+    {
+      "type": "usb-c",
+      "face": "bottom",
+      "center_x_mm": 27.0,
+      "center_y_mm": 54.0
+    },
+    {
+      "type": "led",
+      "face": "front",
+      "center_x_mm": 50.0,
+      "center_y_mm": 3.0,
+      "color": "green"
+    },
+    {
+      "type": "microsd-slot",
+      "face": "bottom",
+      "center_x_mm": 20.4,
+      "center_y_mm": 54.0,
+      "width_mm": 12.56,
+      "height_mm": 1.73,
+      "x_mm": [14.12, 26.68],
+      "from_front_mm": [7.09, 8.81],
+      "from_back_mm": [7.69, 9.41],
+      "insert": "into the bottom edge, toward the top edge: the contact end first, its contacts facing the screen",
+      "model_mm": {"mesh": "case_shell", "plane": "y", "at": -27.0, "x": [-12.88, -0.32], "z": [-0.56, 1.16], "insert": "+y"},
+      "note": "The microSD slot: a slit 12.56 x 1.73 mm through the bottom wall, 14.12 to 26.68 mm from the left edge and 7.09 to 8.81 mm behind the front, its corners rounded (about 0.43 mm), at the middle of a finger notch: a round dimple about 6.3 mm across and 6.5 mm tall at the face (x 17.27 to 23.53, 4.70 to 11.20 mm behind the front), 1.0 mm deep, centered on the slit. The wall is 1.80 mm thick and the slit drafts to 12.50 x 1.70 mm at its inner face, nothing of the file behind it. Measured on M5Stack's Core2_v1.3.stl @dccc8047 (SHA-256 223b148fc19892a77d84aaaa6940c9fce1667d393259bd75316d3b6f85052424, the file the model is built from) and on the model itself (m5stack-core2-v13.glb, the same numbers on its 0.01 mm grid). Checked on The Pi Hut's photo of that face (_shared/photos/core2-v13-extra/pihut_4.jpg): from left to right the slit and its notch, the microphone hole with two vents under it, Reset in its round recess and a small engraved ring, whose seven edges fit one perspective map of the model's positions within 4.3 px (about 0.45 mm at the photo's 9.5 px/mm there); the left face (pihut_7.jpg) holds the power key, the USB-C port and the red Grove port. front = the glass face, 16.5 mm from the back. model_mm: the mouth in the model's own frame (m5stack-core2-v13.glb, y up), which already holds it whole; its filler stands 1.70 mm in, 0.10 mm short of the wall's inner face, so a card going in disappears into its black there. model_mm.insert is the direction a card goes in, in the model's frame. M5Stack: the card's contacts face the same way as the screen (its Core2 microSD page, https://docs.m5stack.com/zh_CN/arduino/m5core2/microsd, read through the mirror https://docs.m5stack.switch-science.com/zh_CN/arduino/m5core2/microsd), the opposite of the Cardputer ADV."
+    }
+  ],
+  "notes": "Capacitive virtual buttons, each marked by a printed ring (2.08 mm across its centerline, 0.19 mm line) photo-measured 2026-10-18; the touch zone around each ring is wider. Power (left edge) and Reset (bottom edge) positions owner-measured 2026-07-15; neither is visible in the front view.",
+  "_decor": {
+    "red_ring": true
+  },
+  "sources": [
+    {
+      "kind": "see",
+      "url": "sources.md",
+      "local": "sources.md"
+    }
+  ]
+}

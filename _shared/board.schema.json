@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/kleidos-dev/boards/main/_shared/board.schema.json",
+  "title": "Board specification",
+  "description": "What a board is made of, part by part, every value tied to a source. A fact with no source is left out, never guessed. In `absent`, a role the board does not have is recorded with the source that says so. Inside `specs`, null means the part has none of that property, under the component's own sources. `_shared/check_board_specs.py` enforces this schema and the rules a schema cannot state (every source id resolves, every address is https, every date is real and not in the future, and the fields repeated in measurements.json agree).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "identity", "components", "sources"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "id": {
+      "description": "The board's folder name.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "identity": {"$ref": "#/$defs/identity"},
+    "physical": {"$ref": "#/$defs/physical"},
+    "components": {
+      "description": "Every part on the board, one entry per part number (a part fitted more than once carries its quantity).",
+      "type": "array",
+      "items": {"$ref": "#/$defs/component"}
+    },
+    "absent": {
+      "description": "Roles the board does not have, each with the source that says so.",
+      "type": "array",
+      "items": {"$ref": "#/$defs/absent"}
+    },
+    "notes": {"type": "string", "minLength": 1},
+    "sources": {
+      "description": "Every source the file cites, by an id of its own.",
+      "type": "object",
+      "propertyNames": {"$ref": "#/$defs/sourceId"},
+      "additionalProperties": {"$ref": "#/$defs/source"}
+    }
+  },
+  "$defs": {
+    "sourceId": {"type": "string", "pattern": "^[a-z0-9]+([-_][a-z0-9]+)*$"},
+    "componentId": {"type": "string", "pattern": "^[a-z0-9]+([-_][a-z0-9]+)*$"},
+    "src": {
+      "description": "The ids of the sources a value comes from.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/sourceId"}
+    },
+    "https": {"type": "string", "pattern": "^https://[^\\s]+$"},
+    "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "role": {
+      "enum": [
+        "soc", "flash", "psram", "display_panel", "display_controller",
+        "touch_controller", "pmic", "charger", "fuel_gauge", "regulator", "rtc",
+        "imu", "magnetometer", "microphone", "audio_codec", "audio_amp", "speaker",
+        "buzzer", "ir_led", "led", "button", "keyboard_controller", "io_expander",
+        "usb_uart_bridge", "sd_slot", "gps", "lora", "antenna", "battery",
+        "connector", "crystal", "esd", "other"
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "vendor", "sku", "src"],
+      "properties": {
+        "name": {"description": "The product name as the vendor writes it.", "type": "string", "minLength": 1},
+        "aka": {"description": "Other names the vendor sells it under.", "type": "array", "items": {"type": "string", "minLength": 1}},
+        "vendor": {"type": "string", "minLength": 1},
+        "sku": {"type": "string", "minLength": 1},
+        "revision": {"description": "The board revision the vendor states; left out when it states none.", "type": "string", "minLength": 1},
+        "links": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "product": {"$ref": "#/$defs/https"},
+            "docs": {"$ref": "#/$defs/https"},
+            "shop": {"$ref": "#/$defs/https"},
+            "repository": {"$ref": "#/$defs/https"}
+          }
+        },
+        "src": {"$ref": "#/$defs/src"}
+      }
+    },
+    "physical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["src"],
+      "properties": {
+        "width_mm": {"type": "number", "exclusiveMinimum": 0},
+        "height_mm": {"type": "number", "exclusiveMinimum": 0},
+        "depth_mm": {"type": "number", "exclusiveMinimum": 0},
+        "weight_g": {"type": "number", "exclusiveMinimum": 0},
+        "notes": {"type": "string", "minLength": 1},
+        "src": {"$ref": "#/$defs/src"}
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "quantity", "src"],
+      "properties": {
+        "id": {"$ref": "#/$defs/componentId"},
+        "role": {"$ref": "#/$defs/role"},
+        "part": {"description": "The exact part number, as its maker writes it.", "type": "string", "minLength": 1},
+        "manufacturer": {"type": "string", "minLength": 1},
+        "designator": {"description": "The reference designator on the vendor's schematic (U3, R12...).", "type": "string", "minLength": 1},
+        "quantity": {"type": "integer", "minimum": 1},
+        "specs": {
+          "description": "Key specifications, free in shape (interface, bus address, voltage, resolution, capacity...). Null means the part has none of that property.",
+          "type": "object"
+        },
+        "connects_to": {"type": "array", "items": {"$ref": "#/$defs/connection"}},
+        "notes": {"type": "string", "minLength": 1},
+        "src": {"$ref": "#/$defs/src"}
+      }
+    },
+    "connection": {
+      "description": "One fact of wiring: which component, over which bus, at which address and pins, with which pulls. It takes the component's sources unless it names its own.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["to"],
+      "properties": {
+        "to": {"description": "A component id of this file, or `external` for a connector's far side.", "type": "string", "minLength": 1},
+        "bus": {"type": "string", "minLength": 1},
+        "address": {"type": "string", "pattern": "^0x[0-9A-Fa-f]{2,4}$"},
+        "pins": {
+          "description": "{this component's signal: the pin or net it reaches}.",
+          "type": "object",
+          "additionalProperties": {"type": "string", "minLength": 1}
+        },
+        "pulls": {"type": "array", "items": {"$ref": "#/$defs/pull"}},
+        "notes": {"type": "string", "minLength": 1},
+        "src": {"$ref": "#/$defs/src"}
+      }
+    },
+    "pull": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signal", "direction"],
+      "properties": {
+        "signal": {"type": "string", "minLength": 1},
+        "direction": {"enum": ["up", "down"]},
+        "ohms": {"type": "number", "exclusiveMinimum": 0},
+        "to": {"description": "The rail a pull-up goes to.", "type": "string", "minLength": 1},
+        "designator": {"type": "string", "minLength": 1}
+      }
+    },
+    "absent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "src"],
+      "properties": {
+        "role": {"$ref": "#/$defs/role"},
+        "notes": {"type": "string", "minLength": 1},
+        "src": {"$ref": "#/$defs/src"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "kind", "checked"],
+      "properties": {
+        "url": {"$ref": "#/$defs/https"},
+        "title": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["vendor_docs", "datasheet", "schematic", "product_page", "measured", "teardown"]},
+        "checked": {"description": "The day the address was last read or confirmed (YYYY-MM-DD).", "$ref": "#/$defs/date"},
+        "mirror_of": {"description": "The original address of a page read at a mirror.", "$ref": "#/$defs/https"},
+        "found_via": {"description": "The source id of the page that lists this address.", "$ref": "#/$defs/sourceId"},
+        "method": {"description": "How a measured value was taken (instrument, setup).", "type": "string", "minLength": 1},
+        "notes": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -1,0 +1,2023 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "eafd2b99-8473-5b31-ba26-5d5a1303b797")
+	(paper "A3")
+	(title_block
+		(title "CoreS3-SE (K128-SE): Contents")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: M5Stack Sch_M5_CoreS3_SE_v1.0 (2025-06-03), docs; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols)
+	(text "M5Stack CoreS3-SE (K128-SE) schematic"
+		(exclude_from_sim no)
+		(at 25.4 22.86 0)
+		(effects
+			(font
+				(size 3 3)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "1cf2f9ed-df84-5d70-b676-8c92822ee651")
+	)
+	(text "Kleidos boards: every part, pin and net, connectivity documented from the vendor's public documentation, with Kleidos additions and corrections"
+		(exclude_from_sim no)
+		(at 25.4 29.21 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "d5721d0b-25a2-552c-8570-142a83235890")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 25.4 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "3f91a2ee-7405-5b58-9c1c-9d7d53fac353")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 34.837 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "36b01db8-e0c3-5741-a56c-b38b115de229")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 40.312 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "16034f18-a345-51e3-8f02-4f0c4e6bd900")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 45.787 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "11caeb46-4587-5191-97f5-add82f9ba5da")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 51.262 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "4e3757fc-e2fc-55a0-a31c-0597104cd735")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 56.737 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "120ec207-3e53-5e20-9de8-1d518b85024c")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 62.212 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "c7bd7f9d-25c8-5810-897a-d7b4890d4c76")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 67.687 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "294c1ed9-a3dd-5667-9444-d1f4d60ccc79")
+	)
+	(text "[8]"
+		(exclude_from_sim no)
+		(at 73.162 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "0b46e8f7-eec0-5abf-be72-bff0633292ad")
+	)
+	(text "[9]"
+		(exclude_from_sim no)
+		(at 78.637 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "edcaf39d-478a-58ba-bbbb-d609d970b3e8")
+	)
+	(text "[10]"
+		(exclude_from_sim no)
+		(at 84.112 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#10")
+		)
+		(uuid "331e9b7b-490f-5227-a352-58794b47c9cc")
+	)
+	(sheet
+		(at 25.4 40.64)
+		(size 172.72 24.13)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "528a976c-2368-5e55-83e5-e860736f628d")
+		(property "Sheetname" "Power management"
+			(at 27.94 43.18 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "pmu.kicad_sch"
+			(at 25.4 65.3584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "2")
+				)
+			)
+		)
+	)
+	(text "Page 2"
+		(exclude_from_sim no)
+		(at 195.58 43.18 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "38ee5ef0-e985-5524-980a-2fa6263bd7e2")
+	)
+	(text "Vendor sheet 1: the AXP2101 with its DC-DC and LDO outputs, the reset and power keys, the charge LED and the\nbattery connector.\n\nMain parts: U1 AXP2101, J5 battery, S1 reset key, S2 power key, LED1, D7"
+		(exclude_from_sim no)
+		(at 27.94 48.26 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "5249695e-61ae-5dd9-9b8d-2513091008ba")
+	)
+	(sheet
+		(at 25.4 68.58)
+		(size 172.72 24.13)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "ae18e7e5-1e98-564a-a4c7-363b3c76081a")
+		(property "Sheetname" "Boot strap, USB-C, boost, RTC"
+			(at 27.94 71.12 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "psu.kicad_sch"
+			(at 25.4 93.2984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "3")
+				)
+			)
+		)
+	)
+	(text "Page 3"
+		(exclude_from_sim no)
+		(at 195.58 71.12 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "ff5794a6-de31-5324-b1a4-2953c9fd3f2f")
+	)
+	(text "Vendor sheet 2: the comparator that holds GPIO0 at power-up, the USB-C receptacle and header, the SY7088 5 V\nboost, the BM8563 clock.\n\nMain parts: U2 LMV331, J1 USB-C, J6, U3 SY7088, U4 BM8563, Y1, BAT1 (not fitted)"
+		(exclude_from_sim no)
+		(at 27.94 76.2 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "c9c47389-2036-5017-bf88-83f5180e23c1")
+	)
+	(sheet
+		(at 25.4 96.52)
+		(size 172.72 24.13)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "17034e88-245c-57b1-a8de-b4ea5e284403")
+		(property "Sheetname" "ESP32-S3"
+			(at 27.94 99.06 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "soc.kicad_sch"
+			(at 25.4 121.2384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "4")
+				)
+			)
+		)
+	)
+	(text "Page 4"
+		(exclude_from_sim no)
+		(at 195.58 99.06 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "02c707d3-9d86-5dbb-96e8-1c64f6ccd849")
+	)
+	(text "Vendor sheet 3: the ESP32-S3 with its flash and PSRAM, the 40 MHz crystal, the RF path to the chip antenna,\nthe I2C pull-ups and the supply decoupling.\n\nMain parts: U5 ESP32-S3, U6 GD25Q128/W25Q128, U7 ESPSRAM, X1 40 MHz, ANT1 PROANT440, J4 IPEX"
+		(exclude_from_sim no)
+		(at 27.94 104.14 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "2822e6f2-c20c-5011-a27b-6f54c8d24a45")
+	)
+	(sheet
+		(at 25.4 124.46)
+		(size 172.72 24.13)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "2195d24e-aaca-5888-9d17-adb4fbe62887")
+		(property "Sheetname" "Audio"
+			(at 27.94 127 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "audio.kicad_sch"
+			(at 25.4 149.1784 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "5")
+				)
+			)
+		)
+	)
+	(text "Page 5"
+		(exclude_from_sim no)
+		(at 195.58 127 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "973c60df-b7c1-5f10-9648-ad4aa24e2db8")
+	)
+	(text "Vendor sheet 4: the AW88298 amplifier, the ES7210 audio ADC, the two microphones and the echo reference\ntaken from the speaker lines.\n\nMain parts: U8 AW88298, U9 ES7210, U12 U13 MSM381A3729H9BPC"
+		(exclude_from_sim no)
+		(at 27.94 132.08 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "12fd6843-a268-5258-a617-04d812212fbe")
+	)
+	(sheet
+		(at 25.4 152.4)
+		(size 172.72 24.13)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "857ad012-2dd6-503e-b4fa-25e8bb869ab9")
+		(property "Sheetname" "Expander and connectors"
+			(at 27.94 154.94 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "gpio.kicad_sch"
+			(at 25.4 177.1184 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "6")
+				)
+			)
+		)
+	)
+	(text "Page 6"
+		(exclude_from_sim no)
+		(at 195.58 154.94 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "e7d746ca-385c-50b4-983e-2efb4d920f5b")
+	)
+	(text "Vendor sheet 5: the AW9523B I/O expander, the M5-Bus, the LCD and touch connectors, the microSD socket and\nGrove port A.\n\nMain parts: U10 AW9523B, BUS1 M5-Bus, LCD1, CTP1, U11 microSD, J3 Grove"
+		(exclude_from_sim no)
+		(at 27.94 160.02 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "069a33f7-08a1-51ba-86e0-ece29a6ca656")
+	)
+	(sheet
+		(at 25.4 180.34)
+		(size 172.72 24.13)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "309ed0c6-2a01-50db-b693-f0b49caa24a8")
+		(property "Sheetname" "Power path"
+			(at 27.94 182.88 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "power_path.kicad_sch"
+			(at 25.4 205.0584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "7")
+				)
+			)
+		)
+	)
+	(text "Page 7"
+		(exclude_from_sim no)
+		(at 195.58 182.88 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "393a5b64-2e93-58d3-bbe0-e6b80de937ed")
+	)
+	(text "Vendor sheet 6: the four load switches that route 5 V between USB-C, the M5-Bus and the AXP2101, the bulk\ncapacitors and the mounting holes.\n\nMain parts: U14 U17 ME1502AM5G, U18 U19 ME1502CM5G, C124 C125, PHD1-PHD3"
+		(exclude_from_sim no)
+		(at 27.94 187.96 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "2fa5bab8-906d-572e-b9c6-82041b45c995")
+	)
+	(sheet
+		(at 25.4 208.28)
+		(size 172.72 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "f551f579-a9f4-54aa-88cd-a82718eca5c0")
+		(property "Sheetname" "Power tree and rails"
+			(at 27.94 210.82 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 25.4 226.6484 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "8")
+				)
+			)
+		)
+	)
+	(text "Page 8"
+		(exclude_from_sim no)
+		(at 195.58 210.82 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "4e81b6df-63ee-5605-b619-bbef4845cfab")
+	)
+	(text "How power flows from USB-C, the M5-Bus and the battery to every rail, and each rail's nominal voltage,\nsource and enable. Every box leads to where it is drawn."
+		(exclude_from_sim no)
+		(at 27.94 215.9 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "30d515c0-685f-560f-8801-e5f27a4f0b1a")
+	)
+	(sheet
+		(at 25.4 228.6)
+		(size 172.72 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "1d06e863-6fd8-554e-86d1-000fac801ee1")
+		(property "Sheetname" "Nets and signals"
+			(at 27.94 231.14 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "nets.kicad_sch"
+			(at 25.4 246.9684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "9")
+				)
+			)
+		)
+	)
+	(text "Page 9"
+		(exclude_from_sim no)
+		(at 195.58 231.14 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "6ab96026-877d-535b-9eb1-e7ed4cbdca84")
+	)
+	(text "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32-S3 and\nAW9523B pins, the I2C addresses, every pull-up and pull-down."
+		(exclude_from_sim no)
+		(at 27.94 236.22 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "5e8a5cd5-80b9-5cfc-a3c9-33746ad0382f")
+	)
+	(sheet
+		(at 25.4 248.92)
+		(size 172.72 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "0f1ea7d4-1b7e-5e60-ba2e-7ffc40c0a201")
+		(property "Sheetname" "Parts"
+			(at 27.94 251.46 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "parts.kicad_sch"
+			(at 25.4 267.2884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "cores3-se"
+				(path "/eafd2b99-8473-5b31-ba26-5d5a1303b797"
+					(page "10")
+				)
+			)
+		)
+	)
+	(text "Page 10"
+		(exclude_from_sim no)
+		(at 195.58 251.46 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "76366d24-51e5-5ddb-a658-78281c85bddc")
+	)
+	(text "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A\nreference on the drawing leads to its row, the row back to it."
+		(exclude_from_sim no)
+		(at 27.94 256.54 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "0d2da03e-6b98-504e-bf37-70e3d890d0da")
+	)
+	(text "How to read it"
+		(exclude_from_sim no)
+		(at 215.9 40.64 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "68e7bebe-0a8e-5bd3-b086-91bace0e9724")
+	)
+	(text "Click a box on the left to open its page. \"Contents\" and the page numbers at the bottom\nright of every page lead back here and to each page.\n\nCyan lines are connections: wires and pin ends, all one width. A dot joins lines; a cross\non a pin end means the pin is not connected. Pins connect by net labels (the boxed names):\npins whose labels carry the same name are on one net, on any page.\n[3/C4] after a label: page 3 carries that net too, its label in zone C4 (column 4, row C of\nthe border). Click it to land on that label. No [page/zone]: the net is on this page only.\nClick a part's reference to find its row in the parts list; the row's page/zone leads back.\nA part crossed out in red is not fitted (DNP). White: parts and their references. Grey:\nvalues, pin names, pin numbers. A dashed frame is a block of the circuit, titled at its top\nleft. An amber K3 marks a Kleidos addition or correction; click it for its row below."
+		(exclude_from_sim no)
+		(at 215.9 45.085 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "005eefce-b2f8-5cc3-bb52-6d32e5d77d74")
+	)
+	(text "Notes"
+		(exclude_from_sim no)
+		(at 215.9 87.135 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "7cf943f6-67f4-5c24-a895-b848ad752526")
+	)
+	(text "Every part, pin and net of the CoreS3-SE's netlist, with the values the vendor documents:\nconnectivity documented from the vendor's public documentation, with Kleidos additions and\ncorrections listed on page 1 (M5Stack's Sch_M5_CoreS3_SE_v1.0 schematic, 2025-06-03, and\nits docs page, cited in README.md and netlist.yaml beside this file). Layout and symbols are\nthis project's. No footprints, no PCB, no part numbers beyond the documented ones.\nPages 2 to 7 are the vendor's sheets 1 to 6, in order. The parts the vendor's print greys\nout (camera connector, MPU6886, BMI270, BMM150) are not in the SE's netlist and are not\ndrawn. Values are as the vendor prints them (10K/1%, 22uF 6.3V). A value of NC means not\nfitted: those parts are marked DNP. Reference designators are the vendor's; BAT1 is printed\nBAT1/NC. Nets the vendor left unnamed carry names of ours (AXP_LX1, BOOT_RC...).\nZones: columns 1-8 and rows A-F, 50 mm apart, printed in the border."
+		(exclude_from_sim no)
+		(at 215.9 91.58 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "f16fa1d9-51fd-560d-8652-c28b9a1baf3c")
+	)
+	(text "Kleidos additions and corrections"
+		(exclude_from_sim no)
+		(at 215.9 130.655 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "ed61bb86-690d-5fef-ba72-eb92c8a4f22a")
+	)
+	(text "Id"
+		(exclude_from_sim no)
+		(at 215.9 137.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "96e1d43f-af88-555c-bcc1-56bd7f7684da")
+	)
+	(text "Kind"
+		(exclude_from_sim no)
+		(at 222.25 137.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "82132a2d-bad5-504a-8008-3094483c0a90")
+	)
+	(text "What"
+		(exclude_from_sim no)
+		(at 234.95 137.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "5fe7c7b0-b350-55b3-ba0f-1229053d2bae")
+	)
+	(text "Source"
+		(exclude_from_sim no)
+		(at 298.45 137.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "231e5127-45ff-5a93-a8f0-7b4b5c0128de")
+	)
+	(polyline
+		(pts
+			(xy 215.9 138.605)
+			(xy 353.06 138.605)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "92232cf2-8c83-5758-b7f6-a22acd0416c9")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 140.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e87719e6-4f9a-5f67-81c8-76dad0ddaa28")
+	)
+	(text "The BM8563 U4 answers at I2C address 0x51."
+		(exclude_from_sim no)
+		(at 234.95 140.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "91323cdc-d39e-555d-bb03-c378966bb630")
+	)
+	(text "datasheet: BM8563 datasheet, address A2h"
+		(exclude_from_sim no)
+		(at 298.45 140.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d54eef66-05c9-5650-80e2-1733db30b1f9")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 142.885 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8d0e46ec-0134-5b12-bd4b-fb9a65265341")
+	)
+	(text "The touch panel's FT6336U answers at 0x38."
+		(exclude_from_sim no)
+		(at 234.95 142.885 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "54f6e07e-5464-59ef-b517-e34f5e9d7809")
+	)
+	(text "bench: bench/2026-11-17-i2c-scan.md"
+		(exclude_from_sim no)
+		(at 298.45 142.885 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "415b1e93-1697-5431-b912-40a881bcd880")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 145.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ccb02382-c97c-5e87-ac50-0b6476a5a639")
+	)
+	(text "LCD1's panel: 2.0-inch 320x240 IPS, ILI9342C driver."
+		(exclude_from_sim no)
+		(at 234.95 145.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "495aa4da-ee64-5bb9-a56d-28b9613d58c2")
+	)
+	(text "vendor-doc: K128-SE docs (2024), pp. 1, 5, 9"
+		(exclude_from_sim no)
+		(at 298.45 145.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0d64f9c1-3b95-569c-98d7-85ea572ac4fe")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 147.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dd1d41eb-c825-5814-994a-4e008fc74f54")
+	)
+	(text "LCD1 pin 7 (SPI_MISO, GPIO35) is the panel's D/C."
+		(exclude_from_sim no)
+		(at 234.95 147.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "db6ce0ea-fad9-5078-993f-d98740d111c7")
+	)
+	(text "vendor-doc: K128-SE docs (2024), pp. 8-9"
+		(exclude_from_sim no)
+		(at 298.45 147.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d9e58690-a3e1-5e9f-ac1f-b5bd5f284ea8")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 150.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "796e61d2-8433-5085-b417-cdca9c0aa702")
+	)
+	(text "RTC alarm or timer on AXP_WAKEUP powers the board on."
+		(exclude_from_sim no)
+		(at 234.95 150.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2c7b7e27-01fc-53db-ac41-4d3403caeffa")
+	)
+	(text "bench: Kleidos firmware"
+		(exclude_from_sim no)
+		(at 298.45 150.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cdd20066-7113-50a1-880d-1094a5b2f7de")
+	)
+	(text "docs/hardware/introspection/axp2101.md, power-on"
+		(exclude_from_sim no)
+		(at 298.45 153.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3e2abffa-cb28-5cd8-be18-ded3a6d0a740")
+	)
+	(text "source 0x20, 2026-10-07"
+		(exclude_from_sim no)
+		(at 298.45 155.585 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e17e3af3-e080-54ea-8b0e-269518102060")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 158.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7e35501a-88f5-5865-af30-11e2138e1882")
+	)
+	(text "U7 is 8 MB (64 Mbit) quad-SPI PSRAM."
+		(exclude_from_sim no)
+		(at 234.95 158.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0822ec7d-9692-5190-87f7-bd148107e0e9")
+	)
+	(text "vendor-doc: K128-SE docs (2024), p. 1"
+		(exclude_from_sim no)
+		(at 298.45 158.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8f99f05d-6bd8-5bde-9af6-9e7756fce1b2")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 160.665 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c727c5c3-262a-5536-b852-fc632a9c717b")
+	)
+	(text "FLASH_VCC is 3.3 V: GPIO45 strap 0, no eFuse override."
+		(exclude_from_sim no)
+		(at 234.95 160.665 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5b202ccd-5300-5f98-ad6f-4812e94ab18e")
+	)
+	(text "bench:"
+		(exclude_from_sim no)
+		(at 298.45 160.665 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0f1cad83-a13b-5962-a897-e8dd3c301ec5")
+	)
+	(text "bench/2026-11-17-efuse-strap-flash-psram.md"
+		(exclude_from_sim no)
+		(at 298.45 163.205 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "899ff12e-6e4c-55cf-9e6e-128370aac7fe")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 165.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "55cf0408-4f10-513c-a61a-66c01cc92d78")
+	)
+	(text "GPIO45: no external pull, strap 0 (VDD_SPI 3.3 V)."
+		(exclude_from_sim no)
+		(at 234.95 165.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f54b2891-7b37-5780-8be1-1719c0dba1fd")
+	)
+	(text "datasheet: ESP32-S3 datasheet v2.2, Table 3-1"
+		(exclude_from_sim no)
+		(at 298.45 165.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "23498f78-3848-5e0e-8a31-0346a7c5d6ba")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 168.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "22d44411-4cdf-5b6f-83a7-3ed76e85c9dd")
+	)
+	(text "GPIO46: no external pull; its pull-down holds strap 0."
+		(exclude_from_sim no)
+		(at 234.95 168.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a613de00-6214-5d55-a4d9-26eb718b88ef")
+	)
+	(text "datasheet: ESP32-S3 datasheet v2.2, Table 3-1"
+		(exclude_from_sim no)
+		(at 298.45 168.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d3cf0518-f113-5dd3-9e31-35257c936c11")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 170.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5554f76d-d626-5168-b19c-734fc14511a0")
+	)
+	(text "GPIO0: also the chip's weak pull-up; high boots flash."
+		(exclude_from_sim no)
+		(at 234.95 170.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4fd833f1-2857-5d92-b359-8c92883df3c8")
+	)
+	(text "datasheet: ESP32-S3 datasheet v2.2, Table 3-1"
+		(exclude_from_sim no)
+		(at 298.45 170.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0a642626-adda-594c-8b44-a9f628c53eb2")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 173.365 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4e76269f-29dd-57db-9f71-d56b6d0edbd1")
+	)
+	(text "GPIO3: JTAG-source strap, read if STRAP_JTAG_SEL set."
+		(exclude_from_sim no)
+		(at 234.95 173.365 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ab693615-0f99-5905-aba7-41376e2519c2")
+	)
+	(text "datasheet: ESP32-S3 datasheet v2.2, 3.4"
+		(exclude_from_sim no)
+		(at 298.45 173.365 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1164bd95-71c1-576a-a656-d0f64e873b2c")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 175.905 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0fcd68cb-40fc-5fc0-b1b8-e9f021585c5a")
+	)
+	(text "U10 RSTN: low resets; internal 100 kohm pull-down."
+		(exclude_from_sim no)
+		(at 234.95 175.905 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6abc07fc-2159-582b-b481-d47f589dd97a")
+	)
+	(text "datasheet: AW9523B datasheet V1.5, pin 23"
+		(exclude_from_sim no)
+		(at 298.45 175.905 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "456dc221-b193-50df-a535-b5ba234a8159")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 178.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "009a3332-b9ad-53c9-a632-01028f1416f2")
+	)
+	(text "VCC_BL: fed from DC-DC 1 inside, 0.5-3.3 V over I2C."
+		(exclude_from_sim no)
+		(at 234.95 178.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8ba3b1b7-bc6d-5474-b9f6-4c0e1258cd5c")
+	)
+	(text "datasheet: AXP2101 datasheet V1.0, DLDO1"
+		(exclude_from_sim no)
+		(at 298.45 178.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c29c0821-766f-5c2b-9e99-5af8e779050d")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 180.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b190574d-a0f9-5893-9118-be609dce561e")
+	)
+	(text "BUS_5V is 5.03 V: R11 15K / R12 4.7K, 1.2 V FB."
+		(exclude_from_sim no)
+		(at 234.95 180.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e6d44bd4-2b8b-522e-a511-61e032123046")
+	)
+	(text "datasheet: SY7088 datasheet, FB pin"
+		(exclude_from_sim no)
+		(at 298.45 180.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e53e2851-9aad-5c4e-b07b-9a02dd23e1ea")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 183.525 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "aac2b21d-f56e-535d-9bd1-195b2731faa1")
+	)
+	(text "U14 current limit: about 1 A (60 kohm / R17 60K)."
+		(exclude_from_sim no)
+		(at 234.95 183.525 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8a4cccfd-666d-5f9b-9c51-4ed4e787f6ec")
+	)
+	(text "datasheet: ME1502 datasheet V02, pin 3"
+		(exclude_from_sim no)
+		(at 298.45 183.525 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "71b06822-31e0-5ce4-9a0d-51475bd94cce")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 186.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b6daa9e1-3c4d-5393-8c71-41eb842d97d3")
+	)
+	(text "U17 current limit: about 1 A (60 kohm / R44 60K)."
+		(exclude_from_sim no)
+		(at 234.95 186.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2bdc9f11-508d-5f5b-b910-ed1169b46924")
+	)
+	(text "datasheet: ME1502 datasheet V02, pin 3"
+		(exclude_from_sim no)
+		(at 298.45 186.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5abcaef6-4ce3-5a65-9255-8fd9fffb389b")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 188.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bec5c4b6-feab-5c0b-b998-6f497972ac61")
+	)
+	(text "U18 current limit: about 2 A (60 kohm / R45 30K)."
+		(exclude_from_sim no)
+		(at 234.95 188.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "38a1c560-ba66-59be-bb76-1aeef9ac6a34")
+	)
+	(text "datasheet: ME1502 datasheet V02, pin 3"
+		(exclude_from_sim no)
+		(at 298.45 188.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6a6f06ed-2b60-5ebe-8651-d872324dfb80")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 191.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "abc3abb5-e730-5592-813f-ff7955a9ab93")
+	)
+	(text "U19 current limit: about 2 A (60 kohm / R46 30K)."
+		(exclude_from_sim no)
+		(at 234.95 191.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a4662c7e-c49f-54f6-9ac8-ae8f5de719e2")
+	)
+	(text "datasheet: ME1502 datasheet V02, pin 3"
+		(exclude_from_sim no)
+		(at 298.45 191.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6ec4500a-b261-5fa2-894f-adaea3956f6e")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 193.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "61cb4657-8aef-50ac-961c-ba59a8dd22ed")
+	)
+	(text "U2 output is open collector; R4 pulls ESP_BOOT up."
+		(exclude_from_sim no)
+		(at 234.95 193.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1ede55cd-2bb0-5b58-8d09-d5aed898dccc")
+	)
+	(text "datasheet: LMV331 datasheet SLCS136V, Features"
+		(exclude_from_sim no)
+		(at 298.45 193.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "62a68dc6-d457-5f70-acf6-9c3df327c031")
+	)
+	(text "K1"
+		(exclude_from_sim no)
+		(at 215.9 140.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "ca188bdc-9ed1-5125-a243-f94ffa8cc079")
+	)
+	(text "K2"
+		(exclude_from_sim no)
+		(at 215.9 142.885 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "88342bf8-86ff-57a8-95ff-710d27379ab8")
+	)
+	(text "K3"
+		(exclude_from_sim no)
+		(at 215.9 145.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "17883839-e7ad-5dd4-902a-e97fdd4e84e6")
+	)
+	(text "K4"
+		(exclude_from_sim no)
+		(at 215.9 147.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "9d15f711-9dbf-5a1a-9ce0-b6ff54d5fce5")
+	)
+	(text "K5"
+		(exclude_from_sim no)
+		(at 215.9 150.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "2667f456-0a37-5e4d-ad04-037f66788cea")
+	)
+	(text "K6"
+		(exclude_from_sim no)
+		(at 215.9 158.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "f80cd950-58d7-5ced-b96b-325f4715991a")
+	)
+	(text "K7"
+		(exclude_from_sim no)
+		(at 215.9 160.665 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "f8113c2d-87dc-541b-846e-da34b424d94d")
+	)
+	(text "K8"
+		(exclude_from_sim no)
+		(at 215.9 165.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "d98e9dde-62cf-5ead-aa6c-f4fbb5543b4e")
+	)
+	(text "K9"
+		(exclude_from_sim no)
+		(at 215.9 168.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "d005d258-fcec-529c-bcde-689a9e825c2d")
+	)
+	(text "K10"
+		(exclude_from_sim no)
+		(at 215.9 170.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "6ef6bf7d-f992-540f-9d36-48b62338087a")
+	)
+	(text "K11"
+		(exclude_from_sim no)
+		(at 215.9 173.365 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "875ef5c2-9cef-5e8c-88b3-08384439dc26")
+	)
+	(text "K12"
+		(exclude_from_sim no)
+		(at 215.9 175.905 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "f7a05771-f7c5-5b63-929c-7ca02f682577")
+	)
+	(text "K13"
+		(exclude_from_sim no)
+		(at 215.9 178.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "4e54705e-0647-56c4-90da-9d4fd8ac6123")
+	)
+	(text "K14"
+		(exclude_from_sim no)
+		(at 215.9 180.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "3f0a5e8a-b597-5b2e-8842-67f31ca80990")
+	)
+	(text "K15"
+		(exclude_from_sim no)
+		(at 215.9 183.525 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "39d10ec4-fbb8-599f-b0d6-81ee627973f4")
+	)
+	(text "K16"
+		(exclude_from_sim no)
+		(at 215.9 186.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "2c5a2dff-ced1-5b00-9be4-e33fbdcf5e8e")
+	)
+	(text "K17"
+		(exclude_from_sim no)
+		(at 215.9 188.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "052a6902-8b2a-5301-8489-3d616fb2d40c")
+	)
+	(text "K18"
+		(exclude_from_sim no)
+		(at 215.9 191.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "74d8a75b-dd43-59f8-813b-25e6d5ff2525")
+	)
+	(text "K19"
+		(exclude_from_sim no)
+		(at 215.9 193.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "51eb67c7-20b8-58e8-bd40-62b1237c8526")
+	)
+	(text "Revision history"
+		(exclude_from_sim no)
+		(at 215.9 202.575 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "6bcc3c86-1275-55a3-967a-6327ba589eb2")
+	)
+	(text "Rev"
+		(exclude_from_sim no)
+		(at 215.9 208.925 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "11f885be-95ac-50c2-b0c2-04f5bb364a86")
+	)
+	(text "Date"
+		(exclude_from_sim no)
+		(at 222.25 208.925 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "d3efba5b-d9f3-5fe5-9a40-2c08ffafaac5")
+	)
+	(text "Change"
+		(exclude_from_sim no)
+		(at 236.22 208.925 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "c9ee2dde-9927-5c0e-9357-fb9584324180")
+	)
+	(polyline
+		(pts
+			(xy 215.9 210.525)
+			(xy 313.69 210.525)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "35bcab23-0e5f-5b71-a2bb-d1176060064d")
+	)
+	(text "1"
+		(exclude_from_sim no)
+		(at 215.9 212.265 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ca33a966-544a-599a-89d0-af3197798b81")
+	)
+	(text "2026-11-17"
+		(exclude_from_sim no)
+		(at 222.25 212.265 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "108f62ae-febb-5776-a6c4-ef4958fdb01a")
+	)
+	(text "First drawing in the approved format: every part, pin and net of the"
+		(exclude_from_sim no)
+		(at 236.22 212.265 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "43abdb5e-c15e-5706-9ef2-dc2aab549658")
+	)
+	(text "SE's netlist, from the vendor's public documentation."
+		(exclude_from_sim no)
+		(at 236.22 214.805 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "926e4e68-cb61-5adb-8541-d1124870c3fd")
+	)
+	(text "2"
+		(exclude_from_sim no)
+		(at 215.9 217.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c10d6e77-6bb8-5cb4-a038-1018f3567a5f")
+	)
+	(text "2026-11-17"
+		(exclude_from_sim no)
+		(at 222.25 217.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "790f017c-639e-5e77-8a8e-26e2b0ae83a9")
+	)
+	(text "Kleidos additions K1-K19, listed above, from datasheets, the vendor's"
+		(exclude_from_sim no)
+		(at 236.22 217.345 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b9535a1a-e923-55cb-9612-402736ad1a04")
+	)
+	(text "docs page and bench probes."
+		(exclude_from_sim no)
+		(at 236.22 219.885 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7dcff5c9-ae24-553a-9074-bd0f5f75444f")
+	)
+	(text "3"
+		(exclude_from_sim no)
+		(at 215.9 222.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "069adf94-6aee-5900-899f-89cfc4ba26f3")
+	)
+	(text "2026-11-17"
+		(exclude_from_sim no)
+		(at 222.25 222.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a065fc50-a31d-56fe-838c-e1148bef4264")
+	)
+	(text "An entry is marked wherever an index page shows its element again; a"
+		(exclude_from_sim no)
+		(at 236.22 222.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d2225929-4476-54e6-a75c-d3174920ff32")
+	)
+	(text "pin on no net says what it is on the nets page; the title block says"
+		(exclude_from_sim no)
+		(at 236.22 224.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "86647a60-2412-51a7-b820-2156390d8083")
+	)
+	(text "the drawing carries entries."
+		(exclude_from_sim no)
+		(at 236.22 227.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ae173771-6fa3-5030-b650-868515005356")
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)

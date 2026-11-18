@@ -1,0 +1,252 @@
+{
+  "schema": 1,
+  "board": "m5stickc-plus-se",
+  "node_name": "M5StickCPlusSE",
+  "output": "m5stickc-plus-se/model/m5stickc-plus-se.glb",
+  "copyright": "Case geometry (front cap with the BtnA flap and the power key, back shell with BtnB): M5Stack, M5_Hardware Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl @48baa75a, MIT License, Copyright (c) 2021 M5Stack. Display, connectors, filler, label and materials: Kleidos (MIT).",
+  "notes": "The Plus SE is the StickC Plus chassis (the Plus 1.1's, without the IMU) in a translucent orange shell, so its case is M5Stack's StickC-Plus STL, which holds the device twice (an assembly and an exploded copy). Only the assembly is kept: the front cap (the BtnA flap cut free by its U slot, the raised M5, the power key) and the back shell (BtnB). The STL's screen faces -Z with BtnB on -X, so a half turn about Y takes it into the build frame (+Y towards the header end, +Z out of the screen, +X towards BtnB). The front cap's front wall (the window volume, the BtnA flap and its M5 included, up to the fillet round its edge) is the one blended part, core glTF BLEND at half alpha in the shell's measured orange, so the photos' darker LCD, the PCB under the flap and the USB-C's top show through it; the walls round it, solid plastic up to 1.8 mm thick, and the back shell stay opaque, which is how the photos show them: lit orange. Under the clear wall the interior is the cheapest that reads at the film's distances: the LCD module, the cavity in the shell's own orange (so it reads as lit plastic, not as a dark hole), a plate for the PCB under the flap in the PCB edge's brown, and the dark bay; everything else is what the openings show (USB-C, PCB edge, Grove, header, IR and LED, inserts, screws). The model's origin is the center of the 24 x 48 x 13.5 mm body; the label's prints stand 0.02 mm proud of the back rim, which gives the measured 13.52 mm. Build-frame mm throughout: the front frame of measurements.json sits at x = -12 + fx, y = 24 - fy.",
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "file": "StickC-Plus.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl",
+    "commit": "48baa75a9476f4070dd5f107c1c28e2c9f383a96",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/48baa75a9476f4070dd5f107c1c28e2c9f383a96/Products/K016-P_StickC-Plus/Structures/StickC-Plus.stl",
+    "sha256": "56dcfd382032d177ea049f890f59db965a56c161a8db588e80dd45e66576685a",
+    "bytes": 616284,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it. One chassis serves the Plus 1.1, the Plus SE and the Plus2."
+  },
+  "transform": [{"rotate": {"axis": "y", "deg": 180}}],
+  "split": true,
+  "select": {"max_le": [12.5, null, null]},
+  "parts": [
+    {"name": "front", "match": {"max_ge": [null, null, 6.0]}},
+    {"name": "back", "match": {"min_le": [null, null, -6.0]}}
+  ],
+  "volumes": {
+    "fill": [
+      [-10.2, 10.2, -14.2, 21.2, -5.7, 5.2],
+      [-10.2, 10.2, -17.0, -14.2, -3.4, 5.2],
+      [-6.15, 6.15, -23.3, -17.0, -4.5, 5.25]
+    ],
+    "lcd": [
+      [-8.75, 8.75, -9.1, 21.9, 3.6, 5.27]
+    ],
+    "window": [
+      [-11.3, 11.3, -23.3, 23.3, 6.49, 7.0],
+      [-10.4, 10.4, -22.4, 22.4, 5.25, 7.0]
+    ],
+    "note": "fill: the opaque interior the openings show (the cavity inside both shells, clear of their walls; above the back's 45-degree step down to the recess; the bay behind the bottom-end openings). lcd: the LCD module under the front wall, whose underside is at z 5.30. window: the front cap's front wall, which the photos see the interior through, in two boxes: its flat face (z 6.50) out to where it meets the fillet (x +-11.29, y +-23.29, the corners about R2.29), and, short of the fillet (x +-10.4, y +-22.4), every face down to the wall's underside: the screen opening, the BtnA flap's slot and the M5. One box down to the underside would also hold the corner fillet's faces, whose corners all lie inside the flat face's rectangle at the 45-degree corners; the fillet and the walls, solid plastic up to 1.8 mm thick, stay opaque."
+  },
+  "cull": {"parts": ["front", "back"], "volumes": ["fill", "lcd"], "margin": 0.06},
+  "center_mm": [0.0, 0.0, -0.25],
+  "front_frame": {"left_x": -12.0, "top_y": 24.0},
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "planar_min_area": 1.5,
+  "materials": [
+    {"name": "case", "hex": "#F2633E", "rough": 0.42},
+    {"name": "case_clear", "hex": "#F2633E", "rough": 0.42, "alpha": 0.5},
+    {"name": "lcd_black", "rgb": [10, 10, 12], "rough": 0.14},
+    {"name": "screen", "rgb": [8, 8, 10], "rough": 1.0, "unlit": true},
+    {"name": "glass", "rgb": [0, 0, 0], "rough": 0.04, "alpha": 0.06},
+    {"name": "internal", "rgb": [26, 16, 13], "rough": 0.95},
+    {"name": "usb_metal", "rgb": [196, 196, 200], "rough": 0.32, "metal": 1.0},
+    {"name": "black_plastic", "rgb": [26, 26, 28], "rough": 0.55},
+    {"name": "hole", "rgb": [3, 3, 4], "rough": 1.0},
+    {"name": "pcb_edge", "rgb": [124, 88, 56], "rough": 0.5},
+    {"name": "white_plastic", "rgb": [234, 232, 224], "rough": 0.55},
+    {"name": "brass", "rgb": [200, 158, 84], "rough": 0.38, "metal": 1.0},
+    {"name": "screw", "rgb": [172, 172, 176], "rough": 0.35, "metal": 0.9},
+    {"name": "back_label", "rgb": [252, 252, 250], "rough": 0.6},
+    {"name": "led_red", "rgb": [196, 30, 26], "rough": 0.3},
+    {"name": "header_black", "rgb": [17, 17, 18], "rough": 0.5},
+    {"name": "header_funnel", "rgb": [8, 8, 9], "rough": 0.7}
+  ],
+  "meshes": [
+    {"name": "case_front", "part": "front", "material": "case", "smooth_deg": 40.0, "outside": "window"},
+    {
+      "name": "case_front_clear",
+      "note": "The front cap's front wall over the cavity, the BtnA flap and its M5 included, blended over what lies under it: the LCD, the cavity, the PCB under the flap and the USB-C's top.",
+      "part": "front", "material": "case_clear", "smooth_deg": 40.0, "inside": "window"
+    },
+    {"name": "case_back", "part": "back", "material": "case", "smooth_deg": 40.0},
+    {
+      "name": "lcd",
+      "material": "lcd_black",
+      "shapes": [{"prism": {"axis": "z", "volume": "lcd", "profile": {"rounded": 0.6}}}]
+    },
+    {"name": "screen", "material": "screen", "screen": {"z": 5.285}},
+    {"name": "glass", "material": "glass", "glass": {"rect": [-7.51, 7.51, -4.525, 20.545], "z": 5.295}},
+    {"name": "internal", "material": "internal", "shapes": [{"volume": "fill"}]},
+    {
+      "name": "lining",
+      "note": "In the shell's own orange, under the clear front wall, a little past its flat face (x +-11.29, y +-23.29, corners about R2.29) and inside the shell's R3, three segments a corner: a slab just under the wall's underside; over the walls, which are solid plastic, a frame 0.2 mm under the face, so a turned view does not see past the slab through the wall's edge; and round both a skirt 0.05 mm thick from the slab's underside up to z 6.40, at x +-11.45 and y +-23.45 where the fillet is still at z 6.46, so a view that enters the face near its far edge, over the frame or under it, meets orange instead of leaving through the wall. A frame widened instead stops at x +-11.6, where the fillet has come down to z 6.37 (6.28 at 11.7), and lets far more of those views through. Through the wall the cavity and the walls read as lit plastic, as in the photos, and what lies deeper (ribs, bosses, IR, LED, header) is hidden as the plastic's own scattering hides it. The LCD, the PCB plate and the USB-C stand above the slab, inside the frame. Each keeps only the faces a view through the clear wall reaches: the slab its top, the frame its top and the sides of its hole, the skirt its top and its inner side; their undersides, over the cavity, and their outer sides, inside the solid walls, no view of the film's range draws.",
+      "material": "case",
+      "shapes": [
+        {"prism": {"axis": "z", "range": [5.1, 5.22], "faces": ["top"],
+                   "profile": {"rounded_rect": [-11.4, 11.4, -23.4, 23.4], "r": 2.45, "res": 3}}},
+        {"prism": {"axis": "z", "range": [6.15, 6.3], "faces": ["top", "inner"], "profile": {
+          "polygon": [[8.95, -23.4], [10.175, -23.072], [11.072, -22.175], [11.4, -20.95],
+                      [11.4, 20.95], [11.072, 22.175], [10.175, 23.072], [8.95, 23.4],
+                      [-8.95, 23.4], [-10.175, 23.072], [-11.072, 22.175], [-11.4, 20.95],
+                      [-11.4, -20.95], [-11.072, -22.175], [-10.175, -23.072], [-8.95, -23.4]],
+          "holes": [[[-10.05, -22.8], [10.05, -22.8], [10.05, 22.0], [-10.05, 22.0]]]}}},
+        {"prism": {"axis": "z", "range": [5.1, 6.4], "faces": ["top", "inner"], "profile": {
+          "polygon": [[8.95, -23.45], [10.2, -23.115], [11.115, -22.2], [11.45, -20.95],
+                      [11.45, 20.95], [11.115, 22.2], [10.2, 23.115], [8.95, 23.45],
+                      [-8.95, 23.45], [-10.2, 23.115], [-11.115, 22.2], [-11.45, 20.95],
+                      [-11.45, -20.95], [-11.115, -22.2], [-10.2, -23.115], [-8.95, -23.45]],
+          "holes": [[[8.95, -23.4], [10.175, -23.072], [11.072, -22.175], [11.4, -20.95],
+                     [11.4, 20.95], [11.072, 22.175], [10.175, 23.072], [8.95, 23.4],
+                     [-8.95, 23.4], [-10.175, 23.072], [-11.072, 22.175], [-11.4, 20.95],
+                     [-11.4, -20.95], [-11.072, -22.175], [-10.175, -23.072], [-8.95, -23.4]]]}}}
+      ]
+    },
+    {
+      "name": "pcb_top",
+      "note": "The PCB under the BtnA flap, which the clear flap shows darker than the plastic round it (front frame x 4.2 to 19.8, y 33.1 to 47.3), just under the front wall and clear of the LCD's bottom end. Drawn along its length, so it keeps its top, its underside and its long sides, whose 0.05 mm above the slab a turned view sees as a line, and leaves out its two ends, against the LCD's end and the bottom wall, which no view reaches.",
+      "material": "pcb_edge",
+      "shapes": [{"prism": {"axis": "y", "range": [-23.3, -9.1], "faces": ["outer"],
+                            "profile": {"rect": [-7.8, 7.8, 5.2, 5.27]}}}]
+    },
+    {
+      "name": "usb_c_shell",
+      "note": "The USB-C receptacle in the bottom end, centered in the front cap's opening (x -4.6..4.6, z 2.0..5.4).",
+      "material": "usb_metal",
+      "smooth_deg": 40,
+      "shapes": [
+        {"prism": {"axis": "y", "range": [-23.6, -16.6],
+                   "profile": {"stadium": [0.0, 3.7, 8.94, 3.26], "inner": ["8.94 - 0.5", "3.26 - 0.5"]}}}
+      ]
+    },
+    {
+      "name": "usb_c_inside",
+      "note": "The receptacle's back plate and tongue, inside the filler's bay behind the bottom end. The plate ends at y -17.1, a tenth of a millimeter short of the bay's inner end (y -17.0), where its face lay on the filler's.",
+      "material": "black_plastic",
+      "shapes": [
+        {"prism": {"axis": "y", "range": [-17.4, -17.1],
+                   "profile": {"stadium": [0.0, 3.7, "8.94 - 0.5", "3.26 - 0.5"]}}},
+        {"prism": {"axis": "y", "range": [-22.7, -17.3],
+                   "profile": {"rect": [-3.3, 3.3, "3.7 - 0.35", "3.7 + 0.35"]}}}
+      ]
+    },
+    {
+      "name": "pcb_edge",
+      "note": "The PCB's edge between the USB-C and the Grove, as the bottom-end photo shows it.",
+      "material": "pcb_edge",
+      "shapes": [{"box": [-6.1, 6.1, -23.4, -16.6, 0.45, 1.9]}]
+    },
+    {
+      "name": "grove",
+      "note": "The side-entry HY2.0-4P (Grove) housing in the back recess, its mouth at the bottom end: back wall, left and right walls, the walls towards the back and the front, its wider inner flange (x +-5.8, as the back photo shows it) and the ears that reach the end.",
+      "material": "white_plastic",
+      "shapes": [
+        {"box": [-4.9, 4.9, -19.6, -17.3, -4.55, 0.4]},
+        {"box": [-4.9, -4.15, -23.95, -19.6, -4.55, 0.4]},
+        {"box": [4.15, 4.9, -23.95, -19.6, -4.55, 0.4]},
+        {"box": [-4.15, 4.15, -23.95, -19.6, -4.55, -3.85]},
+        {"box": [-4.15, 4.15, -23.95, -19.6, -0.3, 0.4]},
+        {"box": [-5.8, -4.9, -20.4, -17.3, -4.55, 0.4]},
+        {"box": [4.9, 5.8, -20.4, -17.3, -4.55, 0.4]},
+        {"box": [-5.8, -4.9, -23.95, -20.4, -2.45, -0.25]},
+        {"box": [4.9, 5.8, -23.95, -20.4, -2.45, -0.25]}
+      ]
+    },
+    {
+      "name": "grove_pins",
+      "material": "brass",
+      "shapes": [
+        {"box": ["-3.0 - 0.32", "-3.0 + 0.32", -22.0, -19.6, "-2.075 - 0.32", "-2.075 + 0.32"]},
+        {"box": ["-1.0 - 0.32", "-1.0 + 0.32", -22.0, -19.6, "-2.075 - 0.32", "-2.075 + 0.32"]},
+        {"box": ["1.0 - 0.32", "1.0 + 0.32", -22.0, -19.6, "-2.075 - 0.32", "-2.075 + 0.32"]},
+        {"box": ["3.0 - 0.32", "3.0 + 0.32", -22.0, -19.6, "-2.075 - 0.32", "-2.075 + 0.32"]}
+      ]
+    },
+    {
+      "name": "header",
+      "note": "The 8-pin female header in the back-side pocket of the top end (x -10.4..10.4, z -7.0..-4.4), its face just inside the end.",
+      "material": "header_black",
+      "shapes": [{"box": [-10.16, 10.16, 14.8, 23.7, -6.85, -4.45]}]
+    },
+    {
+      "name": "header_funnels",
+      "material": "header_funnel",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "23.7 + 0.010", "facing": 1, "u_center": 0.0,
+                                "v_center": "(-6.85 + -4.45) / 2", "cols": 8, "rows": 1,
+                                "pitch": 2.54, "size": 1.2}}]
+    },
+    {
+      "name": "header_holes",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "23.7 + 0.020", "facing": 1, "u_center": 0.0,
+                                "v_center": "(-6.85 + -4.45) / 2", "cols": 8, "rows": 1,
+                                "pitch": 2.54, "size": 0.64}}]
+    },
+    {
+      "name": "ir_led",
+      "note": "The IR transmitter in the outer notch of the top end (x -7.6..-6.1, z 0..2.5), its face 0.05 mm under the end (y 23.45): the shell's seam crosses the notch on the end's face (z 1.55..1.75 in the model), and the part behind an opening lies behind its face, five position steps, where a depth test tells the two apart at any distance a reader draws the board at.",
+      "material": "black_plastic",
+      "shapes": [{"box": [-7.5, -6.2, 22.2, 23.45, 0.05, 2.4]}]
+    },
+    {
+      "name": "status_led",
+      "note": "The red LED in the inner notch of the top end (x -5.0..-3.0, z 0..2.5), its face 0.05 mm under the end (y 23.45), behind the shell's seam as the IR transmitter is.",
+      "material": "led_red",
+      "shapes": [{"box": [-4.9, -3.1, 22.2, 23.45, 0.05, 2.4]}]
+    },
+    {
+      "name": "back_label",
+      "note": "The back label's paper, 21.06 x 37.25 mm (back_plus_se.PAPER), in its 0.2 mm recess (plate at z -6.80, rim at -7.00; the rim starts at x +-10.55), over the header notch up to the header's top (y 23.7): square at the top, where the pin cells run off its edge, round at the bottom (R0.8). Its face lies 0.01 mm inside the rim, so its prints, three position steps out, stand 0.02 mm proud of the rim.",
+      "material": "back_label",
+      "shapes": [{"prism": {"axis": "z", "range": [-6.99, -6.88],
+                            "profile": {"polygon": [[10.53, 23.7], [-10.53, 23.7], [-10.53, -12.751], [-10.503, -12.958], [-10.423, -13.151], [-10.296, -13.317], [-10.13, -13.444], [-9.937, -13.524], [-9.73, -13.551], [9.73, -13.551], [9.937, -13.524], [10.13, -13.444], [10.296, -13.317], [10.423, -13.151], [10.503, -12.958], [10.53, -12.751]]}}}]
+    },
+    {
+      "name": "label_legends",
+      "note": "Everything the label prints, drawn in svg/back.svg (back_plus_se.py) on the plane label: the pin cells, the banner, the fields, the marks and every line of text, three position steps out of the paper.",
+      "legends": {"drawing": "../svg/back.svg", "face": "back", "plane": "label",
+                  "on": "back_label", "z": "-6.99 - 0.03"}
+    },
+    {
+      "name": "inserts",
+      "note": "The two brass inserts on the back, below the label.",
+      "material": "brass",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [-7.995, -14.621], "r": 0.79, "range": [-6.78, -4.6]}},
+        {"cylinder": {"axis": "z", "c": [7.995, -14.621], "r": 0.79, "range": [-6.78, -4.6]}}
+      ]
+    },
+    {
+      "name": "insert_holes",
+      "material": "hole",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [-7.995, -14.621], "r": 0.45, "range": [-6.795, -6.785], "sections": 16}},
+        {"cylinder": {"axis": "z", "c": [7.995, -14.621], "r": 0.45, "range": [-6.795, -6.785], "sections": 16}}
+      ]
+    },
+    {
+      "name": "screws",
+      "note": "The two hex-socket screws in the counterbores of the back recess (floor z -4.0).",
+      "material": "screw",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [-8.0, -19.5], "r": 1.55, "range": [-4.45, -4.0], "sections": 24}},
+        {"cylinder": {"axis": "z", "c": [8.0, -19.5], "r": 1.55, "range": [-4.45, -4.0], "sections": 24}}
+      ]
+    },
+    {
+      "name": "screw_sockets",
+      "material": "hole",
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [-8.0, -19.5], "r": 0.6, "range": [-4.47, -4.44], "sections": 6}},
+        {"cylinder": {"axis": "z", "c": [8.0, -19.5], "r": 0.6, "range": [-4.47, -4.44], "sections": 6}}
+      ]
+    }
+  ]
+}

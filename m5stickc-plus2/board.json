@@ -1,0 +1,922 @@
+{
+  "$schema": "../_shared/board.schema.json",
+  "id": "m5stickc-plus2",
+  "identity": {
+    "name": "StickC-Plus2",
+    "aka": ["M5StickC Plus2", "M5StickC PLUS2"],
+    "vendor": "M5Stack",
+    "sku": "K016-P2",
+    "links": {
+      "docs": "https://docs.m5stack.com/en/core/StickC-Plus2",
+      "shop": "https://shop.m5stack.com/products/m5stickc-plus2-esp32-mini-iot-development-kit",
+      "repository": "https://github.com/m5stack/M5StickCPlus2"
+    },
+    "src": ["m5-docs"]
+  },
+  "physical": {
+    "width_mm": 24.0,
+    "height_mm": 48.0,
+    "depth_mm": 13.5,
+    "weight_g": 16.7,
+    "notes": "The vendor gives the product size as 48.0 x 24.0 x 13.5 mm and the product weight as 16.7 g (gross weight with the package: 26.3 g; package 110.0 x 65.0 x 15.0 mm). Shell material: plastic (PC). Operating temperature: 0 to 40 °C.",
+    "src": ["m5-docs", "owner-unit-verified"]
+  },
+  "components": [
+    {
+      "id": "soc",
+      "role": "soc",
+      "part": "ESP32-PICO-V3-02",
+      "manufacturer": "Espressif Systems",
+      "designator": "U1",
+      "quantity": 1,
+      "specs": {
+        "type": "System in package: ESP32 chip with in-package flash, PSRAM, crystal and RF matching",
+        "cpu": "Xtensa dual-core 32-bit LX6, up to 240 MHz",
+        "rom_kb": 448,
+        "sram_kb": 520,
+        "rtc_sram_kb": 16,
+        "chip_revision": "v3.0 / v3.1",
+        "in_package_flash": "8 MB, quad SPI",
+        "in_package_psram": "2 MB, quad SPI",
+        "wifi": "802.11 b/g/n, 2412-2484 MHz, 1T1R, up to 150 Mbps",
+        "bluetooth": "Bluetooth v4.2 BR/EDR and Bluetooth LE",
+        "supply_v": [3.0, 3.6],
+        "operating_temperature_c": [-40, 85],
+        "package_mm": [7.0, 7.0, 1.11],
+        "lifecycle": "Not recommended for new designs (NRND), per Espressif",
+        "supply": "VDDA (pins 1, 43, 46), VDDA3P3 (pins 3, 4), VDD3P3_CPU (pin 37) and VDD3P3_RTC (pin 19) on +3.3V, decoupled by C4 10 uF and C5 100 nF; VDD_SDIO (pin 26) is an output: VDD3P3_RTC through about 6 ohm, 3.3 V, for the in-package 3.3 V flash and PSRAM, which needs the MTDI strap (GPIO12, internal pull-down) low at reset; decoupled by C8 100 nF (ESP32-PICO datasheet v1.5, Table 4, section 3.2, Table 17, Figure 12)",
+        "unused_pins": "IO20 (27), SD0/IO7 (32) and SD1/IO8 (33) are left unconnected on the board; SD2/IO9 (28) and SD3/IO10 (29) are the in-package PSRAM's CS and CLK, CMD/IO11 (30) and CLK/IO6 (31) the in-package flash's CS and CLK (ESP32-PICO datasheet v1.5, Table 5), which is why the board leaves them unconnected"
+      },
+      "connects_to": [
+        {
+          "to": "antenna",
+          "bus": "RF",
+          "pins": {"LNA_IN (pin 2)": "E1 through a pi network: C1 2.0 pF to GND, L1 1.8 nH in series, C2 2.4 pF to GND"},
+          "src": ["plus2-schematic"]
+        },
+        {
+          "to": "auto-reset",
+          "bus": "reset and boot strapping",
+          "pins": {"EN (pin 9)": "Q1 pin 3", "IO0 (pin 23)": "Q1 pin 6"},
+          "pulls": [
+            {"signal": "EN", "direction": "up", "ohms": 10000, "to": "+3.3V", "designator": "R7"},
+            {"signal": "GPIO0", "direction": "up", "ohms": 10000, "to": "+3.3V", "designator": "R8"}
+          ],
+          "notes": "EN is also decoupled to GND by C6 100 nF and C3 10 uF.",
+          "src": ["plus2-schematic"]
+        }
+      ],
+      "notes": "Its main crystal, flash and PSRAM are inside the package; the board carries only the antenna network and decoupling around it.",
+      "src": ["m5-docs", "esp32-pico-datasheet", "plus2-schematic"]
+    },
+    {
+      "id": "flash",
+      "role": "flash",
+      "quantity": 1,
+      "specs": {
+        "capacity": "8 MB",
+        "interface": "quad SPI",
+        "location": "inside the ESP32-PICO-V3-02 package"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "SPI0/1 (in package)",
+          "pins": {"FLASH_CLK": "CLK/IO6 (pin 31)", "FLASH_CS": "CMD/IO11 (pin 30)"},
+          "src": ["esp32-pico-datasheet"]
+        }
+      ],
+      "src": ["m5-docs", "esp32-pico-datasheet"]
+    },
+    {
+      "id": "psram",
+      "role": "psram",
+      "quantity": 1,
+      "specs": {
+        "capacity": "2 MB",
+        "interface": "quad SPI",
+        "location": "inside the ESP32-PICO-V3-02 package"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "SPI0/1 (in package)",
+          "pins": {"PSRAM_CS": "SD2/IO9 (pin 28)", "PSRAM_CLK": "SD3/IO10 (pin 29)"},
+          "src": ["esp32-pico-datasheet"]
+        }
+      ],
+      "src": ["m5-docs", "esp32-pico-datasheet"]
+    },
+    {
+      "id": "antenna",
+      "role": "antenna",
+      "designator": "E1",
+      "quantity": 1,
+      "specs": {
+        "type": "2.4 GHz 3D antenna",
+        "matching": "pi network C1 2.0 pF (shunt), L1 1.8 nH (series), C2 2.4 pF (shunt)"
+      },
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "display-panel",
+      "role": "display_panel",
+      "quantity": 1,
+      "specs": {
+        "technology": "colour TFT LCD",
+        "diagonal_in": 1.14,
+        "resolution_px": [135, 240],
+        "controller": "ST7789V2"
+      },
+      "connects_to": [
+        {"to": "lcd-fpc", "bus": "8-pin 0.5 mm FPC", "src": ["plus2-schematic"]}
+      ],
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "display-controller",
+      "role": "display_controller",
+      "part": "ST7789V2",
+      "manufacturer": "Sitronix",
+      "quantity": 1,
+      "specs": {
+        "interface": "3-wire SPI with a bidirectional data line: no MISO on the connector, and the panel answers register reads on the MOSI pin (connector pin 4, GPIO15); bench 2026-11-17 read the ST7789 IDs 0x85 0x85 0x52 back on it, each byte one bit late",
+        "frame_memory": "240 x RGB x 320 at 18 bpp (ST7789V datasheet)",
+        "colors": "262K"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "SPI",
+          "pins": {
+            "CS": "GPIO5 (U1 pin 34)",
+            "SCK": "GPIO13 (U1 pin 20), through R17 0 ohm",
+            "MOSI": "GPIO15 (U1 pin 21)",
+            "D/C": "GPIO14 (U1 pin 17)",
+            "RST": "GPIO12 (U1 pin 18)"
+          },
+          "notes": "Reached through the FPC connector U3; C10 on SCK to GND is marked NC (not fitted).",
+          "src": ["m5-docs", "plus2-schematic"]
+        }
+      ],
+      "notes": "The vendor names the driver IC ST7789V2 and links Sitronix's ST7789V datasheet (version 1.0) for it.",
+      "src": ["m5-docs", "st7789v-datasheet", "plus2-schematic", "bench-panel-readback"]
+    },
+    {
+      "id": "lcd-fpc",
+      "role": "connector",
+      "part": "FPC-0.5-8P",
+      "designator": "U3",
+      "quantity": 1,
+      "specs": {
+        "type": "8-pin FPC connector, 0.5 mm pitch",
+        "pinout": {
+          "1": "CS (GPIO5)",
+          "2": "VCC (+3.3V)",
+          "3": "SCK (GPIO13 through R17 0 ohm)",
+          "4": "MOSI (GPIO15)",
+          "5": "D/C (GPIO14)",
+          "6": "RST (GPIO12)",
+          "7": "GND",
+          "8": "VLED (backlight, from U4 VOUT)"
+        },
+        "decoupling": "C11 10 uF on +3.3V"
+      },
+      "connects_to": [
+        {"to": "soc", "bus": "SPI", "pins": {"1": "GPIO5", "3": "GPIO13", "4": "GPIO15", "5": "GPIO14", "6": "GPIO12"}},
+        {"to": "backlight-switch", "bus": "power", "pins": {"8 VLED": "U4 VOUT (A1)"}}
+      ],
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "backlight-switch",
+      "role": "other",
+      "part": "SGM2578",
+      "designator": "U4",
+      "quantity": 1,
+      "specs": {
+        "function": "load switch feeding the LCD backlight (VLED)",
+        "input": "+3.3V (VIN, A2), decoupled by C13 100 nF",
+        "output": "VOUT (A1) to the FPC's VLED pin",
+        "alternate_part": "WS4622C-4/TR (printed beside it on the schematic)"
+      },
+      "connects_to": [
+        {"to": "soc", "bus": "GPIO", "pins": {"EN (B2)": "GPIO27 (U1 pin 16)"}, "src": ["m5-docs", "plus2-schematic"]},
+        {"to": "lcd-fpc", "bus": "power", "pins": {"VOUT (A1)": "pin 8 VLED"}}
+      ],
+      "notes": "The vendor's pin map calls GPIO27 TFT_BL.",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "usb-c",
+      "role": "connector",
+      "designator": "J2",
+      "quantity": 1,
+      "specs": {
+        "type": "USB Type-C receptacle",
+        "input": "5 V at 500 mA (vendor's rating)",
+        "vbus_path": "VBUS through F1 (6 V / 1 A PPTC) to the VBUS net, then D15 SS34 to +5VIN",
+        "data": "DP1/DP2 (A6/B6) joined as USB_DU_P, DN1/DN2 (A7/B7) joined as USB_DU_N"
+      },
+      "connects_to": [
+        {
+          "to": "usb-uart",
+          "bus": "USB 2.0",
+          "pins": {"D+ (A6, B6)": "U2 pin 3 (UD+)", "D- (A7, B7)": "U2 pin 4 (UD-)"},
+          "notes": "Each data line has a PESDNC2FD3V3B to GND and a test point (JP4 on D+, JP5 on D-)."
+        },
+        {
+          "to": "external",
+          "bus": "USB Type-C configuration",
+          "pins": {"CC1 (A5)": "R18 to GND", "CC2 (B5)": "R20 to GND", "GND, SHELL": "GND"},
+          "pulls": [
+            {"signal": "CC1", "direction": "down", "ohms": 5100, "designator": "R18"},
+            {"signal": "CC2", "direction": "down", "ohms": 5100, "designator": "R20"}
+          ],
+          "notes": "Both CC resistors are 5.1 kohm 1 %."
+        },
+        {"to": "fuse", "bus": "power", "pins": {"VCC": "F1"}}
+      ],
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "fuse",
+      "role": "other",
+      "designator": "F1",
+      "quantity": 1,
+      "specs": {"type": "PPTC resettable fuse", "rating": "6 V / 1 A"},
+      "notes": "Between the USB-C VBUS pin and the VBUS net (test point JP3).",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "usb-uart",
+      "role": "usb_uart_bridge",
+      "part": "CH9102F",
+      "designator": "U2",
+      "quantity": 1,
+      "specs": {
+        "interface": "USB full-speed to UART",
+        "supply": "VBUS (pin 8) and VDD5 (pin 7) from VBUS through D29 1N4148WT, with C9 10 uF; V3 (pin 6), the chip's own 3.3 V regulator output, feeds VIO (pin 5) on the +VDD net, decoupled by C34 and C7 100 nF, so +VDD is up only on USB. The print names pins 6 and 7 VDD and REGIN, the CP2104's names",
+        "reset": "RST (pin 9), active low, pulled up to +VDD by R14 10 kohm beside its built-in pull-up",
+        "built_in_pulls": "RST (pin 9) and RXD (pin 20) pull up, VBUS (pin 8) pulls down (CH9102 datasheet 1C, pin table)",
+        "unused_pins": "RI (1), ACT# (10), WAKEUP/GPIO3 (11), TNOW/GPIO2 (12), RXS/GPIO1 (13), TXS/GPIO0 (14), SUSPEND# (15), GPIO4 (16), SUSPEND (17), CTS (18), DSR (22) and DCD (24) are left unconnected; the print names 10, 11-14 and 16 NC, GPIO.3-GPIO.0 and VPP, the CP2104's names"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "UART0",
+          "pins": {
+            "TXD (pin 21)": "URX net, R11 0 ohm, U0RXD/IO3 (U1 pin 40)",
+            "RXD (pin 20)": "UTX net, R12 0 ohm, U0TXD/IO1 (U1 pin 41)"
+          },
+          "notes": "Test points JP1 (URX) and JP2 (UTX) sit on the two lines."
+        },
+        {
+          "to": "auto-reset",
+          "bus": "modem control",
+          "pins": {"DTR (pin 23)": "Q1 pin 5 through R3 10 kohm, and Q1 pin 1", "RTS (pin 19)": "Q1 pin 2 through R4 10 kohm, and Q1 pin 4"}
+        }
+      ],
+      "notes": "The vendor's driver page and its comparison table name the chip CH9102.",
+      "src": ["m5-docs", "plus2-schematic", "ch9102-datasheet"]
+    },
+    {
+      "id": "auto-reset",
+      "role": "other",
+      "part": "LMBT3904DW1T1G",
+      "designator": "Q1",
+      "quantity": 1,
+      "specs": {
+        "type": "dual NPN transistor",
+        "function": "drives EN and GPIO0 from the bridge's RTS and DTR, with R3 and R4 10 kohm in the bases"
+      },
+      "connects_to": [
+        {"to": "usb-uart", "bus": "modem control", "pins": {"5 (base)": "DTR through R3 10 kohm", "4 (emitter)": "RTS", "2 (base)": "RTS through R4 10 kohm", "1 (emitter)": "DTR"}},
+        {"to": "soc", "bus": "reset and boot strapping", "pins": {"3 (collector)": "EN", "6 (collector)": "GPIO0"}}
+      ],
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "battery",
+      "role": "battery",
+      "quantity": 1,
+      "specs": {
+        "capacity_mah": 200,
+        "nominal_v": 3.7,
+        "chemistry": "lithium",
+        "location": "inside the case"
+      },
+      "connects_to": [
+        {"to": "battery-connector", "bus": "power", "pins": {"+": "J3 pin 2 (VBAT_IN)", "-": "J3 pin 1 (GND)"}, "src": ["plus2-schematic"]},
+        {
+          "to": "soc",
+          "bus": "ADC",
+          "pins": {"VBAT_IN": "GPI38 (U1 pin 7) through a divider, R40 100 kohm from VBAT_IN and R41 100 kohm to GND, with C42 100 nF"},
+          "notes": "The vendor's pin table lists G38 as the battery voltage detect pin.",
+          "src": ["m5-docs", "plus2-schematic"]
+        }
+      ],
+      "src": ["m5-docs"]
+    },
+    {
+      "id": "battery-connector",
+      "role": "connector",
+      "designator": "J3",
+      "quantity": 1,
+      "specs": {"type": "2-pin header", "pinout": {"1": "GND", "2": "VBAT_IN"}, "decoupling": "C35 100 nF on VBAT_IN"},
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "charger",
+      "role": "charger",
+      "part": "TP4057",
+      "designator": "U5",
+      "quantity": 1,
+      "specs": {
+        "input": "VCC (pin 4) from +5VIN through R21 0.8 ohm, decoupled by C14 10 uF",
+        "output": "BAT (pin 3) to VBAT_IN, decoupled by C20 10 uF",
+        "prog_resistor_ohm": 3300,
+        "status_pins": "CHRG (pin 1) and STDBY (pin 5) not connected"
+      },
+      "connects_to": [
+        {"to": "battery", "bus": "power", "pins": {"BAT (pin 3)": "VBAT_IN"}},
+        {"to": "external", "bus": "power", "pins": {"PROG (pin 6)": "R26 3.3 kohm to GND"}}
+      ],
+      "notes": "The schematic gives no part manufacturer.",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "power-switch-fet",
+      "role": "other",
+      "part": "LP3218DT1G",
+      "designator": "Q3, Q4",
+      "quantity": 2,
+      "specs": {
+        "type": "12 V P-channel MOSFET in DFN2020-6S: pins 1, 2, 5, 6 and pad 8 drain, 4 and pad 7 source, 3 gate (LRC LP3218DT1G datasheet Rev.B, pin configuration)",
+        "q3": "between VBAT_IN and +VIN; gate on +5VIN, with R28 100 kohm to GND",
+        "q4": "between +VIN and VBAT_OUT (the switched system rail); gate pulled up to +VIN by R24 100 kohm and pulled down by Q7 (HOLD), by D22 from the RTC INT net and by D23 from the WAKE net (power key)"
+      },
+      "connects_to": [
+        {"to": "hold-fet", "bus": "power control", "pins": {"Q4 gate": "Q7 drain"}},
+        {"to": "rtc", "bus": "power control", "pins": {"Q4 gate": "D22 B5819WT to the INT net"}},
+        {"to": "btn-c", "bus": "power control", "pins": {"Q4 gate": "D23 B5819WT to the WAKE net"}}
+      ],
+      "notes": "D21 SS34 also feeds VBAT_OUT from +5VIN, so the system rail is up whenever USB or the header's 5VIN supplies the board. The +VIN net carries C15 10 uF and the INT pull-up R23; VBAT_OUT carries C16 10 uF.",
+      "src": ["plus2-schematic", "lp3218-datasheet"]
+    },
+    {
+      "id": "hold-fet",
+      "role": "other",
+      "part": "SI2302",
+      "designator": "Q7",
+      "quantity": 1,
+      "specs": {"type": "N-channel MOSFET, SOT-23", "function": "holds Q4's gate low while HOLD is high"},
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "GPIO",
+          "pins": {"gate (HOLD)": "GPIO4 (U1 pin 24)"},
+          "pulls": [{"signal": "HOLD", "direction": "down", "ohms": 100000, "designator": "R34"}],
+          "src": ["m5-docs", "plus2-schematic"]
+        },
+        {"to": "power-switch-fet", "bus": "power control", "pins": {"drain": "Q4 gate"}}
+      ],
+      "notes": "The vendor: after a wake-up, the program sets HOLD (G4) high to keep the power on; setting it to 0 cuts the power when no USB power is connected.",
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "boost",
+      "role": "regulator",
+      "part": "SY7088",
+      "designator": "U6",
+      "quantity": 1,
+      "specs": {
+        "topology": "boost (step-up) converter",
+        "input": "VBAT_OUT through R22 0 ohm; C18 22 uF and C19 1 uF on the input",
+        "enable": "EN (pin 3) tied to IN",
+        "inductor": "L2 1.5 uH, 3015 size",
+        "output_v": 5.3,
+        "feedback": "R25 160 kohm and R27 47 kohm; the schematic prints Vout = 1.2 V x (R1/R2 + 1)",
+        "output_cap": "C17 22 uF",
+        "output_path": "through D20 SS34 to +5VOUT"
+      },
+      "notes": "+5VOUT feeds the Grove-style port, the STICKIO header and the GS321 power-off timer.",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "buck",
+      "role": "regulator",
+      "part": "SY8089",
+      "designator": "U7",
+      "quantity": 1,
+      "specs": {
+        "topology": "buck (step-down) converter",
+        "input": "VBAT_OUT; C23 100 nF and C24 22 uF on the input",
+        "enable": "EN (pin 1) on the 3V3EN net, pulled up to the input by R31 150 kohm and driven by U8 GS321",
+        "inductor": "L3 4.7 uH, 3015 size",
+        "output_v": 3.3,
+        "feedback": "R32 68 kohm and R33 15 kohm",
+        "output_caps": "C21 22 uF, C22 100 nF"
+      },
+      "notes": "Its output is the +3.3V rail (net +3V3OUT) that feeds the SoC, the IMU, the microphone, the LCD, the backlight switch and the I2C pull-ups.",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "power-off-timer",
+      "role": "other",
+      "part": "GS321",
+      "designator": "U8",
+      "quantity": 1,
+      "specs": {
+        "type": "drawn as an operational amplifier, used open-loop as a comparator; powered from +5VOUT (C41 100 nF)",
+        "non_inverting_input": "pin 1: R35 680 kohm 1 % and C25 10 uF from +5VOUT, D27 1N4148WT to GND, and D26 1N4148WT with R36 270 kohm 1 % to the WAKE net (power key)",
+        "inverting_input": "pin 3: R37 10 kohm to +5VOUT and R38 10 kohm to GND",
+        "output": "pin 4 to the 3V3EN net (SY8089 EN); the green LED LED1 hangs from +5VOUT through R39 2 kohm 1 % onto the same net",
+        "pin_numbering": "The print's numbers agree with the Gainsil GS321 datasheet V2 (Figure 1, SOT23-5): 1 IN+, 2 VSS, 3 IN-, 4 OUT, 5 VDD; the GS321Y variant (marked 321Y) differs, with OUT on pin 1"
+      },
+      "notes": "Holding the power key low discharges C25 through D26 and R36; once the non-inverting input falls below half of +5VOUT the output pulls 3V3EN low, the 3.3 V rail stops and the green LED lights. The vendor: holding Button C for more than 6 s powers the board off without USB, and with USB connected turns the display off and sleeps without cutting power; the green LED is a sleep-state indicator.",
+      "src": ["m5-docs", "plus2-schematic", "gs321-datasheet"]
+    },
+    {
+      "id": "rtc",
+      "role": "rtc",
+      "part": "BM8563",
+      "designator": "U9",
+      "quantity": 1,
+      "specs": {
+        "interface": "I2C, up to 400 kbit/s",
+        "i2c_address": "0x51 (write 0xA2, read 0xA3)",
+        "supply": "VDD (pin 8) from VBAT_IN, the battery side of the power switch, decoupled by C27 100 nF",
+        "supply_range_v": [1.5, 5.5],
+        "sleep_current_ua": 0.25,
+        "clkout": "pin 7 not connected",
+        "interrupt": "open-drain INT (pin 3)"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "I2C",
+          "address": "0x51",
+          "pins": {"SCL (pin 6)": "GPIO22 (U1 pin 39)", "SDA (pin 5)": "GPIO21 (U1 pin 42)"},
+          "pulls": [
+            {"signal": "SCL", "direction": "up", "ohms": 2200, "to": "+3.3V", "designator": "R10"},
+            {"signal": "SDA", "direction": "up", "ohms": 2200, "to": "+3.3V", "designator": "R13"}
+          ],
+          "src": ["m5-docs", "plus2-schematic", "bm8563-datasheet"]
+        },
+        {
+          "to": "power-switch-fet",
+          "bus": "power control",
+          "pins": {"INT (pin 3)": "INT net, D22 B5819WT to Q4's gate"},
+          "pulls": [{"signal": "INT", "direction": "up", "ohms": 100000, "to": "+VIN", "designator": "R23"}],
+          "notes": "INT reaches no ESP32 GPIO; it can only switch the board on.",
+          "src": ["plus2-schematic"]
+        },
+        {"to": "rtc-crystal", "bus": "oscillator", "pins": {"OSCI (pin 1)": "Y1", "OSCO (pin 2)": "Y1"}, "src": ["plus2-schematic"]}
+      ],
+      "notes": "The schematic symbol is labelled RTC8563; the vendor's documentation names the part BM8563 and links its datasheet.",
+      "src": ["m5-docs", "plus2-schematic", "bm8563-datasheet", "bench-i2c-scan"]
+    },
+    {
+      "id": "rtc-crystal",
+      "role": "crystal",
+      "designator": "Y1",
+      "quantity": 1,
+      "specs": {
+        "frequency_hz": 32768,
+        "tolerance_ppm": 20,
+        "load_capacitance_pf": 12.5,
+        "load_capacitors": "C26 and C28, 6.0 pF each to GND"
+      },
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "imu",
+      "role": "imu",
+      "part": "MPU-6886",
+      "manufacturer": "TDK InvenSense",
+      "designator": "U10",
+      "quantity": 1,
+      "specs": {
+        "axes": "3-axis accelerometer + 3-axis gyroscope",
+        "accel_range_g": [2, 4, 8, 16],
+        "gyro_range_dps": [250, 500, 1000, 2000],
+        "fifo": "1 kB",
+        "vdd_range_v": [1.71, 3.45],
+        "supply": "VDD (pin 13) and VDDIO (pin 8) on +3.3V; C30 10 nF, C31 2.2 uF, C32 100 nF; REGOUT (pin 10) C29 100 nF",
+        "interface_select": "CS (pin 22) tied to +3.3V (I2C mode)",
+        "address_select": "AD0/SDO (pin 9) tied to GND",
+        "interrupt": "INT (pin 12) not connected",
+        "fsync": "FSYNC (pin 11) not connected"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "I2C",
+          "address": "0x68",
+          "pins": {"SCL/SCLK (pin 23)": "GPIO22 (U1 pin 39)", "SDA/SDI (pin 24)": "GPIO21 (U1 pin 42)"},
+          "pulls": [
+            {"signal": "SCL", "direction": "up", "ohms": 2200, "to": "+3.3V", "designator": "R10"},
+            {"signal": "SDA", "direction": "up", "ohms": 2200, "to": "+3.3V", "designator": "R13"}
+          ],
+          "src": ["m5-docs", "plus2-schematic", "mpu6886-datasheet"]
+        }
+      ],
+      "src": ["m5-docs", "plus2-schematic", "mpu6886-datasheet"]
+    },
+    {
+      "id": "microphone",
+      "role": "microphone",
+      "part": "SPM1423HM4H-B",
+      "manufacturer": "Knowles",
+      "designator": "U11",
+      "quantity": 1,
+      "specs": {
+        "type": "digital MEMS microphone (SiSonic)",
+        "supply": "3V3 (pin 6) on +3.3V, C33 100 nF",
+        "channel_select": "SELECT (pin 2) tied to GND",
+        "operating_temperature_c": [-40, 100]
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "PDM",
+          "pins": {"CLK (pin 4)": "GPIO0 (U1 pin 23)", "DAT (pin 5)": "GPI34 (U1 pin 10)"},
+          "pulls": [
+            {"signal": "DAT (GPI34)", "direction": "up", "ohms": 10000, "to": "+3.3V", "designator": "R5"},
+            {"signal": "CLK (GPIO0)", "direction": "up", "ohms": 10000, "to": "+3.3V", "designator": "R8"}
+          ],
+          "notes": "The clock line is the GPIO0 strapping pin, shared with the STICKIO header and the auto-reset circuit.",
+          "src": ["m5-docs", "plus2-schematic"]
+        }
+      ],
+      "src": ["m5-docs", "plus2-schematic", "spm1423-datasheet"]
+    },
+    {
+      "id": "buzzer",
+      "role": "buzzer",
+      "designator": "LS1",
+      "quantity": 1,
+      "specs": {
+        "type": "passive buzzer",
+        "supply": "+3.3V through R16 10 ohm",
+        "flyback_diode": "D14 1N4148WT across the buzzer"
+      },
+      "connects_to": [
+        {"to": "driver-npn", "bus": "low-side switch", "pins": {"-": "Q2 collector"}}
+      ],
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "driver-npn",
+      "role": "other",
+      "part": "SS8050",
+      "designator": "Q2, Q5",
+      "quantity": 2,
+      "specs": {
+        "type": "NPN transistor, emitter to GND",
+        "q2": "buzzer driver: base from GPIO2 through R19 470 ohm and C12 10 uF in series, D19 1N4148WT from base to GND",
+        "q5": "red LED and IR emitter driver: base on the GPIO19 net, R29 100 kohm to GND"
+      },
+      "connects_to": [
+        {"to": "soc", "bus": "GPIO", "pins": {"Q2 base": "GPIO2 (U1 pin 22) through R19 and C12"}, "src": ["m5-docs", "plus2-schematic"]},
+        {
+          "to": "soc",
+          "bus": "GPIO",
+          "pins": {"Q5 base": "GPIO19 net, from IO19 (U1 pin 38) through R9 10 ohm"},
+          "pulls": [{"signal": "GPIO19", "direction": "down", "ohms": 100000, "designator": "R29"}],
+          "src": ["m5-docs", "plus2-schematic"]
+        },
+        {"to": "buzzer", "bus": "low-side switch", "pins": {"Q2 collector": "LS1"}},
+        {"to": "led-red", "bus": "low-side switch", "pins": {"Q5 collector": "D24 cathode"}},
+        {"to": "ir-led", "bus": "low-side switch", "pins": {"Q5 collector": "IR1 cathode"}}
+      ],
+      "notes": "Q2's base is AC-coupled through C12.",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "led-red",
+      "role": "led",
+      "designator": "D24",
+      "quantity": 1,
+      "specs": {"colour": "red", "series_resistor": "R30 300 ohm from VBAT_OUT"},
+      "notes": "Shares its driver and control pin (G19) with the IR emitter; the vendor states the red LED and IR emitter share G19.",
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "ir-led",
+      "role": "ir_led",
+      "designator": "IR1",
+      "quantity": 1,
+      "specs": {"function": "infrared emitter", "series_resistor": "R15 22 ohm 1 % from VBAT_OUT"},
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "led-green",
+      "role": "led",
+      "designator": "LED1",
+      "quantity": 1,
+      "specs": {"colour": "green", "series_resistor": "R39 2 kohm 1 % from +5VOUT", "programmable": false},
+      "connects_to": [
+        {"to": "power-off-timer", "bus": "status", "pins": {"cathode": "U8 output (3V3EN net)"}}
+      ],
+      "notes": "The vendor: non-programmable, a sleep-state indicator; it lights when a long press of the power button turns the board off.",
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "btn-a",
+      "role": "button",
+      "designator": "S2",
+      "quantity": 1,
+      "specs": {"name": "Button A", "type": "push button to GND", "esd": "D8 PESDNC2FD3V3B"},
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "GPIO",
+          "pins": {"switch": "GPI37 (U1 pin 6)"},
+          "pulls": [{"signal": "GPI37", "direction": "up", "ohms": 10000, "to": "+3.3V", "designator": "R1"}]
+        }
+      ],
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "btn-b",
+      "role": "button",
+      "designator": "S1",
+      "quantity": 1,
+      "specs": {"name": "Button B", "type": "push button to GND", "esd": "D5 PESDNC2FD3V3B"},
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "GPIO",
+          "pins": {"switch": "GPI39 (U1 pin 8)"},
+          "pulls": [{"signal": "GPI39", "direction": "up", "ohms": 10000, "to": "+3.3V", "designator": "R2"}]
+        }
+      ],
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "btn-c",
+      "role": "button",
+      "designator": "S3",
+      "quantity": 1,
+      "specs": {
+        "name": "Button C (power)",
+        "type": "push button pulling the WAKE net to GND",
+        "esd": "D25 PESDNC2FD3V3B on WAKE"
+      },
+      "connects_to": [
+        {
+          "to": "soc",
+          "bus": "GPIO",
+          "pins": {"WAKE": "GPI35 (U1 pin 11) through D1 B5819WT"},
+          "pulls": [{"signal": "GPI35", "direction": "up", "ohms": 10000, "to": "+3.3V", "designator": "R6"}]
+        },
+        {"to": "power-switch-fet", "bus": "power control", "pins": {"WAKE": "Q4 gate through D23 B5819WT"}},
+        {"to": "power-off-timer", "bus": "power control", "pins": {"WAKE": "U8 pin 1 through D26 1N4148WT and R36 270 kohm"}}
+      ],
+      "notes": "The vendor: a press of more than 2 s powers the board on (the program must then raise HOLD); more than 6 s powers it off without USB.",
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "grove",
+      "role": "connector",
+      "part": "GH2.0-4P",
+      "designator": "J1",
+      "quantity": 1,
+      "specs": {
+        "type": "4-pin port; the vendor's page calls it HY2.0-4P (I2C + I/O + UART)",
+        "pinout": {"1": "GPIO33 (white wire)", "2": "GPIO32 (yellow wire)", "3": "+5VOUT (red wire)", "4": "GND (black wire)"},
+        "esd": "D12 and D13 PESDNC2FD3V3B on GPIO33 and GPIO32, D28 PESDNC2FD5VB on +5VOUT",
+        "decoupling": "C38 100 nF/25 V on +5VOUT"
+      },
+      "connects_to": [
+        {"to": "soc", "bus": "GPIO", "pins": {"1": "GPIO33 (U1 pin 13)", "2": "GPIO32 (U1 pin 12)"}},
+        {"to": "external", "bus": "PORT.CUSTOM", "pins": {"1": "G33", "2": "G32", "3": "5V", "4": "GND"}}
+      ],
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "stickio",
+      "role": "connector",
+      "designator": "P1",
+      "quantity": 1,
+      "specs": {
+        "type": "8-pin expansion header (STICKIO, HAT compatible)",
+        "pinout": {
+          "1": "GND",
+          "2": "5VOUT (+5VOUT)",
+          "3": "G26 (GPIO26)",
+          "4": "G36 (GPI36, joined with GPIO25 on this pin)",
+          "5": "G0 (GPIO0)",
+          "6": "BAT (VBAT_IN)",
+          "7": "3V3 (+3.3V)",
+          "8": "5VIN (into +5VIN through D2 SS34)"
+        },
+        "esd": "PESDNC2FD3V3B on GPIO26 (D4), GPI36 (D6), GPIO0 (D7), +3.3V (D10); PESDNC2FD5VB on +5VOUT (D3), VBAT_IN (D9), +5VIN (D11)",
+        "decoupling": "C36 100 nF (+5VOUT), C37 100 nF (VBAT_IN), C39 100 nF (+3.3V), C40 100 nF (+5VIN)"
+      },
+      "connects_to": [
+        {"to": "soc", "bus": "GPIO", "pins": {"3": "GPIO26 (U1 pin 15)", "4": "GPI36 (U1 pin 5) and GPIO25 (U1 pin 14)", "5": "GPIO0 (U1 pin 23)"}},
+        {"to": "external", "bus": "HAT", "pins": {"1": "GND", "2": "5VOUT", "3": "G26", "4": "G36/G25", "5": "G0", "6": "BAT", "7": "3V3", "8": "5VIN"}}
+      ],
+      "notes": "The vendor lists the external pins as G0, G25/G26, G36, G32, G33 (G32/G33 are on the Grove-style port).",
+      "src": ["m5-docs", "plus2-schematic"]
+    },
+    {
+      "id": "i2c-header",
+      "role": "connector",
+      "designator": "P2",
+      "quantity": 1,
+      "specs": {"type": "4-pin header", "pinout": {"1": "SCL", "2": "SDA", "3": "+5VOUT", "4": "GND"}},
+      "connects_to": [
+        {"to": "soc", "bus": "I2C", "pins": {"1": "GPIO22", "2": "GPIO21"}}
+      ],
+      "notes": "The schematic names it only \"Header 4\"; it is not one of the external ports the vendor lists.",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "test-points",
+      "role": "other",
+      "designator": "JP1-JP5",
+      "quantity": 5,
+      "specs": {"JP1": "URX", "JP2": "UTX", "JP3": "VBUS", "JP4": "USB D+", "JP5": "USB D-"},
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "esd-3v3",
+      "role": "esd",
+      "part": "PESDNC2FD3V3B",
+      "quantity": 11,
+      "specs": {
+        "type": "bidirectional ESD protection diode",
+        "placement": "D4 GPIO26, D6 GPI36, D7 GPIO0, D10 +3.3V, D5 GPI39 (Button B), D8 GPI37 (Button A), D12 GPIO33, D13 GPIO32, D25 WAKE, D17 USB_DU_P and D18 USB_DU_N"
+      },
+      "notes": "The designators of the two USB data-line diodes overlap their labels on the printed page; the PDF's bookmarks name them D17 (pins on USB_DU_P) and D18 (USB_DU_N).",
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "esd-5v",
+      "role": "esd",
+      "part": "PESDNC2FD5VB",
+      "designator": "D3, D9, D11, D16, D28",
+      "quantity": 5,
+      "specs": {
+        "type": "bidirectional ESD protection diode",
+        "placement": "D3 +5VOUT, D9 VBAT_IN, D11 +5VIN, D16 +5VIN at the USB input, D28 +5VOUT at the Grove-style port"
+      },
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "schottky-ss34",
+      "role": "other",
+      "part": "SS34",
+      "designator": "D2, D15, D20, D21",
+      "quantity": 4,
+      "specs": {
+        "type": "Schottky diode",
+        "placement": "D15 VBUS to +5VIN; D2 header 5VIN to +5VIN; D20 boost output to +5VOUT; D21 +5VIN to VBAT_OUT"
+      },
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "schottky-b5819",
+      "role": "other",
+      "part": "B5819WT",
+      "designator": "D1, D22, D23",
+      "quantity": 3,
+      "specs": {
+        "type": "Schottky diode",
+        "placement": "D1 GPI35 to WAKE; D22 Q4 gate to INT; D23 Q4 gate to WAKE"
+      },
+      "src": ["plus2-schematic"]
+    },
+    {
+      "id": "signal-diode",
+      "role": "other",
+      "part": "1N4148WT",
+      "designator": "D14, D19, D26, D27, D29",
+      "quantity": 5,
+      "specs": {
+        "type": "small-signal switching diode",
+        "placement": "D14 across the buzzer; D19 Q2 base clamp; D26 and D27 in the power-off timer; D29 VBUS to the CH9102F supply"
+      },
+      "src": ["plus2-schematic"]
+    }
+  ],
+  "absent": [
+    {"role": "pmic", "notes": "The vendor's version history: the AXP192 power management chip was removed in 2023.12 (v2); its comparison table gives the Plus2 no power management chip.", "src": ["m5-docs"]},
+    {"role": "fuel_gauge", "notes": "Battery voltage is read only through the GPI38 divider.", "src": ["plus2-schematic"]},
+    {"role": "touch_controller", "src": ["plus2-schematic"]},
+    {"role": "magnetometer", "src": ["plus2-schematic"]},
+    {"role": "audio_codec", "src": ["plus2-schematic"]},
+    {"role": "audio_amp", "src": ["plus2-schematic"]},
+    {"role": "speaker", "notes": "The board's sound part is the passive buzzer LS1.", "src": ["plus2-schematic"]},
+    {"role": "keyboard_controller", "src": ["plus2-schematic"]},
+    {"role": "io_expander", "src": ["plus2-schematic"]},
+    {"role": "sd_slot", "src": ["plus2-schematic"]},
+    {"role": "gps", "src": ["plus2-schematic"]},
+    {"role": "lora", "src": ["plus2-schematic"]}
+  ],
+  "notes": "Components are the parts of the vendor's schematic v0.5 (three sheets). Resistors, capacitors and inductors are recorded on the part they serve (pulls, decoupling, feedback, matching) rather than as entries of their own. Power rails as the schematic names them: +5VIN (USB VBUS through D15, or the header's 5VIN through D2), VBAT_IN (the battery), +VIN (battery through Q3), VBAT_OUT (the switched system rail, through Q4 or from +5VIN through D21), +5VOUT (SY7088 boost through D20) and +3.3V (SY8089 buck, enabled by 3V3EN). The absent roles rest on the full schematic drawing no such part.",
+  "sources": {
+    "m5-docs": {
+      "url": "https://docs.m5stack.switch-science.com/en/core/StickC-Plus2",
+      "mirror_of": "https://docs.m5stack.com/en/core/StickC-Plus2",
+      "title": "StickC-Plus2 (K016-P2), M5Stack documentation",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "notes": "Read at Switch Science's mirror of docs.m5stack.com: the original host timed out from the machine that wrote this file on 2026-11-16. Specifications, pin map, power on/off, USB driver, version change and hardware difference tables."
+    },
+    "plus2-schematic": {
+      "url": "https://web.archive.org/web/20260318085629/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/512/Sch_M5StickC_Plus2_v0.5.pdf",
+      "mirror_of": "https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/512/Sch_M5StickC_Plus2_v0.5.pdf",
+      "title": "M5StickC Plus2 schematic v0.5 (Altium, 3 sheets)",
+      "kind": "schematic",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "Read at the Internet Archive's capture of 2026-03-18; the vendor's file host timed out. SHA-256 of the file read: 75017af5c47c7e56904469f032e7d71a63803651a6e8af070d427f125e88e6cd."
+    },
+    "esp32-pico-datasheet": {
+      "url": "https://www.espressif.com/sites/default/files/documentation/esp32-pico_series_datasheet_en.pdf",
+      "title": "ESP32-PICO Series Datasheet v1.5 (Espressif)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "mpu6886-datasheet": {
+      "url": "https://web.archive.org/web/20261031011628/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/MPU-6886-000193%2Bv1.1_GHIC_en.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/MPU-6886-000193%2Bv1.1_GHIC_en.pdf",
+      "title": "MPU-6886 datasheet DS-000193 revision 1.1 (TDK InvenSense), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "Read at the Internet Archive's capture; the vendor's file host timed out."
+    },
+    "bm8563-datasheet": {
+      "url": "https://web.archive.org/web/20261031011628/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/BM8563_V1.1_cn.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/BM8563_V1.1_cn.pdf",
+      "title": "BM8563 real-time clock datasheet V1.1 (Chinese), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "Read at the Internet Archive's capture; the vendor's file host timed out."
+    },
+    "spm1423-datasheet": {
+      "url": "https://web.archive.org/web/20260917142323/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/SPM1423HM4H-B_datasheet_en.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/SPM1423HM4H-B_datasheet_en.pdf",
+      "title": "SPM1423HM4H-B digital microphone datasheet revision A (Knowles), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "Read at the Internet Archive's capture; the vendor's file host timed out. Its specification tables are images, so only the text values are taken."
+    },
+    "st7789v-datasheet": {
+      "url": "https://web.archive.org/web/20261022024740/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/ST7789V.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/ST7789V.pdf",
+      "title": "ST7789V display controller datasheet version 1.0 (Sitronix), as M5Stack hosts it for the ST7789V2",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "Read at the Internet Archive's capture; the vendor's file host timed out."
+    },
+    "ch9102-datasheet": {
+      "url": "https://akizukidenshi.com/goodsaffix/ch9102.pdf",
+      "title": "CH9102 USB to high-speed serial port chip datasheet, version 1C (WCH)",
+      "kind": "datasheet",
+      "checked": "2026-11-17",
+      "notes": "Read at a distributor's copy; WCH's own host timed out on 2026-11-17. SHA-256 of the file read: 876966aa794ec18d850b622a76386d7565bd76e7f76fdb972b1602172062fb3a."
+    },
+    "lp3218-datasheet": {
+      "url": "https://static.chipdip.ru/lib/495/DOC013495055.pdf",
+      "title": "LP3218DT1G P-channel MOSFET datasheet Rev.B, May 2017 (Leshan Radio Company)",
+      "kind": "datasheet",
+      "checked": "2026-11-17",
+      "notes": "Read at a distributor's copy. SHA-256 of the file read: 336b22f5df448eab6804ba03191fa0035faed5e4ecb915b193f9917f96553e49."
+    },
+    "gs321-datasheet": {
+      "url": "https://static.chipdip.ru/lib/913/DOC012913966.pdf",
+      "title": "GS321/358/324 operational amplifier datasheet V2 (Gainsil)",
+      "kind": "datasheet",
+      "checked": "2026-11-17",
+      "notes": "Read at a distributor's copy. SHA-256 of the file read: 59fba7a51d3ae6b8a84803d7fae7bcc5f66c91ccfba01907f3b02f9a6b5acab1."
+    },
+    "bench-i2c-scan": {
+      "title": "I2C bus scan on the owner's StickC-Plus2 (Kleidos boards bench record m5stickc-plus2/schematic/bench/2026-11-17-i2c-scan.md)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Over the board's USB-C port, case closed: the I2C? console command of the Kleidos m5stickc_plus2_debug image already on the board, on SDA GPIO21 / SCL GPIO22 and with the two swapped, three runs after fresh resets; only 0x51 and 0x68 answered."
+    },
+    "bench-panel-readback": {
+      "title": "LCD panel register read-back on the owner's StickC-Plus2 (Kleidos boards bench record m5stickc-plus2/schematic/bench/2026-11-17-panel-readback-spird.md)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Over the board's USB-C port, case closed, read only: the SPIRD console command of the Kleidos m5stickc_plus2_debug image already on the board (3-wire panel bus, the answer read on GPIO15), three sessions after fresh resets."
+    },
+    "owner-unit-verified": {
+      "title": "Verified against the owner's physical unit, 2026-11-18",
+      "kind": "measured",
+      "checked": "2026-11-18",
+      "method": "The owner compared his own StickC-Plus2 with this repository's front drawing (svg/front.svg) and 3D model (model/) on 2026-11-18: the model and the drawing match the real board. A check by eye, no instrument. The original source of the measurement was not recorded (sources.md)."
+    }
+  }
+}

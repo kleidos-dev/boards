@@ -1,0 +1,2382 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "43ec302d-9ed5-5820-9530-41d22b16ee98")
+	(paper "A3")
+	(title_block
+		(title "StickC-Plus SE (K016-P-SE): Power tree and rails")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: M5Stack K016-P-SE schematic (print of 2025-11-04) and docs; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols)
+	(text "Power tree and rails"
+		(exclude_from_sim no)
+		(at 15.24 20.32 0)
+		(effects
+			(font
+				(size 3 3)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "38a6dd83-8d5d-5a72-b97c-ba62b5df4049")
+	)
+	(text "Power tree"
+		(exclude_from_sim no)
+		(at 15.24 33.02 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "8cdeba0f-58ec-5e48-95e1-70e499dc78ae")
+	)
+	(rectangle
+		(start 15.24 34.7)
+		(end 39.37 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "b6477626-7f55-5841-990c-cb4c9530f141")
+	)
+	(text "J2 USB-C receptacle"
+		(exclude_from_sim no)
+		(at 16.51 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "f9bc730e-b935-5cd5-85c6-16f6df95bb24")
+	)
+	(text "TYPEC"
+		(exclude_from_sim no)
+		(at 16.51 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "c82da703-4407-529a-bfa2-83595918bf04")
+	)
+	(rectangle
+		(start 43.18 34.7)
+		(end 67.31 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "78796942-630a-501a-80a4-93455797cbdc")
+	)
+	(text "VBUS_USB"
+		(exclude_from_sim no)
+		(at 44.45 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "e173776a-a276-50f4-9ddf-2023994713f1")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 44.45 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "92dd3289-7ae4-53e5-94e1-248b7a5728ff")
+	)
+	(rectangle
+		(start 15.24 52.48)
+		(end 39.37 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5b02ad73-79c2-50a8-bae6-c2729b55210e")
+	)
+	(text "PAD6 Pad"
+		(exclude_from_sim no)
+		(at 16.51 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "48139e37-ec6e-5998-a22d-8b959b846d69")
+	)
+	(text "VIN"
+		(exclude_from_sim no)
+		(at 16.51 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "44672eed-7007-5add-9c46-454c2309729e")
+	)
+	(rectangle
+		(start 43.18 52.48)
+		(end 67.31 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f06249cc-ef95-54fb-b0bc-3eba35c932ee")
+	)
+	(text "VBUS_VIN"
+		(exclude_from_sim no)
+		(at 44.45 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "4db49a71-35c4-5391-bbed-8e1a541e44bf")
+	)
+	(text "5 V (4.8-5.5 V)"
+		(exclude_from_sim no)
+		(at 44.45 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "27dad9be-1788-5549-9414-4781bc463bb8")
+	)
+	(text "K5"
+		(exclude_from_sim no)
+		(at 65.11 51.38 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "7581ca56-c303-51fa-8e41-ad0a321a32ef")
+	)
+	(rectangle
+		(start 15.24 70.26)
+		(end 39.37 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f5550be4-e7ef-5a09-8e60-0d42cab0c397")
+	)
+	(text "J3 Battery connector"
+		(exclude_from_sim no)
+		(at 16.51 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "d248254c-d401-546b-8329-149bbe251775")
+	)
+	(text "Li_Ion"
+		(exclude_from_sim no)
+		(at 16.51 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "97961890-2f2e-55dd-b50f-1ec3df52d60d")
+	)
+	(rectangle
+		(start 43.18 70.26)
+		(end 67.31 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "73e76b49-2d33-59a1-96d9-e0d49fd9463f")
+	)
+	(text "VBAT_Li_Ion"
+		(exclude_from_sim no)
+		(at 44.45 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "fe24f7fd-758f-51db-ad2b-feec2a620012")
+	)
+	(text "3.7 V, 120 mAh cell"
+		(exclude_from_sim no)
+		(at 44.45 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "8ba747c0-1a78-5b7f-8c5e-7275aaea6083")
+	)
+	(text "K4"
+		(exclude_from_sim no)
+		(at 65.11 69.16 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "68cb1627-dd76-50c7-8c7a-15a17b04bcde")
+	)
+	(rectangle
+		(start 15.24 88.04)
+		(end 39.37 94.84)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "17723682-ea93-5ea9-a68c-4b86b4764e37")
+	)
+	(text "BAT1 Backup cell"
+		(exclude_from_sim no)
+		(at 16.51 90.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "600d6750-14f6-5c97-8b91-00817f47432f")
+	)
+	(text "DMS_3R3"
+		(exclude_from_sim no)
+		(at 16.51 92.64 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "90dd7edb-e03b-58d3-b4e4-b707ea19ca9b")
+	)
+	(rectangle
+		(start 43.18 88.04)
+		(end 67.31 94.84)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "19d2f091-308f-5ccc-8d71-65f4e0e2cb8f")
+	)
+	(text "VBAT_RTC"
+		(exclude_from_sim no)
+		(at 44.45 90.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "959eb34a-1ed8-5f86-93f4-61187f393bad")
+	)
+	(text "backup cell"
+		(exclude_from_sim no)
+		(at 44.45 92.64 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "a8ca0934-ffef-50e7-8c83-07943f68d621")
+	)
+	(rectangle
+		(start 71.12 61.37)
+		(end 95.25 68.17)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4a74105d-1b33-5fff-b66c-54ae600d5a31")
+	)
+	(text "U2 PMU"
+		(exclude_from_sim no)
+		(at 72.39 63.67 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "47d4dd41-0745-5e44-b50f-8156a067aaad")
+	)
+	(text "AXP192"
+		(exclude_from_sim no)
+		(at 72.39 65.97 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "ff72de72-944a-5956-b39f-418dc235b865")
+	)
+	(rectangle
+		(start 99.06 34.7)
+		(end 123.19 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "0084cfad-4c30-5a1e-b309-be9e7d5c218b")
+	)
+	(text "IPSOUT"
+		(exclude_from_sim no)
+		(at 100.33 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "9360a1fe-f34d-547e-9653-4b5a045d00d0")
+	)
+	(text "input or cell"
+		(exclude_from_sim no)
+		(at 100.33 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "8c2985e6-6c0a-5ead-879f-c6d16310377c")
+	)
+	(rectangle
+		(start 127 33.55)
+		(end 151.13 42.65)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 224 224 224 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5696a7c7-79f3-559d-8bdf-b8545ac54de8")
+	)
+	(text "U8 Boost converter"
+		(exclude_from_sim no)
+		(at 128.27 35.85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "e6527454-099d-5b7e-a035-754c4690db9a")
+	)
+	(text "SGM6603-5.0"
+		(exclude_from_sim no)
+		(at 128.27 38.15 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "3530650f-aebe-5dd3-b258-73b3cf7baba0")
+	)
+	(text "EN EXT_BOOST_EN"
+		(exclude_from_sim no)
+		(at 128.27 40.45 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "4db41a3b-f4e5-5214-9e88-c06ba1821184")
+	)
+	(rectangle
+		(start 154.94 34.7)
+		(end 179.07 41.5)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5c4c0063-24fa-534d-a0f0-bd840286cca2")
+	)
+	(text "EXT_VDD"
+		(exclude_from_sim no)
+		(at 156.21 37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "26f89843-f0bf-5912-94d1-5e5c0155b64d")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 156.21 39.3 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "f619998c-e0ae-5f2d-9427-246e6d8b9463")
+	)
+	(rectangle
+		(start 99.06 52.48)
+		(end 123.19 59.28)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f9fecc2a-80be-5a32-8a8f-f5094739db4a")
+	)
+	(text "VESP_3V3"
+		(exclude_from_sim no)
+		(at 100.33 54.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "a0a29fc8-920a-5cb1-bf1e-d410e66aaf3d")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 100.33 57.08 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "88520d2c-e1a3-5366-969c-6ecb352c97a3")
+	)
+	(rectangle
+		(start 99.06 70.26)
+		(end 123.19 77.06)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f13d22c6-fa7a-5565-b61a-25c6d63355b5")
+	)
+	(text "RTC_VDD"
+		(exclude_from_sim no)
+		(at 100.33 72.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "58b35942-d0a3-5584-a15f-a2bb5bae97fd")
+	)
+	(text "not printed"
+		(exclude_from_sim no)
+		(at 100.33 74.86 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "559515ce-10a7-5256-8f29-8c1be94591af")
+	)
+	(rectangle
+		(start 99.06 88.04)
+		(end 123.19 94.84)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5d2a02e9-4d68-5832-a606-6e646a7ed848")
+	)
+	(text "LCD_BL_VCC"
+		(exclude_from_sim no)
+		(at 100.33 90.34 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "498d0a62-b460-5da4-b9ce-e1374cdff894")
+	)
+	(text "1.8-3.3 V, set over I2C"
+		(exclude_from_sim no)
+		(at 100.33 92.64 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "464bb4d3-2cec-580c-906c-57d216fb5d86")
+	)
+	(text "K6"
+		(exclude_from_sim no)
+		(at 120.99 86.94 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "fbd3be6e-2f32-5e9e-827e-2ee1d2e4e0b5")
+	)
+	(rectangle
+		(start 99.06 105.82)
+		(end 123.19 112.62)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "c1e3a02f-5036-5169-998a-ae7a64bfd9a4")
+	)
+	(text "LCD_LOGIC_VCC"
+		(exclude_from_sim no)
+		(at 100.33 108.12 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "2aa20d03-ac7c-5a51-bdf1-5ae4e8ccbbe1")
+	)
+	(text "1.8-3.3 V, set over I2C"
+		(exclude_from_sim no)
+		(at 100.33 110.42 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "10ec5ba7-70e8-52cf-a01e-a65cc80c351c")
+	)
+	(text "K7"
+		(exclude_from_sim no)
+		(at 120.99 104.72 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "1ef9e506-e99f-54a2-98b0-134fd3c1273d")
+	)
+	(rectangle
+		(start 99.06 123.6)
+		(end 123.19 130.4)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 127 230 255 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "0af255b8-d9fe-5162-8583-7486f2f25419")
+	)
+	(text "MIC_VCC"
+		(exclude_from_sim no)
+		(at 100.33 125.9 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "91fc81f8-0cb8-5bc6-bc8b-3380c1bc8c5a")
+	)
+	(text "1.8-3.3 V, set over I2C"
+		(exclude_from_sim no)
+		(at 100.33 128.2 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+		)
+		(uuid "bccf2081-6003-5a08-bda6-59e8bf626b7d")
+	)
+	(text "K8"
+		(exclude_from_sim no)
+		(at 120.99 122.5 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "4e5322d8-01fb-5efe-9b39-fb493c620318")
+	)
+	(polyline
+		(pts
+			(xy 39.37 38.1)
+			(xy 41.91 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5c89b897-c15e-58ca-90bf-43b55eefdc69")
+	)
+	(polyline
+		(pts
+			(xy 41.91 37.465)
+			(xy 43.18 38.1)
+			(xy 41.91 38.735)
+			(xy 41.91 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "2304a316-7f37-5540-9174-cf8f35ae6768")
+	)
+	(polyline
+		(pts
+			(xy 39.37 55.88)
+			(xy 41.91 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "3a570f61-8838-597a-9514-01ac10a3fe66")
+	)
+	(polyline
+		(pts
+			(xy 41.91 55.245)
+			(xy 43.18 55.88)
+			(xy 41.91 56.515)
+			(xy 41.91 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "92ff0479-8a94-5644-a2ac-7cc27d16b08c")
+	)
+	(polyline
+		(pts
+			(xy 39.37 73.66)
+			(xy 41.91 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "a5e2ee40-be97-5219-8521-4c2e641438fc")
+	)
+	(polyline
+		(pts
+			(xy 41.91 73.025)
+			(xy 43.18 73.66)
+			(xy 41.91 74.295)
+			(xy 41.91 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "b29f3f38-4c48-548a-953c-4e55263cd580")
+	)
+	(polyline
+		(pts
+			(xy 39.37 91.44)
+			(xy 41.91 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "114f561e-ea5a-582d-9378-0d69bbf5647c")
+	)
+	(polyline
+		(pts
+			(xy 41.91 90.805)
+			(xy 43.18 91.44)
+			(xy 41.91 92.075)
+			(xy 41.91 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "833fb4a1-ec03-57f4-919f-258dc2471461")
+	)
+	(polyline
+		(pts
+			(xy 67.31 38.1)
+			(xy 69.215 38.1)
+			(xy 69.215 64.77)
+			(xy 69.85 64.77)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4aa24b2e-ea38-5b8a-b8be-15647739b4d6")
+	)
+	(polyline
+		(pts
+			(xy 69.85 64.135)
+			(xy 71.12 64.77)
+			(xy 69.85 65.405)
+			(xy 69.85 64.135)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "0475b36e-070d-59dd-a114-30686b71a2d9")
+	)
+	(polyline
+		(pts
+			(xy 67.31 55.88)
+			(xy 69.215 55.88)
+			(xy 69.215 64.77)
+			(xy 69.85 64.77)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4ffa3fd5-d301-51a7-8b22-4c977775d111")
+	)
+	(polyline
+		(pts
+			(xy 69.85 64.135)
+			(xy 71.12 64.77)
+			(xy 69.85 65.405)
+			(xy 69.85 64.135)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "e597ced9-9e58-5f76-af16-1cdda096edbd")
+	)
+	(polyline
+		(pts
+			(xy 67.31 73.66)
+			(xy 69.215 73.66)
+			(xy 69.215 64.77)
+			(xy 69.85 64.77)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "faec714c-07ef-5aec-9620-4bbde92d89b6")
+	)
+	(polyline
+		(pts
+			(xy 69.85 64.135)
+			(xy 71.12 64.77)
+			(xy 69.85 65.405)
+			(xy 69.85 64.135)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "4b415e96-ee42-5732-b6a5-51a58f46da7b")
+	)
+	(polyline
+		(pts
+			(xy 67.31 91.44)
+			(xy 69.215 91.44)
+			(xy 69.215 64.77)
+			(xy 69.85 64.77)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "d1da5743-cb8d-5de6-b1e1-58ffee939fc8")
+	)
+	(polyline
+		(pts
+			(xy 69.85 64.135)
+			(xy 71.12 64.77)
+			(xy 69.85 65.405)
+			(xy 69.85 64.135)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "92cf596e-1c3d-5b4b-aa09-346a4f365828")
+	)
+	(polyline
+		(pts
+			(xy 95.25 64.77)
+			(xy 97.155 64.77)
+			(xy 97.155 38.1)
+			(xy 97.79 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "e8ace0b2-0563-597b-873d-bd42b94d1a2b")
+	)
+	(polyline
+		(pts
+			(xy 97.79 37.465)
+			(xy 99.06 38.1)
+			(xy 97.79 38.735)
+			(xy 97.79 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "2f434bd2-3cda-5711-8405-37b5a0f67a86")
+	)
+	(polyline
+		(pts
+			(xy 95.25 64.77)
+			(xy 97.155 64.77)
+			(xy 97.155 55.88)
+			(xy 97.79 55.88)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "67bdd711-d739-5c0d-b000-30eb786a89f0")
+	)
+	(polyline
+		(pts
+			(xy 97.79 55.245)
+			(xy 99.06 55.88)
+			(xy 97.79 56.515)
+			(xy 97.79 55.245)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "c16192a6-c469-56e3-a616-add1b3255eaf")
+	)
+	(polyline
+		(pts
+			(xy 95.25 64.77)
+			(xy 97.155 64.77)
+			(xy 97.155 73.66)
+			(xy 97.79 73.66)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "20512d0b-28a3-5084-953f-442583c3bef0")
+	)
+	(polyline
+		(pts
+			(xy 97.79 73.025)
+			(xy 99.06 73.66)
+			(xy 97.79 74.295)
+			(xy 97.79 73.025)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "a636a0de-1dd8-57b1-844e-d62a0f47713c")
+	)
+	(polyline
+		(pts
+			(xy 95.25 64.77)
+			(xy 97.155 64.77)
+			(xy 97.155 91.44)
+			(xy 97.79 91.44)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "da35ceac-6d88-56b1-a373-ba8268672aa5")
+	)
+	(polyline
+		(pts
+			(xy 97.79 90.805)
+			(xy 99.06 91.44)
+			(xy 97.79 92.075)
+			(xy 97.79 90.805)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "d0565410-7afb-5eb9-8345-3d3414a538a9")
+	)
+	(polyline
+		(pts
+			(xy 95.25 64.77)
+			(xy 97.155 64.77)
+			(xy 97.155 109.22)
+			(xy 97.79 109.22)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "818c0353-eeb0-514b-afa4-f608f3a83762")
+	)
+	(polyline
+		(pts
+			(xy 97.79 108.585)
+			(xy 99.06 109.22)
+			(xy 97.79 109.855)
+			(xy 97.79 108.585)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "1366bc30-362c-53fe-9ef9-b8aa89a17582")
+	)
+	(polyline
+		(pts
+			(xy 95.25 64.77)
+			(xy 97.155 64.77)
+			(xy 97.155 127)
+			(xy 97.79 127)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "19e43c78-7dcb-54cf-adac-89b4a98cefed")
+	)
+	(polyline
+		(pts
+			(xy 97.79 126.365)
+			(xy 99.06 127)
+			(xy 97.79 127.635)
+			(xy 97.79 126.365)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "d8233853-c833-5733-8b80-942b5bd89ece")
+	)
+	(polyline
+		(pts
+			(xy 123.19 38.1)
+			(xy 125.73 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "6ed5a301-79bc-585a-b6f1-7ed075cf2fea")
+	)
+	(polyline
+		(pts
+			(xy 125.73 37.465)
+			(xy 127 38.1)
+			(xy 125.73 38.735)
+			(xy 125.73 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "cb4147f9-130d-5a88-96b5-93b89ca4e928")
+	)
+	(polyline
+		(pts
+			(xy 151.13 38.1)
+			(xy 153.67 38.1)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "a924bd27-1c1b-581f-9fc5-a36fba7db281")
+	)
+	(polyline
+		(pts
+			(xy 153.67 37.465)
+			(xy 154.94 38.1)
+			(xy 153.67 38.735)
+			(xy 153.67 37.465)
+		)
+		(stroke
+			(width 0.2)
+			(type solid)
+			(color 136 153 170 1)
+		)
+		(fill
+			(type color)
+			(color 136 153 170 1)
+		)
+		(uuid "33be87ac-b93e-59b0-a05d-7e39e107551c")
+	)
+	(text "The AXP192 takes VBUS_USB (VBUS), VBUS_VIN (ACIN), the cell (BAT) and the backup cell (BACKUP), and gives IPSOUT, DCDC1 (VESP_3V3), LDO1 to LDO3 (RTC_VDD, LCD_BL_VCC, LCD_LOGIC_VCC) and GPIO0 (MIC_VCC). The print states no voltage for VBUS_VIN, RTC_VDD, LCD_BL_VCC, LCD_LOGIC_VCC or MIC_VCC; the docs page and the AXP192 datasheet give all but RTC_VDD's (K5 to K8)."
+		(exclude_from_sim no)
+		(at 15.24 135.48 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4a7e9253-b760-5605-8687-12b35cfa1ab9")
+	)
+	(text "Rails"
+		(exclude_from_sim no)
+		(at 15.24 145.64 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "cc11e55d-da77-59cd-af84-a9987674b856")
+	)
+	(text "Rail"
+		(exclude_from_sim no)
+		(at 15.24 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "5b292ccb-da11-5fdd-85ca-d2a460a90111")
+	)
+	(text "Nominal"
+		(exclude_from_sim no)
+		(at 33.02 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "3c81cd32-909b-5709-bf0a-2ebfce1a3b3a")
+	)
+	(text "What feeds it, and what it supplies"
+		(exclude_from_sim no)
+		(at 62.23 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "0e25168d-4430-5512-8ce7-34cb34246fbc")
+	)
+	(text "Enable"
+		(exclude_from_sim no)
+		(at 143.51 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "67849c87-75c9-5ed4-8754-5197410ae00f")
+	)
+	(text "Drawn at"
+		(exclude_from_sim no)
+		(at 191.77 150.085 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "daf92001-4a71-58d2-9ef4-6127d1f11958")
+	)
+	(polyline
+		(pts
+			(xy 15.24 151.685)
+			(xy 208.28 151.685)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "5ef314d1-cd95-555c-ad01-25bda5314866")
+	)
+	(text "VBUS_USB"
+		(exclude_from_sim no)
+		(at 15.24 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c3cafe8f-d7b0-57b9-a8e2-a50b98694dcc")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 33.02 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "70a1c9d1-0300-5745-ac6a-1adaee3edff0")
+	)
+	(text "USB-C VBUS (J2 VCC), C4 10uF; the AXP192's VBUS input (pin 31). Also"
+		(exclude_from_sim no)
+		(at 62.23 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3ea95409-bb36-58d4-9e34-0c0b32a7fb32")
+	)
+	(text "the CH552T's supply (VCC pin 19, P3.2 pin 1, C27) and the gate"
+		(exclude_from_sim no)
+		(at 62.23 155.965 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bb2612e5-f7d7-58f4-a856-8633224bf851")
+	)
+	(text "dividers of MOS1 and MOS2 (R103/R104, R101/R102)."
+		(exclude_from_sim no)
+		(at 62.23 158.505 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "70c2dd46-78b0-59ed-be25-082584645b65")
+	)
+	(text "2/A1"
+		(exclude_from_sim no)
+		(at 191.77 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "249649d4-ffd8-569e-86c9-d75b504f999d")
+	)
+	(text "4/A1"
+		(exclude_from_sim no)
+		(at 197.52 153.425 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "bc901df1-7e1d-59b7-9894-61cef514ae5f")
+	)
+	(text "VBUS_VIN"
+		(exclude_from_sim no)
+		(at 15.24 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0752be8b-e27e-5a00-99da-4a9ef544c299")
+	)
+	(text "5 V (4.8-5.5 V)"
+		(exclude_from_sim no)
+		(at 33.02 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b0e568e0-9e91-5b1e-9f42-e8bbd14c0372")
+	)
+	(text "Pad PAD6 (VIN): the AXP192's ACIN input (pins 32, 33). The docs page"
+		(exclude_from_sim no)
+		(at 62.23 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "93260d0f-7236-57c6-86a9-30794dc16a80")
+	)
+	(text "limits VBUS_VIN and VBUS_USB to 4.8-5.5 V (K5)."
+		(exclude_from_sim no)
+		(at 62.23 163.585 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0ab7205e-5b34-526e-a490-de13e0e4eda0")
+	)
+	(text "2/A1"
+		(exclude_from_sim no)
+		(at 191.77 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "e8f3c4a8-2ac1-5096-bee5-1472f544176a")
+	)
+	(text "3/B4"
+		(exclude_from_sim no)
+		(at 197.52 161.045 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "3703749c-cfcb-58df-956b-1239c2b82b30")
+	)
+	(text "VBAT_Li_Ion"
+		(exclude_from_sim no)
+		(at 15.24 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9e0ffae5-ac7d-5feb-9b30-cdb6c226eade")
+	)
+	(text "3.7 V, 120 mAh cell"
+		(exclude_from_sim no)
+		(at 33.02 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2a331be8-76ea-5770-b295-926865079966")
+	)
+	(text "The battery connector (printed Li_Ion), C3 10uF; the AXP192's BAT pins"
+		(exclude_from_sim no)
+		(at 62.23 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "22d82385-2d10-5368-8369-6aad5e8f31f6")
+	)
+	(text "(34, 35), whose TS pin (37) is on GND. The cell is the docs page's"
+		(exclude_from_sim no)
+		(at 62.23 168.665 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a71e2424-2e43-5f1b-832d-9c3a3cc09aa4")
+	)
+	(text "built-in 3.7 V 120 mAh lithium battery (K4)."
+		(exclude_from_sim no)
+		(at 62.23 171.205 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8e328528-813e-550a-b546-b3748f76c53e")
+	)
+	(text "2/A6"
+		(exclude_from_sim no)
+		(at 191.77 166.125 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "1744c789-779d-56c5-ada7-07f8f6add909")
+	)
+	(text "VBAT_RTC"
+		(exclude_from_sim no)
+		(at 15.24 173.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e5cdfec9-d29d-55e4-8ccf-d320298dddc8")
+	)
+	(text "backup cell"
+		(exclude_from_sim no)
+		(at 33.02 173.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e6637e29-9b99-5639-8763-205cdc4ce36c")
+	)
+	(text "BAT1 (DMS_3R3) on the AXP192's BACKUP input (pin 30)."
+		(exclude_from_sim no)
+		(at 62.23 173.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "617625af-fe49-5b9c-bfc9-b6192efda635")
+	)
+	(text "2/A7"
+		(exclude_from_sim no)
+		(at 191.77 173.745 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "ffe5c8a7-4098-59c1-a551-69ad85ea2de8")
+	)
+	(text "IPSOUT"
+		(exclude_from_sim no)
+		(at 15.24 176.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0c18d07d-68d9-5f7e-9e98-0e82adc8b872")
+	)
+	(text "input or cell"
+		(exclude_from_sim no)
+		(at 33.02 176.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "707a3920-c43d-5c70-a284-fb8d5d444404")
+	)
+	(text "AXP192 IPSOUT (pins 38, 39), its power-path output, with C24 and C30"
+		(exclude_from_sim no)
+		(at 62.23 176.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "46549f36-409d-5d74-8750-4a9e1c50fe77")
+	)
+	(text "100nF, C23 10uF, CX2 10uF/6.3V and C13 220nF (on APS). Feeds the"
+		(exclude_from_sim no)
+		(at 62.23 178.825 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2cbc57c0-d7d7-55d1-a9e5-19582f244178")
+	)
+	(text "AXP192's VIN1, VIN2, VIN3, LDOIN and APS, the SGM6603 boost U8 through"
+		(exclude_from_sim no)
+		(at 62.23 181.365 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "94be577c-a172-5c67-bf19-17189a88e738")
+	)
+	(text "L4, and R401."
+		(exclude_from_sim no)
+		(at 62.23 183.905 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "faf89e9e-6390-57b6-b47e-299a7caf747c")
+	)
+	(text "2/A2"
+		(exclude_from_sim no)
+		(at 191.77 176.285 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "e7c7e1fe-94ba-52e4-bee1-930f1a37a6af")
+	)
+	(text "VESP_3V3"
+		(exclude_from_sim no)
+		(at 15.24 186.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8d35ea8c-2672-5db8-b25a-fc593282d55e")
+	)
+	(text "3.3 V"
+		(exclude_from_sim no)
+		(at 33.02 186.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a3c44790-f5be-55d2-9c52-5143b96d5834")
+	)
+	(text "AXP192 DCDC1: LX1 (pin 45) through L2 2.2uH, sensed at DCDC1 (pin 47);"
+		(exclude_from_sim no)
+		(at 62.23 186.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0558de7c-cd2c-55a0-814f-6408fcf6c0e5")
+	)
+	(text "C5 10uF and CX1 100uF/4V. Supplies the ESP32-PICO-D4, the pull-ups,"
+		(exclude_from_sim no)
+		(at 62.23 188.985 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "549f4f04-29a1-5f8f-b6c1-c5a875c950a9")
+	)
+	(text "the IR and red LEDs, the unfitted IMU footprint and pad PAD1 (3V3)."
+		(exclude_from_sim no)
+		(at 62.23 191.525 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "aa70e19b-23e7-5dc9-9157-ffff2276a4e7")
+	)
+	(text "2/A2"
+		(exclude_from_sim no)
+		(at 191.77 186.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "1b15f394-af53-54c6-aa62-3f894331e367")
+	)
+	(text "3/A3"
+		(exclude_from_sim no)
+		(at 197.52 186.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "7230872c-7d4c-53cc-be44-f852fb820f65")
+	)
+	(text "4/D5"
+		(exclude_from_sim no)
+		(at 203.27 186.445 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "c6ea2480-f73f-5b37-8c1f-6ee5f152bfbc")
+	)
+	(text "RTC_VDD"
+		(exclude_from_sim no)
+		(at 15.24 194.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bb1e9b52-9e36-5128-9b8a-db32ccc4371a")
+	)
+	(text "not printed"
+		(exclude_from_sim no)
+		(at 33.02 194.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "aff98fe4-b0dc-5b9d-86a3-d3826dc5fe10")
+	)
+	(text "AXP192 LDO1 (pin 28), also on its SYSEN (pin 29); C11 1uF. Supplies"
+		(exclude_from_sim no)
+		(at 62.23 194.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4e080da1-ce2d-552f-8c24-42c48bcea9b2")
+	)
+	(text "the BM8563 (U4)."
+		(exclude_from_sim no)
+		(at 62.23 196.605 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f0dbf164-ad7d-599f-b2f2-15b25bbb925c")
+	)
+	(text "2/B2"
+		(exclude_from_sim no)
+		(at 191.77 194.065 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "7b47138d-f9ed-5779-bfdb-907947c72448")
+	)
+	(text "LCD_BL_VCC"
+		(exclude_from_sim no)
+		(at 15.24 199.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "554ad308-f9bf-5d1e-911c-408f045627ca")
+	)
+	(text "1.8-3.3 V, set over I2C"
+		(exclude_from_sim no)
+		(at 33.02 199.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f5a31d4b-dcfa-5ef1-9d36-9d4cd3c1c2b5")
+	)
+	(text "AXP192 LDO2 (pin 12), C15 and C18 1uF. The LCD backlight (U5 LEDA);"
+		(exclude_from_sim no)
+		(at 62.23 199.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ecfce580-be74-5d9d-a92f-a1f2677ed130")
+	)
+	(text "its voltage sets the brightness (K6)."
+		(exclude_from_sim no)
+		(at 62.23 201.685 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "36f8f509-d6c6-5757-a7b1-dbe7ed438a86")
+	)
+	(text "2/B2"
+		(exclude_from_sim no)
+		(at 191.77 199.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "da6a3d97-8227-5c54-b639-958085efc349")
+	)
+	(text "4/A7"
+		(exclude_from_sim no)
+		(at 197.52 199.145 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "7b2ac4d6-34fb-5f94-b84e-30985394e271")
+	)
+	(text "LCD_LOGIC_VCC"
+		(exclude_from_sim no)
+		(at 15.24 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1cbd1c90-a4c3-52df-9908-36cbff1819d3")
+	)
+	(text "1.8-3.3 V, set over I2C"
+		(exclude_from_sim no)
+		(at 33.02 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3e5e3171-ac45-5813-9ab2-69f7b4d419e6")
+	)
+	(text "AXP192 LDO3 (pin 11), C20 1uF. The LCD's logic supply (U5 VDD); its"
+		(exclude_from_sim no)
+		(at 62.23 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2f40d5e8-a6d3-5baa-ba64-b87c72e6285a")
+	)
+	(text "range is K7, and both M5Unified (src/utility/Power_Class.inl:1238 at"
+		(exclude_from_sim no)
+		(at 62.23 206.765 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "413ab8f6-054e-545f-8560-ab100e418d67")
+	)
+	(text "96576a1) and the Kleidos firmware (src/drivers/power/axp192.cpp,"
+		(exclude_from_sim no)
+		(at 62.23 209.305 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "edd1f28e-c9f5-5039-aea0-d97b329b6fce")
+	)
+	(text "axp192::kLdo3Code3V0) set it to 3.0 V."
+		(exclude_from_sim no)
+		(at 62.23 211.845 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "190d0289-9d10-56f9-a5ee-bc76cf5a36ab")
+	)
+	(text "2/B2"
+		(exclude_from_sim no)
+		(at 191.77 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "51434cd0-1414-5885-b28b-42065eeec577")
+	)
+	(text "4/A6"
+		(exclude_from_sim no)
+		(at 197.52 204.225 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "03b3f280-804e-5a95-9aa5-c9077c6b429b")
+	)
+	(text "MIC_VCC"
+		(exclude_from_sim no)
+		(at 15.24 214.385 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "77e9d1c8-b623-57b5-84d2-c72860f9b2d0")
+	)
+	(text "1.8-3.3 V, set over I2C"
+		(exclude_from_sim no)
+		(at 33.02 214.385 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "eec70c92-705c-5d42-84eb-cad07afe9732")
+	)
+	(text "AXP192 GPIO0 (pin 19) as LDOIO0, C8 1nF and C7 1uF. The microphone's"
+		(exclude_from_sim no)
+		(at 62.23 214.385 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "53166156-6e9a-5182-a7a7-49211d1f5171")
+	)
+	(text "supply (U3 VCC) (K8)."
+		(exclude_from_sim no)
+		(at 62.23 216.925 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2a61a6cf-b48b-520b-a9c5-f4d9f7ba640f")
+	)
+	(text "2/B2"
+		(exclude_from_sim no)
+		(at 191.77 214.385 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "3e512c00-d2fd-5a03-82c9-cc62236e2bee")
+	)
+	(text "4/B7"
+		(exclude_from_sim no)
+		(at 197.52 214.385 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "3afccaf8-3a62-52b9-a641-88517d949864")
+	)
+	(text "EXT_VDD"
+		(exclude_from_sim no)
+		(at 15.24 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "29333e5d-a205-5019-9f5b-0098a46d6261")
+	)
+	(text "5 V"
+		(exclude_from_sim no)
+		(at 33.02 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b40613b7-9a4f-5342-9133-9c9647d4c32e")
+	)
+	(text "U8 SGM6603-5.0 boost (block 5VOUT_BOOST) from IPSOUT; C36 100nF, C45"
+		(exclude_from_sim no)
+		(at 62.23 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8ceb8bcb-41d3-51ae-8a93-7fc2652de417")
+	)
+	(text "and C46 10uF. The Grove port's 5 V (J1 pin 2, C37 10uF) and pad PAD7"
+		(exclude_from_sim no)
+		(at 62.23 222.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cda2ba3f-99e0-5144-a7d5-36c57d2ca83d")
+	)
+	(text "(5VOUT)."
+		(exclude_from_sim no)
+		(at 62.23 224.545 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5c383473-be3a-5f9e-b89b-4de0c0191543")
+	)
+	(text "EXT_BOOST_EN (AXP192 EXTEN, pin 40), R18"
+		(exclude_from_sim no)
+		(at 143.51 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e9ad5ff3-f021-590a-b54b-1974e5e0d01c")
+	)
+	(text "100K to GND"
+		(exclude_from_sim no)
+		(at 143.51 222.005 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "187aae10-2bff-5109-829a-7c80d5eea3da")
+	)
+	(text "2/C4"
+		(exclude_from_sim no)
+		(at 191.77 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "497e3943-9c51-5ae2-815d-dc52bcf43700")
+	)
+	(text "3/C4"
+		(exclude_from_sim no)
+		(at 197.52 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "3b9fa044-edae-5f00-8233-332aef1f203e")
+	)
+	(text "4/D1"
+		(exclude_from_sim no)
+		(at 203.27 219.465 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "aa399b18-09be-50d3-a371-6535ed283c4f")
+	)
+	(text "K5"
+		(exclude_from_sim no)
+		(at 209.55 161.045 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "d0482f6d-e594-5d2e-a355-3de1db875ffd")
+	)
+	(text "K4"
+		(exclude_from_sim no)
+		(at 209.55 166.125 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "47105493-1562-5ae9-b196-956717817462")
+	)
+	(text "K6"
+		(exclude_from_sim no)
+		(at 209.55 199.145 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "783f6120-1ad0-5e1c-be7c-8c9fec17bc7c")
+	)
+	(text "K7"
+		(exclude_from_sim no)
+		(at 209.55 204.225 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "b342d7f5-9ea0-5ddf-b008-7953c819f63e")
+	)
+	(text "K8"
+		(exclude_from_sim no)
+		(at 209.55 214.385 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "e55b51bf-65b0-5790-acbd-63b4ed46e33c")
+	)
+	(text "Contents"
+		(exclude_from_sim no)
+		(at 308 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "e7b3a5c9-9293-5c55-a72c-6bda7696dad2")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 321.5827 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "431ec581-530d-5956-b64a-ae31fb484c54")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 331.0197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "178f06c3-268f-5dfb-874c-067ee15c0da4")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 336.4947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "3f6397e4-3b0f-59de-9d41-ab086b9f5b32")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 341.9697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "2d4870ba-2dd8-5eab-b831-7b9a5d4615b0")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 347.4447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "f2f1801a-74b8-5f15-8242-1a4ae9de1916")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 352.9197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "a6854f8d-1919-5a9e-ba07-8a0b693b75fd")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 358.3947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "9ac8e3a4-ed61-5e06-8eef-d23747ba3dc4")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 363.8697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "34fc9605-1c24-5068-ab4f-5ccb6c7325da")
+	)
+	(embedded_fonts no)
+)

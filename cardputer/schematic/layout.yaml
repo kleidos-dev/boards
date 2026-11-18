@@ -1,0 +1,510 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# How the Cardputer-Adv schematic is drawn: the symbol each part takes, our own
+# symbols, and the sheets, blocks and rows the parts sit in. The facts (values,
+# pins, nets) are in netlist.yaml; _shared/kicad_schematic.py joins the two.
+#
+# parts: a part takes the symbol its prefix names under _by_prefix unless it has
+# a row of its own. "pins" maps our symbol's pin number to the vendor's pin
+# (a list when one of our pins stands for several of the vendor's, "-" when the
+# vendor has no such pin). "angle" turns the symbol (90: a vertical two-pin part
+# lies flat).
+# rows: each row of a block is laid left to right; an item is a reference,
+# {col: [...]} for a column of two-pin parts, {cols: [[...], [...]]} for
+# several, or {text: ...}.
+# sheets: one page per vendor sheet (the carrier's four, then the module's
+# one), in the vendor's order; "summary" and "parts" fill the sheet's box on the
+# contents page; a sheet with "index" (power, nets, parts) is a page of tables
+# the generator writes from netlist.yaml, after the drawing.
+# root: the contents page's heading and the panels of its right-hand column;
+# revisions: the history the contents page prints (the last one is in every
+# title block). short: what a part is, in the parts list and the power tree.
+# power_tree: its boxes, [column, row], and arrows, each a connection
+# netlist.yaml has (the generator refuses any other); "NET@2" draws a net twice.
+
+paper: A2
+title_block:
+  title: M5Stack Cardputer-Adv (K132-Adv)
+  company: "Kleidos boards: connectivity documented from the vendor's public documentation"
+  comments:
+    - "Sources: M5Stack Cardputer-Adv v1.0 and Stamp-S3 v0.3.3 schematics; README.md"
+    - "Values as documented. Layout and symbols: Kleidos boards"
+    - "License: MIT. github.com/kleidos-dev/boards"
+
+revisions:
+  - {rev: 1, date: "2026-11-17", change: "First drawing in the boards' schematic format: every part, pin and net of the carrier's four sheets and the module's sheet, from the vendor's public documentation."}
+  - {rev: 2, date: "2026-11-17", change: "Kleidos additions and corrections K1-K19, listed above: the power path's MOSFETs, supervisor, charge current and 3.3 V, the key scanner's pulls, the amplifier's enable, the codec's address, the module's antenna, LED, USB-C and C114, the ESP32-S3 straps and VDD_SPI."}
+  - {rev: 3, date: "2026-11-17", change: "An entry is marked wherever an index page shows its element again; a pin on no net says what it is on the nets page; the title block says the drawing carries entries."}
+
+grounds:
+  GND: kleidos:GND
+  AGND: kleidos:GNDA
+
+parts:
+  _by_prefix:
+    R: {symbol: "kleidos:R", angle: 90, stub: 0}
+    C: {symbol: "kleidos:C", angle: 90, stub: 0}
+    L: {symbol: "kleidos:L", angle: 90, stub: 0}
+    FB: {symbol: "kleidos:FerriteBead_Small", angle: 90, stub: 0}
+    D: {symbol: "kleidos:D_TVS", stub: 0}
+    S: {symbol: "kleidos:SW_Push", stub: 0}
+  BTN1: {symbol: "kleidos:SW_Push", stub: 0, pins: {"1": "1", "2": "3"}}
+  BTN2: {symbol: "kleidos:SW_Push", stub: 0, pins: {"1": "1", "2": "3"}}
+  D1: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "2", "2": "1"}}
+  D2: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "2", "2": "1"}}
+  D3: {symbol: "kleidos:D", stub: 0, pins: {"1": "2", "2": "1"}, short: Diode}
+  IR1: {symbol: "kleidos:LED", stub: 0, pins: {"1": "2", "2": "1"}, short: IR emitter}
+  Q1: {symbol: "cardputer:LP3218DT1G"}
+  Q2: {symbol: "cardputer:LP3218DT1G"}
+  Q3: {symbol: "cardputer:LP3218DT1G"}
+  Q4: {symbol: "kleidos:Q_NMOS"}
+  SW1: {symbol: "kleidos:SW_SPDT", stub: 0, short: SPDT switch}
+  SW2: {symbol: "kleidos:SW_SPDT", stub: 0, short: SPDT switch}
+  J1: {symbol: "kleidos:Conn_01x02", short: Battery connector}
+  J8: {symbol: "kleidos:Conn_01x02", short: Battery connector}
+  J4: {symbol: "kleidos:Conn_01x02", short: Speaker connector}
+  J5: {symbol: "kleidos:TestPoint", stub: 0, short: Pad}
+  J6: {symbol: "kleidos:TestPoint", stub: 0, short: Pad}
+  J2: {symbol: "cardputer:HY-2.0_IIC"}
+  J3: {symbol: "cardputer:TF-015"}
+  J7: {symbol: "cardputer:PJ-342"}
+  FPC1: {symbol: "cardputer:FPC-8P-0.5"}
+  P1: {symbol: "kleidos:Conn_01x17", short: Module socket (pins 1-17)}
+  P2: {symbol: "kleidos:Conn_01x11", short: Module socket (pins 28-18)}
+  P3: {symbol: "cardputer:HDR-SMD_14P"}
+  U1: {symbol: "cardputer:TP4057"}
+  U2: {symbol: "cardputer:SY7088"}
+  U3: {symbol: "cardputer:CN809J"}
+  U4: {symbol: "cardputer:SY8089"}
+  U5: {symbol: "cardputer:NS4150B"}
+  U6: {symbol: "cardputer:ES8311"}
+  U7: {symbol: "cardputer:BMI270"}
+  U8: {symbol: "cardputer:MSM381A3729H9BPC"}
+  U9: {symbol: "cardputer:TCA8418RTWR"}
+  ANT101: {symbol: "cardputer:ANT_2P"}
+  F101: {symbol: "kleidos:Polyfuse", angle: 90, stub: 0, short: PPTC fuse}
+  J101: {symbol: "cardputer:LCD_FPC_12P"}
+  J102: {symbol: "cardputer:USB-TYPEC", short: USB-C}
+  J103: {symbol: "cardputer:LCD_FPC_8P"}
+  JP102: {symbol: "kleidos:TestPoint", stub: 0, short: Pad}
+  JP103: {symbol: "kleidos:TestPoint", stub: 0, short: Pad}
+  PHD101: {symbol: "kleidos:TestPoint", stub: 0, short: Plated hole}
+  L105: {symbol: "cardputer:CMC_4P"}
+  M101: {symbol: "cardputer:STAMP-S3M"}
+  S101: {symbol: "cardputer:SMT_SW_1TS026A"}
+  U101: {symbol: "cardputer:ESP32-S3FN8"}
+  U102: {symbol: "cardputer:AW35122FDR"}
+  U103: {symbol: "cardputer:WS2812"}
+  U104: {symbol: "cardputer:JW5712"}
+  X101: {symbol: "kleidos:Crystal_GND24", short: Crystal}
+
+symbols:
+  TP4057:
+    short: Li-ion charger
+    description: Li-ion linear charger
+    left: ["4 VCC", "6 PROG"]
+    right: ["3 BAT", "1 ~{CHRG}", "5 ~{STDBY}"]
+    bottom: ["2 GND"]
+  SY7088:
+    short: Boost converter
+    description: Synchronous boost converter
+    left: ["6 IN", "3 EN", "1 LX", "2 LX"]
+    right: ["7 OUT", "8 OUT", "5 FB"]
+    bottom: ["4 GND", "9 PGND"]
+  CN809J:
+    short: Voltage supervisor
+    description: Voltage supervisor (reset output)
+    left: ["3 VCC"]
+    right: ["2 RESET"]
+    bottom: ["1 GND"]
+  SY8089:
+    short: Buck converter
+    description: Synchronous buck converter
+    left: ["4 IN", "1 EN"]
+    right: ["3 LX", "5 FB"]
+    bottom: ["2 GND"]
+  LP3218DT1G:
+    short: P-channel MOSFET
+    ref: Q
+    description: "P-channel MOSFET, the vendor's 8-pin numbering: 1, 2, 5, 6, 8 drain, 3 gate, 4, 7 source (LP3218DT1G datasheet; Kleidos additions K1-K3)"
+    left: ["1 D", "2 D", "5 D", "6 D", "8 D"]
+    right: ["4 S", "7 S"]
+    bottom: ["3 G"]
+  HY-2.0_IIC:
+    short: Grove connector
+    ref: J
+    description: Grove HY2.0-4P connector (I2C)
+    left: ["1 IIC_SCL", "2 IIC_SDA", "3 VCC", "4 GND"]
+  TF-015:
+    short: microSD socket
+    ref: J
+    description: microSD card socket
+    left: ["4 VCC", "2 CS", "3 MOSI", "5 CLK", "7 MISO"]
+    bottom: ["6 GND", "0 GPAD"]
+  PJ-342:
+    short: 3.5 mm jack
+    ref: J
+    description: 3.5 mm audio jack with switch contacts (pins as the vendor numbers them)
+    left: ["2 2", "3 3", "4 4", "5 5", "6 6", "7 7"]
+  FPC-8P-0.5:
+    short: FPC connector
+    ref: FPC
+    description: FPC connector, 8 contacts, 0.5 mm
+    left: ["1 GND", "2 3V3", "3 GND", "4 5V", "5 IO1", "6 IO2", "7 IO3", "8 GND"]
+  HDR-SMD_14P:
+    short: EXT header
+    ref: P
+    description: 14-pin 2.54 mm header (EXT)
+    left: ["1 RESET", "2 INT", "3 BUSY", "4 SCK", "5 MOSI", "6 MISO", "7 CS"]
+    right: ["14 5VIN", "13 GND", "12 5VOUT", "11 SDA", "10 SCL", "9 GPS-RX", "8 GPS-TX"]
+  NS4150B:
+    short: Audio amplifier
+    description: Class-D audio amplifier
+    left: ["3 INP", "4 INN", "1 CTRL", "2 BYPASS"]
+    right: ["8 VOP", "5 VON", "6 VCC"]
+    bottom: ["7 GND"]
+  ES8311:
+    description: Audio codec
+    left: ["3 PVDD", "4 DVDD", "11 AVDD", "-", "1 CCLK", "19 CDATA", "20 CE", "-", "2 MCLK",
+           "6 SCLK/DMIC_SCL", "8 LRCK", "9 DSDIN", "7 ASDOUT"]
+    bottom: ["5 DGND", "10 AGND", "0 EPAD"]
+    right: ["18 MIC1P/DMIC_SDA", "17 MIC1N", "-", "16 VMID", "15 ADCVREF", "14 DACVREF", "-",
+            "12 OUTP", "13 OUTN"]
+  BMI270:
+    description: 6-axis motion sensor
+    left: ["8 VDD", "5 VDDIO", "12 CSB", "1 SDO"]
+    bottom: ["7 GND", "6 GNDIO"]
+    right: ["13 SCX", "14 SDX", "4 INT1", "9 INT2", "2 ASDX", "3 ASCX", "10 OCSB", "11 OSDO"]
+  MSM381A3729H9BPC:
+    short: MEMS microphone
+    description: Analog MEMS microphone
+    left: ["1 VDD", "4 OUT"]
+    right: ["2 GND", "3 GND"]
+  TCA8418RTWR:
+    short: Keyboard scanner
+    description: I2C keypad scan controller
+    left: ["21 VCC", "20 RESET", "-", "22 SDA", "23 SCL", "24 ~{INT}"]
+    right: ["8 ROW0", "7 ROW1", "6 ROW2", "5 ROW3", "4 ROW4", "3 ROW5", "2 ROW6", "1 ROW7", "-",
+            "9 COL0", "10 COL1", "11 COL2", "12 COL3", "13 COL4", "14 COL5", "15 COL6", "16 COL7",
+            "17 COL8", "18 COL9"]
+    bottom: ["19 GND", "25 EP"]
+  ANT_2P:
+    short: Antenna
+    ref: ANT
+    description: 2.4 GHz antenna, two pins (1 the feed, 2 GND as drawn)
+    left: ["1 1", "2 2"]
+  LCD_FPC_12P:
+    short: LCD FPC connector
+    ref: J
+    description: LCD FPC connector, 12 contacts, 0.5 mm
+    left: ["1 1", "2 2", "3 3", "4 4", "5 5", "6 6", "7 7", "8 8", "9 9", "10 10", "11 11", "12 12"]
+  LCD_FPC_8P:
+    short: LCD FPC connector
+    ref: J
+    description: LCD FPC connector, 8 contacts, 0.5 mm
+    left: ["1 PIN1", "2 PIN2", "3 PIN3", "4 PIN4", "5 PIN5", "6 PIN6", "7 PIN7", "8 PIN8"]
+  USB-TYPEC:
+    short: USB-C receptacle
+    ref: J
+    description: USB Type-C receptacle (USB 2.0)
+    pin_length: 6.35
+    left: ["VBUS VCC", "A5 CC1", "B5 CC2"]
+    right: ["A6 DP1", "B6 DP2", "A7 DN1", "B7 DN2"]
+    bottom: ["GND GND", "SHELL SHELL"]
+  CMC_4P:
+    short: Common-mode choke
+    ref: L
+    description: Common-mode choke (windings 1-2 and 4-3, as drawn)
+    left: ["1 1", "4 4"]
+    right: ["2 2", "3 3"]
+  STAMP-S3M:
+    short: Module pins
+    ref: M
+    description: The Stamp-S3A module's pins (STAMP-S3M)
+    left: ["1 G1", "2 G2", "3 G3", "4 G4", "5 G5", "6 G6", "7 G7", "8 G8", "9 G9", "10 G10", "11 GND",
+           "12 G11", "13 5V", "14 G12", "15 G13", "16 G14", "17 G15"]
+    right: ["28 3V3", "27 G46", "26 G43/Tx", "25 G42/MTMS", "24 G44/Rx", "23 G41/MTDI", "22 EN",
+            "21 G40/MTDO", "20 G0/Boot", "19 G39/MTCK", "18 GND"]
+  SMT_SW_1TS026A:
+    short: Push button
+    ref: S
+    description: Push button, four pins (pins as the vendor numbers them)
+    left: ["1 1", "3 3"]
+    right: ["2 2", "4 4"]
+  ESP32-S3FN8:
+    short: ESP32-S3 SoC
+    description: ESP32-S3FN8, 8 MB flash in the package, no PSRAM
+    left: ["2 VDD3P3", "3 VDD3P3", "20 VDD3P3_RTC", "46 VDD3P3_CPU", "55 VDDA1", "56 VDDA2", "29 VDD_SPI",
+           "-", "1 LNA_IN", "-", "4 CHIP_PU", "-", "54 XTAL_P", "53 XTAL_N", "-",
+           "30 SPIHD", "31 SPIWP", "32 SPICS0", "33 SPICLK", "34 SPIQ", "35 SPID", "28 SPICS1",
+           "36 SPICLK_N", "37 SPICLK_P"]
+    bottom: ["57 GND"]
+    right: ["5 GPIO0", "6 GPIO1", "7 GPIO2", "8 GPIO3", "9 GPIO4", "10 GPIO5", "11 GPIO6", "12 GPIO7",
+            "13 GPIO8", "14 GPIO9", "15 GPIO10", "16 GPIO11", "17 GPIO12", "18 GPIO13", "19 GPIO14",
+            "21 XTAL_32K_P", "22 XTAL_32K_N", "23 GPIO17", "24 GPIO18", "25 GPIO19", "26 GPIO20",
+            "27 GPIO21", "38 GPIO33", "39 GPIO34", "40 GPIO35", "41 GPIO36", "42 GPIO37", "43 GPIO38",
+            "44 MTCK", "45 MTDO", "47 MTDI", "48 MTMS", "49 U0TXD", "50 U0RXD", "51 GPIO45", "52 GPIO46"]
+  AW35122FDR:
+    description: Load switch
+    left: ["A2 VIN", "B2 EN"]
+    right: ["A1 VOUT"]
+    bottom: ["B1 GND"]
+  WS2812:
+    short: RGB LED
+    description: Addressable RGB LED
+    left: ["4 VDD", "3 DI"]
+    right: ["1 DO"]
+    bottom: ["2 GND"]
+  JW5712:
+    short: Buck converter
+    description: Synchronous buck converter
+    left: ["A2 VIN", "B1 EN", "C1 VSEL1", "D1 VSEL2", "D2 VSEL3"]
+    right: ["A1 SW", "C2 VOS"]
+    bottom: ["B2 GND"]
+
+root:
+  title: Contents
+  heading: "M5Stack Cardputer-Adv (K132-Adv) schematic"
+  subheading: "Kleidos boards: every part, pin and net of the carrier and its Stamp-S3A module, connectivity documented from the vendor's public documentation"
+  panels:
+    - title: How to read it
+      text: |
+        Click a box on the left to open its page. "Contents" and the page
+        numbers at the bottom right of every page lead back here and to each page.
+
+        Cyan lines are connections: wires and pin ends, all one width.
+        A dot joins lines; a cross on a pin end means the pin is not connected.
+        Pins connect by net labels (the boxed names): pins whose labels carry
+        the same name are on one net, on any page.
+        [3/C4] after a label: page 3 carries that net too, its label in zone C4
+        (column 4, row C of the border). Click it to land on that label.
+        No [page/zone]: the net is on this page only.
+        Click a part's reference to find its row in the parts list; the row's
+        page/zone leads back. A part crossed out in red is not fitted (DNP).
+        White: parts and their references. Grey: values, pin names, pin numbers.
+        A dashed frame is a block of the circuit, titled at its top left.
+        An amber K3 marks a Kleidos addition or correction: it leads to its
+        row below.
+    - title: Notes
+      text: |
+        Every part, pin and net of the Cardputer-Adv, with the values the vendor
+        documents: connectivity documented from the vendor's public documentation,
+        with Kleidos additions and corrections listed on page 1 (M5Stack's
+        Cardputer-Adv schematic v1.0 and Stamp-S3 schematic v0.3.3, the docs
+        pages, the datasheets and bench records each entry cites; README.md and
+        netlist.yaml beside this file). Layout and symbols are this project's.
+        No footprints, no PCB, no part numbers beyond the documented ones.
+        Values are as the vendor prints them (10KΩ, 10K/1%, 22uF), but where an
+        entry below says otherwise. A value of NC means not fitted: that part
+        is marked DNP.
+        Pages 2 to 5 are the carrier's four sheets, page 6 the module's.
+        Both number their parts from 1, so the module's are numbered +100
+        here (its U1 is U101, its M1, the module's pins, is M101).
+        The module's pins land on the carrier's sockets P1 and P2. A net
+        they share takes the carrier's name (GPIO8 on the module is G8).
+        GI and GO are the vendor's names for the Grove pair (GPIO1, GPIO2).
+        Nets the vendor left unnamed carry names of ours (U2_FB, SD_CS...).
+        Zones: numbered columns and rows A-H, 50 mm apart, printed in the border.
+
+sheets:
+  - file: carrier_main.kicad_sch
+    name: Power, sockets and ports
+    summary: "Carrier sheet 1: the charger, battery, power switch and power path, the 5 V boost and 3.3 V buck, the module's sockets, the reset and G0 buttons, the microSD socket, the Grove port, the FPC expansion connector and the IR emitter."
+    parts: "U1 TP4057, J1 J8 battery, Q1-Q3 LP3218DT1G, SW1, U3 CN809J, U2 SY7088, U4 SY8089, P1 P2 module sockets, BTN1 BTN2, J3 microSD, J2 Grove, SW2, FPC1, IR1"
+    pwr_flags: [GND]
+    blocks:
+      - title: Charger
+        rows:
+          - [U1, {col: [R1, C1, R5, C6]}]
+      - title: Battery, power switch and power path
+        rows:
+          - [J1, J8, {col: [C7]}, Q2, Q3]
+          - [SW1, {col: [R9]}, U3, Q1, {col: [R7, D1, C2]}]
+          - [{col: [R8, R12, C10]}]
+      - title: 5 V boost
+        rows:
+          - [U2, {cols: [[R2, L1, C4, C5], [R4, R6, C3, D2]]}]
+      - title: 3.3 V buck
+        rows:
+          - [U4, {cols: [[L2, R11, R13], [C11, C12, C8, C9]]}]
+      - title: Module sockets
+        rows:
+          - [P1, P2]
+      - title: Reset and G0 buttons
+        rows:
+          - [{cols: [[BTN1, D4, R15], [BTN2, D5, R18]]}]
+      - title: microSD
+        rows:
+          - [J3, {cols: [[R19, R20, R21, R22, C18], [D9, D10, D11, D12, D13]]}, {col: [J5, J6]}]
+      - title: Grove port
+        rows:
+          - [J2, SW2, {cols: [[R3, R10, C14], [D6, D7, D8]]}]
+      - title: FPC expansion connector
+        rows:
+          - [FPC1]
+      - title: IR emitter
+        rows:
+          - [IR1, {col: [R14]}]
+  - file: keyboard.kicad_sch
+    name: Keyboard
+    summary: "Carrier sheet 2: the TCA8418RTWR key scanner on the I2C bus, its column resistors and the 56 keys in a matrix of seven rows and eight columns."
+    parts: "U9 TCA8418RTWR, R27-R34, S1-S56"
+    blocks:
+      - title: Key scanner
+        rows:
+          - [U9, {cols: [[R35, R36, R37, R38, C21], [R27, R28, R29, R30], [R31, R32, R33, R34]]}]
+      - title: "Keys, as the vendor lays them out: four rows of 14 (matrix rows ROW0-ROW6, columns Y0-Y7)"
+        rows:
+          - [{cols: [[S1, S15, S29, S43], [S2, S16, S30, S44], [S3, S17, S31, S45], [S4, S18, S32, S46],
+                     [S5, S19, S33, S47], [S6, S20, S34, S48], [S7, S21, S35, S49], [S8, S22, S36, S50],
+                     [S9, S23, S37, S51], [S10, S24, S38, S52], [S11, S25, S39, S53], [S12, S26, S40, S54],
+                     [S13, S27, S41, S55], [S14, S28, S42, S56]]}]
+  - file: audio_imu.kicad_sch
+    name: Motion sensor and audio
+    summary: "Carrier sheet 3: the BMI270 motion sensor, the ES8311 codec and its supply, the microphone, the NS4150B amplifier and speaker connector, the headphone jack and its detect switch."
+    parts: "U7 BMI270, U6 ES8311, U8 MSM381A3729H9BPC, U5 NS4150B, J4 speaker, J7 PJ-342, Q4 2N7002T"
+    pwr_flags: [AGND]
+    blocks:
+      - title: Motion sensor
+        rows:
+          - [U7, {col: [R43, FB7, C25, C27]}]
+      - title: Audio codec
+        rows:
+          - [U6, {cols: [[R24, C26, C31, R26], [C22, C23, C24], [C28, C29, C30]]}]
+      - title: Microphone
+        rows:
+          - [U8, {col: [R41, C33]}]
+      - title: Amplifier and speaker
+        rows:
+          - [U5, {cols: [[R16, C13, R17, C15], [R23, C16, C17, FB3], [FB1, FB2, C19, C20]]}, J4]
+      - title: Headphone jack and detect
+        rows:
+          - [J7, Q4, {cols: [[R25, R40, R42], [R39, D3, C32]]}]
+  - file: ext.kicad_sch
+    name: EXT header
+    summary: "Carrier sheet 4: the 14-pin 2.54 mm EXT header."
+    parts: "P3 HDR-SMD_14P-P2.54"
+    blocks:
+      - title: EXT header (2.54 mm, 14 pins)
+        rows:
+          - [P3]
+  - file: module.kicad_sch
+    name: Stamp-S3A module
+    summary: "The module's sheet (Stamp-S3 v0.3.3): the ESP32-S3FN8 with its RF path, crystal and decoupling, the 3.3 V buck, the LCD connectors and backlight switch, the RGB LED, the G0 button, the USB-C and the module's pins."
+    parts: "U101 ESP32-S3FN8, ANT101, X101, U104 JW5712, U102 AW35122FDR, J101 J103 LCD FPC, U103 WS2812, S101, J102 USB-C, F101, M101 module pins"
+    blocks:
+      - title: ESP32-S3FN8
+        rows:
+          - [U101]
+      - title: RF path
+        rows:
+          - [ANT101, {cols: [[L106, L101], [C119, C120, C102, C101]]}]
+      - title: Crystal
+        rows:
+          - [X101, {col: [L103, C109, C114]}]
+      - title: Supply decoupling
+        rows:
+          - [{cols: [[L102, C105, C106, C107, C108], [C110, C111, C112, C113], [C104, C126]]}]
+      - title: Reset (EN) and G0 button
+        rows:
+          - [S101, {cols: [[R107, C123, L107, C124], [R104, D101]]}]
+      - title: 3.3 V buck (DCDC)
+        rows:
+          - [U104, {cols: [[R116, C116, C118], [L104, C115, C121, C122, C125]]}]
+      - title: LCD connectors and backlight switch
+        rows:
+          - [U102, {col: [C103]}, J103, J101]
+      - title: RGB LED
+        rows:
+          - [U103, {col: [C117]}]
+      - title: Module pins and UART TX resistor
+        rows:
+          - [M101, {col: [D102, R105]}]
+      - title: USB-C
+        rows:
+          - [J102, L105, {cols: [[R101, R102, F101], [D103, D104, D114], [JP102, JP103, PHD101]]}]
+  - file: power.kicad_sch
+    name: Power tree and rails
+    index: power
+    summary: "How power flows from the USB-C and the battery to every rail, and each rail's nominal voltage, source and enable. Every box leads to where it is drawn."
+  - file: nets.kicad_sch
+    name: Nets and signals
+    index: nets
+    gpio_title: ESP32-S3 GPIO (U101)
+    test_points: {title: "Pads", sub: "The one-pin pads and the plated hole the print draws."}
+    summary: "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32-S3 GPIO, the I2C addresses, the pads, every pull-up and pull-down."
+  - file: parts.kicad_sch
+    name: Parts
+    index: parts
+    summary: "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A reference on the drawing leads to its row, the row back to it."
+
+power_tree:
+  title: Power tree
+  pitch: [27.94, 17.78]
+  nodes:
+    J1: [0, 0]
+    BAT: [1, 0]
+    Q2: [2, 0]
+    Q3: [3, 0]
+    J8: [0, 1]
+    R1: [4, 1]
+    U1: [5, 1]
+    VBAT_IN: [6, 1]
+    Q1: [7, 1]
+    VBAT_OUT: [8, 1]
+    J102: [0, 2]
+    USB_VBUS: [1, 2]
+    F101: [2, 2]
+    "+5VIN": [3, 2]
+    D1: [4, 2]
+    R2: [9, 2]
+    U2: [10, 2]
+    BOOST_OUT: [11, 2]
+    D2: [12, 2]
+    "+5VOUT": [13, 2]
+    U4: [9, 3]
+    L2: [10, 3]
+    "+3.3V": [11, 3]
+    U102: [12, 3]
+    BL_3V3: [13, 3]
+    U104: [4, 4]
+    R24: [12, 4]
+    AVDD: [13, 4]
+    "+5VOUT@2": [3, 5]
+    SW2: [4, 5]
+    "+5VGrove": [5, 5]
+  edges:
+    - [J1, BAT]
+    - [J8, BAT]
+    - [BAT, Q2]
+    - [Q2, Q3]
+    - [Q3, VBAT_IN]
+    - [J102, USB_VBUS]
+    - [USB_VBUS, F101]
+    - [F101, "+5VIN"]
+    - ["+5VIN", R1]
+    - [R1, U1]
+    - [U1, VBAT_IN]
+    - [VBAT_IN, Q1]
+    - [Q1, VBAT_OUT]
+    - ["+5VIN", D1]
+    - [D1, VBAT_OUT]
+    - [VBAT_OUT, R2]
+    - [R2, U2]
+    - [U2, BOOST_OUT]
+    - [BOOST_OUT, D2]
+    - [D2, "+5VOUT"]
+    - [VBAT_OUT, U4]
+    - [U4, L2]
+    - [L2, "+3.3V"]
+    - ["+5VIN", U104]
+    - [U104, "+3.3V"]
+    - ["+3.3V", U102]
+    - [U102, BL_3V3]
+    - ["+3.3V", R24]
+    - [R24, AVDD]
+    - ["+5VIN", SW2]
+    - ["+5VOUT@2", SW2]
+    - [SW2, "+5VGrove"]
+  note: "+5VOUT is drawn twice: D2 feeds it from the boost, and SW2 takes it (or +5VIN) for the Grove port. Q2 and Q3, back to back, pass the cell to VBAT_IN as SW1 sets Q3's gate (Q2's is on GND); Q1 passes VBAT_IN to VBAT_OUT, its gate held by the CN809J U3 that watches +5VIN. The module's U104 and the carrier's U4 both drive +3.3V."

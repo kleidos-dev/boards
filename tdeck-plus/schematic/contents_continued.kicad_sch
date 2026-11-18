@@ -1,0 +1,915 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "5c49d1c7-708f-543e-bab8-2b3c84df56e3")
+	(paper "A3")
+	(title_block
+		(title "LILYGO T-Deck Plus: Contents, continued")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: LilyGO T-Deck schematic 2023-06-01, GPS sheets; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols)
+	(text "Contents, continued"
+		(exclude_from_sim no)
+		(at 15.24 20.32 0)
+		(effects
+			(font
+				(size 3 3)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "5d9b6cb7-1504-5402-bf6f-cf47e0b6d54a")
+	)
+	(text "Kleidos additions and corrections (continued)"
+		(exclude_from_sim no)
+		(at 15.24 33.02 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "c2025e6f-2945-59f2-9224-68f5e01dd20f")
+	)
+	(text "Id"
+		(exclude_from_sim no)
+		(at 15.24 39.37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "0ec5f19f-da0b-5488-ba8c-5ecb120bea15")
+	)
+	(text "Kind"
+		(exclude_from_sim no)
+		(at 21.59 39.37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "bcebbc2e-37b4-5a1b-85cf-3d3cf30e0899")
+	)
+	(text "What"
+		(exclude_from_sim no)
+		(at 35.56 39.37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "a258a2f1-8fa7-5173-b14c-32981b704e59")
+	)
+	(text "Source"
+		(exclude_from_sim no)
+		(at 101.6 39.37 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "617e65d5-3d00-5872-8cf8-622f4b2432ec")
+	)
+	(polyline
+		(pts
+			(xy 15.24 40.97)
+			(xy 156.21 40.97)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4ab6906b-5bb1-56f0-baa4-1f9da74a4044")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 21.59 42.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "af98d784-fbd1-5b82-a2a3-507edd9b5840")
+	)
+	(text "U2 answers at I2C address 0x40 (AD1, AD0 low)."
+		(exclude_from_sim no)
+		(at 35.56 42.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d872e6c2-bf0f-55ba-80dc-ff1ecba57e96")
+	)
+	(text "datasheet: ES7210 datasheet rev. 21.0, p. 6"
+		(exclude_from_sim no)
+		(at 101.6 42.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fd3cfcc5-707f-5ece-bf46-0660bbdfc643")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 21.59 45.25 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "95e4d18e-3cad-551b-9b8c-3993b8e26b56")
+	)
+	(text "U5 answers at I2C address 0x55."
+		(exclude_from_sim no)
+		(at 35.56 45.25 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7ddff884-e38a-5f70-948a-96d1995cab8f")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 101.6 45.25 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ebb46080-7ea7-5abb-8bbd-3f14de8158e4")
+	)
+	(text "variants/tdeck/variant.h: KEYBOARD_I2C_ADDR"
+		(exclude_from_sim no)
+		(at 101.6 47.79 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e87a67f6-a214-504e-8b5d-6589ae3d6619")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 21.59 50.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "42a86ace-6ce7-50ea-bbb5-8ba14258308e")
+	)
+	(text "P4's GT911 answers at 0x5D or 0x14 (INT at power-up)."
+		(exclude_from_sim no)
+		(at 35.56 50.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bc5457d4-fb68-5270-a935-197159cfb035")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 101.6 50.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "72a12744-eac3-550a-90a7-d9757bc6382f")
+	)
+	(text "src/drivers/touch/gt911.h: Gt911::begin, the"
+		(exclude_from_sim no)
+		(at 101.6 52.87 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5cf63be8-952c-528a-929b-3fd77a951eba")
+	)
+	(text "two-address probe"
+		(exclude_from_sim no)
+		(at 101.6 55.41 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b72ff4b3-4bf5-5177-a14d-b63f5cd97944")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 21.59 57.95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e391e6f1-e4c3-5477-9f7b-1ebc0167eec5")
+	)
+	(text "GPIO3 (UZ3, G_S1) reads the trackball rolled up."
+		(exclude_from_sim no)
+		(at 35.56 57.95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "087a4cd8-9cae-56c6-a8f1-e7eb23f6fdc3")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 101.6 57.95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9884a916-fbdd-52e3-acbf-8789efec1bc3")
+	)
+	(text "variants/tdeck/variant.h: PIN_TRACKBALL_UP; the"
+		(exclude_from_sim no)
+		(at 101.6 60.49 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a3bff186-b105-51d2-b910-4af72049af3a")
+	)
+	(text "owner saw it act so on his unit, 2026-11-17"
+		(exclude_from_sim no)
+		(at 101.6 63.03 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6cce2434-bcbf-5311-b102-e686acb3f8ca")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 21.59 65.57 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1673a706-ceb4-57ec-809a-0211ccb11b36")
+	)
+	(text "GPIO15 (UZ1, G_S3) reads the trackball rolled down."
+		(exclude_from_sim no)
+		(at 35.56 65.57 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b97ac135-a005-5d13-a3d0-5b6d704d4c31")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 101.6 65.57 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9dbd2466-5b75-501e-8cbd-72275018d8a9")
+	)
+	(text "variants/tdeck/variant.h: PIN_TRACKBALL_DOWN;"
+		(exclude_from_sim no)
+		(at 101.6 68.11 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2c673839-5d4c-5091-920f-c477e920303c")
+	)
+	(text "the owner saw it act so on his unit, 2026-11-17"
+		(exclude_from_sim no)
+		(at 101.6 70.65 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e8baf8d6-3eeb-5cdd-9f17-874b2cc68fa1")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 21.59 73.19 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a4052608-473a-5843-92c1-c5998a08eaf6")
+	)
+	(text "GPIO1 (UZ4, G_S4) reads the trackball rolled left."
+		(exclude_from_sim no)
+		(at 35.56 73.19 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a91ab7cd-b67a-5340-aec6-629ef362c212")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 101.6 73.19 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "46292d9f-a3b8-58ac-b015-57f7d5c89db3")
+	)
+	(text "variants/tdeck/variant.h: PIN_TRACKBALL_LEFT;"
+		(exclude_from_sim no)
+		(at 101.6 75.73 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9ec8f723-6c27-5084-a56e-f43708333328")
+	)
+	(text "the owner saw it act so on his unit, 2026-11-17"
+		(exclude_from_sim no)
+		(at 101.6 78.27 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5bba284d-b54c-5082-b8be-dee2f6820d86")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 21.59 80.81 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "54e29514-9558-5cbf-bd98-88f9ffd2b24d")
+	)
+	(text "GPIO2 (UZ2, G_S2) reads the trackball rolled right."
+		(exclude_from_sim no)
+		(at 35.56 80.81 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bea2041d-61ac-5da5-9f8b-33e2fe5e18ee")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 101.6 80.81 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4b801fc6-bba5-5617-acd2-d36cc51eb8c3")
+	)
+	(text "variants/tdeck/variant.h: PIN_TRACKBALL_RIGHT;"
+		(exclude_from_sim no)
+		(at 101.6 83.35 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c37df3ac-527d-5698-8ae6-2655e4afc435")
+	)
+	(text "the owner saw it act so on his unit, 2026-11-17"
+		(exclude_from_sim no)
+		(at 101.6 85.89 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1ec2d92e-2cab-5ced-9c97-242d477b2830")
+	)
+	(text "K18"
+		(exclude_from_sim no)
+		(at 15.24 42.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "e531c0bf-8cb9-53fc-8609-132d2b96e7bf")
+	)
+	(text "K19"
+		(exclude_from_sim no)
+		(at 15.24 45.25 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "cf8c20eb-b29a-5021-a670-6e869bc82d9f")
+	)
+	(text "K20"
+		(exclude_from_sim no)
+		(at 15.24 50.33 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "48d110c8-477b-5287-b871-ad43f6aa667a")
+	)
+	(text "K21"
+		(exclude_from_sim no)
+		(at 15.24 57.95 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "b5439e1b-3c7f-56a6-9ed4-04acc284aae7")
+	)
+	(text "K22"
+		(exclude_from_sim no)
+		(at 15.24 65.57 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "8035af28-ca09-5b62-9a75-b6f2f04435d0")
+	)
+	(text "K23"
+		(exclude_from_sim no)
+		(at 15.24 73.19 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "5c295431-2977-5a16-a155-8dfcd54d35d0")
+	)
+	(text "K24"
+		(exclude_from_sim no)
+		(at 15.24 80.81 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "c8cfa951-44ab-5a4e-8e25-f225cd5e5841")
+	)
+	(text "Revision history"
+		(exclude_from_sim no)
+		(at 15.24 94.78 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "274adf3a-f7c2-5310-80ff-df2ef6e8bc38")
+	)
+	(text "Rev"
+		(exclude_from_sim no)
+		(at 15.24 101.13 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "ab587bbe-1a36-5029-868f-4367988e2839")
+	)
+	(text "Date"
+		(exclude_from_sim no)
+		(at 21.59 101.13 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "a2ef7cab-f6e1-59ee-bef4-3ded9bace120")
+	)
+	(text "Change"
+		(exclude_from_sim no)
+		(at 35.56 101.13 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "a72e842e-d666-595f-a6e8-890b8d02021d")
+	)
+	(polyline
+		(pts
+			(xy 15.24 102.73)
+			(xy 111.76 102.73)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "c795d8a3-3029-52d2-8c7c-370b0d18346f")
+	)
+	(text "1"
+		(exclude_from_sim no)
+		(at 15.24 104.47 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0cf01f0e-f621-586c-8b61-d595c6119994")
+	)
+	(text "2026-11-17"
+		(exclude_from_sim no)
+		(at 21.59 104.47 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3b4550c1-fcc6-5c1e-9cd6-9341c8736628")
+	)
+	(text "First drawing: every part, pin and net of the mainboard and the two"
+		(exclude_from_sim no)
+		(at 35.56 104.47 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "39d325d1-ff01-5ea0-92cc-8c3bda670939")
+	)
+	(text "GPS daughterboards, from the vendor's public documentation."
+		(exclude_from_sim no)
+		(at 35.56 107.01 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cef4f841-e42f-5586-a749-d75965572e61")
+	)
+	(text "2"
+		(exclude_from_sim no)
+		(at 15.24 109.55 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e1731058-62b3-567c-b422-737bfbcb2554")
+	)
+	(text "2026-11-17"
+		(exclude_from_sim no)
+		(at 21.59 109.55 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "41750670-f47d-5f30-808f-1eb27d7a3106")
+	)
+	(text "Kleidos additions and corrections K1-K20, listed above, from"
+		(exclude_from_sim no)
+		(at 35.56 109.55 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "febcabf9-21eb-5359-8365-b41738a7899e")
+	)
+	(text "datasheets, the vendor's documentation, the Kleidos firmware on this"
+		(exclude_from_sim no)
+		(at 35.56 112.09 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5c8773d4-74ac-5cb0-9bcb-008dbb542ae3")
+	)
+	(text "board and a bench probe."
+		(exclude_from_sim no)
+		(at 35.56 114.63 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9c203566-e34a-5b87-846b-dd958c8f0c49")
+	)
+	(text "3"
+		(exclude_from_sim no)
+		(at 15.24 117.17 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7f469369-bbec-5afd-a204-76dfe22b2bc7")
+	)
+	(text "2026-11-17"
+		(exclude_from_sim no)
+		(at 21.59 117.17 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "08c97d74-ce79-50e5-9d3a-199406bc4376")
+	)
+	(text "K21-K24: which way each trackball sensor reads. Markers repeated on"
+		(exclude_from_sim no)
+		(at 35.56 117.17 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a6423239-e0c5-53a0-974f-022b887a990d")
+	)
+	(text "the index pages; pins on no net say what they are; the title block"
+		(exclude_from_sim no)
+		(at 35.56 119.71 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "292dfada-4608-5388-8b5f-62d4e7f8212b")
+	)
+	(text "names the entries."
+		(exclude_from_sim no)
+		(at 35.56 122.25 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b019bf37-4f18-594a-bd0b-0651d79cace0")
+	)
+	(text "Contents"
+		(exclude_from_sim no)
+		(at 308 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "872916c1-3cf6-5e78-8c7e-bc4402640eaa")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 321.5827 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "6a529a68-e021-5ec0-b3c4-dfb70dfa3c26")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 331.0197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "b9e954a8-d104-516d-922a-fb9e791bfc01")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 336.4947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "a15b252b-79e6-5aaf-9d3c-1716d77801a2")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 341.9697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "382e757a-494e-52f0-b41a-b79c5aa06233")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 347.4447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "db605ec2-9166-5e46-9f4c-7c3e02214a82")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 352.9197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "353661ea-abfd-5749-9677-4730a278bb0c")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 358.3947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "152713bc-158f-5dd2-959b-8e12b91dbd81")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 363.8697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "1793bc64-9d30-58a6-baca-71e42c27eaaf")
+	)
+	(text "[8]"
+		(exclude_from_sim no)
+		(at 369.3447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "10dd31ae-e016-5958-adbb-10181de57184")
+	)
+	(text "[9]"
+		(exclude_from_sim no)
+		(at 374.8197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "ea197701-777d-5004-84a2-01a4e10a1e98")
+	)
+	(text "[10]"
+		(exclude_from_sim no)
+		(at 380.2947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#10")
+		)
+		(uuid "6c78f1e7-b978-5cd9-87f9-8df5530ba0ac")
+	)
+	(embedded_fonts no)
+)

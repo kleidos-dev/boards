@@ -1,0 +1,175 @@
+{
+  "board": "faces",
+  "model": "_shared/fixtures/faces/model/faces.glb",
+  "model_sha256": "13a7cb377973881185f2e5e74e007bb6f35fd2bf227186b8d9c5e6e79fb9ed1f",
+  "model_bytes": 7732,
+  "model_gzip_bytes": 2390,
+  "triangles": 148,
+  "meshes": 5,
+  "materials": 5,
+  "source": {
+    "vendor": "Kleidos",
+    "format": "stl",
+    "url": "_shared/fixtures/faces/vendor/body.stl",
+    "sha256": "0b01b9f366003fc0006b5064c17b7ddd29c2c350215bd156cca1857d4728b830",
+    "bytes": 684,
+    "license": "MIT",
+    "copyright": "Kleidos",
+    "license_note": "A box written by face_fixture.py."
+  },
+  "modules": [
+    {
+      "name": "base",
+      "source": {
+        "vendor": "Kleidos",
+        "format": "stl",
+        "url": "_shared/fixtures/faces/vendor/base.stl",
+        "sha256": "c49a401cd93915dc0e6511e83bbd29341b9db4076a12ba53e4c00826de0b7bac",
+        "bytes": 684,
+        "license": "MIT",
+        "copyright": "Kleidos",
+        "license_note": "A box written by face_fixture.py."
+      },
+      "tessellation": null,
+      "transform": [
+        {
+          "translate": [
+            0.0,
+            0.0,
+            -12.0
+          ]
+        }
+      ]
+    }
+  ],
+  "builder": {
+    "script": "_shared/build_board_glb.py",
+    "version": "1.6.0",
+    "spec": "_shared/fixtures/faces/model/spec.json",
+    "spec_sha256": "a0c1fdd9a3ca0708d6779ad591d3a3a00ff0b371a45250be2fd01ff7d1c49ad2",
+    "python": "3.14.7",
+    "packages": {
+      "numpy": "2.5.4",
+      "shapely": "2.2.0",
+      "trimesh": "5.2.0",
+      "mapbox_earcut": "2.1.0",
+      "scipy": "1.18.1",
+      "networkx": "3.7",
+      "rtree": "1.4.1",
+      "cascadio": "0.1.1",
+      "fast-simplification": "0.2.0",
+      "fonttools": "4.68.0"
+    }
+  },
+  "parameters": {
+    "quant_mm": 0.01,
+    "planar_min_area_mm2": 1.5,
+    "tessellation": null,
+    "transform": [],
+    "center_mm": [
+      10.0,
+      15.0,
+      -6.0
+    ],
+    "front_frame": {
+      "left_x": 0.0,
+      "top_y": 30.0
+    },
+    "face_frames": {
+      "back": {
+        "right_x": 20.0,
+        "top_y": 30.0
+      }
+    },
+    "screen": {
+      "x0": 5.0,
+      "x1": 15.0,
+      "y_top": 14.0,
+      "y_bot": 4.0,
+      "w": 10.0,
+      "h": 10.0,
+      "resolution": [
+        100,
+        100
+      ]
+    }
+  },
+  "legends": [
+    {
+      "mesh": "name_legends",
+      "plane": "name",
+      "on": "case",
+      "front": "_shared/fixtures/faces/svg/front.svg",
+      "legends_sha256": "24733ec0bf32c9d5e7775a2d6a9f85dbd31386f1f31456f3384ca443a88a23f0",
+      "z_mm": 0.03,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 2,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+      },
+      "sheets": [
+        {
+          "fill": "#ffffff",
+          "vertices": 97,
+          "triangles": 97,
+          "area_mm2": 22.807,
+          "stroke_mm": 0.802,
+          "mesh": "name_legends_ffffff"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "case",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "label_legends",
+      "plane": "label",
+      "on": "base",
+      "face": "back",
+      "drawing": "_shared/fixtures/faces/svg/back.svg",
+      "legends_sha256": "33c8664bc41dd82edc5aa754b462264dd14c20f2e087e11f17661eb49898728f",
+      "z_mm": -12.03,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 2,
+      "fonts": {
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#111113",
+          "vertices": 10,
+          "triangles": 8,
+          "area_mm2": 42.0,
+          "stroke_mm": 1.826,
+          "mesh": "label_legends_111113"
+        },
+        {
+          "fill": "#d2390c",
+          "vertices": 23,
+          "triangles": 19,
+          "area_mm2": 2.187,
+          "stroke_mm": 0.248,
+          "mesh": "label_legends_d2390c"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "base",
+        "least_mm": 0.02
+      }
+    }
+  ],
+  "without_legends": {
+    "bytes": 2768,
+    "gzip_bytes": 961,
+    "sha256": "f006b74bbbf5eb2458132b17517ab88d8503521f82a5187ab5f8ebc3aef6ebc3",
+    "meshes": 2,
+    "materials": 2
+  }
+}

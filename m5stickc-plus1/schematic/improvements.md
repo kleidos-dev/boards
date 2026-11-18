@@ -1,0 +1,130 @@
+# M5StickC Plus 1.1 (K016-P): schematic improvements, triage
+
+Triage of 2026-11-17 under the owner's rule of the same day (a detail the vendor's print does not show goes in when a primary source makes it certain; a drawing error of the print is corrected when the evidence settles it; what stays uncertain is listed as open). The settled items are applied as the `kleidos` entries K1-K23 of `netlist.yaml` (`docs/models-and-drawings.md`, "Kleidos additions and corrections"); "Applied" at the end maps each triage id to its entry, and lists the settled items left undrawn and why. The "Entry" column below is the triage's proposal.
+
+Sources read for it: the vendor's print (Wayback copy, SHA-256 `da0717dc…943cb`, the file `netlist.yaml` cites), rendered at 600-2400 dpi for the drawing checks; the AXP192 datasheet v1.1 English draft (board.json `axp192-datasheet-full`); the BM8563 datasheet V1.1 (`bm8563-datasheet`); the MPU-6886 datasheet DS-000193 v1.1 (`mpu6886-datasheet`); the ESP32-PICO Series datasheet v1.1 (`esp32-pico-datasheet`); the WCH CH552 datasheet V1G (<https://wch-ic.com/downloads/file/309.html>, read at the Wayback capture of 2024-04-04, SHA-256 `fcccd350…a7a5d2`); the vendor's docs page (Switch Science mirror, read 2026-11-17); the Kleidos firmware. Page numbers are the PDF's own printed pages.
+
+Status words: **settled** (a primary source makes it certain; ready to become an entry), **needs bench** (a probe in the list at the end settles it without opening the board), **open** (cannot be settled without opening the board; stays out and the README lists it), **firmware** (a Kleidos statement that disagrees with the print; fixed in the firmware repository, no change here), **no change**.
+
+## A. Gaps and doubts the README lists
+
+| Id | Claim | Evidence | Status | Entry |
+| --- | --- | --- | --- | --- |
+| A1 | GPIO2 also drives the passive buzzer (the print shows it on PAD2 only) | Vendor docs page: PinMap "Passive Buzzer, Buzzer Pin G2", specifications "Integrated passive buzzer"; Kleidos `docs/variants.md`, section "Detailed Specifications" ("the buzzer on G2 ... fitted"), `variants/m5stickc_plus1/variant.h` | settled for the GPIO's function (vendor-doc); P5 (2026-11-17, partial) found no DC load on GPIO2 held high (no step above the reading's ~5 mA standard error in the VBUS current), which rules out a transistor-switched magnetic buzzer and fits a piezo, but no one listened, so whether it sounds on GPIO2 is not bench-confirmed; the part and its drive circuit stay open (board opened) | `gpio: GPIO2` addition (vendor-doc) |
+| A2 | Which HAT header pin each pad is, and whether G36 and G25 share one pin | Docs page: "G36/G25 share the same port. When using one pin, set the other pin to floating input"; its specifications list "G0, G25/G26, G36, G32, G33", the 2021 page "G0, G25/G36, G26" (the vendor's two pages disagree); the print draws PAD4 (GPIO36 via R107) and PAD10 (GPIO25) apart | open: P3 was not run on 2026-11-17 (it needs a person to tie each header pin through a resistor; no fixture does it from the bench) | after P3: the join (net) as an addition, source bench + vendor-doc |
+| A3 | U5 holds an ST7789V2 controller, written over a 4-line write-only SPI | Docs page "Driver Chip: ST7789v2"; the print has no read line (GPIO14, U1 pin 17, is not connected) | settled (vendor-doc), optional | `part: U5` addition (vendor-doc) |
+| A4 | Part numbers the print omits (J3, BAT1, J1, J2, LEDs, ESD diodes, E1) | Only the parts' markings would tell | open | none |
+| A5 | AXP192 LDO output voltages | Set over I2C at run time (Kleidos sets LDO3 to 3.0 V, `src/drivers/power/axp192.cpp` (`Axp192::prepareDisplay`)): a firmware choice, not a property of the board | no change ("not printed" stays) | none |
+| A6 | Antenna E1 drawn on ANT_FEED though Altium's netlist has no pin for it | Drawn where the print draws it; README says so | no change | none |
+| A7 | ESP32-PICO-D4 pins 44, 45, 47, 48 are absent from the symbol | PICO datasheet p15, Table 2: XTAL_N_NC, XTAL_P_NC, CAP2_NC, CAP1_NC, type NC | settled, optional (needs four pins added to our U1 symbol, each NC) | `pin: U1.44` ... (datasheet), low value |
+| A8 | CH552T pin 10 printed P3.2 like pin 1 | See D3 | settled | see D3 |
+| A9 | U7's pin names come from the MPU-6886 datasheet, not the print (README "Numbering and names") | Datasheet p17, Table 9 and Figure 3; the print numbers the pins only. Today the names differ from the print with no marker | settled; marks a difference that is already silent | `part: U7` addition (datasheet) |
+
+## B. What the firmware relies on, against the drawing
+
+| Id | Claim | Evidence | Status | Entry |
+| --- | --- | --- | --- | --- |
+| B1 | U2 AXP192 answers at I2C 0x34 | AXP192 datasheet p11 (TWSI address 0x68, 8-bit) and p31, §9.10 ("69H is to read and 68H to write"); firmware `variants/m5stickc_plus1/variant.h` (`PMIC_I2C_ADDR`) | settled (now only a `source:` string in the `i2c` table) | `i2c: U2` addition (datasheet) |
+| B2 | U4 BM8563 answers at I2C 0x51 | BM8563 datasheet p1 (bus address: read 0A3H, write 0A2H); firmware `variants/m5stickc_plus1/variant.h` (`RTC_I2C_ADDR`), `src/drivers/rtc/bm8563_regs.h` (`kI2cAddress`) | settled | `i2c: U4` addition (datasheet) |
+| B3 | U7 MPU6886 answers at I2C 0x68 | MPU-6886 datasheet p25, §6.2 (b110100X, LSB from pin 9 SA0); pin 9 is on GND in the print; the firmware reads it on this board (`variants/m5stickc_plus1/variant.h` (`IMU_I2C_ADDR`), `docs/research/imu-tuning.md`, section "Plus 1.1: GPIO35") | settled | `i2c: U7` addition (datasheet) |
+| B4 | SYS_INT (GPIO35) has R2 2.2K up to VESP_3V3 | The print draws R2; the Kleidos bench scan (`docs/research/imu-tuning.md`, section "Plus 1.1: GPIO35", 2026-11-12) read GPIO35 low with the MPU6886's INT open drain at either polarity and concluded "nothing pulls the net up". P1 (2026-11-17, `bench/2026-11-17-sys-int-pull-up-and-drivers.md`): with every AXP192 IRQ masked and cleared and the MPU6886's INT open drain with nothing enabled, GPIO35 (no internal pull, `pu=0 pd=0`) read high on two firmware images; an AXP192 timer IRQ latch pulled it low for as long as it was set. A pull-up is fitted as drawn, and the earlier low reading was a set latch. The resistor's value is not measured | settled (bench): the print is right, no correction | the bench fact goes into C3's `net: SYS_INT` entry (one entry per net) |
+| B5 | Does the BM8563 INT reach GPIO35? | The print and Altium's netlist put U4 pin 3 on RTC_INT (C401 to PWR_KEY, R401 to IPSOUT), never on SYS_INT. P2 (2026-11-17, `bench/2026-11-17-rtc-int-to-power-key.md`): with the BM8563's INT asserted (TF and TIE set) GPIO35 stayed high, at rest and through five countdowns | settled (bench): it does not; the print is right | none |
+| B6 | An RTC interrupt powers the board on through C401 (the v1.1 "sleep and wake-up functions") | The print couples RTC_INT to PWR_KEY through C401 10 uF; the docs page's change log dates the sleep and wake-up functions to v1.1 (2021.12). P2 (2026-11-17, `bench/2026-11-17-rtc-int-to-power-key.md`): each BM8563 countdown with TIE on made the AXP192 latch a power-key short press (four runs; none with TIE off, two controls), and on a bench build with `rtcIntPowersOn = true`, `PMICOFFTEST` 20 and 30 switched the board off at the AXP192 and it powered itself back on after ≈19.4 s and ≈28.7 s (`SYS? reason=POWERON`, no deep-sleep wake, USB connected; a third run at 35 s also returned) | settled (bench); on battery alone not run | `net: RTC_INT` addition (bench + datasheet), merged with C2: "open drain (R401 to IPSOUT); its falling edge presses PWR_KEY through C401, so an RTC countdown or alarm powers the board on from an AXP192 power-off" |
+| B8 | The USB-serial bridge enumerates as an FTDI FT232 (VID 0403, PID 6001), manufacturer "Hades2001", product "M5stack" | Read on the bench 2026-11-17 with `ioreg -p IOUSB` (both Stick units on the bench report the same strings); Kleidos `docs/variants.md`, section "Detailed Specifications"; the docs page's driver section points to the FTDI driver. The part is the CH552T the print names, running firmware that presents an FT232 identity | settled (bench + vendor-doc) | `part: U6` addition (bench) |
+| B9 | LDO3 at 3.0 V for the panel logic | `variants/m5stickc_plus1/variant.h`, `src/drivers/power/axp192.cpp` (`Axp192::prepareDisplay`): set by the firmware over I2C | no change (see A5) | none |
+| B10 | Buttons G37/G39, red LED G10 active low, I2C G21/G22, LCD G13/G15/G5/G23/G18, backlight on LDO2, EXTEN boost, LDOio0 microphone supply | `variants/m5stickc_plus1/variant.h` (`PIN_BTN_A`, `PIN_BTN_B`, `PIN_STATUS_LED`, `STATUS_LED_ACTIVE_LOW`); all as drawn (README table) | no change | none |
+| B11 | AXP192 PWROK holds the ESP32 in reset until its outputs are stable; a power-off cuts the ESP32 even with VBUS present | AXP192 datasheet p17 (pin 5, power good) and p21 (PWROK as the reset signal); bench: `docs/variants.md`, section "The USB PHY pads, on the four ESP32-S3 boards" | settled | `net: ESP32_EN` addition (datasheet) |
+
+## C. Datasheet facts the print omits
+
+| Id | Claim | Evidence | Status | Entry |
+| --- | --- | --- | --- | --- |
+| C1 | PWR_KEY has a 100 kΩ pull-up to APS inside the AXP192 | AXP192 datasheet p18, pin 23: "Internal 100k pull high to APS" | settled | `net: PWR_KEY` addition (datasheet) |
+| C2 | RTC_INT is an open-drain output (R401 is its pull-up) | BM8563 datasheet p1 (open-drain interrupt pin) and p2 pin table | settled | `net: RTC_INT` addition (datasheet), merged with B6's bench text (P2 landed), one entry per net |
+| C3 | SYS_INT: the AXP192 signals by pulling IRQ low; the MPU6886's INT is push-pull active high at reset and must be set open drain, active low (INT_PIN_CFG bits 6 and 7) to share the net | AXP192 datasheet p31, §9.10; MPU-6886 datasheet p41, register 55 (INT_PIN_CFG); P1 (2026-11-17, `bench/2026-11-17-sys-int-pull-up-and-drivers.md`): both chips drive the net on the board (the AXP192's timer IRQ and the MPU6886's data-ready interrupt, open drain active low, each pulled GPIO35 low), the pull-up holds it high when both release it, and the BM8563's INT is not on it | settled (datasheet + bench) | `net: SYS_INT` addition (datasheet + bench): "shared open-drain, active-low line: AXP192 IRQ and MPU6886 INT (set open drain, active low), R2 pull-up; any AXP192 IRQ latch left set holds it low" |
+| C4 | GPIO27 drives N_VBUSEN: low lets IPSOUT take VBUS, high stops it (R21 holds it low) | AXP192 datasheet p17 (pin 6) and p23 | settled | `gpio: GPIO27` addition (datasheet) |
+| C5 | N_OE on GND keeps the AXP192's outputs on | AXP192 datasheet p17, pin 4 ("GND: on; IPSOUT: off") | settled, optional | `pin: U2.4` addition (datasheet) |
+| C6 | DC-DC1 (VESP_3V3) comes up at 3.3 V | AXP192 datasheet p12, DCDC1 output voltage, default 3.3 V (range 0.7-3.5 V); P6 register half (2026-11-17, `bench/2026-11-17-dcdc1-setpoint.md`): `DC1OUT_VOL` (0x26) reads 0x68 = 3.30 V on the board, and the Kleidos firmware never writes that register | settled (datasheet + bench register read); the voltmeter half of P6 was not run (no meter on the header) | `rail: VESP_3V3` addition (datasheet + bench), optional |
+| C7 | RTC_VDD (LDO1) voltage | AXP192 datasheet p12 gives VLDO1 1.25 V typical at 1 mA, which cannot be this board's value (the BM8563 talks on a 3.3 V bus); the factory option is not documented; the net reaches only C11, U2 and U4 | open | none |
+| C8 | Strapping pins: GPIO0 (internal pull-up, plus R12; low = download), GPIO2 (internal pull-down; low or floating for download), GPIO12/MTDI (not connected; internal pull-down sets VDD_SDIO from VDD3P3_RTC, the 3.3 V the in-package flash needs), GPIO15/MTDO (LCD_MOSI; internal pull-up, boot log on U0TXD), GPIO5 (LCD_CS; internal pull-up, SDIO slave timing) | ESP32-PICO datasheet p23, Table 8; p24, Table 10; p25, §3.2 | settled | `gpio:` additions GPIO0, GPIO2, GPIO12, GPIO15, GPIO5 (datasheet); GPIO2's merges with A1 |
+| C9 | GPIO6 (pin 31 CLK), GPIO16 (pin 25, FLASH_CS), GPIO17 (pin 27, SO/SIO1), GPIO7 (pin 32, WP/SIO2), GPIO8 (pin 33, SI/SIO0) and GPIO11 (pin 30, HOLD/SIO3) carry the in-package flash; GPIO9 and GPIO10 do not (free for the LEDs) | ESP32-PICO datasheet p16, Table 3 | settled | `gpio:` additions GPIO6, GPIO7, GPIO8, GPIO11, GPIO16, GPIO17 (datasheet) |
+| C10 | U1 pin 26 VDD_SDIO is an output: the in-package flash's supply, taken from VDD3P3_RTC with MTDI low | ESP32-PICO datasheet p14 (pin 26, "Output power supply") and p25, §3.2 | settled | `pin: U1.26` addition (datasheet) |
+| C11 | GPIO34-39 are input only (GPIO35, SYS_INT, has no internal pull) | ESP32-PICO datasheet p13-14, type I; "no internal pull" is in the ESP32 Series datasheet, not yet cited by page | settled for "input only"; the pull statement needs its page | optional, inside C3's text |
+| C12 | MPU-6886 REGOUT (U7 pin 10) needs a 0.1 µF capacitor to GND; the print leaves pin 10 unwired, with no cross | MPU-6886 datasheet p18, Table 10 (REGOUT capacitor, X7R 0.1 µF) and p22, §4.16 | open: the board must carry it, but which part and where cannot be told without opening (C29 is the only 100 nF near U7 and the print puts it on VESP_3V3) | none; README lists it |
+| C13 | U7 nCS (pin 22) high selects I2C | MPU-6886 datasheet p25, Table 13 ("CS ... 0 = SPI mode") | settled | `pin: U7.22` addition (datasheet) |
+| C14 | CH552T pin 1 is P3.2/VBUS1, the type-C bus-voltage detect input; V33 takes a 0.1 µF when VCC is above 3.6 V (C25) | CH552 datasheet V1G p4, §4 Pin Definitions | settled, optional | `pin: U6.1` addition (datasheet) |
+| C15 | U3 SELECT on GND picks the microphone's channel | SPM1423 datasheet: its electrical table is an image (board.json note), not read here | open (re-read the datasheet) | none yet |
+| C16 | SGM6603 EN is active high; R18 keeps the boost off until EXTEN rises | SGM6603 datasheet (board.json `sgm6603-datasheet`), page not re-read here because the download link carries a session token | needs the datasheet re-read for its page | `net: EXT_BOOST_EN` addition (datasheet), optional |
+
+## D. Drawing errors of the print
+
+| Id | Claim | Evidence | Status | Entry |
+| --- | --- | --- | --- | --- |
+| D1 | U1 pin 19 (VDD3P3_RTC) is on VESP_3V3; the print hops its line over the 3.3 V bar and Altium's netlist keeps it on C40 alone | ESP32-PICO datasheet p14 (pin 19, "Input power supply for RTC IO") and p25 (VDD_SDIO, the in-package flash's supply, comes from VDD3P3_RTC): the board boots and its RTC pads work (GPIO37/39 buttons, GPIO37 deep-sleep wake, `variants/m5stickc_plus1/variant.h` (`PIN_BTN_A`, `PIN_BTN_B`, `SLEEP_WAKE_PINS`)), so the pin is certainly supplied. That the supply is VESP_3V3 (the board's only 3.3 V rail) is what P4 measures | open for the rail: P4 was not run on 2026-11-17 (it needs a voltmeter on the HAT header's G26 and 3V3 pins, held by a person; the bench has none on this board); the "not floating" half is settled | `pin: U1.19` correction (bench + datasheet), vendor: "the line hops over the VESP_3V3 bar; the netlist keeps it on C40 only" |
+| D2 | U1 pin 4 (VDDA3P3) is on VESP_3V3, like pin 3 of the same name | ESP32-PICO datasheet p13 (pins 3 and 4, both "Analog power supply"); the print hops pin 4's line over the bar; the radio works on this board, but no probe reaches pin 4 or C43 from outside | open (continuity C43 to VESP_3V3 needs the board open); the owner may accept the datasheet's two same-named pins as enough | after a decision: `pin: U1.4` correction |
+| D3 | CH552T pin 10 is P3.0 (RXD), not P3.2 | CH552 datasheet V1G p4, §4 (TSSOP20 pin 10 = P3.0, PWM1_/RXD; pin 1 = P3.2); fits the net: CH552_RXD receives the ESP32's U0TXD through R25 | settled | `pin: U6.10` correction (datasheet), vendor: "the print names pin 10 P3.2, as it names pin 1"; our symbol's pin name becomes P3.0 |
+| D4 | U7 pin 10 drawn with no wire and no cross | See C12 | open | none |
+| D5 | CH552T V33/VCC wiring around C25 and C27 | Checked at 2400 dpi: pin 20 meets only C25, VBUS hops over it to pin 19 and C27, as Altium's netlist and the datasheet's rule for a 5 V supply say | no change | none |
+| D6 | C18 on LCD_BL_VCC (LEDA), hopping over LCD_LOGIC_VCC | Print and netlist agree (C18.1 = LCD_BL_VCC) | no change here (board.json is wrong, E1) | none |
+| D7 | The AXP192's unused pins (3, 8, 10, 15, 17, 18, 20, 27, 36, 41, 42, 43) carry no not-connected cross in the print | Altium nets each as a pin of its own; our drawing already crosses them | no change | none |
+
+## E. Where board.json disagrees with the evidence
+
+| Id | Claim | Evidence | Status | Entry |
+| --- | --- | --- | --- | --- |
+| E1 | board.json `lcd-panel` → `axp192` notes: "C18 (1 µF) at the panel's VDD" | Print and netlist: C18 is on LCD_BL_VCC (LEDA, LDO2) and its line hops over LCD_LOGIC_VCC (VDD) | board.json was wrong; applied to `board.json` on 2026-11-17 (C15 and C18 on LCD_BL_VCC) | none |
+| E2 | board.json `esp32-pico-d4` → `axp192` power: "Decoupled by C38 to C43" on VESP_3V3 | C40 and C43 sit on pins 19 and 4 (ESP_VDD3P3_RTC, ESP_VDDA3P3), apart from VESP_3V3 in the print | applied to `board.json` on 2026-11-17 (C40 and C43 each on a net of its own); to revisit after D1/D2 | none |
+| E3 | board.json top-level notes: pins 19 and 4 "this file does not record them as connected" | D1 shows pin 19 is certainly supplied | board.json to update after P4 (not run, see D1) | none |
+| E4 | board.json `ch552t` has no word of the FT232 identity | B8 | applied to `board.json` on 2026-11-17 (`usb_identity`, from the bench) | none |
+| E5 | board.json `ext-pads` repeats the vendor's "G36 and G25 share the same port" beside a print with two pads | A2 | board.json to update after P3 (not run, see A2) | none |
+| E6 | board.json dates its schematic read 2026-11-16, the schematic README 2026-11-17 | Two reads of the same file (same SHA-256) | no change | none |
+
+## Bench probes (no opening; the Plus 1.1 on a `_debug` build, USB connected)
+
+| Probe | Settles | Method | Expected and what each result means |
+| --- | --- | --- | --- |
+| P1 | B4, C3 | Mask the AXP192's IRQ enables (`REGW!` axp192 0x40-0x43 and 0x4A to 0), clear its latches (0xFF to 0x44-0x47 and 0x4D) and read them back as 0; set the MPU6886's INT open drain, active low, latched (`I2CWR 0x68 0x37 0xE0`) with no interrupt enabled; read `GPIO? 35 IN` three times. Then enable only the power key's short-press IRQ (0x42 bit1), press the power key once and read GPIO35 before the loop's key read clears it | GPIO35 high at rest: R2 is fitted and the earlier low reading was an AXP192 latch. Low at rest with every latch clear: no pull-up on the board (a correction of R2). Low after the press: the AXP192's IRQ is on GPIO35 |
+| P2 | B5, B6 | With the AXP192's IRQ enables masked except the power key's short press, arm a BM8563 countdown by `I2CWR 0x51` (timer control 0x0E = 0x82, 1 Hz; timer 0x0F = 5; control/status 2 0x01 TIE = 1) and watch `GPIO? 35 IN` and the AXP192's key latch (`kRegPowerKeyIrq`, `axp192_regs.h`) for 10 s. Then, on a bench-only build with `rtcIntPowersOn = true` in `board_plus1.cpp` (not committed), `PMICOFFTEST 20` on battery | GPIO35 unchanged while the countdown fires: the RTC's INT is not on GPIO35. The key latch set when it fires: the RTC presses the power key through C401. The board back on by itself after `PMICOFFTEST`: an RTC alarm powers it on |
+| P3 | A2, E5 | Through a 10 kΩ, tie each signal pin of the top HAT header first to its 3V3 pin, then to its GND pin, and read `GPIO? 0`, `25`, `26`, `36`, `38` and `2` with `IN` each time; meter the header's power pins | Each header pin mapped to the GPIOs that follow it; a pin that moves both GPIO25 and GPIO36 proves the shared port the docs page describes, and which of the vendor's two lists is right |
+| P4 | D1, E3 | On a one-off bench build that drives GPIO26 (RTC_GPIO7, header G26 through R105) high, meter G26 and the 3V3 header pin with DC-DC1 at 3.3 V, then at 3.0 V (`REGW! axp192` DC-DC1 voltage 0x26 = 0x68, then 0x5C) | G26's high level follows the 3V3 pin from 3.3 to 3.0 V: VDD3P3_RTC is on VESP_3V3. Any other value: it has another supply, and D1 stays open |
+| P5 | A1 | On a bench build with the buzzer path enabled on GPIO2 (2-4 kHz LEDC), listen; then hold GPIO2 high and low and read the USB current | Sound: the buzzer is on GPIO2 (confirms A1 on this unit). A current step of tens of mA with GPIO2 high: a transistor-driven magnetic buzzer; none: a directly driven piezo. Its exact circuit still needs the board open |
+| P6 | C6 | Meter the 3V3 header pin; read the AXP192's DC-DC1 voltage register (`REGR axp192` 0x26) | About 3.3 V and code 0x68: the rail is at its datasheet default |
+
+## Bench results (2026-11-17)
+
+Run on the board on the Mac's hub, USB connected, the case closed, on the `m5stickc_plus1_debug` image found on it and on the Kleidos firmware of 2026-11-17 built in a throwaway worktree with two bench-only changes (a `PROBEPIN` console command and `rtcIntPowersOn = true`, never committed). The board was then left on the stock `m5stickc_plus1_debug` image of the same firmware.
+
+| Probe | Ran | What it proved | Record |
+| --- | --- | --- | --- |
+| P1 | yes, both images | With every driver released GPIO35 reads high (no internal pull): the pull-up R2 draws is fitted. The AXP192's IRQ (its timer IRQ, no key press needed) and the MPU6886's INT (open drain, active low) each pull GPIO35 low. The earlier "nothing pulls the net up" was a set AXP192 latch. Settles B4 (no correction) and C3 | `bench/2026-11-17-sys-int-pull-up-and-drivers.md` |
+| P2 | yes | The BM8563's INT is not on GPIO35 (high with INT asserted, at rest and through five countdowns). Each countdown with TIE on made the AXP192 latch a power-key short press, none with TIE off. On a build with `rtcIntPowersOn = true`, `PMICOFFTEST` 20 and 30 switched the board off at the AXP192 and an RTC countdown powered it back on (power-on reset, no deep-sleep wake), USB connected. Settles B5 (not on GPIO35) and B6 (RTC wakes the board through C401); battery-only power-on not run | `bench/2026-11-17-rtc-int-to-power-key.md` |
+| P3 | no | Needs a person to tie each HAT header pin through a resistor to 3V3 and GND; nothing on the bench can do it without hands. A2 and E5 stay open | none |
+| P4 | no | Needs a voltmeter on the header's G26 and 3V3 pins, held by a person; no meter is wired to this board. D1's rail and E3 stay open | none |
+| P5 | partial | GPIO2 held high draws no DC current that the AXP192's VBUS reading shows (4 ± 5 mA over 80 readings each way): no transistor-switched magnetic buzzer, consistent with a piezo. Not listened to, so the buzzer on GPIO2 is not bench-confirmed; part and circuit open | `bench/2026-11-17-buzzer-gpio2-load.md` |
+| P6 | register half | `DC1OUT_VOL` = 0x68 (3.30 V), never written by the firmware. The meter half was not run (no meter) | `bench/2026-11-17-dcdc1-setpoint.md` |
+
+## Summary
+
+Settled now and ready to become entries: 3 I2C addresses (B1-B3), the CH552T pin-name correction (D3), the bridge's FT232 identity (B8), U7's datasheet pin names (A9), the power-key pull (C1), RTC_INT as open drain that powers the board on through C401 (C2 with B6, bench), SYS_INT as the shared open-drain line of the AXP192 and the MPU6886 with its pull-up confirmed (C3 with B4, bench), N_VBUSEN and PWROK (C4, B11), nCS (C13), VDD_SDIO (C10), the strapping pins (C8, 5 GPIOs), the in-package flash pins (C9, 6 GPIOs), the buzzer's GPIO (A1, vendor-doc), and optional ones (A3, A7, C5, C6 with its register read, C14, C16). Bench-confirmed with no change to the print: R2 on SYS_INT (B4). Still needing a person at the bench (not disassembly): the HAT header map and the G36/G25 join (P3), VDD3P3_RTC's rail (P4, a voltmeter), whether the buzzer sounds on GPIO2 (P5, a listener), the 3V3 pin's voltage (P6, a voltmeter). Open (needs the board opened): U1 pin 4 (D2), LDO1's voltage (C7), the MPU-6886's REGOUT capacitor (C12), part markings (A4), the buzzer's part and drive circuit (A1).
+
+## Applied (2026-11-17)
+
+| Entry | Triage ids | Element |
+| --- | --- | --- |
+| K1 | C1 | `net: PWR_KEY` |
+| K2 | C2, B6 | `net: RTC_INT` (bench) |
+| K3 | C6 | `rail: VESP_3V3` (bench register read) |
+| K4 | C3, B4 | `net: SYS_INT` (bench) |
+| K5 | B11 | `net: ESP32_EN` |
+| K6 | C10 | `pin: U1.26` |
+| K7 | C8 (GPIO12) | `pin: U1.18` (GPIO12 is unconnected, so its nets-page row carries no text) |
+| K8-K13 | C9 | `pin: U1.25`, `U1.27`, `U1.30`, `U1.31`, `U1.32`, `U1.33` |
+| K14 | B8 | `net: USB_DP` (bench record `bench/2026-11-17-usb-bridge-identity.md`) |
+| K15 | D3, A8 | `pin: U6.10`, correction |
+| K16-K18 | B1, B2, B3, C13 | `i2c: U2`, `U4`, `U7` (nCS merged into K18) |
+| K19-K22 | C8 (GPIO0, GPIO5, GPIO15), A1 + C8 (GPIO2) | `gpio:` rows of the nets page |
+| K23 | C4 | `gpio: GPIO27` |
+
+Settled but not drawn: A3 (the ST7789v2 stays named in the parts list, as before), A7 (pins 44, 45, 47, 48), A9 (U7's datasheet pin names stay stated in page 1's notes), C5 (N_OE) and C14 (CH552T pin 1). An addition on a printed part or on a pin the print already wires draws that part's or pin's wires dotted, as an added connection (`pin_adds()` in `_shared/kicad_schematic.py`), which would misstate the print; each fact is in the schematic README instead. Not settled, so not drawn: C11's pull statement, C15, C16 and every item still marked open or needs bench.
+
+Review of 2026-11-17, each entry checked against its cited page, record or file:line: K3 no longer calls 3.30 V DC-DC1's default (the datasheet's defaults are set per order, section 9.6; the register read settles the value, and REG26H's encoding is on p. 37); K6 and K7 no longer give VDD_SDIO a voltage (it follows VDD3P3_RTC's rail, which D1 leaves open, and an eFuse can override the MTDI strap); K23 states that a high N_VBUSEN stops VBUS only while REG30H bit 7 is 0 (p. 23); K19 adds that download boot needs GPIO2 low too (Table 10), and K19, K21 and K22 cite the tables that state their boot effects (Tables 10, 12 and 11). The rest stand as cited.

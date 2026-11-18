@@ -1,0 +1,178 @@
+# SPDX-License-Identifier: MIT
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # The checkers' planted-defect selftests, whatever changed: weekly, and on demand.
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # What a push or a pull request touched, for the two model jobs below. A
+  # scheduled or manual run, a push that opens a branch and anything git cannot
+  # diff count as touching everything.
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      models: ${{ steps.paths.outputs.models }}
+      checkers: ${{ steps.paths.outputs.checkers }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: paths
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          # models and checkers are read by name, as ${!name}, in the loop at the end.
+          # A model's inputs: its drawings, measurements, recipe and records,
+          # the code that builds and checks it, the fonts, the pins, its tests.
+          # shellcheck disable=SC2034
+          models='^([^/]+/(model|svg)/|[^/]+/measurements\.json$|_shared/|fonts/|requirements\.txt$|tests/(conftest|test_board_model_legends)\.py$|\.github/workflows/check\.yml$)'
+          # The checkers the selftests plant defects in, and their fixtures.
+          # shellcheck disable=SC2034
+          checkers='^(_shared/[^/]+\.py$|_shared/fixtures/|requirements\.txt$|tests/(conftest|test_board_model_legends)\.py$|\.github/workflows/check\.yml$)'
+          # Code under _shared/ that neither builds nor checks a model.
+          neither='^_shared/(kicad_schematic|export_schematic|check_schematic|check_schematic_links|schematic_pdf|check_board_specs|check_public_tree)\.py$'
+          if [[ "$EVENT" != push && "$EVENT" != pull_request ]] || [[ -z "$BASE" || "$BASE" =~ ^0+$ ]] \
+             || ! changed=$(git diff --name-only "$BASE" "$HEAD"); then
+            echo "models=true" >> "$GITHUB_OUTPUT"
+            echo "checkers=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          printf '%s\n' "$changed"
+          relevant=$(printf '%s\n' "$changed" | grep -Ev "$neither" || true)
+          for name in models checkers; do
+            if printf '%s\n' "$relevant" | grep -Eq "${!name}"; then hit=true; else hit=false; fi
+            echo "$name=$hit" | tee -a "$GITHUB_OUTPUT"
+          done
+
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+          cache: pip
+      - name: Install the pinned stack
+        run: pip install -r requirements.txt
+      - name: Licenses (REUSE)
+        run: reuse lint
+      - name: No vendor file in the tree
+        run: python3 _shared/check_public_tree.py
+      - name: Board specifications
+        run: python3 _shared/check_board_specs.py
+      - name: Tests, the board models' apart
+        run: python3 -m pytest -rs -m "not models" tests
+
+  # Every model held to what builds it as it is now: built from its drawings
+  # and spec as they are, its legends where its drawings print them, its
+  # materials at separate depths and within the readers' table, and its web
+  # level the master less what a reader cannot see. On every push and pull
+  # request that touches a model's inputs. The limit leaves room: the set took
+  # 22 minutes in a Linux container on a developer's machine (2026-11-17).
+  models:
+    needs: changes
+    if: needs.changes.outputs.models == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+          cache: pip
+      - name: Install the pinned stack
+        run: pip install -r requirements.txt
+      - name: Board models
+        run: python3 -m pytest -rs -m "models and not selftest" tests
+
+  # The checkers' own selftests: each plants defects in a model or a drawing
+  # (a legend moved, a print on the wrong face, two materials at one depth)
+  # and must catch every one, and the face fixture rebuilds byte for byte.
+  # Slow (each planted defect is a whole placement of a board), so only when
+  # a checker or its fixtures change, weekly and on demand.
+  selftests:
+    needs: changes
+    if: needs.changes.outputs.checkers == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+          cache: pip
+      - name: Install the pinned stack
+        run: pip install -r requirements.txt
+      - name: The checkers' selftests
+        run: python3 -m pytest -rs -m selftest tests
+
+  # Every schematic against its netlist.yaml: KiCad's ERC, the drawn netlist
+  # pin for pin, the generator giving back the committed files, and every link
+  # of the PDF (the committed one and a fresh export) leading where it should.
+  # The image pins the KiCad the files were written with (10.0.7) and its
+  # kicad-cli (no KiCad library is read); root, so the job can write the
+  # checked-out tree. It brings its own Python and PyYAML (Debian's, not the versions
+  # requirements.txt pins); pytest and pypdf are installed at the pinned ones.
+  schematic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: kicad/kicad:10.0.7
+      options: --user root
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pytest and pypdf, as requirements.txt pins them
+        run: |
+          set -euo pipefail
+          apt-get update
+          apt-get install -y --no-install-recommends python3-pip
+          mapfile -t pins < <(grep -E '^(pytest|pypdf)==' requirements.txt)
+          [[ ${#pins[@]} -eq 2 ]] || { echo "requirements.txt must pin pytest and pypdf"; exit 1; }
+          python3 -m pip install --break-system-packages --root-user-action=ignore "${pins[@]}"
+      - name: ERC and netlist check, every board with a schematic
+        run: |
+          set -euo pipefail
+          for netlist in */schematic/netlist.yaml; do
+            python3 _shared/export_schematic.py "${netlist%%/*}" --no-export
+          done
+      - name: The committed PDF's links, every board with a schematic
+        run: |
+          set -euo pipefail
+          for netlist in */schematic/netlist.yaml; do
+            python3 _shared/check_schematic_links.py "${netlist%%/*}" --list
+          done
+      - name: A fresh export (theme, line widths, links), every board with a schematic
+        run: |
+          set -euo pipefail
+          for netlist in */schematic/netlist.yaml; do
+            board="${netlist%%/*}"
+            python3 _shared/export_schematic.py "$board" --out "$RUNNER_TEMP/export/$board"
+          done
+      - name: Schematic tests, the generator included
+        run: python3 -m pytest -rs tests/test_schematic.py

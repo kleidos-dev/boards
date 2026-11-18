@@ -1,0 +1,420 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# How the Core2 v1.3 schematic is drawn: the symbol each part takes, our own
+# symbols, and the sheets, blocks and rows the parts sit in. The facts (values,
+# pins, nets) are in netlist.yaml; _shared/kicad_schematic.py joins the two.
+#
+# parts: a part takes the symbol its prefix names under _by_prefix unless it has
+# a row of its own. "pins" maps our symbol's pin number to the vendor's pin
+# (or to the name netlist.yaml gives a pin the print leaves unnumbered: then
+# our symbol numbers it with a short token of ours, V, G, S, EP, GP, P).
+# "angle" turns the symbol (90: a vertical two-pin part lies flat).
+# rows: each row of a block is laid left to right; an item is a reference,
+# {col: [...]} for a column of two-pin parts, {cols: [[...], [...]]} for
+# several, or {text: ...}.
+# sheets: "summary" and "parts" fill the sheet's box on the contents page; a
+# sheet with "index" (power, nets, parts) is a page of tables the generator
+# writes from netlist.yaml, after the drawing. The core sheet of the vendor is
+# drawn on pages 2 to 5; its expansion sheet on page 6, a page of its own.
+# power_tree: its boxes, [column, row], and arrows, each a connection
+# netlist.yaml has (the generator refuses any other); "NET@in" draws a net twice.
+
+paper: A3
+title_block:
+  title: Core2 v1.3 (K010-V13)
+  company: "Kleidos boards: connectivity documented from the vendor's public documentation"
+  comments:
+    - "Sources: M5Stack Core2 v1.3 sheets (2020-07-07, 2025-11-14), docs; README.md"
+    - "Values as documented. Layout and symbols: Kleidos boards"
+    - "License: MIT. github.com/kleidos-dev/boards"
+
+revisions:
+  - {rev: 1, date: "2026-11-17", change: "First drawing: every part, pin and net of both published sheets (core and expansion board), from the vendor's public documentation; contents, power tree, nets and signals, parts list; page/zone links; DNP marks; no script in the PDF."}
+  - {rev: 2, date: "2026-11-17", change: "Kleidos additions and corrections K1-K27, listed above."}
+  - {rev: 3, date: "2026-11-17", change: "An entry is marked wherever an index page shows its element again; a pin on no net says what it is on the nets page; the title block says the drawing carries entries."}
+
+grounds:
+  GND: kleidos:GND
+
+parts:
+  _by_prefix:
+    R: {symbol: "kleidos:R", angle: 90, stub: 0}
+    C: {symbol: "kleidos:C", angle: 90, stub: 0}
+    L: {symbol: "kleidos:L", angle: 90, stub: 0}
+    S: {symbol: "kleidos:SW_Push", stub: 0}
+    TP: {symbol: "kleidos:TestPoint", stub: 0}
+    Q: {symbol: "kleidos:Q_NPN", short: NPN transistor}
+  D1: {symbol: "kleidos:D", stub: 0, pins: {"1": K, "2": A}, short: Diode}
+  D2: {symbol: "kleidos:D", stub: 0, pins: {"1": K, "2": A}, short: Diode}
+  D3: {symbol: "m5stack-core2-v13:SRV05-4"}
+  D4: {symbol: "m5stack-core2-v13:SRV05-4"}
+  D5: {symbol: "m5stack-core2-v13:SRV05-4"}
+  D6: {symbol: "m5stack-core2-v13:SRV05-4"}
+  D7: {symbol: "m5stack-core2-v13:SRV05-4"}
+  D8: {symbol: "m5stack-core2-v13:SRV05-4"}
+  LED1: {symbol: "kleidos:LED", stub: 0, pins: {"1": K, "2": A}}
+  X1: {symbol: "kleidos:Crystal", stub: 0, short: Crystal}
+  X2: {symbol: "kleidos:Crystal_GND24", short: Crystal}
+  BT1: {symbol: "kleidos:Battery_Cell", stub: 0, short: RTC backup cell}
+  FU1: {symbol: "kleidos:Fuse", angle: 90, stub: 0, short: Fuse}
+  ANT1: {symbol: "m5stack-core2-v13:ANTENNA"}
+  ANT2: {symbol: "m5stack-core2-v13:IPEX", short: Antenna socket}
+  J1: {symbol: "m5stack-core2-v13:TF_CARD_SOCKET"}
+  J2: {symbol: "kleidos:Conn_01x04", short: USB line header}
+  J3: {symbol: "m5stack-core2-v13:TYPEC_16P", pins: {V: VCC, G: GND, S: SHELL}}
+  J4: {symbol: "kleidos:Conn_01x04", short: Grove connector}
+  J5: {symbol: "kleidos:Conn_01x02", short: Battery connector}
+  PAD1: {symbol: "kleidos:Conn_01x02", short: Speaker pads}
+  PAD2: {symbol: "kleidos:Conn_01x02", short: Motor pads}
+  BUS1: {symbol: "m5stack-core2-v13:M5_BUS"}
+  BUS101: {symbol: "m5stack-core2-v13:M5_BUS"}
+  LCD1: {symbol: "m5stack-core2-v13:LCD_10P", pins: {GP: GND_PAD}}
+  CTP1: {symbol: "m5stack-core2-v13:CTP", pins: {P: PAD}}
+  U1: {symbol: "m5stack-core2-v13:XM25QH128"}
+  U2: {symbol: "m5stack-core2-v13:ESPSRAM64H"}
+  U3: {symbol: "m5stack-core2-v13:CP2104"}
+  U4: {symbol: "m5stack-core2-v13:AXP192"}
+  U5: {symbol: "m5stack-core2-v13:BM8563"}
+  U6: {symbol: "m5stack-core2-v13:NS4168", pins: {EP: EPAD}}
+  U7: {symbol: "m5stack-core2-v13:ESP32-D0WDQ6"}
+  U8: {symbol: "m5stack-core2-v13:SY7088"}
+  U101: {symbol: "m5stack-core2-v13:BMI270"}
+  U102: {symbol: "m5stack-core2-v13:SPM1423"}
+
+symbols:
+  AXP192:
+    short: PMIC
+    description: Power management IC (charger, three DC-DC, three LDO, GPIO)
+    left: ["32 ACIN", "33 ACIN", "31 VBUS", "34 BAT", "35 BAT", "30 BACKUP", "-",
+           "24 BIAS", "25 VREF", "26 VINT", "37 TS", "4 N_OE", "-",
+           "1 SDA", "2 SCK", "48 IRQ", "3 N_RSTO", "5 PWROK", "-",
+           "23 PWRON", "27 PWREN", "29 SYSEN", "36 CHGLED", "-",
+           "6 N_VBUSEN", "19 GPIO0", "18 GPIO1", "20 GPIO2", "41 GPIO3", "42 GPIO4", "40 EXTEN"]
+    right: ["44 VIN1", "45 LX1", "47 DCDC1", "-", "7 VIN2", "8 LX2", "10 DCDC2", "-",
+            "14 VIN3", "15 LX3", "17 DCDC3", "-", "38 IPSOUT", "39 IPSOUT", "21 APS", "13 LDOIN", "-",
+            "28 LDO1", "12 LDO2", "11 LDO3", "-", "43 NC"]
+    bottom: ["46 PGND1", "9 PGND2", "16 PGND3", "22 AGND", "0 PAD"]
+  ESP32-D0WDQ6:
+    short: ESP32 SoC
+    description: ESP32 dual-core Wi-Fi and Bluetooth SoC, QFN48
+    left: ["1 VDDA", "43 VDDA", "46 VDDA", "3 VDD3P3", "4 VDD3P3", "19 VDD3P3_RTC", "37 VDD3P3_CPU", "-",
+           "26 VDD_SDIO", "-", "2 LNA_IN", "-", "9 CHIP_PU", "-", "45 XTAL_P", "44 XTAL_N", "-",
+           "47 CAP2", "48 CAP1"]
+    right: ["23 GPIO0", "41 GPIO1/U0TXD", "22 GPIO2", "40 GPIO3/U0RXD", "24 GPIO4", "34 GPIO5",
+            "31 GPIO6/SD_CLK", "32 GPIO7/SD_DATA0", "33 GPIO8/SD_DATA1", "28 GPIO9/SD_DATA2",
+            "29 GPIO10/SD_DATA3", "30 GPIO11/SD_CMD", "18 GPIO12", "20 GPIO13", "17 GPIO14", "21 GPIO15",
+            "25 GPIO16", "27 GPIO17", "35 GPIO18", "38 GPIO19", "42 GPIO21", "39 GPIO22", "36 GPIO23",
+            "14 GPIO25", "15 GPIO26", "16 GPIO27", "12 GPIO32", "13 GPIO33", "10 GPIO34", "11 GPIO35",
+            "5 GPIO36", "6 GPIO37", "7 GPIO38", "8 GPIO39"]
+    bottom: ["0 GND_PAD"]
+  CP2104:
+    short: USB-UART bridge
+    description: USB to UART bridge (the CH9102F, drawn with the CP2104 pinout the core sheet prints)
+    left: ["8 VBUS", "7 REGIN", "6 VDD", "5 VIO", "-", "3 DP", "4 DM", "-", "9 ~{RST}", "-",
+           "14 GPIO0", "13 GPIO1", "12 GPIO2", "11 GPIO3"]
+    right: ["21 TXD", "20 RXD", "19 RTS", "23 DTR", "18 CTS", "22 DSR", "24 DCD", "1 RI", "-",
+            "17 SUSPEND", "15 ~{SUSPEND}", "16 VPP"]
+    bottom: ["2 GND", "0 PAD"]
+  NS4168:
+    short: Audio amplifier
+    description: I2S class D mono amplifier (EP, the exposed pad, is our number; the print names it EPAD only)
+    left: ["6 VDD", "1 CTRL", "-", "2 LRCK", "3 BCLK", "4 SADTA"]
+    right: ["8 VOP", "5 VON"]
+    bottom: ["7 GND", "EP EPAD"]
+  SY7088:
+    short: Boost converter
+    description: Synchronous boost converter
+    left: ["6 IN", "1 LX", "2 LX", "3 EN"]
+    right: ["8 OUT", "7 OUT", "5 FB"]
+    bottom: ["4 SGND", "0 PAD"]
+  BM8563:
+    short: Real-time clock
+    description: I2C real-time clock
+    left: ["8 VDD", "5 SDA", "6 SCL", "3 ~{INT}"]
+    right: ["1 OSCI", "2 OSCO", "7 CLKOUT"]
+    bottom: ["4 VSS"]
+  XM25QH128:
+    short: SPI flash
+    description: 128 Mbit SPI NOR flash
+    left: ["8 VCC", "1 CS#", "6 SCLK", "5 SI", "2 SO", "3 WP#", "7 HOLD#"]
+    bottom: ["4 GND"]
+  ESPSRAM64H:
+    short: PSRAM
+    description: 64 Mbit quad SPI PSRAM
+    left: ["8 VCC", "1 CS#", "6 SCLK", "5 SI/SIO0", "2 SO/SIO1", "3 SIO2", "7 SIO3"]
+    bottom: ["4 GND"]
+  SRV05-4:
+    ref: D
+    short: ESD array
+    description: Four-line ESD protection array
+    left: ["1 IO1", "3 IO2", "4 IO3", "6 IO4"]
+    right: ["5 VCC"]
+    bottom: ["2 GND"]
+  M5_BUS:
+    ref: BUS
+    short: M5-Bus
+    description: M5-Bus, 30 pins (2 x 15)
+    left: ["1 GND", "3 GND", "5 GND", "7 G23/MOSI", "9 G38/MISO", "11 G18/SCK", "13 G3/RXD0", "15 G13/RXD2",
+           "17 G21/SYS_SDA", "19 G32/EXT_SDA", "21 G27", "23 G2", "25 HPWR", "27 HPWR", "29 HPWR"]
+    right: ["2 G35/ADC", "4 G36/ADC", "6 EN/RST", "8 G25/DAC", "10 G26/DAC", "12 3.3V", "14 G1/TXD0",
+            "16 G14/TXD2", "18 G22/SYS_SCL", "20 G33/EXT_SCL", "22 G19", "24 G0", "26 G34/ADC", "28 5V",
+            "30 BAT"]
+  LCD_10P:
+    ref: LCD
+    short: LCD connector
+    description: LCD module connector, 10 pins (M5_CORE2_LCD_10P); GP is our number for the unnumbered GND_PAD
+    left: ["8 VDD", "9 LED_A", "-", "2 MOSI", "3 MISO", "4 SCK", "5 CS", "6 RST", "7 D/C"]
+    bottom: ["1 GND", "10 GND", "GP GND_PAD"]
+  CTP:
+    ref: CTP
+    short: Touch panel
+    description: Capacitive touch panel connector (CTP_2.0Inch); P is our number for the unnumbered PAD
+    left: ["1 VDD", "3 SDA", "4 SCL", "5 INT", "6 RST", "7 NC", "8 NC"]
+    bottom: ["2 GND", "P PAD"]
+  TF_CARD_SOCKET:
+    ref: J
+    short: microSD socket
+    description: microSD (TF) card socket
+    left: ["4 VDD", "7 DAT0/MISO", "8 DAT1", "1 DAT2", "2 DAT3/CS", "5 CLK/SCK", "3 CMD/MOSI", "9 Detect"]
+    bottom: ["6 VSS", "0 SHELL"]
+  TYPEC_16P:
+    ref: J
+    short: USB-C receptacle
+    description: USB-C receptacle, 16 pins (pins as the vendor draws them; VCC, GND and SHELL carry no number there, so V, G and S are ours)
+    left: ["V VCC", "A5 CC1", "B5 CC2"]
+    right: ["A6 DP1", "B6 DP2", "A7 DN1", "B7 DN2"]
+    bottom: ["G GND", "S SHELL"]
+  BMI270:
+    short: 6-axis IMU
+    description: 6-axis IMU
+    left: ["8 VDD", "5 VDDIO", "12 CSB", "1 SDO"]
+    right: ["13 SCX", "14 SDX", "4 INT1", "9 INT2", "2 ASDX", "3 ASCX", "10 OCSB", "11 OSDO"]
+    bottom: ["7 GND", "6 GNDIO"]
+  ANTENNA:
+    ref: ANT
+    short: Antenna
+    description: Antenna with a ground lead (pin numbers and names ours; the print numbers none)
+    left: ["1 FEED"]
+    right: ["2 GND"]
+  IPEX:
+    ref: ANT
+    short: Antenna socket
+    description: IPEX antenna socket (pin numbers and names ours; the print numbers none)
+    left: ["1 CENTRE"]
+    right: ["2 SHIELD"]
+  SPM1423:
+    short: PDM microphone
+    description: PDM digital MEMS microphone
+    left: ["6 VCC", "4 CLK", "5 DATA", "2 SELECT"]
+    bottom: ["1 GND", "3 GND"]
+
+root:
+  title: Contents
+  heading: "M5Stack Core2 v1.3 (K010-V13) schematic"
+  subheading: "Kleidos boards: every part, pin and net, connectivity documented from the vendor's public documentation"
+  panels:
+    - title: How to read it
+      text: |
+        Click a box on the left to open its page. "Contents" and the page numbers at the bottom right of
+        every page lead back here and to each page.
+
+        Cyan lines are connections: wires and pin ends, all one width. A dot joins lines; a cross on a pin
+        end means the pin is not connected. Pins connect by net labels (the boxed names): pins whose labels
+        carry the same name are on one net, on any page. [3/C4] after a label: page 3 carries that net too,
+        its label in zone C4 (column 4, row C of the border). Click it to land on that label. No [page/zone]:
+        the net is on this page only. Click a part's reference to find its row in the parts list; the row's
+        page/zone leads back. A part crossed out in red is not fitted (DNP). White: parts and their
+        references. Grey: values, pin names, pin numbers. A dashed frame is a block of the circuit, titled
+        at its top left. An amber K3 marks a Kleidos addition or correction: it leads to its row below.
+    - title: Notes
+      text: |
+        Every part, pin and net of the Core2 v1.3 that the vendor's two published sheets show, with the
+        values printed there: connectivity documented from the vendor's public documentation, with Kleidos
+        additions and corrections listed on page 1 (M5Stack's core sheet CORE2_V1.0_SCH, 2020-07-07, and
+        expansion sheet core2_v1.3_SCH, 2025-11-14, linked from the Core2 v1.3 docs page; README.md and
+        netlist.yaml beside this file cite them). Layout and symbols are this project's. No footprints, no
+        PCB. Values are as printed (226/6.3V is 22 uF) except where an entry below corrects one. DNP marks a
+        part not fitted. Designators are the vendor's; the expansion sheet reuses the core's, so its parts
+        are +100 here (its U1 is U101). Nets the vendor left unnamed carry names of ours (AXP_LX1,
+        RF_MATCH...). Zones: columns 1-8 and rows A-F, 50 mm apart, printed in the border.
+
+sheets:
+  - file: pmu.kicad_sch
+    name: Power management and inputs
+    summary: "The AXP192 with its rails, the 5 V boost to the M5-Bus, the USB-C input with its fuse, the reserved USB and battery headers, the keys, the power LED, the vibration motor and the test points."
+    parts: "U4 AXP192, L2 L3, U8 SY7088, L4, J3 USB-C, FU1, J2, J5, S1 S2 keys, LED1, PAD2 motor, TP1-TP7"
+    pwr_flags: [GND]
+    blocks:
+      - title: AXP192 power management, DCDC1 (MCU_VDD) and DCDC3 (LCD backlight)
+        rows:
+          - [U4, {cols: [[C6, C7, C13, C14, C10, R4, C8, C9], [R5, C11, C18, C19, C21, C22, C23, C24],
+                         [C25, C26, L3, C27, C29, C31], [L2, R17, C28]]}]
+      - title: 5 V boost (to the M5-Bus and Port A)
+        rows:
+          - [U8, {cols: [[L4, C35, C36, C37], [R23, R24, C39], [R30, R31, C49, C51]]}]
+      - title: USB-C input
+        rows:
+          - [J3, {cols: [[FU1, C52], [R32, R33]]}, J2]
+      - title: Test points
+        rows:
+          - [{cols: [[TP1, TP2, TP3, TP4], [TP5, TP6, TP7]]}]
+      - title: Keys
+        rows:
+          - [{col: [S1, S2]}]
+      - title: Power LED
+        rows:
+          - [LED1, {col: [R16, R19]}]
+      - title: Vibration motor
+        rows:
+          - [PAD2, D2, {col: [R21]}]
+      - title: Battery header (EXT.BATT)
+        rows:
+          - [J5]
+  - file: mcu.kicad_sch
+    name: ESP32 and memory
+    summary: "The ESP32 with its supply decoupling, RF path and crystal, the SPI flash and PSRAM, and the internal I2C pull-ups."
+    parts: "U7 ESP32-D0WDQ6-V3, ANT1 ANT2 with L1 R1 R2, X2, U1 XM25QH128BHIQ, U2 ESPSRAM64H, R57 R58"
+    blocks:
+      - title: ESP32-D0WDQ6-V3, its decoupling and the internal I2C pull-ups
+        rows:
+          - [U7, {cols: [[C42, C43, C45, C46, C47, C48, C50, C44], [R57, R58]]}]
+      - title: Crystal and CAP1/CAP2
+        rows:
+          - [X2, {cols: [[R3, C3, C4], [R29, C40, C41]]}]
+      - title: Flash
+        rows:
+          - [U1, {col: [C15]}]
+      - title: PSRAM
+        rows:
+          - [U2, {col: [R9, C16]}]
+      - title: RF path
+        rows:
+          - [ANT1, ANT2]
+          - [{cols: [[L1, C1, C2], [R1, R2]]}]
+  - file: peripherals.kicad_sch
+    name: Display, card, clock, audio, UART
+    summary: "The LCD and touch panel connectors, the microSD socket, the BM8563 clock with its crystal and backup cell, the speaker amplifier, and the USB to UART bridge with its auto-reset."
+    parts: "LCD1, CTP1, J1 microSD, U5 BM8563, X1, BT1, U6 NS4168, PAD1 speaker, U3 CH9102F, Q1 Q2 S8050, D1"
+    blocks:
+      - title: USB to UART (CH9102F, the CP2104 pins as printed) and auto-reset
+        rows:
+          - [U3, {cols: [[C5, C12, R6, R7, R8], [R11, C17, R10, R12, R13]]}]
+          - [Q1, Q2, D1]
+      - title: LCD connector
+        rows:
+          - [LCD1, {cols: [[R61, R62, R63, R64, C53]]}]
+      - title: microSD (SPI)
+        rows:
+          - [J1, {cols: [[R25, R26, R27, R28, C38]]}]
+      - title: Real-time clock
+        rows:
+          - [U5, {cols: [[X1, C32, C33], [R14, C30, C20]]}, BT1]
+      - title: Speaker amplifier
+        rows:
+          - [U6, PAD1, {cols: [[R20, R22, C34], [R15, R18]]}]
+      - title: Touch panel
+        rows:
+          - [CTP1, {col: [R65, C54]}]
+  - file: bus.kicad_sch
+    name: M5-Bus, ESD and Port A
+    summary: "The 30-pin M5-Bus, the 47R series resistors and SRV05-4 ESD arrays between it and the ESP32, and the Grove port A with its I2C pull-ups."
+    parts: "BUS1 M5-Bus, D3-D8 SRV05-4, R34-R56, J4 Port A, R59 R60"
+    blocks:
+      - title: M5-Bus series resistors (47R) and ESD arrays, bus side on the left
+        rows:
+          - [{col: [R34, R35, R36, R37]}, D3, {col: [R38, R39, R40, R41]}, D4]
+          - [{col: [R42, R43, R44, R45]}, D5, {col: [R46, R47, R48, R49]}, D6]
+          - [{col: [R50, R51, R52, R53]}, D7, {col: [R54, R55, R56]}, D8]
+      - title: M5-Bus (core board)
+        rows:
+          - [BUS1]
+      - title: Port A (Grove, external I2C)
+        rows:
+          - [J4, {col: [R59, R60]}]
+  - file: expansion.kicad_sch
+    name: Expansion board
+    summary: "The rear expansion board (the vendor's second sheet, core2_v1.3_SCH): its M5-Bus, the BMI270 IMU and the SPM1423 PDM microphone. Its designators are the vendor's +100."
+    parts: "BUS101 M5-Bus, U101 BMI270, U102 SPM1423HM4H-B, R101, C101-C103"
+    blocks:
+      - title: "Expansion board: M5-Bus (mates with BUS1)"
+        rows:
+          - [BUS101]
+      - title: "Expansion board: IMU"
+        rows:
+          - [U101, {col: [R101, C102, C103]}]
+      - title: "Expansion board: microphone"
+        rows:
+          - [U102, {col: [C101]}]
+      - title: "Expansion board: net names"
+        rows:
+          - [{text: "The nets carry the core sheet's names of the M5-Bus pins they reach:\nSYS_P033 (bus pin 12, 3.3V) is MCU_VDD; IMU_SDA (17) is EXT_G21;\nIMU_SCL (18) is EXT_G22; MIC_CLK (24) is EXT_G0; MIC_DAT (26) is EXT_G34.\nBus pins the expansion sheet leaves unconnected are drawn unconnected here.\nDesignators are the vendor's +100: its BUS1, U1, U2, R1, C1-C3."}]
+  - file: power.kicad_sch
+    name: Power tree and rails
+    index: power
+    summary: "How power flows from the USB-C, the M5-Bus 5 V and the battery through the AXP192 to every rail, and each rail's nominal voltage, source and enable. Every box leads to where it is drawn."
+  - file: nets.kicad_sch
+    name: Nets and signals
+    index: nets
+    gpio_title: ESP32 GPIO (U7)
+    pmic_title: AXP192 GPIO (U4)
+    summary: "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32 and AXP192 GPIO, the I2C addresses, the test points, every pull-up and pull-down."
+  - file: parts.kicad_sch
+    name: Parts
+    index: parts
+    summary: "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A reference on the drawing leads to its row, the row back to it."
+
+power_tree:
+  title: Power tree
+  pitch: [27.94, 15.24]
+  nodes:
+    J3: [0, 0]
+    J2: [0, 1]
+    USB_VBUS: [1, 0]
+    FU1: [2, 0]
+    USB_5V: [3, 0]
+    BUS1: [0, 2]
+    BUS_5V@in: [3, 2]
+    J5: [0, 3]
+    SYS_VBAT: [3, 3]
+    U4: [4, 3]
+    IPS_BUS: [5, 0]
+    U8: [6, 0]
+    BUS_5V: [7, 0]
+    MCU_VDD: [5, 1]
+    PERI_VDD: [5, 2]
+    RTC_VDD: [5, 3]
+    LCD_BL_TP: [5, 4]
+    VIB_MOTOR: [5, 5]
+    RTC_BAT: [5, 6]
+    BT1: [6, 6]
+    R65: [6, 1]
+    CTP_VDD: [7, 1]
+    USB_5V@uart: [3, 7]
+    U3: [4, 7]
+    CP_VDD: [5, 7]
+  edges:
+    - [J3, USB_VBUS]
+    - [J2, USB_VBUS]
+    - [USB_VBUS, FU1]
+    - [FU1, USB_5V]
+    - [USB_5V, U4]
+    - [BUS1, BUS_5V@in]
+    - [BUS_5V@in, U4]
+    - [J5, SYS_VBAT]
+    - [SYS_VBAT, U4]
+    - [U4, IPS_BUS]
+    - [IPS_BUS, U8]
+    - [U8, BUS_5V]
+    - [U4, MCU_VDD]
+    - [U4, PERI_VDD]
+    - [U4, RTC_VDD]
+    - [U4, LCD_BL_TP]
+    - [U4, VIB_MOTOR]
+    - [U4, RTC_BAT]
+    - [RTC_BAT, BT1]
+    - [MCU_VDD, R65]
+    - [R65, CTP_VDD]
+    - [USB_5V@uart, U3]
+    - [U3, CP_VDD]
+  note: "BUS_5V is drawn twice: U8 makes it from IPS_BUS, and 5 V fed in at the M5-Bus (pin 28) or Port A reaches the AXP192 VBUS input (pin 31). USB_5V is drawn twice too: it also feeds the USB-UART bridge U3. The AXP192 charges SYS_VBAT and RTC_BAT."

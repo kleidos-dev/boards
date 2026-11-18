@@ -1,0 +1,769 @@
+{
+  "board": "cardputer",
+  "model": "cardputer/model/cardputer.glb",
+  "model_sha256": "f0c9c55163cf81293797884e09390919440041311a2a8fa3607542c3025b77ed",
+  "model_bytes": 1390768,
+  "model_gzip_bytes": 521410,
+  "triangles": 67996,
+  "meshes": 91,
+  "materials": 45,
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/d99c537a05aebb07eb4d28d6e3c3ac8d35b8b271/Products/K132-Adv_Cardputer-Adv/Structures/Cardputer-Adv.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K132-Adv_Cardputer-Adv/Structures/Cardputer-Adv.stl",
+    "commit": "d99c537a05aebb07eb4d28d6e3c3ac8d35b8b271",
+    "sha256": "50c2b2a72694dd7461125489d99a2f863630bb0c224f86f98f95dda15ae45c00",
+    "bytes": 6775684,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "builder": {
+    "script": "_shared/build_board_glb.py",
+    "version": "1.6.0",
+    "spec": "cardputer/model/spec.json",
+    "spec_sha256": "7dc0384953255c172a0019d23bc00538beceb8be69112302c70814edabd0bb85",
+    "python": "3.14.7",
+    "packages": {
+      "numpy": "2.5.4",
+      "shapely": "2.2.0",
+      "trimesh": "5.2.0",
+      "mapbox_earcut": "2.1.0",
+      "scipy": "1.18.1",
+      "networkx": "3.7",
+      "rtree": "1.4.1",
+      "cascadio": "0.1.1",
+      "fast-simplification": "0.2.0",
+      "fonttools": "4.68.0"
+    }
+  },
+  "parameters": {
+    "quant_mm": 0.01,
+    "planar_min_area_mm2": 1.5,
+    "tessellation": null,
+    "transform": [
+      {
+        "rotate": {
+          "axis": "z",
+          "deg": -90
+        }
+      }
+    ],
+    "center_mm": [
+      0.0,
+      0.0,
+      0.8
+    ],
+    "front_frame": {
+      "left_x": -42.0,
+      "top_y": 27.0
+    },
+    "face_frames": {
+      "back": {
+        "right_x": 42.0,
+        "top_y": 27.0
+      },
+      "top": {
+        "left_x": -42.0,
+        "back_z": -9.0
+      },
+      "left": {
+        "back_z": -9.0,
+        "top_y": 27.0
+      }
+    },
+    "screen": {
+      "x0": -21.25,
+      "x1": 3.66,
+      "y_top": 24.05,
+      "y_bot": 9.19,
+      "w": 24.91,
+      "h": 14.86,
+      "resolution": [
+        240,
+        135
+      ]
+    }
+  },
+  "legends": [
+    {
+      "mesh": "key_legends",
+      "plane": "keys",
+      "on": "legend_strips",
+      "front": "cardputer/svg/front.svg",
+      "legends_sha256": "b558c16d30b00b4dfadb7db5d5509fc1cf426cff037de4ea21be92bd3779c1e0",
+      "z_mm": 6.95,
+      "flatness_mm": 0.004,
+      "groups": 56,
+      "keys": 56,
+      "shapes": 89,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+      },
+      "sheets": [
+        {
+          "fill": "#111113",
+          "vertices": 2188,
+          "triangles": 2100,
+          "area_mm2": 66.431,
+          "stroke_mm": 0.305,
+          "mesh": "key_legends_111113"
+        },
+        {
+          "fill": "#2e6db0",
+          "vertices": 826,
+          "triangles": 788,
+          "area_mm2": 9.171,
+          "stroke_mm": 0.188,
+          "mesh": "key_legends_2e6db0"
+        },
+        {
+          "fill": "#ff6633",
+          "vertices": 98,
+          "triangles": 92,
+          "area_mm2": 10.399,
+          "stroke_mm": 0.478,
+          "mesh": "key_legends_ff6633"
+        },
+        {
+          "fill": "#ffffff",
+          "vertices": 508,
+          "triangles": 492,
+          "area_mm2": 10.031,
+          "stroke_mm": 0.269,
+          "mesh": "key_legends_ffffff"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "legend_orange",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "panel_legends",
+      "plane": "panel",
+      "on": "sticker",
+      "front": "cardputer/svg/front.svg",
+      "legends_sha256": "c0740c4c662a006883cdab7af517892fa486dacae57aa3f239c3357d8d4ab32d",
+      "z_mm": 10.55,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 10,
+      "fonts": {
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#111113",
+          "vertices": 46,
+          "triangles": 44,
+          "area_mm2": 1.893,
+          "stroke_mm": 0.364,
+          "mesh": "panel_legends_111113"
+        },
+        {
+          "fill": "#14c8ee",
+          "vertices": 24,
+          "triangles": 16,
+          "area_mm2": 2.496,
+          "stroke_mm": 0.275,
+          "mesh": "panel_legends_14c8ee"
+        },
+        {
+          "fill": "#1a1a1c",
+          "vertices": 373,
+          "triangles": 363,
+          "area_mm2": 29.672,
+          "stroke_mm": 0.468,
+          "mesh": "panel_legends_1a1a1c"
+        },
+        {
+          "fill": "#ff6633",
+          "vertices": 30,
+          "triangles": 28,
+          "area_mm2": 2.324,
+          "stroke_mm": 0.776,
+          "mesh": "panel_legends_ff6633"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "sticker",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "stamp_legends",
+      "plane": "stamp",
+      "on": "stamp_label",
+      "front": "cardputer/svg/front.svg",
+      "legends_sha256": "1be87b32de09028a85d7f687d525e3f80b3387a7e9e0844c9638796c4ad7f693",
+      "z_mm": 10.73,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 385,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "fonts/inter/Inter-Medium.ttf": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872",
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#06302d",
+          "vertices": 473,
+          "triangles": 485,
+          "area_mm2": 12.356,
+          "stroke_mm": 0.402,
+          "mesh": "stamp_legends_06302d"
+        },
+        {
+          "fill": "#111113",
+          "vertices": 7309,
+          "triangles": 6947,
+          "area_mm2": 41.587,
+          "stroke_mm": 0.118,
+          "mesh": "stamp_legends_111113"
+        },
+        {
+          "fill": "#14c8ee",
+          "vertices": 754,
+          "triangles": 744,
+          "area_mm2": 12.831,
+          "stroke_mm": 0.3,
+          "mesh": "stamp_legends_14c8ee"
+        },
+        {
+          "fill": "#2176ae",
+          "vertices": 261,
+          "triangles": 249,
+          "area_mm2": 2.156,
+          "stroke_mm": 0.134,
+          "mesh": "stamp_legends_2176ae"
+        },
+        {
+          "fill": "#2e6db0",
+          "vertices": 1402,
+          "triangles": 1332,
+          "area_mm2": 3.192,
+          "stroke_mm": 0.076,
+          "mesh": "stamp_legends_2e6db0"
+        },
+        {
+          "fill": "#2f97cc",
+          "vertices": 323,
+          "triangles": 319,
+          "area_mm2": 2.26,
+          "stroke_mm": 0.154,
+          "mesh": "stamp_legends_2f97cc"
+        },
+        {
+          "fill": "#44c294",
+          "vertices": 747,
+          "triangles": 725,
+          "area_mm2": 6.164,
+          "stroke_mm": 0.184,
+          "mesh": "stamp_legends_44c294"
+        },
+        {
+          "fill": "#6f706e",
+          "vertices": 8,
+          "triangles": 8,
+          "area_mm2": 0.595,
+          "stroke_mm": 0.13,
+          "mesh": "stamp_legends_6f706e"
+        },
+        {
+          "fill": "#78a3f2",
+          "vertices": 165,
+          "triangles": 163,
+          "area_mm2": 2.46,
+          "stroke_mm": 0.232,
+          "mesh": "stamp_legends_78a3f2"
+        },
+        {
+          "fill": "#9a1a96",
+          "vertices": 65,
+          "triangles": 67,
+          "area_mm2": 1.22,
+          "stroke_mm": 0.212,
+          "mesh": "stamp_legends_9a1a96"
+        },
+        {
+          "fill": "#a8585c",
+          "vertices": 216,
+          "triangles": 208,
+          "area_mm2": 0.986,
+          "stroke_mm": 0.096,
+          "mesh": "stamp_legends_a8585c"
+        },
+        {
+          "fill": "#bcbcb9",
+          "vertices": 871,
+          "triangles": 483,
+          "area_mm2": 2.242,
+          "stroke_mm": 0.065,
+          "mesh": "stamp_legends_bcbcb9"
+        },
+        {
+          "fill": "#cbcb4a",
+          "vertices": 689,
+          "triangles": 677,
+          "area_mm2": 5.68,
+          "stroke_mm": 0.177,
+          "mesh": "stamp_legends_cbcb4a"
+        },
+        {
+          "fill": "#d2390c",
+          "vertices": 640,
+          "triangles": 634,
+          "area_mm2": 9.478,
+          "stroke_mm": 0.262,
+          "mesh": "stamp_legends_d2390c"
+        },
+        {
+          "fill": "#dfdfdc",
+          "vertices": 623,
+          "triangles": 623,
+          "area_mm2": 7.902,
+          "stroke_mm": 0.224,
+          "mesh": "stamp_legends_dfdfdc"
+        },
+        {
+          "fill": "#e22c34",
+          "vertices": 229,
+          "triangles": 225,
+          "area_mm2": 6.075,
+          "stroke_mm": 0.357,
+          "mesh": "stamp_legends_e22c34"
+        },
+        {
+          "fill": "#ea8f8d",
+          "vertices": 350,
+          "triangles": 358,
+          "area_mm2": 7.38,
+          "stroke_mm": 0.329,
+          "mesh": "stamp_legends_ea8f8d"
+        },
+        {
+          "fill": "#ee2f80",
+          "vertices": 526,
+          "triangles": 530,
+          "area_mm2": 4.255,
+          "stroke_mm": 0.174,
+          "mesh": "stamp_legends_ee2f80"
+        },
+        {
+          "fill": "#f3a0ec",
+          "vertices": 115,
+          "triangles": 117,
+          "area_mm2": 1.806,
+          "stroke_mm": 0.298,
+          "mesh": "stamp_legends_f3a0ec"
+        },
+        {
+          "fill": "#f6cbc6",
+          "vertices": 91,
+          "triangles": 97,
+          "area_mm2": 2.505,
+          "stroke_mm": 0.363,
+          "mesh": "stamp_legends_f6cbc6"
+        },
+        {
+          "fill": "#f6e08a",
+          "vertices": 254,
+          "triangles": 252,
+          "area_mm2": 3.182,
+          "stroke_mm": 0.245,
+          "mesh": "stamp_legends_f6e08a"
+        },
+        {
+          "fill": "#f8cf1d",
+          "vertices": 101,
+          "triangles": 103,
+          "area_mm2": 1.257,
+          "stroke_mm": 0.251,
+          "mesh": "stamp_legends_f8cf1d"
+        },
+        {
+          "fill": "#ff6633",
+          "vertices": 198,
+          "triangles": 194,
+          "area_mm2": 3.68,
+          "stroke_mm": 0.352,
+          "mesh": "stamp_legends_ff6633"
+        },
+        {
+          "fill": "#ffffff",
+          "vertices": 1107,
+          "triangles": 1057,
+          "area_mm2": 8.178,
+          "stroke_mm": 0.129,
+          "mesh": "stamp_legends_ffffff"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "stamp_label",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "back_legends",
+      "plane": "label",
+      "on": "back_label",
+      "face": "back",
+      "drawing": "cardputer/svg/back.svg",
+      "legends_sha256": "ad76a0b049b8652d9ff2197029c2c21f6a9c58005fe066b49e518682fa05694f",
+      "z_mm": -8.95,
+      "flatness_mm": 0.004,
+      "groups": 43,
+      "keys": 0,
+      "shapes": 590,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "fonts/inter/Inter-Medium.ttf": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872",
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#111113",
+          "vertices": 14150,
+          "triangles": 13566,
+          "area_mm2": 224.829,
+          "stroke_mm": 0.241,
+          "mesh": "back_legends_111113"
+        },
+        {
+          "fill": "#14c8ee",
+          "vertices": 41,
+          "triangles": 37,
+          "area_mm2": 1.822,
+          "stroke_mm": 0.388,
+          "mesh": "back_legends_14c8ee"
+        },
+        {
+          "fill": "#2176ae",
+          "vertices": 166,
+          "triangles": 164,
+          "area_mm2": 28.807,
+          "stroke_mm": 0.709,
+          "mesh": "back_legends_2176ae"
+        },
+        {
+          "fill": "#2f97cc",
+          "vertices": 199,
+          "triangles": 169,
+          "area_mm2": 39.102,
+          "stroke_mm": 0.356,
+          "mesh": "back_legends_2f97cc"
+        },
+        {
+          "fill": "#44c294",
+          "vertices": 247,
+          "triangles": 245,
+          "area_mm2": 12.767,
+          "stroke_mm": 0.59,
+          "mesh": "back_legends_44c294"
+        },
+        {
+          "fill": "#505050",
+          "vertices": 1326,
+          "triangles": 1332,
+          "area_mm2": 81.655,
+          "stroke_mm": 0.588,
+          "mesh": "back_legends_505050"
+        },
+        {
+          "fill": "#6f706e",
+          "vertices": 326,
+          "triangles": 296,
+          "area_mm2": 19.818,
+          "stroke_mm": 0.214,
+          "mesh": "back_legends_6f706e"
+        },
+        {
+          "fill": "#78a3f2",
+          "vertices": 82,
+          "triangles": 78,
+          "area_mm2": 2.735,
+          "stroke_mm": 0.248,
+          "mesh": "back_legends_78a3f2"
+        },
+        {
+          "fill": "#9a1a96",
+          "vertices": 85,
+          "triangles": 73,
+          "area_mm2": 5.859,
+          "stroke_mm": 0.196,
+          "mesh": "back_legends_9a1a96"
+        },
+        {
+          "fill": "#a6e2fb",
+          "vertices": 482,
+          "triangles": 486,
+          "area_mm2": 13.325,
+          "stroke_mm": 0.418,
+          "mesh": "back_legends_a6e2fb"
+        },
+        {
+          "fill": "#a7ac8f",
+          "vertices": 256,
+          "triangles": 128,
+          "area_mm2": 52.724,
+          "stroke_mm": 0.19,
+          "mesh": "back_legends_a7ac8f"
+        },
+        {
+          "fill": "#bcbcb9",
+          "vertices": 116,
+          "triangles": 108,
+          "area_mm2": 13.661,
+          "stroke_mm": 0.244,
+          "mesh": "back_legends_bcbcb9"
+        },
+        {
+          "fill": "#cbcb4a",
+          "vertices": 16,
+          "triangles": 14,
+          "area_mm2": 2.686,
+          "stroke_mm": 0.816,
+          "mesh": "back_legends_cbcb4a"
+        },
+        {
+          "fill": "#d2390c",
+          "vertices": 3974,
+          "triangles": 3836,
+          "area_mm2": 70.725,
+          "stroke_mm": 0.215,
+          "mesh": "back_legends_d2390c"
+        },
+        {
+          "fill": "#dfdfdc",
+          "vertices": 791,
+          "triangles": 801,
+          "area_mm2": 29.763,
+          "stroke_mm": 0.481,
+          "mesh": "back_legends_dfdfdc"
+        },
+        {
+          "fill": "#e22c34",
+          "vertices": 363,
+          "triangles": 363,
+          "area_mm2": 31.617,
+          "stroke_mm": 0.665,
+          "mesh": "back_legends_e22c34"
+        },
+        {
+          "fill": "#ea8f8d",
+          "vertices": 274,
+          "triangles": 278,
+          "area_mm2": 15.979,
+          "stroke_mm": 0.381,
+          "mesh": "back_legends_ea8f8d"
+        },
+        {
+          "fill": "#ee2f80",
+          "vertices": 740,
+          "triangles": 730,
+          "area_mm2": 33.883,
+          "stroke_mm": 0.506,
+          "mesh": "back_legends_ee2f80"
+        },
+        {
+          "fill": "#f8cf1d",
+          "vertices": 364,
+          "triangles": 370,
+          "area_mm2": 15.223,
+          "stroke_mm": 0.485,
+          "mesh": "back_legends_f8cf1d"
+        },
+        {
+          "fill": "#fc659b",
+          "vertices": 729,
+          "triangles": 727,
+          "area_mm2": 29.472,
+          "stroke_mm": 0.566,
+          "mesh": "back_legends_fc659b"
+        },
+        {
+          "fill": "#ff6633",
+          "vertices": 328,
+          "triangles": 324,
+          "area_mm2": 5.915,
+          "stroke_mm": 0.493,
+          "mesh": "back_legends_ff6633"
+        },
+        {
+          "fill": "#ffffff",
+          "vertices": 2662,
+          "triangles": 2568,
+          "area_mm2": 49.902,
+          "stroke_mm": 0.232,
+          "mesh": "back_legends_ffffff"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "back_label",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "top_legends",
+      "plane": "strip",
+      "on": "top_label",
+      "face": "top",
+      "drawing": "cardputer/svg/top.svg",
+      "legends_sha256": "c1d78ce5c26d4a06eabba363226283fabb96d555563a912a9ba8106ac2b41167",
+      "y_mm": 26.95,
+      "flatness_mm": 0.004,
+      "groups": 5,
+      "keys": 0,
+      "shapes": 32,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "fonts/inter/Inter-Medium.ttf": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872",
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#111113",
+          "vertices": 2550,
+          "triangles": 2474,
+          "area_mm2": 52.119,
+          "stroke_mm": 0.258,
+          "mesh": "top_legends_111113"
+        },
+        {
+          "fill": "#2f97cc",
+          "vertices": 42,
+          "triangles": 40,
+          "area_mm2": 0.516,
+          "stroke_mm": 0.185,
+          "mesh": "top_legends_2f97cc"
+        },
+        {
+          "fill": "#e22c34",
+          "vertices": 269,
+          "triangles": 263,
+          "area_mm2": 15.813,
+          "stroke_mm": 0.582,
+          "mesh": "top_legends_e22c34"
+        },
+        {
+          "fill": "#ea8f8d",
+          "vertices": 20,
+          "triangles": 10,
+          "area_mm2": 0.268,
+          "stroke_mm": 0.094,
+          "mesh": "top_legends_ea8f8d"
+        },
+        {
+          "fill": "#ee2f80",
+          "vertices": 42,
+          "triangles": 40,
+          "area_mm2": 0.516,
+          "stroke_mm": 0.185,
+          "mesh": "top_legends_ee2f80"
+        },
+        {
+          "fill": "#ff6633",
+          "vertices": 6,
+          "triangles": 2,
+          "area_mm2": 3.14,
+          "stroke_mm": 0.513,
+          "mesh": "top_legends_ff6633"
+        },
+        {
+          "fill": "#ffffff",
+          "vertices": 300,
+          "triangles": 292,
+          "area_mm2": 4.09,
+          "stroke_mm": 0.227,
+          "mesh": "top_legends_ffffff"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "top_label",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "side_legends",
+      "plane": "side",
+      "on": "side_label",
+      "face": "left",
+      "drawing": "cardputer/svg/left.svg",
+      "legends_sha256": "4d77a7c1a83ddae43f54dbc5d711b0f593295de78f68a892bfd4ff456001a112",
+      "x_mm": -41.95,
+      "flatness_mm": 0.004,
+      "groups": 2,
+      "keys": 0,
+      "shapes": 13,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f",
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#111113",
+          "vertices": 524,
+          "triangles": 496,
+          "area_mm2": 9.394,
+          "stroke_mm": 0.215,
+          "mesh": "side_legends_111113"
+        },
+        {
+          "fill": "#d2390c",
+          "vertices": 224,
+          "triangles": 222,
+          "area_mm2": 7.035,
+          "stroke_mm": 0.319,
+          "mesh": "side_legends_d2390c"
+        },
+        {
+          "fill": "#dfdfdc",
+          "vertices": 78,
+          "triangles": 80,
+          "area_mm2": 4.253,
+          "stroke_mm": 0.419,
+          "mesh": "side_legends_dfdfdc"
+        },
+        {
+          "fill": "#f8cf1d",
+          "vertices": 120,
+          "triangles": 122,
+          "area_mm2": 4.684,
+          "stroke_mm": 0.422,
+          "mesh": "side_legends_f8cf1d"
+        },
+        {
+          "fill": "#ffffff",
+          "vertices": 139,
+          "triangles": 133,
+          "area_mm2": 2.386,
+          "stroke_mm": 0.23,
+          "mesh": "side_legends_ffffff"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "side_label",
+        "least_mm": 0.02
+      }
+    }
+  ],
+  "without_legends": {
+    "bytes": 383648,
+    "gzip_bytes": 148807,
+    "sha256": "fbbc1427adcde7e74f2afdfcc96de43272d7ea4539a1222bcfcd8b0c86793092",
+    "meshes": 25,
+    "materials": 16
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "board": "tdeck-plus",
+  "model": "tdeck-plus/model/tdeck-plus.glb",
+  "model_sha256": "2ea45ef998b5da3f85212265f03d735f37a426f057af2a34ff5fcf4947961932",
+  "model_bytes": 406196,
+  "model_gzip_bytes": 137940,
+  "triangles": 18949,
+  "meshes": 38,
+  "materials": 28,
+  "source": {
+    "format": "none",
+    "license": "MIT",
+    "copyright": "2026 José M. Requena Plens",
+    "license_note": "Built from no vendor file: every part is a shape of this spec, from this repository's own drawings and measurements."
+  },
+  "builder": {
+    "script": "_shared/build_board_glb.py",
+    "version": "1.6.0",
+    "spec": "tdeck-plus/model/spec.json",
+    "spec_sha256": "411a9c8f927f861815879394573b7f7c15faed69a50993e7d04251116c77051b",
+    "python": "3.14.7",
+    "packages": {
+      "numpy": "2.5.4",
+      "shapely": "2.2.0",
+      "trimesh": "5.2.0",
+      "mapbox_earcut": "2.1.0",
+      "scipy": "1.18.1",
+      "networkx": "3.7",
+      "rtree": "1.4.1",
+      "cascadio": "0.1.1",
+      "fast-simplification": "0.2.0",
+      "fonttools": "4.68.0"
+    }
+  },
+  "parameters": {
+    "quant_mm": 0.01,
+    "planar_min_area_mm2": 1.5,
+    "tessellation": null,
+    "transform": [],
+    "center_mm": [
+      36.57,
+      57.49,
+      -10.2
+    ],
+    "front_frame": {
+      "left_x": 0.0,
+      "top_y": 114.98
+    },
+    "face_frames": {
+      "back": {
+        "right_x": 73.14,
+        "top_y": 114.98
+      }
+    },
+    "screen": {
+      "x0": 7.83,
+      "x1": 65.43,
+      "y_top": 98.58,
+      "y_bot": 55.38,
+      "w": 57.6,
+      "h": 43.2,
+      "resolution": [
+        320,
+        240
+      ]
+    }
+  },
+  "legends": [
+    {
+      "mesh": "glass_legends",
+      "plane": "glass",
+      "on": "face",
+      "front": "tdeck-plus/svg/front.svg",
+      "legends_sha256": "f8e1e4f7881e5d49315de6b4e17f26b3c62509c0378031db076975adae485ec4",
+      "z_mm": -0.22,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 6,
+      "fonts": {
+        "fonts/inter/Inter-Regular.ttf": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+      },
+      "sheets": [
+        {
+          "fill": "#cfd2d8",
+          "vertices": 219,
+          "triangles": 209,
+          "area_mm2": 12.35,
+          "stroke_mm": 0.349,
+          "mesh": "glass_legends_cfd2d8"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "face",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "key_legends",
+      "plane": "keys",
+      "on": "keys",
+      "front": "tdeck-plus/svg/front.svg",
+      "legends_sha256": "120a35fc4f399732cc8138e2abf4115e11a6318263f60a2f2d35d4a1b0fdb54f",
+      "z_mm": -0.12,
+      "flatness_mm": 0.004,
+      "groups": 35,
+      "keys": 35,
+      "shapes": 68,
+      "fonts": {
+        "fonts/inter/Inter-Medium.ttf": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872"
+      },
+      "sheets": [
+        {
+          "fill": "#f2f3f5",
+          "vertices": 2524,
+          "triangles": 2412,
+          "area_mm2": 75.243,
+          "stroke_mm": 0.265,
+          "mesh": "key_legends_f2f3f5"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "keys",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "plate_legends",
+      "plane": "plate",
+      "on": "keyboard_plate",
+      "front": "tdeck-plus/svg/front.svg",
+      "legends_sha256": "caa521d7d9b87c6d9d862e010407f5a22a6110267b7f5391893fe38e518bb841",
+      "z_mm": -1.52,
+      "flatness_mm": 0.004,
+      "groups": 2,
+      "keys": 0,
+      "shapes": 33,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+      },
+      "sheets": [
+        {
+          "fill": "#bcbfc5",
+          "vertices": 36,
+          "triangles": 24,
+          "area_mm2": 78.96,
+          "stroke_mm": 1.612,
+          "mesh": "plate_legends_bcbfc5"
+        },
+        {
+          "fill": "#dcdde2",
+          "vertices": 358,
+          "triangles": 330,
+          "area_mm2": 47.213,
+          "stroke_mm": 0.301,
+          "mesh": "plate_legends_dcdde2"
+        },
+        {
+          "fill": "#e9eaed",
+          "vertices": 280,
+          "triangles": 270,
+          "area_mm2": 12.245,
+          "stroke_mm": 0.374,
+          "mesh": "plate_legends_e9eaed"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "band",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "plate_mark_legends",
+      "plane": "plate-marks",
+      "on": "keyboard_plate",
+      "front": "tdeck-plus/svg/front.svg",
+      "legends_sha256": "fb766fc994acd9a7840996315248ac7fa199064ae8a0a72d1d94ca85cdd7d62c",
+      "z_mm": -1.52,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 4,
+      "fonts": {},
+      "sheets": [
+        {
+          "fill": "#2f3033",
+          "vertices": 16,
+          "triangles": 12,
+          "area_mm2": 1.535,
+          "stroke_mm": 0.281,
+          "mesh": "plate_mark_legends_2f3033"
+        },
+        {
+          "fill": "#dcdde2",
+          "vertices": 72,
+          "triangles": 64,
+          "area_mm2": 4.984,
+          "stroke_mm": 0.521,
+          "mesh": "plate_mark_legends_dcdde2"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.08,
+        "under_mesh": "keyboard_plate",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "frame_legends",
+      "plane": "frame",
+      "on": "case_shell",
+      "face": "back",
+      "drawing": "tdeck-plus/svg/back.svg",
+      "legends_sha256": "a770f1be7f46400ce32eee0fd223311e88d624e85e9d78592b0dd1b66b29346d",
+      "z_mm": -19.03,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 6,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+      },
+      "sheets": [
+        {
+          "fill": "#767b7f",
+          "vertices": 228,
+          "triangles": 218,
+          "area_mm2": 83.206,
+          "stroke_mm": 1.071,
+          "mesh": "frame_legends_767b7f"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "case_shell",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "frame_line_legends",
+      "plane": "frame-line",
+      "on": "case_shell",
+      "face": "back",
+      "drawing": "tdeck-plus/svg/back.svg",
+      "legends_sha256": "c300bd5183ad9eff1975c449184cc01ba6d1854670efdf140d06504cd2a2c4e1",
+      "z_mm": -19.03,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 1,
+      "fonts": {},
+      "sheets": [
+        {
+          "fill": "#767b7f",
+          "vertices": 20,
+          "triangles": 18,
+          "area_mm2": 19.201,
+          "stroke_mm": 0.299,
+          "mesh": "frame_line_legends_767b7f"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "case_shell",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "badge_legends",
+      "plane": "badge",
+      "on": "case_shell",
+      "face": "back",
+      "drawing": "tdeck-plus/svg/back.svg",
+      "legends_sha256": "e593f6d846a0875a575454fe71efd861db558be8cbdbc1ca482967c79f16c9b9",
+      "z_mm": -19.03,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 7,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+      },
+      "sheets": [
+        {
+          "fill": "#767b7f",
+          "vertices": 492,
+          "triangles": 488,
+          "area_mm2": 30.362,
+          "stroke_mm": 0.531,
+          "mesh": "badge_legends_767b7f"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "case_shell",
+        "least_mm": 0.02
+      }
+    },
+    {
+      "mesh": "base_legends",
+      "plane": "base",
+      "on": "case_shell",
+      "face": "back",
+      "drawing": "tdeck-plus/svg/back.svg",
+      "legends_sha256": "5ab5b032073089f02ed485a1bf58d5b2f0fc45f5ddb70c207eb1fbbac0ed0f4a",
+      "z_mm": -19.03,
+      "flatness_mm": 0.004,
+      "groups": 1,
+      "keys": 0,
+      "shapes": 7,
+      "fonts": {
+        "fonts/inter/Inter-Bold.ttf": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+      },
+      "sheets": [
+        {
+          "fill": "#767b7f",
+          "vertices": 356,
+          "triangles": 346,
+          "area_mm2": 40.823,
+          "stroke_mm": 0.693,
+          "mesh": "base_legends_767b7f"
+        }
+      ],
+      "clearance": {
+        "under_mm": 0.03,
+        "under_mesh": "case_shell",
+        "least_mm": 0.02
+      }
+    }
+  ],
+  "without_legends": {
+    "bytes": 315068,
+    "gzip_bytes": 103871,
+    "sha256": "b652e2ee8ec19de28797de2cf736ac84bf3bab4b560194bee1d98295cf949be2",
+    "meshes": 27,
+    "materials": 21
+  }
+}

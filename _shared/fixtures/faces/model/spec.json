@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "board": "faces",
+  "node_name": "FaceFixture",
+  "output": "_shared/fixtures/faces/model/faces.glb",
+  "generator": "kleidos build_board_glb.py",
+  "copyright": "Kleidos test fixture (MIT): two boxes and Inter glyph outlines (SIL Open Font License 1.1).",
+  "notes": "Written by _shared/face_fixture.py. A body and a base stacked under it, a print on the front and one on the back, for the checks of the faces and modules paths.",
+  "source": {
+    "vendor": "Kleidos",
+    "format": "stl",
+    "file": "body.stl",
+    "url": "_shared/fixtures/faces/vendor/body.stl",
+    "sha256": "0b01b9f366003fc0006b5064c17b7ddd29c2c350215bd156cca1857d4728b830",
+    "bytes": 684,
+    "license": "MIT",
+    "copyright": "Kleidos",
+    "license_note": "A box written by face_fixture.py."
+  },
+  "transform": [],
+  "split": true,
+  "parts": [
+    {
+      "name": "body",
+      "match": {}
+    }
+  ],
+  "modules": [
+    {
+      "name": "base",
+      "note": "Its own file draws it from z 0; the transform stands it under the body.",
+      "source": {
+        "vendor": "Kleidos",
+        "format": "stl",
+        "file": "base.stl",
+        "url": "_shared/fixtures/faces/vendor/base.stl",
+        "sha256": "c49a401cd93915dc0e6511e83bbd29341b9db4076a12ba53e4c00826de0b7bac",
+        "bytes": 684,
+        "license": "MIT",
+        "copyright": "Kleidos",
+        "license_note": "A box written by face_fixture.py."
+      },
+      "transform": [
+        {
+          "translate": [
+            0.0,
+            0.0,
+            -12.0
+          ]
+        }
+      ],
+      "split": true,
+      "parts": [
+        {
+          "name": "base",
+          "match": {}
+        }
+      ]
+    }
+  ],
+  "center_mm": [
+    10.0,
+    15.0,
+    -6.0
+  ],
+  "front_frame": {
+    "left_x": 0.0,
+    "top_y": 30.0
+  },
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "materials": [
+    {
+      "name": "case",
+      "rgb": [
+        90,
+        90,
+        94
+      ],
+      "rough": 0.6
+    },
+    {
+      "name": "base_plastic",
+      "rgb": [
+        46,
+        143,
+        138
+      ],
+      "rough": 0.6
+    }
+  ],
+  "meshes": [
+    {
+      "name": "case",
+      "part": "body",
+      "material": "case"
+    },
+    {
+      "name": "base",
+      "part": "base",
+      "material": "base_plastic"
+    },
+    {
+      "name": "name_legends",
+      "legends": {
+        "front": "../svg/front.svg",
+        "plane": "name",
+        "on": "case",
+        "z": "0.0 + 0.03"
+      }
+    },
+    {
+      "name": "label_legends",
+      "legends": {
+        "drawing": "../svg/back.svg",
+        "face": "back",
+        "plane": "label",
+        "on": "base",
+        "z": "-12.0 - 0.03",
+        "note": "three steps out of the base's bottom, towards its viewer"
+      }
+    }
+  ]
+}

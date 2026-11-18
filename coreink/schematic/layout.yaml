@@ -1,0 +1,412 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# How the CoreInk schematic is drawn: the symbol each part takes, our own
+# symbols, and the sheets, blocks and rows the parts sit in. The facts (values,
+# pins, nets) are in netlist.yaml; _shared/kicad_schematic.py joins the two.
+#
+# parts: a part takes the symbol its prefix names under _by_prefix unless it has
+# a row of its own. "pins" maps our symbol's pin number to the vendor's pin
+# (a list when one of our pins stands for several of the vendor's, "-" when the
+# vendor has no such pin). "angle" turns the symbol (90: a vertical two-pin part
+# lies flat).
+# rows: each row of a block is laid left to right; an item is a reference
+# ({col: [...]} for a column of two-pin parts, {cols: [[...], [...]]} for
+# several, or {text: ...}).
+# sheets: "summary" and "parts" fill the sheet's box on the contents page; a
+# sheet with "index" (power, nets, parts) is a page of tables the generator
+# writes from netlist.yaml, after the drawing; the nets sheet's gpio_title
+# names the GPIO table.
+# root: the contents page's heading and the panels of its right-hand column;
+# revisions: the history the contents page prints (the last one is in every
+# title block). short: what a part is, in the parts list and the power tree.
+# power_tree: its boxes, [column, row], and arrows, each a connection
+# netlist.yaml has (the generator refuses any other); "NET@2" draws a net twice.
+
+paper: A3
+title_block:
+  title: M5Stack CoreInk (K048)
+  company: "Kleidos boards: connectivity documented from the vendor's public documentation"
+  comments:
+    - "Sources: M5Stack CoreInk schematic (coreink_sch.pdf) and docs; README.md"
+    - "Values as documented. Layout and symbols: Kleidos boards"
+    - "License: MIT. github.com/kleidos-dev/boards"
+
+revisions:
+  - {rev: 1, date: "2026-11-17", change: "First drawing: every part, pin and net, connectivity documented from the vendor's public documentation; contents, page/zone links, power tree, nets and signals, parts list (no part on the print is marked not fitted, so none carries a DNP mark), no script in the PDF."}
+  - {rev: 2, date: "2026-11-17", change: "Kleidos additions K1-K28, listed above: U1's four NC pins, the ESP32 strapping, input-only, RTC and in-package flash pins, the panel's reads on GPIO23, the RTC address, three rails."}
+  - {rev: 3, date: "2026-11-17", change: "K29: the status LED on GPIO10 is green, lit when the pin is low. An entry is marked wherever an index page shows its element again; a pin on no net says what it is on the nets page; the title block says the drawing carries entries."}
+
+grounds:
+  GND: kleidos:GND
+
+parts:
+  _by_prefix:
+    R: {symbol: "kleidos:R", angle: 90, stub: 0}
+    C: {symbol: "kleidos:C", angle: 90, stub: 0}
+    L: {symbol: "kleidos:L", angle: 90, stub: 0}
+    S: {symbol: "kleidos:SW_Push", stub: 0}
+  D4: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D5: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D6: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D7: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D12: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D13: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D14: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D18: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D19: {symbol: "kleidos:D", stub: 0, pins: {"1": "K", "2": "A"}, short: Diode}
+  D1: {symbol: "coreink:SRV05-4"}
+  D2: {symbol: "coreink:SRV05-4"}
+  D3: {symbol: "coreink:SRV05-4"}
+  D8: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "K", "2": "A"}}
+  D9: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "K", "2": "A"}}
+  D10: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "K", "2": "A"}}
+  D11: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "K", "2": "A"}}
+  D15: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "K", "2": "A"}}
+  D16: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "K", "2": "A"}}
+  D17: {symbol: "kleidos:D_Schottky", stub: 0, pins: {"1": "K", "2": "A"}}
+  LED1: {symbol: "kleidos:LED", stub: 0, pins: {"1": "K", "2": "A"}}
+  Q1: {symbol: "kleidos:Q_NPN", short: NPN transistor}
+  Q2: {symbol: "kleidos:Q_NPN", short: NPN transistor}
+  Q3: {symbol: "kleidos:Q_NPN", short: NPN transistor}
+  Q4: {symbol: "kleidos:Q_PMOS", short: P-MOSFET}
+  Q5: {symbol: "kleidos:Q_NMOS"}
+  Q6: {symbol: "kleidos:Q_NMOS"}
+  FU1: {symbol: "kleidos:Polyfuse", angle: 90, stub: 0, short: PTC fuse}
+  X1: {symbol: "kleidos:Crystal", stub: 0, short: Crystal}
+  ANT1: {symbol: "coreink:ANTENNA"}
+  ANT2: {symbol: "coreink:ANTENNA", short: IPEX RF connector}
+  U1: {symbol: "coreink:ESP32-PICO-D4"}
+  U2: {symbol: "coreink:CP2104"}
+  U3: {symbol: "coreink:SY8089"}
+  U4: {symbol: "coreink:BM8563"}
+  U5: {symbol: "coreink:SY7088"}
+  U6: {symbol: "coreink:TP40P57"}
+  EPD1: {symbol: "coreink:EPD_SPI_24"}
+  BUS1: {symbol: "coreink:M5_BUS_16P"}
+  J1: {symbol: "coreink:CON10"}
+  J2: {symbol: "coreink:TYPEC"}
+  J3: {symbol: "coreink:GROVE"}
+  J4: {symbol: "coreink:CON2"}
+  S3: {symbol: "coreink:K1-1502SA-02"}
+  BZ1: {symbol: "coreink:BUZZER_3P"}
+
+symbols:
+  ESP32-PICO-D4:
+    short: ESP32-PICO-D4 SiP
+    description: ESP32-PICO-D4 system in package (the vendor's symbol's pins, and pins 44, 45, 47 and 48 from the datasheet)
+    left: ["1 VDDA", "43 VDDA", "46 VDDA", "3 VDDA3P3", "4 VDDA3P3", "19 VDD3P3_RTC", "37 VDD3P3_CPU", "-",
+           "26 VDD_SDIO", "-", "2 LNA_IN", "-", "9 EN", "-", "31 IO6/CLK", "32 IO7/SD0", "33 IO8/SD1",
+           "30 IO11/CMD", "25 IO16", "27 IO17", "-", "44 XTAL_N_NC", "45 XTAL_P_NC", "47 CAP2_NC", "48 CAP1_NC"]
+    right: ["23 IO0", "41 IO1/U0TXD", "22 IO2", "40 IO3/U0RXD", "24 IO4", "34 IO5", "28 IO9/SD2", "29 IO10/SD3",
+            "18 IO12", "20 IO13", "17 IO14", "21 IO15", "35 IO18", "38 IO19", "42 IO21", "39 IO22", "36 IO23",
+            "14 IO25", "15 IO26", "16 IO27", "12 IO32", "13 IO33", "10 IO34", "11 IO35", "5 IO36", "6 IO37",
+            "7 IO38", "8 IO39"]
+    bottom: ["0 PAD"]
+  SRV05-4:
+    ref: D
+    short: ESD array
+    description: Four-channel ESD protection array
+    left: ["5 VCC"]
+    right: ["1 IO1", "6 IO4", "4 IO3", "3 IO2"]
+    bottom: ["2 GND"]
+  CP2104:
+    short: USB-UART bridge
+    description: USB to UART bridge (CP2104-F03-GMR)
+    left: ["8 VBUS", "7 REGIN", "6 VDD", "5 VIO", "9 ~{RST}", "-", "3 DP", "4 DM", "-", "14 GPIO0", "13 GPIO1",
+           "12 GPIO2", "11 GPIO3"]
+    right: ["21 TXD", "20 RXD", "19 RTS", "23 DTR", "-", "18 CTS", "22 DSR", "24 DCD", "1 RI", "-", "17 SUSPEND",
+            "15 ~{SUSPEND}", "16 VPP"]
+    bottom: ["2 GND", "0 PAD"]
+  SY7088:
+    short: Boost converter
+    description: Synchronous boost converter
+    left: ["6 IN", "1 LX", "2 LX", "3 EN"]
+    right: ["8 OUT", "7 OUT", "5 FB"]
+    bottom: ["4 SGND", "0 PAD"]
+  SY8089:
+    short: Buck converter
+    description: Synchronous buck converter
+    left: ["4 IN", "1 EN"]
+    right: ["3 SW", "5 FB"]
+    bottom: ["2 GND"]
+  TP40P57:
+    short: Li-ion charger
+    description: Single-cell charger, as the schematic writes it
+    left: ["4 VCC"]
+    right: ["3 BAT", "6 PROG", "1 ~{CHG}", "5 ~{STDBY}"]
+    bottom: ["2 GND"]
+  BM8563:
+    short: Real-time clock
+    description: Real-time clock, I2C
+    left: ["8 VDD", "5 SDA", "6 SCL"]
+    right: ["1 OSCI", "2 OSCO", "3 ~{INT}", "7 CLKOUT"]
+    bottom: ["4 VSS"]
+  EPD_SPI_24:
+    ref: EPD
+    short: E-paper connector
+    description: E-paper panel FPC connector (the vendor's EPD_SPI symbol, which has no pin 1)
+    left: ["2 GDR", "3 RESE", "-", "9 BUSY", "10 RST#", "11 D/C", "12 CS#", "13 SCK", "14 MOSI", "-",
+           "15 VDDIO", "16 VCI", "-", "6 TSCL", "7 TSDA"]
+    right: ["4 VGL", "5 VGH", "18 VDD", "19 VPP", "20 VSH", "22 VSL", "24 VCOM", "-", "21 PREVGH", "23 PREVGL"]
+    bottom: ["8 BSI", "17 VSS", "0 SHELL_GND"]
+  M5_BUS_16P:
+    ref: BUS
+    short: M5-Bus socket
+    description: M5-Bus, 16-pin socket
+    left: ["1 GND", "3 5VIN", "5 RST", "7 G13/RXD", "9 G21/SDA", "11 G18/SCK", "13 G34/MISO", "15 G23/MOSI"]
+    right: ["2 BAT", "4 5VOUT", "6 3V3", "8 G14/TXD", "10 G22/SCL", "12 G36/27/AD", "14 G26/IO", "16 G25/IO"]
+  GROVE:
+    ref: J
+    short: Grove connector
+    description: Grove (HY2.0-4P) connector with its shell
+    right: ["4 IO2", "3 IO1", "2 5V", "1 GND", "0 SH"]
+  CON10:
+    ref: J
+    short: HAT FPC
+    description: 10-pin FPC connector to the top HAT board, with its shell
+    right: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "SH"]
+  CON2:
+    ref: J
+    short: Battery port
+    description: 2-pin battery connector with its shell
+    right: ["1", "2", "SH"]
+  TYPEC:
+    ref: J
+    short: USB-C receptacle
+    description: USB Type-C receptacle (the print numbers only the CC and data contacts)
+    left: ["V VCC", "A5 CC1", "B5 CC2", "G GND", "SH SHELL"]
+    right: ["A6 DP1", "B6 DP2", "A7 DN1", "B7 DN2"]
+  K1-1502SA-02:
+    ref: S
+    short: Dial switch
+    description: Three-way dial switch (up, press, down) with a common pin
+    left: ["1", "T", "2"]
+    right: ["C"]
+  BUZZER_3P:
+    ref: BZ
+    short: Passive buzzer
+    description: Passive buzzer; three pins as the vendor's symbol has them, numbered here
+    left: ["1 +", "2"]
+    bottom: ["3"]
+  ANTENNA:
+    ref: ANT
+    short: 2.4 GHz antenna
+    description: Antenna or RF connector; two pins, numbered here (1 the feed, 2 the end on GND)
+    left: ["1"]
+    right: ["2"]
+
+root:
+  title: Contents
+  heading: "M5Stack CoreInk (K048) schematic"
+  subheading: "Kleidos boards: every part, pin and net, connectivity documented from the vendor's public documentation"
+  panels:
+    - title: How to read it
+      text: |
+        Click a box on the left to open its page. "Contents" and the page numbers at the bottom right of
+        every page lead back here and to each page.
+
+        Cyan lines are connections: wires and pin ends, all one width. A dot joins lines; a cross on a pin
+        end means the pin is not connected. Pins connect by net labels (the boxed names): pins whose labels
+        carry the same name are on one net, on any page. [3/C4] after a label: page 3 carries that net too,
+        its label in zone C4 (column 4, row C of the border). Click it to land on that label. No [page/zone]:
+        the net is on this page only. Click a part's reference to find its row in the parts list; the row's
+        page/zone leads back. White: parts and their references. Grey: values, pin names, pin numbers.
+        A dashed frame is a block of the circuit, titled at its top left. An amber K3 marks a Kleidos
+        addition or correction: it leads to its row below; a dotted line is an added connection.
+    - title: Notes
+      text: |
+        Every part, pin and net of the CoreInk, with the values the vendor documents: connectivity
+        documented from the vendor's public documentation, with Kleidos additions and corrections listed
+        on page 1 (M5Stack's one-page CoreInk schematic, coreink_sch.pdf, and its docs page; the datasheets
+        and the Kleidos firmware each entry cites; README.md and netlist.yaml beside this file). Layout and
+        symbols are this project's. No footprints, no PCB, no part numbers beyond the documented ones.
+        Values are as the vendor prints them (10K/1%, 105/6.3V). No part on the print is marked not fitted.
+        Reference designators are the vendor's, not renumbered. Where the print numbers no pins (passives,
+        diodes, transistors, keys, antennas, the buzzer), the pin names are ours: 1/2, A/K, B/C/E, G/S/D.
+        Nets the vendor left unnamed carry names of ours (U5_FB, EPD_SW...). The USB-UART bridge is the
+        CP2104 the print shows; the docs say later units carry a CH9102, as the bench unit does (README.md).
+        Zones: columns 1-8 and rows A-F, 50 mm apart, printed in the border.
+
+sheets:
+  - file: soc_usb.kicad_sch
+    name: ESP32-PICO-D4 and USB
+    summary: "The ESP32-PICO-D4 with its supply decoupling, the antenna's matching network, the antenna and the IPEX connector, the I2C pull-ups; the USB-C receptacle, the CP2104 USB to UART bridge and the auto-reset transistors on EN and GPIO0."
+    parts: "U1 ESP32-PICO-D4, L1 C4 C6, ANT1, ANT2 IPEX, R26 R27, J2 USB-C, U2 CP2104-F03-GMR, Q2 Q3 S8050, D7"
+    pwr_flags: [GND]
+    blocks:
+      - title: ESP32-PICO-D4
+        rows:
+          - [U1]
+      - title: RF path
+        rows:
+          - [L1, {col: [C4, C6]}]
+          - [ANT1, ANT2]
+      - title: Supply decoupling
+        rows:
+          - [{cols: [[C46, C18, C10, C12], [C13, C14, C15, C16]]}]
+      - title: I2C pull-ups
+        rows:
+          - [{col: [R26, R27]}]
+      - title: USB-C
+        rows:
+          - [J2, {col: [R1, R4, R17, R18]}]
+      - title: CP2104 USB to UART bridge
+        rows:
+          - [U2, {cols: [[C3, C5, R20], [R21, R22]]}]
+      - title: Auto-reset (DTR, RTS)
+        rows:
+          - [Q2, Q3, D7]
+          - [{cols: [[R29, C17, R28], [R30, R31]]}]
+  - file: power.kicad_sch
+    name: Power
+    summary: "The 5 V inputs and their diodes, the charger and the battery, the battery switch and power hold, the battery voltage divider, the 5 V boost and the 3.3 V buck."
+    parts: "D8-D11, FU1 PTC, U6 TP40P57 charger, LED1, J4 battery, Q4 SI2301, Q5 SI2302, D14 D19, U5 SY7088, U3 SY8089"
+    blocks:
+      - title: 5 V inputs and power path (PMU)
+        rows:
+          - [D8, FU1, {col: [C22]}]
+          - [D9, D10, D11, {col: [C29]}]
+      - title: Charger
+        rows:
+          - [U6, LED1, {col: [R34, R45, C23, C11]}]
+      - title: Battery connector
+        rows:
+          - [J4]
+      - title: Battery switch, power hold and battery voltage
+        rows:
+          - [Q4, {col: [R32, R36, R50]}, {col: [R41, R42, C30]}]
+          - [Q5, D14, D19, {col: [R33, R51]}]
+      - title: 5 V boost (SYS_P050)
+        rows:
+          - [U5, {cols: [[L2, C20, C21, R35], [R43, R44, C31]]}]
+      - title: 3.3 V buck (MCU_VDD)
+        rows:
+          - [U3, {cols: [[L3, C19], [R39, R40, C28, C33]]}]
+  - file: epd_expansion.kicad_sch
+    name: E-paper and expansion
+    summary: "The e-paper panel's 24-pin connector with its capacitors and the booster that makes its gate supplies VGG and VEE; the M5-Bus socket, the FPC to the HAT board, the Grove port, and the ESD arrays and 47R series resistors between the ESP32 and the M5-Bus."
+    parts: "EPD1, L4, Q6 CJ2310, D15-D17, BUS1 M5-Bus, J1 FPC to HAT, J3 Grove, D1-D3 SRV05-4, R6-R16, R48 R49"
+    blocks:
+      - title: Panel connector
+        rows:
+          - [EPD1, {cols: [[C35, C36, C37, C38], [C39, C40, C41, C42]]}]
+      - title: Gate-voltage booster (EPD BOOST)
+        rows:
+          - [L4, Q6, {col: [R46, R47, C34]}]
+          - [D15, C43, D16, D17, {col: [C44, C45]}]
+      - title: M5-Bus
+        rows:
+          - [BUS1]
+      - title: FPC to HAT
+        rows:
+          - [J1]
+      - title: Grove
+        rows:
+          - [J3, {col: [R48, R49]}]
+      - title: ESD and series resistors
+        rows:
+          - [D1, {col: [R6, R7, R16]}, D2, {col: [R8, R9, R10, R11]}]
+          - [D3, {col: [R12, R13, R14, R15]}]
+  - file: hmi.kicad_sch
+    name: Keys, RTC and buzzer
+    summary: "The power and reset keys, the three-way dial, the BM8563 real-time clock with its crystal and alarm diodes, and the buzzer with its driver."
+    parts: "S1 S2 keys, S3 K1-1502SA-02 dial, D5 D6, U4 BM8563, X1 32.768K, D12 D13, BZ1, Q1 S8050, D4 D18"
+    blocks:
+      - title: Power and reset keys
+        rows:
+          - [S1, D5, D6, {col: [R19, C2]}]
+          - [S2]
+      - title: Dial switch
+        rows:
+          - [S3, {cols: [[R25, R23, R24], [C9, C7, C8]]}]
+      - title: Real-time clock
+        rows:
+          - [U4, X1, {cols: [[C25, C26, C27], [R37, R38]]}]
+          - [D12, D13]
+      - title: Buzzer
+        rows:
+          - [BZ1, Q1, {cols: [[R5, R2, R3], [C1]]}]
+          - [D4, D18]
+  - file: power_tree.kicad_sch
+    name: Power tree and rails
+    index: power
+    summary: "How power flows from the USB-C, the M5-Bus and HAT inputs and the battery to every rail, and each rail's nominal voltage, source and enable. Every box leads to where it is drawn."
+  - file: nets.kicad_sch
+    name: Nets and signals
+    index: nets
+    gpio_title: ESP32-PICO-D4 GPIO (U1)
+    summary: "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32-PICO-D4 GPIO, the I2C address and every pull-up and pull-down."
+  - file: parts.kicad_sch
+    name: Parts
+    index: parts
+    summary: "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A reference on the drawing leads to its row, the row back to it."
+
+power_tree:
+  title: Power tree
+  pitch: [25.4, 17.78]
+  box: 22.86
+  nodes:
+    J2: [0, 0]
+    USB_5V: [1, 0]
+    D8: [2, 0]
+    EXT_5VI: [3, 0]
+    FU1: [4, 0]
+    CHG: [5, 0]
+    D9: [6, 0]
+    BST_IN: [9, 0]
+    U5: [10, 0]
+    SYS_P050: [11, 0]
+    U3: [12, 0]
+    L3: [13, 0]
+    MCU_VDD: [14, 0]
+    BUS1: [2, 1]
+    J1: [2, 2]
+    U6: [6, 1]
+    SYS_BAT: [7, 1]
+    D10: [8, 1]
+    J4: [6, 2]
+    Q4: [8, 2]
+    VBAT_SW: [9, 2]
+    D11: [12, 1]
+    EXT_5VO: [13, 1]
+    MCU_VDD@epd: [9, 3]
+    L4: [10, 3]
+    Q6: [11, 3]
+    D15: [12, 3]
+    VGG: [13, 3]
+    C43: [12, 4]
+    D17: [13, 4]
+    VEE: [14, 4]
+  edges:
+    - [J2, USB_5V]
+    - [USB_5V, D8]
+    - [D8, EXT_5VI]
+    - [BUS1, EXT_5VI]
+    - [J1, EXT_5VI]
+    - [EXT_5VI, FU1]
+    - [FU1, CHG]
+    - [CHG, D9]
+    - [D9, BST_IN]
+    - [CHG, U6]
+    - [U6, SYS_BAT]
+    - [J4, SYS_BAT]
+    - [SYS_BAT, D10]
+    - [D10, BST_IN]
+    - [BST_IN, U5]
+    - [U5, SYS_P050]
+    - [SYS_P050, U3]
+    - [U3, L3]
+    - [L3, MCU_VDD]
+    - [SYS_P050, D11]
+    - [D11, EXT_5VO]
+    - [SYS_BAT, Q4]
+    - [Q4, VBAT_SW]
+    - [MCU_VDD@epd, L4]
+    - [L4, Q6]
+    - [Q6, D15]
+    - [D15, VGG]
+    - [Q6, C43]
+    - [C43, D17]
+    - [D17, VEE]
+  note: "MCU_VDD is drawn twice: U3 makes it through L3, and it feeds the panel's booster (L4, Q6). VBAT_SW switches the 5 V boost on through PS_EN (U5 EN) and feeds the battery divider to GPIO35."

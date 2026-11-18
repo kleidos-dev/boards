@@ -1,0 +1,47 @@
+version = 1
+SPDX-PackageName = "boards"
+SPDX-PackageSupplier = "José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-PackageDownloadLocation = "https://github.com/kleidos-dev/boards"
+
+# Everything this project wrote is under the MIT License: the builders, the
+# checks, their tests and the CI; the drawings, data and documents (fronts,
+# backs, icons, contact sheets, measurements, specs, schemas, recipes,
+# schematics and their PDF, prose); the agent skills. The rows below
+# name what is not this project's alone.
+[[annotations]]
+path = ["**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-License-Identifier = "MIT"
+
+# The models' rasterizer tone maps with Khronos's PBR Neutral function
+# (KhronosGroup/ToneMapping, PBR_Neutral/pbrNeutral.glsl, Apache-2.0),
+# written in Python operation for operation (NOTICE.md); the rest of the
+# script is this project's.
+[[annotations]]
+path = ["_shared/model_raster.py"]
+precedence = "override"
+SPDX-FileCopyrightText = ["2026 José M. Requena Plens <jmrplens@kleidos.dev>",
+                          "2024 The Khronos Group, Inc. (the PBR Neutral tone mapping function)"]
+SPDX-License-Identifier = "MIT AND Apache-2.0"
+
+# The M5Stack boards' models, master and web level of detail: our recipe,
+# parts and legends over re-meshed M5Stack case geometry (m5stack/M5_Hardware,
+# MIT, "Copyright (c) 2021 M5Stack"; NOTICE.md). The T-Deck Plus's model is
+# this project's own throughout (_shared/tdeck_plus_case.py) and takes the
+# first row.
+[[annotations]]
+path = ["sticks3/model/*.glb", "m5stickc-plus2/model/*.glb", "m5stickc-plus1/model/*.glb",
+        "m5stickc-plus-se/model/*.glb", "coreink/model/*.glb", "cores3-se/model/*.glb",
+        "m5stack-core2-v13/model/*.glb", "cardputer/model/*.glb", "models-contact-sheet.png"]
+precedence = "override"
+SPDX-FileCopyrightText = ["2026 José M. Requena Plens <jmrplens@kleidos.dev>",
+                          "2021 M5Stack"]
+SPDX-License-Identifier = "MIT"
+
+# Inter 4.1, unmodified (fonts/VERSIONS.md).
+[[annotations]]
+path = ["fonts/inter/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "2016 The Inter Project Authors"
+SPDX-License-Identifier = "OFL-1.1"

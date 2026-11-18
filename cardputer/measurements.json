@@ -1,0 +1,119 @@
+{
+  "device_id": "cardputer",
+  "display_name": "M5Stack Cardputer ADV",
+  "vendor": "M5Stack",
+  "sku": "K132-Adv",
+  "theme": "cardputer_adv",
+  "case": {
+    "width": 84.0,
+    "height": 54.0,
+    "depth": 19.6,
+    "corner_radius": 4.0,
+    "color": "#F4F4F6",
+    "material": "PC+ABS"
+  },
+  "display": {
+    "tech": "TFT-IPS",
+    "controller": "ST7789v2",
+    "active_w_mm": 24.91,
+    "active_h_mm": 14.86,
+    "resolution_w_px": 240,
+    "resolution_h_px": 135,
+    "origin_x_mm": 20.75,
+    "origin_y_mm": 2.95,
+    "native_orientation": "landscape",
+    "firmware_rotation_deg": 270,
+    "note": "Active area datasheet-verified 2026-07-15: 24.91 x 14.86 mm (same 1.14\" glass as the Stick family, rotated; ~241 PPI); was 30.0 x 17.0 mm (~202 PPI). Origin photo-measured 2026-10-18: the glass's black window on the vendor front photo spans x 20.75-45.66, y 2.93-17.79 mm, the active area itself."
+  },
+  "buttons": [
+    {
+      "id": "G0",
+      "logical": "boot",
+      "gpio": 0,
+      "active": "low",
+      "face": "right",
+      "shape": "rect",
+      "width_mm": 3.0,
+      "height_mm": 2.5,
+      "center_x_mm": 84.0,
+      "center_y_mm": 10.0,
+      "label_on_case": "G0"
+    },
+    {
+      "id": "Reset",
+      "logical": "reset",
+      "gpio": -1,
+      "active": "low",
+      "face": "left",
+      "shape": "circle",
+      "diameter_mm": 2.0,
+      "center_x_mm": 0.0,
+      "center_y_mm": 5.0
+    },
+    {
+      "id": "PowerSwitch",
+      "logical": "power",
+      "gpio": -1,
+      "active": "slide",
+      "face": "left",
+      "shape": "rect",
+      "width_mm": 3.0,
+      "height_mm": 6.0,
+      "center_x_mm": 0.0,
+      "center_y_mm": 14.0,
+      "label_on_case": "PWR"
+    }
+  ],
+  "keyboard": {
+    "rows": 4,
+    "cols": 14,
+    "origin_x_mm": 2.37,
+    "origin_y_mm": 25.77,
+    "key_w_mm": 3.95,
+    "key_h_mm": 2.42,
+    "gap_mm": 1.82,
+    "controller": "TCA8418RTWR",
+    "i2c_addr": "0x34",
+    "notes": "Geometry only: the 56 black push buttons as drawn on the front (2026-10-18). What is printed for each key (its legend, its shifted legend, an arrow, the colored block under some) is the front's, drawn in svg/front.svg by _shared/emit_front_svg.py from its own table, with a legend group and an hs-key-<slug> hotspot per key, and what each key types is the Kleidos firmware's (kKeyMap, src/hal/common/cardputer_key_decoder.h); neither is listed here a second time. The columns are 5.773 mm apart (gap_mm is the horizontal gap); row centers at y 26.98 / 34.44 / 41.93 / 49.41, each row under its white legend strip (y 21.55-25.45, 28.95-32.45, 36.25-39.8, 43.9-47.6)."
+  },
+  "extras": [
+    {
+      "type": "stamp",
+      "face": "front",
+      "center_x_mm": 70.0,
+      "center_y_mm": 11.0,
+      "size_mm": 13.0
+    },
+    {
+      "type": "label",
+      "text": "CARDPUTER ADV",
+      "center_x_mm": 50.0,
+      "center_y_mm": 20.0,
+      "size_mm": 1.6,
+      "color": "#888",
+      "anchor": "middle",
+      "weight": "600"
+    },
+    {
+      "type": "usb-c",
+      "face": "left",
+      "center_x_mm": 0.0,
+      "center_y_mm": 27.0
+    },
+    {
+      "type": "led",
+      "face": "front",
+      "center_x_mm": 81.0,
+      "center_y_mm": 4.0,
+      "color": "rgb"
+    }
+  ],
+  "notes": "Cardputer ADV: white case with black base trim, TCA8418 + ES8311. The keys are plain black buttons; the color is in the legend blocks printed above some of them, as the front draws them: fn orange, Aa blue, opt green, tab, ctrl and alt gray.",
+  "sources": [
+    {
+      "kind": "see",
+      "url": "sources.md",
+      "local": "sources.md"
+    }
+  ]
+}

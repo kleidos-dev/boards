@@ -1,0 +1,1439 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
+#
+# M5Stack StickC-Plus SE (K016-P-SE): every component, every pin and the net it
+# is on, as the vendor's published schematic shows them, with the Kleidos
+# additions and corrections listed under "kleidos" (each with its source,
+# marked on the drawing and listed on page 1). Facts only: what connects where
+# and through what. The drawing in this folder (m5stickc-plus-se.kicad_sch) is
+# generated from this file; README.md says how, and how the two are checked
+# against each other.
+#
+# Read from: the one printed page of the PDF below (a "Microsoft: Print To PDF"
+# print, which carries no netlist), at 450 to 2400 dpi. Every connection and
+# value here is what that page draws and prints, except the entries under
+# "kleidos", each from a datasheet, the vendor's docs page or a bench record
+# (source.also_read); nothing is taken from other boards.
+#
+# Conventions:
+# - pins are the vendor's pin numbers where the print gives them; where it
+#   gives none, they are ours: "1" and "2" for resistors, capacitors,
+#   inductors, the crystal, the keys and the two-pin connectors (the order does
+#   not matter; on the polarised capacitors CX1 and CX2, "1" is the +
+#   terminal), "1" (cathode) and "2" (anode) for the diodes and LEDs, as
+#   KiCad numbers them, "G", "D", "S" for the MOSFETs,
+#   and the pin's printed name (VCC, GND, SHELL, PAD) where only a name is
+#   printed;
+# - net names are the vendor's; a net the print leaves unnamed gets a name of
+#   ours, listed under "unnamed_nets";
+# - NC is a pin the print leaves unconnected (a stub with nothing on it, or
+#   crossed out);
+# - two wires that cross without a junction dot are not connected: that is how
+#   the print draws a crossing, and how it is read here (see U1 pins 4 and 19,
+#   U6 pin 20);
+# - "block" is the titled frame of the print the part sits in.
+
+board: m5stickc-plus-se
+source:
+  title: StickC-Plus SE schematic (K016-P-SE-SCH), one A4 sheet
+  url: https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1234/K016-P-SE-SCH_StickC-Plus-SE_SCH.pdf
+  listed_at: https://docs.m5stack.com/en/core/StickC-Plus_SE
+  read_from: https://web.archive.org/web/20260831122432/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1234/K016-P-SE-SCH_StickC-Plus-SE_SCH.pdf
+  read_note: The vendor's file host timed out from the machine that wrote this file on 2026-11-17; the Wayback Machine copy (captured 2026-08-31) was read instead.
+  sha256: 49be11fda8fa216cdd316a16db4a2eca30b6654f284c0aca52a465cbdea6c46f
+  version: The print states no revision or date of its own; the PDF was printed on 2025-11-04 (its metadata, "Schematic Prints", Microsoft Print To PDF). It carries the revision note "IMU (MPU6886) was removed in version SE and only exists in versions V1.1 and earlier."
+  checked: 2026-11-17
+  pages:
+    1: The whole board on one A4 sheet, in titled blocks (PMU, ESP32-PICO, IMU, RTC, CH552, USB TYPE-C, GP0/EN/UART, LED/IR, 5VOUT_BOOST, IPS_LCD, GROVE, I2S_MIC) and untitled ones (the battery and backup-cell connectors, the pads, the series resistors and ESD diodes of the pads, the keys, R401/C401)
+  also_read:
+    - url: https://docs.m5stack.switch-science.com/en/core/StickC-Plus_SE
+      mirror_of: https://docs.m5stack.com/en/core/StickC-Plus_SE
+      used_for: Which schematic is the board's (the docs page links it); the LCD (1.14-inch, 135 x 240, ST7789v2 driver), the HY2.0-4P port, the 3.7 V 120 mAh cell and the 4.8-5.5 V input range of VBUS_VIN and VBUS_USB (K2 to K5)
+      checked: 2026-11-17
+    - url: https://github.com/m5stack/M5Unified/blob/96576a14247ddc935149145aa6b51943464120f1/src/utility/power/AXP192_Class.hpp
+      used_for: The AXP192's I2C address (DEFAULT_ADDRESS = 0x34), with the bench scan (K23)
+      checked: 2026-11-16
+    - url: https://web.archive.org/web/20261031011628/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/BM8563_V1.1_cn.pdf
+      title: BM8563 real-time clock datasheet V1.1 (Shanghai Belling), as M5Stack hosts it (board.json bm8563-datasheet)
+      sha256: a847c85a8d00121c1338c62797039fa1412d70588873313bd1759c80d4da44ed
+      used_for: The I2C address (p. 1, write A2h, read A3h, that is 0x51) and the open-drain INT output (p. 2, pin 3) (K24, K25)
+      checked: 2026-11-17
+    - url: https://www.espressif.com/sites/default/files/documentation/esp32-pico_series_datasheet_en.pdf
+      title: ESP32-PICO Series Datasheet v1.5 (Espressif), "ESP32-PICO v1.5" in the entries (board.json esp32-pico-datasheet)
+      sha256: 177eb1517274eea5056ce725951091ebe8e2bce1d8635f064081fdad1cec0918
+      used_for: The four package pins the vendor's symbol leaves out (Table 2, p. 15), the in-package flash's pins (Table 3, p. 16), the strapping pins and their internal pulls (Table 8, p. 23; 3.1, p. 24; 3.2, p. 25), the input-only pins (Table 2 notes, p. 13) (K9 to K22)
+      checked: 2026-11-17
+    - url: https://web.archive.org/web/20240404213535/https://wch-ic.com/downloads/file/309.html
+      title: WCH CH552 datasheet V1G (the Wayback Machine's capture of 2024-04-04)
+      sha256: fcccd350a578416d189bdbee175609dae03210261a5c4491b9b17b71d0a7a5d2
+      used_for: The CH552T's TSSOP20 pin names, pin 10 P3.0 (section 4, p. 4) (K1)
+      checked: 2026-11-17
+    - url: https://web.archive.org/web/20261031011628/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/AXP192_datasheet_en.pdf
+      title: AXP192 datasheet summary, Revision 1.0 (X-Powers), four pages, as M5Stack hosts it (board.json axp192-datasheet)
+      used_for: The LDO2, LDO3 and LDOIO0 ranges, 1.8-3.3 V in 100 mV steps (p. 1, features) (K6 to K8)
+      checked: 2026-11-17
+    - url: https://github.com/m5stack/M5-Schematic/blob/master/Core/AXP192%20Datasheet_v1.1_en_draft_2211.pdf
+      title: AXP192 datasheet, revision 1.1, English draft (X-Powers), in M5Stack's M5-Schematic repository (board.json axp192-datasheet-full)
+      sha256: b15b800222b91480ab3ab9a73dacdea1ef2643598d11358913532cf02e0183f0
+      used_for: N_VBUSEN, pin 6 (p. 17, and the VBUS selection table, p. 23), beside the bench record (K27)
+      checked: 2026-11-17
+    - url: https://web.archive.org/web/20261031011628/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/MPU-6886-000193%2Bv1.1_GHIC_en.pdf
+      title: MPU-6886 datasheet DS-000193 v1.1 (TDK InvenSense), as M5Stack hosts it
+      sha256: 6751256f22f10afc7bbd1cdfd2c2d20ecffedddad364cea4973f8a84b13634bb
+      used_for: The pin names of the unfitted footprint U7 (Table 9, p. 17) (K28)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-i2c-scan.md
+      used_for: The bus answers at 0x34 and 0x51 only, nothing at 0x68 or 0x69 (K23, K24)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-rtc-int-power-key.md
+      used_for: A BM8563 countdown presses the power key through C401 (GPIO35 stays high) and powers the board on from an AXP192 power-off (K26)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-gpio27-n-vbusen.md
+      used_for: GPIO27 high shuts VBUS out of the AXP192; low, through R21, lets it in (K27)
+      checked: 2026-11-17
+    - path: bench/2026-11-17-gpio2-buzzer.md
+      used_for: GPIO2 has no DC load and a tone on it changes the draw by nothing resolvable; not an entry, the buzzer stays open
+      checked: 2026-11-17
+
+unnamed_nets:   # nets the print draws but does not name, with the names used here
+  RF_LNA: U1 pin 2 (LNA_IN), C2 and L1, the module side of the antenna match
+  ANT_FEED: L1, C1 and the antenna E1
+  AXP_LX1: U2 pin 45 (LX1) and L2
+  AXP_BIAS: U2 pin 24 (BIAS) and R5
+  AXP_VREF: U2 pin 25 (VREF) and C16
+  AXP_VINT: U2 pin 26 (VINT) and C10
+  RTC_OSCI: U4 pin 1 (OSCI), Y1 and C12
+  RTC_OSCO: U4 pin 2 (OSCO), Y1 and C9
+  BOOST_SW: U8 pin 1 (SW) and L4
+  CH552_V33: U6 pin 20 (V33) and C25
+  MOS1_G: the gate of MOS1, between R103 and R104
+  MOS1_D: the drain of MOS1 and R108
+  MOS2_G: the gate of MOS2, between R101 and R102
+  MOS2_D: the drain of MOS2 and R109
+  USB_CC1: J2 A5 (CC1) and R13
+  USB_CC2: J2 B5 (CC2) and R19
+  U1_VDD3P3_RTC: U1 pin 19 (VDD3P3_RTC) and C40; its wire crosses the VESP_3V3 bar with no junction dot
+  U1_VDDA3P3_4: U1 pin 4 (VDDA3P3) and C43; its wire crosses the VESP_3V3 bar with no junction dot
+
+rails:   # nominal: the voltage the net's name or the part states (3V3, 5V, -5.0), USB's 5 V;
+         # where the print states none, the vendor's docs page or the AXP192's datasheet
+         # (K4 to K8), or "not printed" (LDO1's output, RTC_VDD)
+  VBUS_USB:
+    nominal: "5 V"
+    from: J2
+    what: "USB-C VBUS (J2 VCC), C4 10uF; the AXP192's VBUS input (pin 31). Also the CH552T's supply (VCC pin 19, P3.2 pin 1, C27) and the gate dividers of MOS1 and MOS2 (R103/R104, R101/R102)."
+  VBUS_VIN:
+    nominal: "5 V (4.8-5.5 V)"
+    from: PAD6
+    what: "Pad PAD6 (VIN): the AXP192's ACIN input (pins 32, 33). The docs page limits VBUS_VIN and VBUS_USB to 4.8-5.5 V (K5)."
+  VBAT_Li_Ion:
+    nominal: "3.7 V, 120 mAh cell"
+    from: J3
+    what: "The battery connector (printed Li_Ion), C3 10uF; the AXP192's BAT pins (34, 35), whose TS pin (37) is on GND. The cell is the docs page's built-in 3.7 V 120 mAh lithium battery (K4)."
+  VBAT_RTC:
+    nominal: "backup cell"
+    from: BAT1
+    what: "BAT1 (DMS_3R3) on the AXP192's BACKUP input (pin 30)."
+  IPSOUT:
+    nominal: "input or cell"
+    from: U2
+    what: "AXP192 IPSOUT (pins 38, 39), its power-path output, with C24 and C30 100nF, C23 10uF, CX2 10uF/6.3V and C13 220nF (on APS). Feeds the AXP192's VIN1, VIN2, VIN3, LDOIN and APS, the SGM6603 boost U8 through L4, and R401."
+  VESP_3V3:
+    nominal: "3.3 V"
+    from: U2
+    what: "AXP192 DCDC1: LX1 (pin 45) through L2 2.2uH, sensed at DCDC1 (pin 47); C5 10uF and CX1 100uF/4V. Supplies the ESP32-PICO-D4, the pull-ups, the IR and red LEDs, the unfitted IMU footprint and pad PAD1 (3V3)."
+  RTC_VDD:
+    nominal: "not printed"
+    from: U2
+    what: "AXP192 LDO1 (pin 28), also on its SYSEN (pin 29); C11 1uF. Supplies the BM8563 (U4)."
+  LCD_BL_VCC:
+    nominal: "1.8-3.3 V, set over I2C"
+    from: U2
+    what: "AXP192 LDO2 (pin 12), C15 and C18 1uF. The LCD backlight (U5 LEDA); its voltage sets the brightness (K6)."
+  LCD_LOGIC_VCC:
+    nominal: "1.8-3.3 V, set over I2C"
+    from: U2
+    what: "AXP192 LDO3 (pin 11), C20 1uF. The LCD's logic supply (U5 VDD); its range is K7, and both M5Unified (src/utility/Power_Class.inl:1238 at 96576a1) and the Kleidos firmware (src/drivers/power/axp192.cpp, axp192::kLdo3Code3V0) set it to 3.0 V."
+  MIC_VCC:
+    nominal: "1.8-3.3 V, set over I2C"
+    from: U2
+    what: "AXP192 GPIO0 (pin 19) as LDOIO0, C8 1nF and C7 1uF. The microphone's supply (U3 VCC) (K8)."
+  EXT_VDD:
+    nominal: "5 V"
+    from: U8
+    what: "U8 SGM6603-5.0 boost (block 5VOUT_BOOST) from IPSOUT; C36 100nF, C45 and C46 10uF. The Grove port's 5 V (J1 pin 2, C37 10uF) and pad PAD7 (5VOUT)."
+    enable: "EXT_BOOST_EN (AXP192 EXTEN, pin 40), R18 100K to GND"
+
+i2c:
+  bus: {sda: SYS_SDA (GPIO21), scl: SYS_SCL (GPIO22), pullups: "R4 (SDA) and R3 (SCL), 2.2K to VESP_3V3"}
+  devices:
+    - {ref: U2, part: AXP192, address: "0x34", source: "not printed: K23, M5Unified AXP192_Class.hpp DEFAULT_ADDRESS and the bench scan of 2026-11-17"}
+    - {ref: U4, part: BM8563, address: "0x51", source: "not printed: K24, the BM8563 datasheet V1.1, p. 1 (write A2h, read A3h), and the bench scan of 2026-11-17"}
+  also_on_bus: U7, the IMU footprint the SE leaves unfitted (pins 24 SDA, 23 SCL)
+  interrupt: SYS_INT (GPIO35), the AXP192's IRQ (pin 48), R2 2.2K to VESP_3V3; also U7 pin 12
+
+esp32_gpio:   # module pin -> GPIO, net, what it does (U1)
+  GPIO0: {pin: 23, net: GPIO0, what: "boot strap: internal pull-up and R12 1K to VESP_3V3; low at reset (with GPIO2 low) enters download boot. Microphone CLK; MOS1 (USB auto-boot) through R108; PAD5 through R106"}
+  GPIO1: {pin: 41, net: ESP32_U0TXD, what: "UART0 TX, to the CH552T through R25 100R"}
+  GPIO2: {pin: 22, net: GPIO2, what: "PAD2; boot strap: internal pull-down, low at reset with GPIO0 low for download boot"}
+  GPIO3: {pin: 40, net: ESP32_U0RXD, what: "UART0 RX, from the CH552T through R24 100R"}
+  GPIO4: {pin: 24, net: "NC"}
+  GPIO5: {pin: 34, net: LCD_CS, what: "LCD chip select; boot strap: internal pull-up (SDIO slave timing)"}
+  GPIO6: {pin: 31, net: "NC"}
+  GPIO7: {pin: 32, net: "NC"}
+  GPIO8: {pin: 33, net: "NC"}
+  GPIO9: {pin: 28, net: GPIO9, what: "IR LED LED1 cathode (lit while low); ESD D6"}
+  GPIO10: {pin: 29, net: GPIO10, what: "red LED LED2 cathode (lit while low); ESD D7"}
+  GPIO11: {pin: 30, net: "NC"}
+  GPIO12: {pin: 18, net: "NC"}
+  GPIO13: {pin: 20, net: LCD_SCK, what: LCD SPI clock}
+  GPIO14: {pin: 17, net: "NC"}
+  GPIO15: {pin: 21, net: LCD_MOSI, what: "LCD SPI data; boot strap MTDO: internal pull-up, low at reset silences the boot log"}
+  GPIO16: {pin: 25, net: "NC"}
+  GPIO17: {pin: 27, net: "NC"}
+  GPIO18: {pin: 35, net: LCD_RST, what: "LCD reset; R14 5.1K to VESP_3V3"}
+  GPIO19: {pin: 38, net: "NC"}
+  GPIO21: {pin: 42, net: SYS_SDA, what: "I2C SDA (AXP192, BM8563)"}
+  GPIO22: {pin: 39, net: SYS_SCL, what: "I2C SCL (AXP192, BM8563)"}
+  GPIO23: {pin: 36, net: LCD_DC, what: LCD data/command (RS)}
+  GPIO25: {pin: 14, net: GPIO25, what: PAD10}
+  GPIO26: {pin: 15, net: GPIO26, what: "PAD9 through R105 22R; ESD D14"}
+  GPIO27: {pin: 16, net: GPIO27, what: "AXP192 N_VBUSEN (pin 6), active low while REG30H bit 7 is 0: low (R21 10K to GND) lets VBUS in, high shuts it out"}
+  GPIO32: {pin: 12, net: GPIO32, what: "Grove J1 pin 3; ESD D1"}
+  GPIO33: {pin: 13, net: GPIO33, what: "Grove J1 pin 4; ESD D2"}
+  GPIO34: {pin: 10, net: GPIO34, what: microphone DATA}
+  GPIO35: {pin: 11, net: SYS_INT, what: "AXP192 IRQ (pin 48); R2 2.2K to VESP_3V3"}
+  GPIO36: {pin: 5, net: GPIO36, what: "PAD4 through R107 22R; ESD D16. Input only, no internal pull; no resistor on the board pulls it"}
+  GPIO37: {pin: 6, net: GPIO37, what: "button A (S3) to GND; R20 10K to VESP_3V3"}
+  GPIO38: {pin: 7, net: GPIO38, what: "PAD3. Input only, no internal pull; nothing on the board pulls it"}
+  GPIO39: {pin: 8, net: GPIO39, what: "button B (S2) to GND; R11 5.1K to VESP_3V3; ESD D8"}
+
+pmic_gpio:   # AXP192 (U2) GPIOs as the print wires them ("AXP" keeps them apart from the ESP32's GPIO nets)
+  AXP GPIO0: {pin: 19, net: MIC_VCC}
+  AXP GPIO1: {pin: 18, net: "NC"}
+  AXP GPIO2: {pin: 20, net: "NC"}
+  AXP GPIO3: {pin: 41, net: "NC"}
+  AXP GPIO4: {pin: 42, net: "NC"}
+
+pulls:   # every resistor with one end on a rail or ground and the other on a signal
+  - {signal: SYS_INT, up: VESP_3V3, via: R2, value: 2.2K}
+  - {signal: SYS_SCL, up: VESP_3V3, via: R3, value: 2.2K}
+  - {signal: SYS_SDA, up: VESP_3V3, via: R4, value: 2.2K}
+  - {signal: AXP_BIAS, down: GND, via: R5, value: 200K}
+  - {signal: ESP32_EN, up: VESP_3V3, via: R8, value: 5.1K}
+  - {signal: GPIO39, up: VESP_3V3, via: R11, value: 5.1K}
+  - {signal: GPIO0, up: VESP_3V3, via: R12, value: 1K}
+  - {signal: USB_CC1, down: GND, via: R13, value: 5.1K}
+  - {signal: LCD_RST, up: VESP_3V3, via: R14, value: 5.1K}
+  - {signal: EXT_BOOST_EN, down: GND, via: R18, value: 100K}
+  - {signal: USB_CC2, down: GND, via: R19, value: 5.1K}
+  - {signal: GPIO37, up: VESP_3V3, via: R20, value: 10K}
+  - {signal: GPIO27, down: GND, via: R21, value: 10K}
+  - {signal: MOS2_G, up: VBUS_USB, via: R101, value: 1K}
+  - {signal: MOS2_G, down: GND, via: R102, value: 1K}
+  - {signal: MOS1_G, up: VBUS_USB, via: R103, value: 1K}
+  - {signal: MOS1_G, down: GND, via: R104, value: 1K}
+  - {signal: RTC_INT, up: IPSOUT, via: R401, value: 10K}
+
+components:
+  BAT1:
+    value: DMS_3R3
+    page: 1
+    block: "(backup cell)"
+    pins:
+      "1": VBAT_RTC
+      "2": GND
+  C1:
+    value: "1.2pF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": ANT_FEED
+      "2": GND
+  C2:
+    value: "1.5pF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": RF_LNA
+      "2": GND
+  C3:
+    value: "10uF"
+    page: 1
+    block: PMU
+    pins:
+      "1": VBAT_Li_Ion
+      "2": GND
+  C4:
+    value: "10uF"
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": VBUS_USB
+      "2": GND
+  C5:
+    value: "10uF"
+    page: 1
+    block: PMU
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C7:
+    value: "1uF"
+    page: 1
+    block: I2S_MIC
+    pins:
+      "1": MIC_VCC
+      "2": GND
+  C8:
+    value: "1nF"
+    page: 1
+    block: PMU
+    pins:
+      "1": MIC_VCC
+      "2": GND
+  C9:
+    value: "6pF"
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_OSCO
+      "2": GND
+  C10:
+    value: "1uF"
+    page: 1
+    block: PMU
+    pins:
+      "1": AXP_VINT
+      "2": GND
+  C11:
+    value: "1uF"
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_VDD
+      "2": GND
+  C12:
+    value: "6pF"
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_OSCI
+      "2": GND
+  C13:
+    value: "220nF"
+    page: 1
+    block: PMU
+    pins:
+      "1": IPSOUT
+      "2": GND
+  C15:
+    value: "1uF"
+    page: 1
+    block: PMU
+    pins:
+      "1": LCD_BL_VCC
+      "2": GND
+  C16:
+    value: "1uF"
+    page: 1
+    block: PMU
+    pins:
+      "1": AXP_VREF
+      "2": GND
+  C18:
+    value: "1uF"
+    page: 1
+    block: IPS_LCD
+    pins:
+      "1": LCD_BL_VCC
+      "2": GND
+  C20:
+    value: "1uF"
+    page: 1
+    block: PMU
+    pins:
+      "1": LCD_LOGIC_VCC
+      "2": GND
+  C21:
+    value: "NC"
+    page: 1
+    block: IMU
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C23:
+    value: "10uF"
+    page: 1
+    block: PMU
+    pins:
+      "1": IPSOUT
+      "2": GND
+  C24:
+    value: "100nF"
+    page: 1
+    block: PMU
+    pins:
+      "1": IPSOUT
+      "2": GND
+  C25:
+    value: "100nF"
+    page: 1
+    block: CH552
+    pins:
+      "1": CH552_V33
+      "2": GND
+  C27:
+    value: "100nF"
+    page: 1
+    block: CH552
+    pins:
+      "1": VBUS_USB
+      "2": GND
+  C28:
+    value: "NC"
+    page: 1
+    block: IMU
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C29:
+    value: "NC"
+    page: 1
+    block: IMU
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C30:
+    value: "100nF"
+    page: 1
+    block: PMU
+    pins:
+      "1": IPSOUT
+      "2": GND
+  C36:
+    value: "100nF"
+    page: 1
+    block: "5VOUT_BOOST"
+    pins:
+      "1": EXT_VDD
+      "2": GND
+  C37:
+    value: "10uF"
+    page: 1
+    block: GROVE
+    pins:
+      "1": EXT_VDD
+      "2": GND
+  C38:
+    value: "100nF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C39:
+    value: "100nF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C40:
+    value: "100nF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": U1_VDD3P3_RTC
+      "2": GND
+  C41:
+    value: "100nF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C42:
+    value: "100nF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C43:
+    value: "100nF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": U1_VDDA3P3_4
+      "2": GND
+  C44:
+    value: "10uF"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  C45:
+    value: "10uF"
+    page: 1
+    block: "5VOUT_BOOST"
+    pins:
+      "1": EXT_VDD
+      "2": GND
+  C46:
+    value: "10uF"
+    page: 1
+    block: "5VOUT_BOOST"
+    pins:
+      "1": EXT_VDD
+      "2": GND
+  C401:
+    value: "106/6.3V"
+    page: 1
+    block: "(below the blocks)"
+    pins:
+      "1": RTC_INT
+      "2": PWR_KEY
+  CX1:
+    value: "100uF/4V"
+    page: 1
+    block: PMU
+    note: "Polarised: pin 1 is the + terminal."
+    pins:
+      "1": VESP_3V3
+      "2": GND
+  CX2:
+    value: "10uF/6.3V"
+    page: 1
+    block: PMU
+    note: "Polarised: pin 1 is the + terminal."
+    pins:
+      "1": IPSOUT
+      "2": GND
+  D1:
+    value: ESD/3.3V
+    page: 1
+    block: GROVE
+    pins:
+      "1": GPIO32
+      "2": GND
+  D2:
+    value: ESD/3.3V
+    page: 1
+    block: GROVE
+    pins:
+      "1": GPIO33
+      "2": GND
+  D3:
+    value: ESD/3.3V
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_DP
+      "2": GND
+  D4:
+    value: ESD/3.3V
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_DM
+      "2": GND
+  D6:
+    value: ESD/3.3V
+    page: 1
+    block: LED/IR
+    pins:
+      "1": GPIO9
+      "2": GND
+  D7:
+    value: ESD/3.3V
+    page: 1
+    block: LED/IR
+    pins:
+      "1": GPIO10
+      "2": GND
+  D8:
+    value: ESD/3.3V
+    page: 1
+    block: "(unnamed: keys)"
+    pins:
+      "1": GPIO39
+      "2": GND
+  D13:
+    value: ESD/3.3V
+    page: 1
+    block: "(unnamed: keys)"
+    pins:
+      "1": PWR_KEY
+      "2": GND
+  D14:
+    value: ESD/3.3V
+    page: 1
+    block: "(unnamed: series resistors and ESD)"
+    pins:
+      "1": GPIO26
+      "2": GND
+  D15:
+    value: ESD/3.3V
+    page: 1
+    block: "(unnamed: series resistors and ESD)"
+    pins:
+      "1": GPIO0
+      "2": GND
+  D16:
+    value: ESD/3.3V
+    page: 1
+    block: "(unnamed: series resistors and ESD)"
+    pins:
+      "1": GPIO36
+      "2": GND
+  E1:
+    value: ANT
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": ANT_FEED
+  J1:
+    value: GROVE
+    page: 1
+    block: GROVE
+    note: "The docs page names the port HY2.0-4P (PORT.CUSTOM): GND, 5V, G32, G33 (K3)."
+    pins:
+      "1": GND
+      "2": EXT_VDD
+      "3": GPIO32
+      "4": GPIO33
+  J2:
+    value: TYPEC
+    page: 1
+    block: "USB TYPE-C"
+    note: "The print numbers only the CC and data pins; VCC, GND and SHELL are keyed by their names."
+    pins:
+      "A5": USB_CC1   # CC1
+      "A6": USB_DP   # DP1
+      "A7": USB_DM   # DN1
+      "B5": USB_CC2   # CC2
+      "B6": USB_DP   # DP2
+      "B7": USB_DM   # DN2
+      "GND": GND   # GND
+      "SHELL": GND   # SHELL
+      "VCC": VBUS_USB   # VCC
+  J3:
+    value: Li_Ion
+    page: 1
+    block: "(battery)"
+    note: "The battery connector: the print labels it \"Li_Ion\" and gives it no designator; J3 is ours."
+    pins:
+      "1": VBAT_Li_Ion
+      "2": GND
+  L1:
+    value: "1.8nH/HQ"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": RF_LNA
+      "2": ANT_FEED
+  L2:
+    value: "2.2uH"
+    page: 1
+    block: PMU
+    pins:
+      "1": AXP_LX1
+      "2": VESP_3V3
+  L4:
+    value: "4.7uH"
+    page: 1
+    block: "5VOUT_BOOST"
+    pins:
+      "1": IPSOUT
+      "2": BOOST_SW
+  LED1:
+    value: LED_IR
+    page: 1
+    block: LED/IR
+    pins:
+      "1": GPIO9
+      "2": VESP_3V3
+  LED2:
+    value: LED_RED
+    page: 1
+    block: LED/IR
+    pins:
+      "1": GPIO10
+      "2": VESP_3V3
+  MOS1:
+    value: CJ2302
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "D": MOS1_D
+      "G": MOS1_G
+      "S": CH552_GP0_CTRL
+  MOS2:
+    value: CJ2302
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "D": MOS2_D
+      "G": MOS2_G
+      "S": CH552_EN_CTRL
+  PAD1:
+    value: "3V3"
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": VESP_3V3
+  PAD2:
+    value: GPIO2
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": GPIO2
+  PAD3:
+    value: GPIO38
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": GPIO38
+  PAD4:
+    value: GPIO36
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": GPIO36_EXT
+  PAD5:
+    value: GPIO0
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": GPIO0_EXT
+  PAD6:
+    value: VIN
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": VBUS_VIN
+  PAD7:
+    value: "5VOUT"
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": EXT_VDD
+  PAD8:
+    value: GND
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": GND
+  PAD9:
+    value: GPIO26
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": GPIO26_EXT
+  PAD10:
+    value: GPIO25
+    page: 1
+    block: "(pads)"
+    pins:
+      "1": GPIO25
+  R2:
+    value: "2.2K"
+    page: 1
+    block: PMU
+    pins:
+      "1": VESP_3V3
+      "2": SYS_INT
+  R3:
+    value: "2.2K"
+    page: 1
+    block: PMU
+    pins:
+      "1": VESP_3V3
+      "2": SYS_SCL
+  R4:
+    value: "2.2K"
+    page: 1
+    block: PMU
+    pins:
+      "1": VESP_3V3
+      "2": SYS_SDA
+  R5:
+    value: "200K"
+    page: 1
+    block: PMU
+    pins:
+      "1": AXP_BIAS
+      "2": GND
+  R8:
+    value: "5.1K"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": ESP32_EN
+  R11:
+    value: "5.1K"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GPIO39
+  R12:
+    value: "1K"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GPIO0
+  R13:
+    value: "5.1K"
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_CC1
+      "2": GND
+  R14:
+    value: "5.1K"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": LCD_RST
+  R18:
+    value: "100K"
+    page: 1
+    block: "5VOUT_BOOST"
+    pins:
+      "1": EXT_BOOST_EN
+      "2": GND
+  R19:
+    value: "5.1K"
+    page: 1
+    block: "USB TYPE-C"
+    pins:
+      "1": USB_CC2
+      "2": GND
+  R20:
+    value: "10K"
+    page: 1
+    block: ESP32-PICO
+    pins:
+      "1": VESP_3V3
+      "2": GPIO37
+  R21:
+    value: "10K"
+    page: 1
+    block: PMU
+    pins:
+      "1": GPIO27
+      "2": GND
+  R24:
+    value: "100R"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": ESP32_U0RXD
+      "2": CH552_TXD
+  R25:
+    value: "100R"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": ESP32_U0TXD
+      "2": CH552_RXD
+  R101:
+    value: "1K"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": VBUS_USB
+      "2": MOS2_G
+  R102:
+    value: "1K"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": MOS2_G
+      "2": GND
+  R103:
+    value: "1K"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": VBUS_USB
+      "2": MOS1_G
+  R104:
+    value: "1K"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": MOS1_G
+      "2": GND
+  R105:
+    value: "22R"
+    page: 1
+    block: "(unnamed: series resistors and ESD)"
+    pins:
+      "1": GPIO26_EXT
+      "2": GPIO26
+  R106:
+    value: "22R"
+    page: 1
+    block: "(unnamed: series resistors and ESD)"
+    pins:
+      "1": GPIO0_EXT
+      "2": GPIO0
+  R107:
+    value: "22R"
+    page: 1
+    block: "(unnamed: series resistors and ESD)"
+    pins:
+      "1": GPIO36_EXT
+      "2": GPIO36
+  R108:
+    value: "22R"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": GPIO0
+      "2": MOS1_D
+  R109:
+    value: "2.2K"
+    page: 1
+    block: GP0/EN/UART
+    pins:
+      "1": ESP32_EN
+      "2": MOS2_D
+  R401:
+    value: "10K"
+    page: 1
+    block: "(below the blocks)"
+    pins:
+      "1": IPSOUT
+      "2": RTC_INT
+  S1:
+    value: TS_015
+    page: 1
+    block: "(unnamed: keys)"
+    note: "Labelled POWER."
+    pins:
+      "1": PWR_KEY
+      "2": GND
+  S2:
+    value: TS_015
+    page: 1
+    block: "(unnamed: keys)"
+    note: "Labelled BUTTONB."
+    pins:
+      "1": GPIO39
+      "2": GND
+  S3:
+    value: PTS_820
+    page: 1
+    block: "(unnamed: keys)"
+    note: "Labelled BUTTONA."
+    pins:
+      "1": GPIO37
+      "2": GND
+  U1:
+    value: PICO_D4
+    page: 1
+    block: ESP32-PICO
+    note: "The print leaves the module's designator unassigned (\"U?\"); U1 is ours. The vendor's symbol shows 45 of the package's 49 pins; 44, 45, 47 and 48, which the datasheet lists as not connected, are drawn here unconnected (K9)."
+    pins:
+      "1": VESP_3V3   # VDDA
+      "2": RF_LNA   # LNA_IN
+      "3": VESP_3V3   # VDDA3P3
+      "4": U1_VDDA3P3_4   # VDDA3P3
+      "5": GPIO36   # IO36
+      "6": GPIO37   # IO37
+      "7": GPIO38   # IO38
+      "8": GPIO39   # IO39
+      "9": ESP32_EN   # EN
+      "10": GPIO34   # IO34
+      "11": SYS_INT   # IO35
+      "12": GPIO32   # IO32
+      "13": GPIO33   # IO33
+      "14": GPIO25   # IO25
+      "15": GPIO26   # IO26
+      "16": GPIO27   # IO27
+      "17": "NC"   # IO14
+      "18": "NC"   # IO12, the MTDI strap: its internal pull-down powers VDD_SDIO from VDD3P3_RTC (K19)
+      "19": U1_VDD3P3_RTC   # VDD3P3_RTC
+      "20": LCD_SCK   # IO13
+      "21": LCD_MOSI   # IO15
+      "22": GPIO2   # IO2
+      "23": GPIO0   # IO0
+      "24": "NC"   # IO4
+      "25": "NC"   # IO16, the in-package flash's CS (K14)
+      "26": "NC"   # VDD_SDIO
+      "27": "NC"   # IO17, the in-package flash's SO/SIO1 (K15)
+      "28": GPIO9   # IO9/SD2
+      "29": GPIO10   # IO10/SD3
+      "30": "NC"   # IO11/CMD, the in-package flash's HOLD/SIO3 (K13)
+      "31": "NC"   # IO6/CLK, the in-package flash's CLK (K10)
+      "32": "NC"   # IO7/SD0, the in-package flash's WP/SIO2 (K11)
+      "33": "NC"   # IO8/SD1, the in-package flash's SI/SIO0 (K12)
+      "34": LCD_CS   # IO5
+      "35": LCD_RST   # IO18
+      "36": LCD_DC   # IO23
+      "37": VESP_3V3   # VDD3P3_CPU
+      "38": "NC"   # IO19
+      "39": SYS_SCL   # IO22
+      "40": ESP32_U0RXD   # IO3/U0RXD
+      "41": ESP32_U0TXD   # IO1/U0TXD
+      "42": SYS_SDA   # IO21
+      "43": VESP_3V3   # VDDA
+      "44": "NC"   # XTAL_N_NC (not on the vendor's symbol; K9)
+      "45": "NC"   # XTAL_P_NC (not on the vendor's symbol; K9)
+      "46": VESP_3V3   # VDDA
+      "47": "NC"   # CAP2_NC (not on the vendor's symbol; K9)
+      "48": "NC"   # CAP1_NC (not on the vendor's symbol; K9)
+      "49": GND   # PAD
+  U2:
+    value: AXP192
+    page: 1
+    block: PMU
+    pins:
+      "1": SYS_SDA   # SDA
+      "2": SYS_SCL   # SCK
+      "3": "NC"   # N_RSTO
+      "4": GND   # N_OE
+      "5": ESP32_EN   # PWROK
+      "6": GPIO27   # N_VBUSEN
+      "7": IPSOUT   # VIN2
+      "8": "NC"   # LX2
+      "9": GND   # PGND2
+      "10": "NC"   # DCDC2
+      "11": LCD_LOGIC_VCC   # LDO3
+      "12": LCD_BL_VCC   # LDO2
+      "13": IPSOUT   # LDOIN
+      "14": IPSOUT   # VIN3
+      "15": "NC"   # LX3
+      "16": GND   # PGND3
+      "17": "NC"   # DCDC3
+      "18": "NC"   # GPIO1
+      "19": MIC_VCC   # GPIO0
+      "20": "NC"   # GPIO2
+      "21": IPSOUT   # APS
+      "22": GND   # AGND
+      "23": PWR_KEY   # PWRON
+      "24": AXP_BIAS   # BIAS
+      "25": AXP_VREF   # VREF
+      "26": AXP_VINT   # VINT
+      "27": "NC"   # PWREN
+      "28": RTC_VDD   # LDO1
+      "29": RTC_VDD   # SYSEN
+      "30": VBAT_RTC   # BACKUP
+      "31": VBUS_USB   # VBUS
+      "32": VBUS_VIN   # ACIN
+      "33": VBUS_VIN   # ACIN
+      "34": VBAT_Li_Ion   # BAT
+      "35": VBAT_Li_Ion   # BAT
+      "36": "NC"   # CHGLED
+      "37": GND   # TS
+      "38": IPSOUT   # IPSOUT
+      "39": IPSOUT   # IPSOUT
+      "40": EXT_BOOST_EN   # EXTEN
+      "41": "NC"   # GPIO3
+      "42": "NC"   # GPIO4
+      "43": "NC"   # NC
+      "44": IPSOUT   # VIN1
+      "45": AXP_LX1   # LX1
+      "46": GND   # PGND1
+      "47": VESP_3V3   # DCDC1
+      "48": SYS_INT   # IRQ
+      "49": GND   # PAD
+  U3:
+    value: SPM1423HM4H-B
+    page: 1
+    block: I2S_MIC
+    pins:
+      "1": GND   # GND
+      "2": GND   # SELECT
+      "3": GND   # GND
+      "4": GPIO0   # CLK
+      "5": GPIO34   # DATA
+      "6": MIC_VCC   # VCC
+  U4:
+    value: BM8563
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_OSCI   # OSCI
+      "2": RTC_OSCO   # OSCO
+      "3": RTC_INT   # INT
+      "4": GND   # VSS
+      "5": SYS_SDA   # SDA
+      "6": SYS_SCL   # SCL
+      "7": "NC"   # CLKOUT
+      "8": RTC_VDD   # VDD
+  U5:
+    value: LCD
+    page: 1
+    block: IPS_LCD
+    note: "The LCD module; the print gives no panel part number. The docs page: a 1.14-inch 135 x 240 colour TFT with an ST7789v2 driver (K2)."
+    pins:
+      "1": LCD_BL_VCC   # LEDA
+      "2": GND   # GND
+      "3": LCD_RST   # RESET
+      "4": LCD_DC   # RS
+      "5": LCD_MOSI   # MOSI
+      "6": LCD_SCK   # SCK
+      "7": LCD_LOGIC_VCC   # VDD
+      "8": LCD_CS   # CS
+      "PAD": GND   # PAD
+  U6:
+    value: CH552T
+    page: 1
+    block: CH552
+    note: "The print names both pin 1 and pin 10 \"P3.2\"; the CH552 datasheet names pin 10 P3.0 (RXD), the name drawn here (K1)."
+    pins:
+      "1": VBUS_USB   # P3.2
+      "2": "NC"   # P1.4
+      "3": "NC"   # P1.5
+      "4": "NC"   # P1.6
+      "5": CH552_GP0_CTRL   # P1.7
+      "6": GND   # RST
+      "7": CH552_EN_CTRL   # P1.0
+      "8": "NC"   # P1.1
+      "9": CH552_TXD   # P3.1
+      "10": CH552_RXD   # P3.0 (printed P3.2; K1)
+      "11": "NC"   # P3.3
+      "12": "NC"   # P3.4
+      "13": "NC"   # P3.5
+      "14": USB_DP   # P3.6
+      "15": USB_DM   # P3.7
+      "16": "NC"   # P1.3
+      "17": "NC"   # P1.2
+      "18": GND   # GND
+      "19": VBUS_USB   # VCC
+      "20": CH552_V33   # V33
+  U7:
+    value: "NC"
+    page: 1
+    block: IMU
+    note: "Not fitted (value NC). The print's revision note: \"IMU (MPU6886) was removed in version SE and only exists in versions V1.1 and earlier.\" The print numbers its pins only; the names drawn are the MPU-6886 datasheet's (K28)."
+    pins:
+      "1": "NC"
+      "2": "NC"
+      "3": "NC"
+      "4": "NC"
+      "5": "NC"
+      "6": "NC"
+      "7": "NC"
+      "8": VESP_3V3
+      "9": GND
+      "10": "NC"
+      "11": "NC"
+      "12": SYS_INT
+      "13": VESP_3V3
+      "14": "NC"
+      "15": "NC"
+      "16": "NC"
+      "17": "NC"
+      "18": GND
+      "19": "NC"
+      "20": "NC"
+      "21": "NC"
+      "22": VESP_3V3
+      "23": SYS_SCL
+      "24": SYS_SDA
+  U8:
+    value: SGM6603-5.0
+    page: 1
+    block: "5VOUT_BOOST"
+    pins:
+      "1": BOOST_SW   # SW
+      "2": GND   # GND
+      "3": EXT_BOOST_EN   # EN
+      "4": "NC"   # NC/FB
+      "5": EXT_VDD   # OUT
+      "6": IPSOUT   # IN
+  Y1:
+    value: "32.768/6PF"
+    page: 1
+    block: RTC
+    pins:
+      "1": RTC_OSCI
+      "2": RTC_OSCO
+
+nets:   # every named net and the pages of the vendor's print it is on (the print is one page)
+  ANT_FEED: {pages: [1], pins: [C1.1, E1.1, L1.2]}
+  AXP_BIAS: {pages: [1], pins: [R5.1, U2.24]}
+  AXP_LX1: {pages: [1], pins: [L2.1, U2.45]}
+  AXP_VINT: {pages: [1], pins: [C10.1, U2.26]}
+  AXP_VREF: {pages: [1], pins: [C16.1, U2.25]}
+  BOOST_SW: {pages: [1], pins: [L4.2, U8.1]}
+  CH552_EN_CTRL: {pages: [1], pins: [MOS2.S, U6.7]}
+  CH552_GP0_CTRL: {pages: [1], pins: [MOS1.S, U6.5]}
+  CH552_RXD: {pages: [1], pins: [R25.2, U6.10]}
+  CH552_TXD: {pages: [1], pins: [R24.2, U6.9]}
+  CH552_V33: {pages: [1], pins: [C25.1, U6.20]}
+  ESP32_EN: {pages: [1], pins: [R8.2, R109.1, U1.9, U2.5]}
+  ESP32_U0RXD: {pages: [1], pins: [R24.1, U1.40]}
+  ESP32_U0TXD: {pages: [1], pins: [R25.1, U1.41]}
+  EXT_BOOST_EN: {pages: [1], pins: [R18.1, U2.40, U8.3]}
+  EXT_VDD: {pages: [1], pins: [C36.1, C37.1, C45.1, C46.1, J1.2, PAD7.1, U8.5]}
+  GND: {pages: [1], pins: [BAT1.2, C1.2, C2.2, C3.2, C4.2, C5.2, C7.2, C8.2, C9.2, C10.2, C11.2, C12.2, C13.2, C15.2, C16.2, C18.2, C20.2, C21.2, C23.2, C24.2, C25.2, C27.2, C28.2, C29.2, C30.2, C36.2, C37.2, C38.2, C39.2, C40.2, C41.2, C42.2, C43.2, C44.2, C45.2, C46.2, CX1.2, CX2.2, D1.2, D2.2, D3.2, D4.2, D6.2, D7.2, D8.2, D13.2, D14.2, D15.2, D16.2, J1.1, J2.GND, J2.SHELL, J3.2, PAD8.1, R5.2, R13.2, R18.2, R19.2, R21.2, R102.2, R104.2, S1.2, S2.2, S3.2, U1.49, U2.4, U2.9, U2.16, U2.22, U2.37, U2.46, U2.49, U3.1, U3.2, U3.3, U4.4, U5.2, U5.PAD, U6.6, U6.18, U7.9, U7.18, U8.2]}
+  GPIO0: {pages: [1], pins: [D15.1, R12.2, R106.2, R108.1, U1.23, U3.4]}
+  GPIO0_EXT: {pages: [1], pins: [PAD5.1, R106.1]}
+  GPIO10: {pages: [1], pins: [D7.1, LED2.1, U1.29]}
+  GPIO2: {pages: [1], pins: [PAD2.1, U1.22]}
+  GPIO25: {pages: [1], pins: [PAD10.1, U1.14]}
+  GPIO26: {pages: [1], pins: [D14.1, R105.2, U1.15]}
+  GPIO26_EXT: {pages: [1], pins: [PAD9.1, R105.1]}
+  GPIO27: {pages: [1], pins: [R21.1, U1.16, U2.6]}
+  GPIO32: {pages: [1], pins: [D1.1, J1.3, U1.12]}
+  GPIO33: {pages: [1], pins: [D2.1, J1.4, U1.13]}
+  GPIO34: {pages: [1], pins: [U1.10, U3.5]}
+  GPIO36: {pages: [1], pins: [D16.1, R107.2, U1.5]}
+  GPIO36_EXT: {pages: [1], pins: [PAD4.1, R107.1]}
+  GPIO37: {pages: [1], pins: [R20.2, S3.1, U1.6]}
+  GPIO38: {pages: [1], pins: [PAD3.1, U1.7]}
+  GPIO39: {pages: [1], pins: [D8.1, R11.2, S2.1, U1.8]}
+  GPIO9: {pages: [1], pins: [D6.1, LED1.1, U1.28]}
+  IPSOUT: {pages: [1], pins: [C13.1, C23.1, C24.1, C30.1, CX2.1, L4.1, R401.1, U2.7, U2.13, U2.14, U2.21, U2.38, U2.39, U2.44, U8.6]}
+  LCD_BL_VCC: {pages: [1], pins: [C15.1, C18.1, U2.12, U5.1]}
+  LCD_CS: {pages: [1], pins: [U1.34, U5.8]}
+  LCD_DC: {pages: [1], pins: [U1.36, U5.4]}
+  LCD_LOGIC_VCC: {pages: [1], pins: [C20.1, U2.11, U5.7]}
+  LCD_MOSI: {pages: [1], pins: [U1.21, U5.5]}
+  LCD_RST: {pages: [1], pins: [R14.2, U1.35, U5.3]}
+  LCD_SCK: {pages: [1], pins: [U1.20, U5.6]}
+  MIC_VCC: {pages: [1], pins: [C7.1, C8.1, U2.19, U3.6]}
+  MOS1_D: {pages: [1], pins: [MOS1.D, R108.2]}
+  MOS1_G: {pages: [1], pins: [MOS1.G, R103.2, R104.1]}
+  MOS2_D: {pages: [1], pins: [MOS2.D, R109.2]}
+  MOS2_G: {pages: [1], pins: [MOS2.G, R101.2, R102.1]}
+  PWR_KEY: {pages: [1], pins: [C401.2, D13.1, S1.1, U2.23]}
+  RF_LNA: {pages: [1], pins: [C2.1, L1.1, U1.2]}
+  RTC_INT: {pages: [1], pins: [C401.1, R401.2, U4.3]}
+  RTC_OSCI: {pages: [1], pins: [C12.1, U4.1, Y1.1]}
+  RTC_OSCO: {pages: [1], pins: [C9.1, U4.2, Y1.2]}
+  RTC_VDD: {pages: [1], pins: [C11.1, U2.28, U2.29, U4.8]}
+  SYS_INT: {pages: [1], pins: [R2.2, U1.11, U2.48, U7.12]}
+  SYS_SCL: {pages: [1], pins: [R3.2, U1.39, U2.2, U4.6, U7.23]}
+  SYS_SDA: {pages: [1], pins: [R4.2, U1.42, U2.1, U4.5, U7.24]}
+  U1_VDD3P3_RTC: {pages: [1], pins: [C40.1, U1.19]}
+  U1_VDDA3P3_4: {pages: [1], pins: [C43.1, U1.4]}
+  USB_CC1: {pages: [1], pins: [J2.A5, R13.1]}
+  USB_CC2: {pages: [1], pins: [J2.B5, R19.1]}
+  USB_DM: {pages: [1], pins: [D4.1, J2.A7, J2.B7, U6.15]}
+  USB_DP: {pages: [1], pins: [D3.1, J2.A6, J2.B6, U6.14]}
+  VBAT_Li_Ion: {pages: [1], pins: [C3.1, J3.1, U2.34, U2.35]}
+  VBAT_RTC: {pages: [1], pins: [BAT1.1, U2.30]}
+  VBUS_USB: {pages: [1], pins: [C4.1, C27.1, J2.VCC, R101.1, R103.1, U2.31, U6.1, U6.19]}
+  VBUS_VIN: {pages: [1], pins: [PAD6.1, U2.32, U2.33]}
+  VESP_3V3: {pages: [1], pins: [C5.1, C21.1, C28.1, C29.1, C38.1, C39.1, C41.1, C42.1, C44.1, CX1.1, L2.2, LED1.2, LED2.2, PAD1.1, R2.1, R3.1, R4.1, R8.1, R11.1, R12.1, R14.1, R20.1, U1.1, U1.3, U1.37, U1.43, U1.46, U2.47, U7.8, U7.13, U7.22]}
+
+kleidos:   # Kleidos additions to and corrections of the vendor's print: each marked on the drawing and listed
+  # on page 1 (docs/models-and-drawings.md, "Schematics"). The documents are cited in full under
+  # source.also_read, a bench path is under this folder, and README.md ("Kleidos additions and
+  # corrections") gives each entry's second sources, kept off the page-1 table for its length;
+  # improvements.md is the triage (T01-T33). K1 T04, K2 T11, K3 T12, K4 T13, K5 T14, K6-K8 T15,
+  # K9 T17, K10-K15 T18, K16-K20 T19, K21-K22 T20, K23 T21, K24 T22, K25 T23, K26 T24, K27 T27,
+  # K28 T28.
+  - id: K1
+    kind: correction
+    what: "U6 pin 10 is P3.0."
+    vendor: "P3.2, like pin 1"
+    element: {pin: U6.10}
+    source:
+      type: datasheet
+      cite: "CH552 V1G, section 4, p. 4, pin 10"
+  - id: K2
+    kind: correction
+    what: "U5: ST7789V2 TFT, 135 x 240."
+    vendor: "LCD"
+    element: {part: U5}
+    source:
+      type: vendor-doc
+      cite: "docs page (2026-11-17), LCD"
+  - id: K3
+    kind: correction
+    what: "J1 is an HY2.0-4P port."
+    vendor: "GROVE"
+    element: {part: J1}
+    source:
+      type: vendor-doc
+      cite: "docs page (2026-11-17), HY2.0-4P"
+  - id: K4
+    kind: addition
+    what: "The cell on J3 is a 3.7 V 120 mAh lithium cell."
+    element: {rail: VBAT_Li_Ion}
+    source:
+      type: vendor-doc
+      cite: "docs page (2026-11-17), Battery"
+  - id: K5
+    kind: addition
+    what: "VBUS_VIN (PAD6, ACIN): 5 V, limited to 4.8-5.5 V."
+    element: {rail: VBUS_VIN}
+    source:
+      type: vendor-doc
+      cite: "docs page (2026-11-17), Hat-Bus"
+  - id: K6
+    kind: addition
+    what: "LCD_BL_VCC (LDO2): 1.8-3.3 V in 100 mV steps, over I2C."
+    element: {rail: LCD_BL_VCC}
+    source:
+      type: datasheet
+      cite: "AXP192 summary rev 1.0, p. 1"
+  - id: K7
+    kind: addition
+    what: "LCD_LOGIC_VCC (LDO3): 1.8-3.3 V in 100 mV steps."
+    element: {rail: LCD_LOGIC_VCC}
+    source:
+      type: datasheet
+      cite: "AXP192 summary rev 1.0, p. 1"
+  - id: K8
+    kind: addition
+    what: "MIC_VCC (LDOIO0): 1.8-3.3 V in 100 mV steps, over I2C."
+    element: {rail: MIC_VCC}
+    source:
+      type: datasheet
+      cite: "AXP192 summary rev 1.0, p. 1"
+  - id: K9
+    kind: correction
+    what: "U1 pins 44, 45, 47, 48: NC."
+    vendor: "omitted"
+    element: {part: U1}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 2, p. 15"
+  - id: K10
+    kind: addition
+    what: "IO6 (CLK) is the in-package flash's CLK."
+    element: {pin: U1.31}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K11
+    kind: addition
+    what: "IO7 (SD0) is the in-package flash's WP/SIO2."
+    element: {pin: U1.32}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K12
+    kind: addition
+    what: "IO8 (SD1) is the in-package flash's SI/SIO0."
+    element: {pin: U1.33}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K13
+    kind: addition
+    what: "IO11 (CMD) is the in-package flash's HOLD/SIO3."
+    element: {pin: U1.30}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K14
+    kind: addition
+    what: "IO16 is the in-package flash's CS."
+    element: {pin: U1.25}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K15
+    kind: addition
+    what: "IO17 is the in-package flash's SO/SIO1."
+    element: {pin: U1.27}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 3, p. 16"
+  - id: K16
+    kind: addition
+    what: "GPIO0: strap, pull-up; low, with GPIO2 low: download."
+    element: {gpio: GPIO0}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"
+  - id: K17
+    kind: addition
+    what: "GPIO2: strap, internal pull-down (download boot)."
+    element: {gpio: GPIO2}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"
+  - id: K18
+    kind: addition
+    what: "GPIO5: strap, internal pull-up (SDIO slave timing)."
+    element: {gpio: GPIO5}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"
+  - id: K19
+    kind: addition
+    what: "IO12: MTDI strap, pull-down: VDD_SDIO from VDD3P3_RTC."
+    element: {pin: U1.18}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8; 3.2, p. 25"
+  - id: K20
+    kind: addition
+    what: "GPIO15: MTDO strap, pull-up; low silences the boot log."
+    element: {gpio: GPIO15}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, Table 8, p. 23"
+  - id: K21
+    kind: addition
+    what: "GPIO36: input only, no internal pull; no pull resistor."
+    element: {gpio: GPIO36}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, p. 13, note 1"
+  - id: K22
+    kind: addition
+    what: "GPIO38: input only, no internal pull; nothing pulls it."
+    element: {gpio: GPIO38}
+    source:
+      type: datasheet
+      cite: "ESP32-PICO v1.5, p. 13, note 1"
+  - id: K23
+    kind: addition
+    what: "The PMIC U2 answers at I2C address 0x34."
+    element: {i2c: U2}
+    source:
+      type: bench
+      cite: "bench/2026-11-17-i2c-scan.md; M5Unified"
+  - id: K24
+    kind: addition
+    what: "The RTC U4 answers at I2C address 0x51 (write A2h)."
+    element: {i2c: U4}
+    source:
+      type: datasheet
+      cite: "BM8563 V1.1, p. 1"
+  - id: K25
+    kind: addition
+    what: "R401 is the pull-up of U4's open-drain INT."
+    element: {pull: R401}
+    source:
+      type: datasheet
+      cite: "BM8563 V1.1, p. 2, pin 3"
+  - id: K26
+    kind: addition
+    what: "U4's INT presses PWR_KEY via C401: RTC wake from off."
+    element: {net: RTC_INT}
+    source:
+      type: bench
+      cite: "bench/2026-11-17-rtc-int-power-key.md"
+  - id: K27
+    kind: addition
+    what: "GPIO27 is N_VBUSEN: high shuts VBUS out if REG30H[7]=0."
+    element: {gpio: GPIO27}
+    source:
+      type: bench
+      cite: "bench/2026-11-17-gpio27-n-vbusen.md"
+  - id: K28
+    kind: correction
+    what: "U7's pins: MPU-6886 names."
+    vendor: "numbers"
+    element: {part: U7}
+    source:
+      type: datasheet
+      cite: "MPU-6886 v1.1, Table 9, p. 17"

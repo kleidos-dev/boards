@@ -1,0 +1,7322 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "3220364a-a793-56e3-8a36-6d9f2acaca18")
+	(paper "A3")
+	(title_block
+		(title "M5StickC Plus2 (K016-P2): Regulators, power-off timer, RTC")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: M5Stack M5StickC Plus2 schematic v0.5 and docs; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols
+		(symbol "kleidos:C"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "C"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "C"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: C"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "C_0_1"
+				(polyline
+					(pts
+						(xy -2.032 0.635)
+						(xy 2.032 0.635)
+					)
+					(stroke
+						(width 0.381)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -0.635)
+						(xy 2.032 -0.635)
+					)
+					(stroke
+						(width 0.381)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "C_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 3.175)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 3.175)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:Crystal"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "Y"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Crystal"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: Crystal"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Crystal_0_1"
+				(rectangle
+					(start -0.762 -1.397)
+					(end 0.762 1.397)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.397 1.905)
+						(xy -1.397 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.397 1.905)
+						(xy 1.397 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 0)
+						(xy -1.397 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.397 0)
+						(xy 2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Crystal_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 1.27)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 1.27)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:D"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "D"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: D"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "D_0_1"
+				(polyline
+					(pts
+						(xy -1.27 0)
+						(xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27)
+						(xy 1.27 -1.27)
+						(xy -1.27 0)
+						(xy 1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 1.27)
+						(xy -1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "D_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:D_Schottky"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "D_Schottky"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: D_Schottky"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "D_Schottky_0_1"
+				(polyline
+					(pts
+						(xy -1.27 0)
+						(xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27)
+						(xy 1.27 -1.27)
+						(xy -1.27 0)
+						(xy 1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.9 0.76)
+						(xy -1.9 1.27)
+						(xy -1.27 1.27)
+						(xy -1.27 -1.27)
+						(xy -0.64 -1.27)
+						(xy -0.64 -0.76)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "D_Schottky_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:GND"
+			(power global)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board no)
+			(property "Reference" "#PWR"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GND"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: GND"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GND_0_1"
+				(polyline
+					(pts
+						(xy 0 0)
+						(xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -1.27)
+						(xy 1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.762 -1.905)
+						(xy 0.762 -1.905)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.254 -2.54)
+						(xy 0.254 -2.54)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(hide yes)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:L"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "L"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "L"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: L"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "L_0_1"
+				(polyline
+					(pts
+						(xy 0 2.54)
+						(xy 0.3175 2.3283)
+						(xy 0.5499 2.1167)
+						(xy 0.635 1.905)
+						(xy 0.5499 1.6933)
+						(xy 0.3175 1.4817)
+						(xy 0 1.27)
+						(xy 0 1.27)
+						(xy 0.3175 1.0583)
+						(xy 0.5499 0.8467)
+						(xy 0.635 0.635)
+						(xy 0.5499 0.4233)
+						(xy 0.3175 0.2117)
+						(xy 0 0)
+						(xy 0 0)
+						(xy 0.3175 -0.2117)
+						(xy 0.5499 -0.4233)
+						(xy 0.635 -0.635)
+						(xy 0.5499 -0.8467)
+						(xy 0.3175 -1.0583)
+						(xy 0 -1.27)
+						(xy 0 -1.27)
+						(xy 0.3175 -1.4817)
+						(xy 0.5499 -1.6933)
+						(xy 0.635 -1.905)
+						(xy 0.5499 -2.1167)
+						(xy 0.3175 -2.3283)
+						(xy 0 -2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "L_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:LED"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "LED"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: LED"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "LED_0_1"
+				(polyline
+					(pts
+						(xy -1.27 0)
+						(xy 1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27)
+						(xy 1.27 -1.27)
+						(xy -1.27 0)
+						(xy 1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 1.27)
+						(xy -1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.508 1.651)
+						(xy -1.778 2.921)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.6012 2.3907)
+						(xy -1.778 2.921)
+						(xy -1.2477 2.7442)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.762 1.651)
+						(xy -0.508 2.921)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.3312 2.3907)
+						(xy -0.508 2.921)
+						(xy 0.0223 2.7442)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "LED_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "kleidos:R"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "R"
+				(at 0 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Kleidos boards: R"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "R_0_1"
+				(rectangle
+					(start -0.889 -2.54)
+					(end 0.889 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "m5stickc-plus2:GS321"
+			(pin_names
+				(offset 0.762)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "GS321"
+				(at 0 -13.97 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Single op-amp, used as a comparator"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GS321_0_1"
+				(rectangle
+					(start -7.62 5.08)
+					(end 7.62 -12.7)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "GS321_1_1"
+				(pin passive line
+					(at -10.16 2.54 0)
+					(length 2.54)
+					(name "V+"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 -2.54 0)
+					(length 2.54)
+					(name "+"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 -5.08 0)
+					(length 2.54)
+					(name "-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -15.24 90)
+					(length 2.54)
+					(name "V-"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "m5stickc-plus2:RTC8563"
+			(pin_names
+				(offset 0.762)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "RTC8563"
+				(at 0 -13.97 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Real-time clock (BM8563 in the vendor's docs)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "RTC8563_0_1"
+				(rectangle
+					(start -10.16 5.08)
+					(end 10.16 -12.7)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "RTC8563_1_1"
+				(pin passive line
+					(at -12.7 2.54 0)
+					(length 2.54)
+					(name "VDD"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -12.7 -2.54 0)
+					(length 2.54)
+					(name "OSCI"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -12.7 -5.08 0)
+					(length 2.54)
+					(name "OSCO"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 2.54 180)
+					(length 2.54)
+					(name "SCL"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 0 180)
+					(length 2.54)
+					(name "SDA"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 -2.54 180)
+					(length 2.54)
+					(name "INT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 12.7 -5.08 180)
+					(length 2.54)
+					(name "CLKOUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -15.24 90)
+					(length 2.54)
+					(name "VSS"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "m5stickc-plus2:SY7088"
+			(pin_names
+				(offset 0.762)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SY7088"
+				(at 0 -16.51 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Synchronous boost converter"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SY7088_0_1"
+				(rectangle
+					(start -7.62 5.08)
+					(end 7.62 -15.24)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "SY7088_1_1"
+				(pin passive line
+					(at -10.16 2.54 0)
+					(length 2.54)
+					(name "IN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "6"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 0 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 -2.54 0)
+					(length 2.54)
+					(name "LX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -10.16 -5.08 0)
+					(length 2.54)
+					(name "LX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 10.16 2.54 180)
+					(length 2.54)
+					(name "OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "7"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 10.16 0 180)
+					(length 2.54)
+					(name "OUT"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "8"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 10.16 -2.54 180)
+					(length 2.54)
+					(name "FB"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -2.54 -17.78 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -17.78 90)
+					(length 2.54)
+					(name "PGND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "9"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "m5stickc-plus2:SY8089"
+			(pin_names
+				(offset 0.762)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "U"
+				(at 0 3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "SY8089"
+				(at 0 -11.43 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Synchronous buck converter"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "SY8089_0_1"
+				(rectangle
+					(start -5.08 2.54)
+					(end 5.08 -10.16)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+			)
+			(symbol "SY8089_1_1"
+				(pin passive line
+					(at -7.62 0 0)
+					(length 2.54)
+					(name "IN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 -2.54 0)
+					(length 2.54)
+					(name "EN"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 0 180)
+					(length 2.54)
+					(name "LX"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -2.54 180)
+					(length 2.54)
+					(name "FB"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -12.7 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(symbol
+		(lib_id "m5stickc-plus2:SY7088")
+		(at 43.18 34.29 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "618973a2-e8ab-5989-ae3a-74887f1005b1")
+		(property "Reference" "U6"
+			(at 33.02 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SY7088"
+			(at 33.02 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 43.18 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 43.18 34.29 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d5632db7-3cbe-5481-a43f-cb6edf5edc28")
+		)
+		(pin "2"
+			(uuid "5055e62f-8cd7-5472-9a53-be9040e78fd9")
+		)
+		(pin "3"
+			(uuid "3072541b-61db-5de7-ba64-93d0dd83d131")
+		)
+		(pin "4"
+			(uuid "09bf8ad8-9174-5461-bd21-041a658c6d0a")
+		)
+		(pin "5"
+			(uuid "9f558a87-acda-5ad7-b45e-9d5283cfb7fe")
+		)
+		(pin "6"
+			(uuid "ffe421dd-2a84-5f39-ba74-2c78e745bd51")
+		)
+		(pin "7"
+			(uuid "7abfef1b-8e3f-5e19-9ba0-d5613cb866ee")
+		)
+		(pin "8"
+			(uuid "5c1bde50-0a88-53d4-8a63-e22d96981186")
+		)
+		(pin "9"
+			(uuid "ac0fe46f-dc5c-5389-a9a8-52a788d8ae15")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "U6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 33.02 31.75)
+			(xy 30.48 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0d3b0d9b-db48-5a30-bbd1-166ba2f2acb2")
+	)
+	(wire
+		(pts
+			(xy 33.02 34.29)
+			(xy 30.48 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f53b526c-db42-5f03-a7ce-482731976045")
+	)
+	(wire
+		(pts
+			(xy 30.48 31.75)
+			(xy 30.48 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "065f9330-9075-54ac-8343-a23d05a27e3e")
+	)
+	(junction
+		(at 30.48 31.75)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "03bd0e4f-b440-5c3b-bf9a-bb5656408bb5")
+	)
+	(wire
+		(pts
+			(xy 30.48 31.75)
+			(xy 27.94 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9c3d4817-45da-5b04-9275-fca01611bcb7")
+	)
+	(global_label "BOOST_IN"
+		(shape passive)
+		(at 27.94 31.75 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "8e32e787-6247-59f7-bb65-8ff1ef8ee587")
+	)
+	(wire
+		(pts
+			(xy 33.02 36.83)
+			(xy 30.48 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f1d237c1-c287-55be-9a3d-9d59770a174e")
+	)
+	(wire
+		(pts
+			(xy 33.02 39.37)
+			(xy 30.48 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8e62b4c8-ebf2-521c-8a9d-cadbdb7f4783")
+	)
+	(wire
+		(pts
+			(xy 30.48 36.83)
+			(xy 30.48 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0a287519-43a1-5cb2-8859-1032e073d2b6")
+	)
+	(junction
+		(at 30.48 36.83)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "09ab0d5a-1044-5b01-b331-1e40c0e165f6")
+	)
+	(wire
+		(pts
+			(xy 30.48 36.83)
+			(xy 27.94 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1007575e-0b9a-5c56-8682-32169baf1083")
+	)
+	(global_label "BOOST_LX"
+		(shape passive)
+		(at 27.94 36.83 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d7591de7-3965-529b-81f1-af539f5605a9")
+	)
+	(wire
+		(pts
+			(xy 40.64 52.07)
+			(xy 40.64 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a32d4bcf-d8fe-56aa-bd29-f444f3d44db8")
+	)
+	(wire
+		(pts
+			(xy 43.18 52.07)
+			(xy 43.18 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "78caa42a-80ad-57fa-8828-ea76fd865ce4")
+	)
+	(wire
+		(pts
+			(xy 40.64 54.61)
+			(xy 43.18 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "22482839-fe21-517c-9554-ef9881b1e0bf")
+	)
+	(junction
+		(at 40.64 54.61)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "08c77656-ccbd-508b-b93d-f9ba21dc2254")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 40.64 54.61 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "fd39a83a-f02a-551b-add9-920f1de31b3d")
+		(property "Reference" "#PWR068"
+			(at 40.64 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 40.64 58.61 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 40.64 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 40.64 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 40.64 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5306cc16-bcfb-5b43-910c-e3e4208ee8a1")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR068")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 53.34 31.75)
+			(xy 55.88 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a917b1e1-60e3-5033-85f7-a34080cb2598")
+	)
+	(wire
+		(pts
+			(xy 53.34 34.29)
+			(xy 55.88 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "99f430c2-72bb-51b6-b4c7-86468af61db4")
+	)
+	(wire
+		(pts
+			(xy 55.88 31.75)
+			(xy 55.88 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5c8819ed-beca-50a1-abba-076c89443457")
+	)
+	(junction
+		(at 55.88 31.75)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8ee24bba-3b54-5399-9b33-6183ab3ad400")
+	)
+	(wire
+		(pts
+			(xy 55.88 31.75)
+			(xy 58.42 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "76bb91a1-cd5e-5d3d-90f5-eb83bc6bca4b")
+	)
+	(global_label "BOOST_OUT"
+		(shape passive)
+		(at 58.42 31.75 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1038e9a6-89ad-50ff-b510-b980696e0a85")
+	)
+	(wire
+		(pts
+			(xy 53.34 36.83)
+			(xy 55.88 36.83)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "559a8b64-4ce5-5d9c-b5cb-34edab4dde35")
+	)
+	(global_label "BOOST_FB"
+		(shape passive)
+		(at 55.88 36.83 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "77843d32-510d-5c74-b697-236c7ed265bb")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 99.06 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "830f55f1-caad-5d57-a194-c2b19be7a483")
+		(property "Reference" "R22"
+			(at 99.06 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "0Ω"
+			(at 99.06 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 99.06 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 99.06 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0d445bca-947f-53bb-8ef8-5a5ef7fe3300")
+		)
+		(pin "2"
+			(uuid "0ec45060-a2c3-5d62-baf7-e0aaea46cf04")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VBAT_OUT"
+		(shape passive)
+		(at 95.25 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e4636ed6-7754-53cf-8fb2-654b2613017d")
+	)
+	(text "[4/B4]"
+		(exclude_from_sim no)
+		(at 77.95 27.94 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "cafc3583-d7a5-532c-b949-c24b2980f5db")
+	)
+	(global_label "BOOST_IN"
+		(shape passive)
+		(at 102.87 27.94 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4982e970-955a-5fe2-a9ae-2b0b342e2bbb")
+	)
+	(symbol
+		(lib_id "kleidos:L")
+		(at 99.06 36.83 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f9eccc22-454d-511a-b12b-bee53b6df981")
+		(property "Reference" "L2"
+			(at 99.06 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "3015 1.5uH"
+			(at 99.06 39.37 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 99.06 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 99.06 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "525431bb-5802-5b43-ab55-e24075235493")
+		)
+		(pin "2"
+			(uuid "b19dfe1a-1224-594f-8c1b-0d773ff5067c")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "L2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BOOST_IN"
+		(shape passive)
+		(at 95.25 36.83 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9e019427-3741-5a3c-9506-2cfacd5ceb90")
+	)
+	(global_label "BOOST_LX"
+		(shape passive)
+		(at 102.87 36.83 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "14c51021-aa58-5476-b596-143a6cad296c")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 99.06 46.99 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "244df10f-e5cb-558d-b571-1a984963cd8c")
+		(property "Reference" "C18"
+			(at 99.06 43.688 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF"
+			(at 99.06 50.292 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 99.06 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 99.06 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4f0c3534-1a6e-5759-ab3e-9df9091a261b")
+		)
+		(pin "2"
+			(uuid "fb0ee9f9-2abc-54fb-8da9-716f8c746b76")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C18")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 95.25 46.99 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "06ffb38b-8f7e-57d5-883e-4952ffa8eb87")
+		(property "Reference" "#PWR069"
+			(at 95.25 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 91.85 46.99 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 95.25 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 95.25 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 95.25 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "37ad7dc4-2f07-59f6-9a1e-9b24941d8e8d")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR069")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BOOST_IN"
+		(shape passive)
+		(at 102.87 46.99 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f93bc660-30df-5250-bdb7-e61c182ea6c1")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 99.06 57.15 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e083eb27-b9dc-5f78-8685-5ce90ecef586")
+		(property "Reference" "C19"
+			(at 99.06 53.848 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1uF"
+			(at 99.06 60.452 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 99.06 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 99.06 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a0ae1a01-49e1-5af0-b47f-aace20c32c20")
+		)
+		(pin "2"
+			(uuid "3ce363c6-5d06-545d-8a35-b17c482b23c8")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C19")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 95.25 57.15 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f0f2755a-b046-5427-830e-e1f2785ef020")
+		(property "Reference" "#PWR070"
+			(at 95.25 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 91.85 57.15 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 95.25 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 95.25 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 95.25 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d47a0b8f-3743-5880-8d37-82a50a5caf5e")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR070")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BOOST_IN"
+		(shape passive)
+		(at 102.87 57.15 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "668a58af-6c29-55bf-9e29-38aa82978dc3")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 140.97 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "28cabf08-d4d4-504a-8fca-539aadc269a8")
+		(property "Reference" "R25"
+			(at 140.97 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "160KΩ"
+			(at 140.97 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 140.97 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 140.97 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 140.97 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "218acee2-4755-51cc-bdd5-3c907c6a4b46")
+		)
+		(pin "2"
+			(uuid "b3fc804e-4cbe-5752-b69e-6a901791565b")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R25")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BOOST_FB"
+		(shape passive)
+		(at 137.16 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a4ed7b44-4341-5147-8c46-38502070f090")
+	)
+	(global_label "BOOST_OUT"
+		(shape passive)
+		(at 144.78 27.94 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d6df1c78-c483-5376-91bd-2df4c2c17fc2")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 140.97 36.83 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c6f7705a-de33-5250-a037-c55524106087")
+		(property "Reference" "R27"
+			(at 140.97 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "47KΩ"
+			(at 140.97 39.37 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 140.97 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 140.97 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 140.97 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c922b163-da8d-5ef8-a4e4-e7b54ffda8cc")
+		)
+		(pin "2"
+			(uuid "e9735099-3ea9-594c-a6f7-75b430558740")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R27")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 137.16 36.83 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b50a67ff-20ff-512f-8936-859ec8e4756e")
+		(property "Reference" "#PWR071"
+			(at 137.16 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 133.76 36.83 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 137.16 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 137.16 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 137.16 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c8b8dd11-9d7e-5635-bfbf-301ebd3202bc")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR071")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BOOST_FB"
+		(shape passive)
+		(at 144.78 36.83 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7575be56-22be-543d-839e-e1b4a6bc9885")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 140.97 46.99 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9f995f7f-3c0c-595c-8266-39c14da58cc8")
+		(property "Reference" "C17"
+			(at 140.97 43.688 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF"
+			(at 140.97 50.292 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 140.97 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 140.97 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 140.97 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c6758aa2-6df6-5aab-961c-96ff499bce3a")
+		)
+		(pin "2"
+			(uuid "8f46fa24-8e20-5236-b60b-ff14ba1230f0")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C17")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 137.16 46.99 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "06ffb38b-8f7e-57d5-883e-4952ffa8eb87")
+		(property "Reference" "#PWR072"
+			(at 137.16 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 133.76 46.99 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 137.16 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 137.16 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 137.16 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "37ad7dc4-2f07-59f6-9a1e-9b24941d8e8d")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR072")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BOOST_OUT"
+		(shape passive)
+		(at 144.78 46.99 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5acd2a8a-a493-52d4-98ab-d8b2e755e07b")
+	)
+	(symbol
+		(lib_id "kleidos:D_Schottky")
+		(at 140.97 57.15 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "a14e44b2-666b-5425-ba7e-2976b74cc398")
+		(property "Reference" "D20"
+			(at 140.97 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "SS34"
+			(at 140.97 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 140.97 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 140.97 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 140.97 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a31c125e-5fb1-53ac-8af3-4e9b132a8136")
+		)
+		(pin "2"
+			(uuid "db894e7d-c1b2-5044-8acb-eda60dae185a")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "D20")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+5VOUT"
+		(shape passive)
+		(at 137.16 57.15 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "779fc189-10dd-5cd7-a700-455f11254f8e")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 122.06 57.15 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "569e5d03-b01f-5dd5-8cdb-a784bdc9adca")
+	)
+	(global_label "BOOST_OUT"
+		(shape passive)
+		(at 144.78 57.15 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d8d2ebeb-91dd-5c37-b7a4-0f37de52bf2b")
+	)
+	(rectangle
+		(start 12.7 12.7)
+		(end 162.56 67.31)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "4409c32c-2860-59a5-96ac-69bf1e6a69bd")
+	)
+	(text "5 V boost"
+		(exclude_from_sim no)
+		(at 14.605 14.605 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "ca65a284-ef6b-5810-ba10-396cc5ef31c7")
+	)
+	(symbol
+		(lib_id "m5stickc-plus2:SY8089")
+		(at 203.2 31.75 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "569ad610-23db-5eda-9175-de8d3dc5de14")
+		(property "Reference" "U7"
+			(at 195.58 25.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SY8089"
+			(at 195.58 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 203.2 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 203.2 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 203.2 31.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5142d51c-83c8-5c81-9a9f-782a57d57d8f")
+		)
+		(pin "2"
+			(uuid "9a1117ae-3f3b-5fc3-afb5-981d8e54309b")
+		)
+		(pin "3"
+			(uuid "247c2196-b6a7-5caa-811c-c806d32bb256")
+		)
+		(pin "4"
+			(uuid "737cac74-5a06-5c54-b3b2-fb48b4d14ce2")
+		)
+		(pin "5"
+			(uuid "f12f10ec-7b97-518c-ab3e-36ea1f146392")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "U7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 195.58 31.75)
+			(xy 193.04 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eceac773-1735-5d33-b727-c52327afbaa0")
+	)
+	(global_label "VBAT_OUT"
+		(shape passive)
+		(at 193.04 31.75 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "47b361b1-06ce-536b-b8c6-b4600d7c8d6f")
+	)
+	(text "[4/B4]"
+		(exclude_from_sim no)
+		(at 175.74 31.75 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "c3717cf4-414f-504d-8227-5f89f7424525")
+	)
+	(wire
+		(pts
+			(xy 195.58 34.29)
+			(xy 193.04 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4ae62b77-b33d-53ad-949a-0b9d3e16fe2d")
+	)
+	(global_label "3V3EN"
+		(shape passive)
+		(at 193.04 34.29 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "17cc9ed7-f61e-5df9-abb3-f3e5ef03e21a")
+	)
+	(wire
+		(pts
+			(xy 203.2 44.45)
+			(xy 203.2 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95fe94c3-c452-568a-a751-39d03604d895")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 203.2 46.99 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5c110291-fae9-5632-a75a-e2347c17ca40")
+		(property "Reference" "#PWR073"
+			(at 203.2 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 203.2 50.99 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 203.2 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 203.2 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 203.2 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c507ebc8-9ee5-5ffe-8fd2-2e9587010128")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR073")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 210.82 31.75)
+			(xy 213.36 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "36048fc5-1e5c-5501-b62a-52f314d54829")
+	)
+	(global_label "BUCK_LX"
+		(shape passive)
+		(at 213.36 31.75 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ab80904e-ac9c-500a-a2d0-2e3a299365ac")
+	)
+	(wire
+		(pts
+			(xy 210.82 34.29)
+			(xy 213.36 34.29)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "88bae6cb-b238-5271-9a33-be8fdd9f8c21")
+	)
+	(global_label "BUCK_FB"
+		(shape passive)
+		(at 213.36 34.29 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4e5f788c-8adc-54ef-9d2b-a9333783ec13")
+	)
+	(symbol
+		(lib_id "kleidos:L")
+		(at 251.46 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "13243eee-d273-5a27-ae3d-6a6d704c089a")
+		(property "Reference" "L3"
+			(at 251.46 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "3015 4.7uH"
+			(at 251.46 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 251.46 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 251.46 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 251.46 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4c5a3b09-eb5b-59d2-a7b6-40f1ff051a4e")
+		)
+		(pin "2"
+			(uuid "0b65607e-0393-50da-97c1-12bda4a8d53d")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "L3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUCK_LX"
+		(shape passive)
+		(at 247.65 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3ac2767e-4dde-5879-afa6-c321a7fd0327")
+	)
+	(global_label "+3.3V"
+		(shape passive)
+		(at 255.27 27.94 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0d399805-2823-58dc-ab19-19c472d220da")
+	)
+	(text "[2/A5]"
+		(exclude_from_sim no)
+		(at 263.57 27.94 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "8b191a35-958b-5750-b70b-7702dceab2f5")
+	)
+	(text "[3/C4]"
+		(exclude_from_sim no)
+		(at 270.07 27.94 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "c2c04ce3-e52b-55c5-b761-78be69b1d2ef")
+	)
+	(text "[6/A6]"
+		(exclude_from_sim no)
+		(at 276.57 27.94 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "6d3e8cc9-8359-57de-9fce-ac21798f79af")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 251.46 36.83 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e64d4318-727f-5f82-bd06-eed3f11da7ae")
+		(property "Reference" "R31"
+			(at 251.46 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "150KΩ"
+			(at 251.46 39.37 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 251.46 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 251.46 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 251.46 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "37fbcda3-c60e-5a06-abfc-57e573975f22")
+		)
+		(pin "2"
+			(uuid "117ad88c-5484-5f52-b5ae-f4b237f35f7a")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R31")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VBAT_OUT"
+		(shape passive)
+		(at 247.65 36.83 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d3b59904-c96e-5bcb-863d-c9a4b078c05d")
+	)
+	(text "[4/B4]"
+		(exclude_from_sim no)
+		(at 230.35 36.83 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "4c0b5ce9-b9c1-5a36-8702-47d88bdc6aa8")
+	)
+	(global_label "3V3EN"
+		(shape passive)
+		(at 255.27 36.83 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d0cd6f5d-40f6-5589-a1d6-535db2a75000")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 251.46 46.99 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e4dc054d-baeb-5f27-847a-f6dbeab9759e")
+		(property "Reference" "C23"
+			(at 251.46 43.688 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "100nF"
+			(at 251.46 50.292 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 251.46 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 251.46 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 251.46 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7e7168db-e797-5fe9-abf6-5f5509a8f679")
+		)
+		(pin "2"
+			(uuid "94afa114-47bd-50cc-bbe4-7290dac5e649")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 247.65 46.99 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "06ffb38b-8f7e-57d5-883e-4952ffa8eb87")
+		(property "Reference" "#PWR074"
+			(at 247.65 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 244.25 46.99 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 247.65 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 247.65 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 247.65 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "37ad7dc4-2f07-59f6-9a1e-9b24941d8e8d")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR074")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VBAT_OUT"
+		(shape passive)
+		(at 255.27 46.99 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "60e3ad70-4b99-5f50-b79e-75b322ac8882")
+	)
+	(text "[4/B4]"
+		(exclude_from_sim no)
+		(at 266.87 46.99 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "0a98b0d9-abbe-5a52-9891-a613eb810955")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 251.46 57.15 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3925f253-b147-5964-8e31-45c4ed92293d")
+		(property "Reference" "C24"
+			(at 251.46 53.848 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF"
+			(at 251.46 60.452 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 251.46 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 251.46 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 251.46 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6ce605a2-b976-51ae-aca6-6b163dbb7152")
+		)
+		(pin "2"
+			(uuid "4158a791-c120-5bf1-bb1e-5ce3f7631221")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 247.65 57.15 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f0f2755a-b046-5427-830e-e1f2785ef020")
+		(property "Reference" "#PWR075"
+			(at 247.65 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 244.25 57.15 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 247.65 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 247.65 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 247.65 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d47a0b8f-3743-5880-8d37-82a50a5caf5e")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR075")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VBAT_OUT"
+		(shape passive)
+		(at 255.27 57.15 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "38e1b02c-5513-5a28-a876-8de7a33a2948")
+	)
+	(text "[4/B4]"
+		(exclude_from_sim no)
+		(at 266.87 57.15 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "849f24fa-d0a5-58b1-a104-b52acbce8e81")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 303.53 27.94 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f5250ff9-0660-5bc7-8ae9-d3f76bb174f1")
+		(property "Reference" "R32"
+			(at 303.53 25.4 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "68KΩ"
+			(at 303.53 30.48 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 303.53 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 303.53 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 303.53 27.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ca49247e-9db3-51ef-995f-49a0d796ec2a")
+		)
+		(pin "2"
+			(uuid "743f9a85-9861-5643-bc11-4aa692c1a887")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R32")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUCK_FB"
+		(shape passive)
+		(at 299.72 27.94 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "015b7fb7-342f-55aa-86ca-63468adb13ae")
+	)
+	(global_label "+3.3V"
+		(shape passive)
+		(at 307.34 27.94 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3217a7a8-c687-5eba-88f7-82566638732f")
+	)
+	(text "[2/A5]"
+		(exclude_from_sim no)
+		(at 315.64 27.94 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "3d3c6ae8-3a80-56bc-8daf-7d1f7022dda0")
+	)
+	(text "[3/C4]"
+		(exclude_from_sim no)
+		(at 322.14 27.94 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "fcc83b01-217b-5017-a72e-fbbc7a1931be")
+	)
+	(text "[6/A6]"
+		(exclude_from_sim no)
+		(at 328.64 27.94 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "6a68f128-3d1a-5a5c-8175-2f3568130e12")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 303.53 36.83 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b1782408-0874-5c02-8aa7-10ed3ccd0bb3")
+		(property "Reference" "R33"
+			(at 303.53 34.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "15KΩ"
+			(at 303.53 39.37 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 303.53 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 303.53 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 303.53 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0f331326-d7c8-5ee4-ae25-aace86f0cd33")
+		)
+		(pin "2"
+			(uuid "54a55383-6484-5d8a-831b-5dcc24e171cb")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R33")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 299.72 36.83 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b50a67ff-20ff-512f-8936-859ec8e4756e")
+		(property "Reference" "#PWR076"
+			(at 299.72 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 296.32 36.83 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 299.72 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 299.72 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 299.72 36.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c8b8dd11-9d7e-5635-bfbf-301ebd3202bc")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR076")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BUCK_FB"
+		(shape passive)
+		(at 307.34 36.83 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "858883a3-a9aa-5958-9fb9-1ced1481d0c2")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 303.53 46.99 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d0229c5c-cbcc-552a-8efc-e610677b5c98")
+		(property "Reference" "C21"
+			(at 303.53 43.688 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "22uF"
+			(at 303.53 50.292 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 303.53 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 303.53 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 303.53 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3cc1f25b-1274-5799-83de-a0e2ecafdd7d")
+		)
+		(pin "2"
+			(uuid "07bd423f-9128-5c45-86b4-fe9a0c2b1c14")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C21")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 299.72 46.99 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "06ffb38b-8f7e-57d5-883e-4952ffa8eb87")
+		(property "Reference" "#PWR077"
+			(at 299.72 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 296.32 46.99 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 299.72 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 299.72 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 299.72 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "37ad7dc4-2f07-59f6-9a1e-9b24941d8e8d")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR077")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+3.3V"
+		(shape passive)
+		(at 307.34 46.99 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c8243198-4b46-5ef4-b49b-b6a3dabc0d31")
+	)
+	(text "[2/A5]"
+		(exclude_from_sim no)
+		(at 315.64 46.99 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "fe34d56a-1cee-582a-aee1-d4bd311ed845")
+	)
+	(text "[3/C4]"
+		(exclude_from_sim no)
+		(at 322.14 46.99 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "09b812a2-b4a2-56e4-a4ec-3e1a46cddeaf")
+	)
+	(text "[6/A6]"
+		(exclude_from_sim no)
+		(at 328.64 46.99 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "979d54ce-4591-50f7-aeb1-6aeee91df65d")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 303.53 57.15 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c081fc1c-96f9-5c78-93ab-f8b3c0ca0e6d")
+		(property "Reference" "C22"
+			(at 303.53 53.848 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "100nF"
+			(at 303.53 60.452 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 303.53 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 303.53 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 303.53 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8f91bd28-9a73-5f41-883e-fa5f0b8d246e")
+		)
+		(pin "2"
+			(uuid "4994ea4c-e215-5339-828a-78befed69e6a")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C22")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 299.72 57.15 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f0f2755a-b046-5427-830e-e1f2785ef020")
+		(property "Reference" "#PWR078"
+			(at 299.72 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 296.32 57.15 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 299.72 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 299.72 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 299.72 57.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d47a0b8f-3743-5880-8d37-82a50a5caf5e")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR078")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+3.3V"
+		(shape passive)
+		(at 307.34 57.15 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5ba8675d-404a-5142-b30b-abd7e015cd9c")
+	)
+	(text "[2/A5]"
+		(exclude_from_sim no)
+		(at 315.64 57.15 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "d2d30cf0-c170-5f42-8850-d52b177913fb")
+	)
+	(text "[3/C4]"
+		(exclude_from_sim no)
+		(at 322.14 57.15 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "b17d7b62-401e-5f29-92c0-ec4e87afe8c6")
+	)
+	(text "[6/A6]"
+		(exclude_from_sim no)
+		(at 328.64 57.15 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "cf43342f-1f81-5162-a697-b4fdceb5cfe6")
+	)
+	(rectangle
+		(start 170.18 12.7)
+		(end 340.36 67.31)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "56d2f5ae-1aef-5ab5-a9af-4e5cce6a8990")
+	)
+	(text "3.3 V buck"
+		(exclude_from_sim no)
+		(at 172.085 14.605 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "fab70955-d46a-5338-8e49-fd4861718c5a")
+	)
+	(symbol
+		(lib_id "m5stickc-plus2:GS321")
+		(at 45.72 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4dd340ec-1598-59a9-a84c-1298ddebc997")
+		(property "Reference" "U8"
+			(at 35.56 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "GS321"
+			(at 35.56 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 45.72 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 45.72 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 45.72 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9b48da13-a1ac-5d8a-aba8-bc1deb6e9241")
+		)
+		(pin "2"
+			(uuid "52d882ff-8ec0-52d0-8903-d8384dbe392a")
+		)
+		(pin "3"
+			(uuid "31829a1f-e04e-5a1c-8cdd-52135bccdeee")
+		)
+		(pin "4"
+			(uuid "3045fff8-3ad3-59bc-8a04-6aae6fb66f6b")
+		)
+		(pin "5"
+			(uuid "4112c2dd-2adc-5cb3-9030-b65bcdbb091b")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "U8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 35.56 93.98)
+			(xy 33.02 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64c2ea85-a7f1-53a5-be17-46cfd2830d5a")
+	)
+	(global_label "+5VOUT"
+		(shape passive)
+		(at 33.02 93.98 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b5308c1c-c036-562e-98b6-e0be0058ee4a")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 17.92 93.98 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "67c7320f-cb1f-5678-979a-74a9ecb2fd43")
+	)
+	(wire
+		(pts
+			(xy 35.56 99.06)
+			(xy 33.02 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9da8e6c7-e673-56ff-9eef-8e30cb718b5f")
+	)
+	(global_label "TIMER_IN"
+		(shape passive)
+		(at 33.02 99.06 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bdba351a-ba3a-561f-99d9-3c719587c201")
+	)
+	(wire
+		(pts
+			(xy 35.56 101.6)
+			(xy 33.02 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "95ef7625-7332-560f-bb2f-cc2b4080bfc5")
+	)
+	(global_label "TIMER_REF"
+		(shape passive)
+		(at 33.02 101.6 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c79a6af8-2247-5183-8ec2-bf6cd8831e15")
+	)
+	(wire
+		(pts
+			(xy 45.72 111.76)
+			(xy 45.72 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "745cdb76-41f5-52ee-88b1-43ea1b3f1189")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 45.72 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "908261b9-548c-5454-9992-b97ff57d942b")
+		(property "Reference" "#PWR079"
+			(at 45.72 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 45.72 118.3 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 45.72 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 45.72 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 45.72 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7ce20d15-aeb0-50e2-a62b-2455bdfc14be")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR079")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 55.88 93.98)
+			(xy 58.42 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ef1683ac-bf11-5a01-92fd-8b20cfdde809")
+	)
+	(global_label "3V3EN"
+		(shape passive)
+		(at 58.42 93.98 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5cca463e-1fd3-51b1-b392-224e2c4b60e0")
+	)
+	(symbol
+		(lib_id "kleidos:D")
+		(at 96.52 90.17 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "03817a39-224b-5b9d-bc9c-d2df0e2208d9")
+		(property "Reference" "D26"
+			(at 96.52 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1N4148WT"
+			(at 96.52 92.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1b9908bf-c26c-5cbe-8723-ad9e30bb1557")
+		)
+		(pin "2"
+			(uuid "7774ecb0-273b-5ed2-b351-0e2fd160301e")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "D26")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "WAKE"
+		(shape passive)
+		(at 92.71 90.17 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "81ff02a3-ff5b-5174-b344-095428bc5e4f")
+	)
+	(text "[2/B3]"
+		(exclude_from_sim no)
+		(at 73.31 90.17 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "ccd3be27-6f50-58c6-bcc6-e4544e65bbe7")
+	)
+	(text "[4/B2]"
+		(exclude_from_sim no)
+		(at 79.81 90.17 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "de3a3316-fa8f-5cd5-baf9-07117a07ad6b")
+	)
+	(global_label "TIMER_WAKE"
+		(shape passive)
+		(at 100.33 90.17 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0e0a9a37-5074-5cf0-b324-fa184f8d2817")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 96.52 99.06 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f1f89ae0-b402-5cd5-9e0c-6154433cb327")
+		(property "Reference" "R36"
+			(at 96.52 96.52 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "270K/1%"
+			(at 96.52 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5f251b6d-2356-5867-8a10-5e6bd1a03207")
+		)
+		(pin "2"
+			(uuid "1c7ea8a9-8006-51dd-92ea-42ed5624fa04")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R36")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "TIMER_IN"
+		(shape passive)
+		(at 92.71 99.06 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "52b0d4fa-4f7c-57af-9d03-7f27f05fa5d1")
+	)
+	(global_label "TIMER_WAKE"
+		(shape passive)
+		(at 100.33 99.06 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7ca3599e-08cd-58cc-8bbb-4dddd9328150")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 96.52 109.22 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "608a17da-a9a6-548a-b50f-e62978851eac")
+		(property "Reference" "C25"
+			(at 96.52 105.918 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10uF/10V"
+			(at 96.52 112.522 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "aa24f184-7c6f-5336-b9ee-cca645a8ce77")
+		)
+		(pin "2"
+			(uuid "c39ccf29-6441-542c-80e1-be1d544484d3")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C25")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "TIMER_IN"
+		(shape passive)
+		(at 92.71 109.22 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "cf5c818e-e0b2-57b2-94e5-de508530498b")
+	)
+	(global_label "+5VOUT"
+		(shape passive)
+		(at 100.33 109.22 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "13b052da-6c59-5ced-a146-b405e3e27da3")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 109.73 109.22 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "f51d1a31-9ec3-5b63-8efe-aeb8d30584ba")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 96.52 119.38 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "74447259-8dfa-59fe-b362-494d908c5713")
+		(property "Reference" "R35"
+			(at 96.52 116.84 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "680K/1%"
+			(at 96.52 121.92 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "abc9270a-3936-5cc8-9617-424b8e68f1ac")
+		)
+		(pin "2"
+			(uuid "a90d7a16-9c1c-585f-b6d3-0b9e517b0cae")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R35")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+5VOUT"
+		(shape passive)
+		(at 92.71 119.38 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6b28515b-a469-5619-beba-118543b99e7e")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 77.61 119.38 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "0ebd9a47-3158-5afd-b1a8-8c6824610f4a")
+	)
+	(global_label "TIMER_IN"
+		(shape passive)
+		(at 100.33 119.38 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9255e3dc-89a9-5fb0-80c5-0f461ab5f0f1")
+	)
+	(symbol
+		(lib_id "kleidos:D")
+		(at 96.52 128.27 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9043473a-0c14-5a97-84ed-2dd1b67e42c8")
+		(property "Reference" "D27"
+			(at 96.52 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1N4148WT"
+			(at 96.52 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 96.52 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "ec5ea2b3-12f1-5a3f-b252-b6dcfec5fc59")
+		)
+		(pin "2"
+			(uuid "c407ad8c-ad83-58d7-b2fc-c775e373e79e")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "D27")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "TIMER_IN"
+		(shape passive)
+		(at 92.71 128.27 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "15070a52-c2af-5576-b309-3a5bb272d38a")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 100.33 128.27 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d73550bd-cf55-5f9a-b778-87221d0bb1c4")
+		(property "Reference" "#PWR080"
+			(at 100.33 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 103.73 128.27 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 100.33 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 100.33 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 100.33 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "916bdd1b-d2fe-537b-9cb0-f8d64b46b4c9")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR080")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 142.24 90.17 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6ee71000-7584-5cbb-9db6-876ae2a04d49")
+		(property "Reference" "R37"
+			(at 142.24 87.63 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10KΩ"
+			(at 142.24 92.71 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "aae2acff-d55b-5a6a-8b3d-473fcdfc6655")
+		)
+		(pin "2"
+			(uuid "f89411d4-d68e-5a81-a60f-d06e7f64d768")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R37")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+5VOUT"
+		(shape passive)
+		(at 138.43 90.17 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2ce2855a-b0e4-5233-889f-b1f72dcbc1fe")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 123.33 90.17 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "fd677d5a-79ad-5548-b0aa-7657613d5886")
+	)
+	(global_label "TIMER_REF"
+		(shape passive)
+		(at 146.05 90.17 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bea79b12-4e86-5058-9225-0c390021e1b3")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 142.24 99.06 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5d983c41-fbed-557a-8437-c3b6c45efb6f")
+		(property "Reference" "R38"
+			(at 142.24 96.52 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10KΩ"
+			(at 142.24 101.6 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "89d4322e-5e3a-5b9a-91dc-7b5e202d38f1")
+		)
+		(pin "2"
+			(uuid "811db087-6490-5b5b-826a-ab3dd955a6d6")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R38")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 138.43 99.06 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b50a67ff-20ff-512f-8936-859ec8e4756e")
+		(property "Reference" "#PWR081"
+			(at 138.43 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 135.03 99.06 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 138.43 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 138.43 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 138.43 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c8b8dd11-9d7e-5635-bfbf-301ebd3202bc")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR081")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "TIMER_REF"
+		(shape passive)
+		(at 146.05 99.06 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3e08be39-fd78-54e0-a29d-f1a8437cf13f")
+	)
+	(symbol
+		(lib_id "kleidos:LED")
+		(at 142.24 109.22 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7bc74428-85e9-5ece-89b5-6697342d9568")
+		(property "Reference" "LED1"
+			(at 142.24 105.029 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GREEN"
+			(at 142.24 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 109.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "1bb989dc-b500-53a0-844f-bda0cabd7ea2")
+		)
+		(pin "2"
+			(uuid "3fd49f1e-f652-5014-9473-d4958de6068e")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "LED1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "3V3EN"
+		(shape passive)
+		(at 138.43 109.22 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "50f1dc53-2473-5fb4-8234-532a4fcd0851")
+	)
+	(global_label "LED1_A"
+		(shape passive)
+		(at 146.05 109.22 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "96dfc7d0-1889-55b1-a795-d40a0f6e0d2e")
+	)
+	(symbol
+		(lib_id "kleidos:R")
+		(at 142.24 118.11 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1e9cc362-b508-5a5c-804f-af81a631075a")
+		(property "Reference" "R39"
+			(at 142.24 115.57 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "2K/1%"
+			(at 142.24 120.65 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c939940d-9449-553b-9d29-9b9feaf19591")
+		)
+		(pin "2"
+			(uuid "262840a2-ae71-5d6d-af97-fca0e2ee9a39")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "R39")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+5VOUT"
+		(shape passive)
+		(at 138.43 118.11 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fe72f5a9-130c-5167-a6f0-40891bc1260a")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 123.33 118.11 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "2d79b0d8-f99f-5330-add2-f00648626273")
+	)
+	(global_label "LED1_A"
+		(shape passive)
+		(at 146.05 118.11 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "14d4de58-a49c-5f92-aafd-b24887052999")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 142.24 128.27 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "cc08dedc-7727-5c98-a2d5-ec9663807217")
+		(property "Reference" "C41"
+			(at 142.24 124.968 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "100nF"
+			(at 142.24 131.572 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 142.24 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 142.24 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 142.24 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "495a289b-7457-5343-a319-d498b507f266")
+		)
+		(pin "2"
+			(uuid "7e7280f0-cf2c-5d11-8c33-c3e2ba6b95ac")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C41")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 138.43 128.27 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "49ecc460-4b94-531f-b765-cf3b9f9322b7")
+		(property "Reference" "#PWR082"
+			(at 138.43 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 135.03 128.27 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 138.43 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 138.43 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 138.43 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "19949ac5-fda0-5744-b3f9-ca372a68204e")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR082")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "+5VOUT"
+		(shape passive)
+		(at 146.05 128.27 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1bb33f1f-ee7f-50e3-b05b-da99b67f591a")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 155.45 128.27 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "2ede3184-f963-5b68-89cd-1183932a7f50")
+	)
+	(rectangle
+		(start 12.7 74.93)
+		(end 167.64 138.43)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "f40c3c2b-88f4-5141-af88-2fa7f628ea7a")
+	)
+	(text "Power-off timer (3V3EN)"
+		(exclude_from_sim no)
+		(at 14.605 76.835 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "794cf4bf-71fa-5518-885d-1aaf9002a738")
+	)
+	(symbol
+		(lib_id "m5stickc-plus2:RTC8563")
+		(at 218.44 96.52 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b4cfed53-bd40-59d3-9f99-f9053e30c9ed")
+		(property "Reference" "U9"
+			(at 205.74 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "RTC8563"
+			(at 205.74 90.17 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 218.44 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 218.44 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 218.44 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "61b837dd-b241-5b63-9d0e-6b02d19f20da")
+		)
+		(pin "2"
+			(uuid "4f74c3fc-6f89-5182-a09d-6f322831077a")
+		)
+		(pin "3"
+			(uuid "4a5fff02-6ff0-5d35-ae1c-f79768729b03")
+		)
+		(pin "4"
+			(uuid "96072c6c-b321-56c0-b1bb-64d8abf5f71e")
+		)
+		(pin "5"
+			(uuid "6ee2da27-6d87-5689-82ce-ec518d5fb0b2")
+		)
+		(pin "6"
+			(uuid "86213eb2-d596-5137-acfd-978c1d11e199")
+		)
+		(pin "7"
+			(uuid "758cae33-e0ad-5f62-91f7-c6982e8211ba")
+		)
+		(pin "8"
+			(uuid "8c789ac3-184c-5ed8-9e1f-99598d10aec8")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "U9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 205.74 93.98)
+			(xy 203.2 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1450fab5-6401-55cf-8e8a-e7bd7b770489")
+	)
+	(global_label "VBAT_IN"
+		(shape passive)
+		(at 203.2 93.98 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "504c672a-b76e-52ae-8f36-6abba19638c2")
+	)
+	(text "[3/D4]"
+		(exclude_from_sim no)
+		(at 180.5 93.98 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "34bf116d-c7b3-5755-9060-07243c79d2c1")
+	)
+	(text "[4/A4]"
+		(exclude_from_sim no)
+		(at 187 93.98 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "d0b185fd-1916-5c45-9900-0176e6794a15")
+	)
+	(wire
+		(pts
+			(xy 205.74 99.06)
+			(xy 203.2 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b3666ea1-89f6-5813-b235-0e7060a77af5")
+	)
+	(global_label "OSCI"
+		(shape passive)
+		(at 203.2 99.06 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "71dafa48-5a85-5961-ad50-8c27d6d84da1")
+	)
+	(wire
+		(pts
+			(xy 205.74 101.6)
+			(xy 203.2 101.6)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fcaac99e-ffea-514d-9755-f1458bfb3b25")
+	)
+	(global_label "OSCO"
+		(shape passive)
+		(at 203.2 101.6 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "65faa928-5d0f-5ded-b0d4-19b278be9a4e")
+	)
+	(wire
+		(pts
+			(xy 231.14 93.98)
+			(xy 233.68 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1538f9aa-3df9-5993-8cdf-925346fd6e94")
+	)
+	(global_label "SCL"
+		(shape passive)
+		(at 233.68 93.98 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f9c60474-9df4-5f79-94f4-035dd6f112a6")
+	)
+	(text "[2/B2]"
+		(exclude_from_sim no)
+		(at 239.78 93.98 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "e117e71e-290f-5d55-9e0a-65be0fc3400f")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 246.28 93.98 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "6b01e598-8e34-5aac-8007-7fa9c21ebcf4")
+	)
+	(text "[6/A2]"
+		(exclude_from_sim no)
+		(at 252.78 93.98 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "f60f12ee-eb95-56c4-8854-eb5137e8cb8d")
+	)
+	(wire
+		(pts
+			(xy 231.14 96.52)
+			(xy 233.68 96.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2b0fe029-06aa-5689-b869-108661336162")
+	)
+	(global_label "SDA"
+		(shape passive)
+		(at 233.68 96.52 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9747b851-6bd5-5542-8536-28712c647d7b")
+	)
+	(text "[2/A2]"
+		(exclude_from_sim no)
+		(at 239.78 96.52 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "00a4f1c4-51cc-538b-bba4-b18aeeb9dff0")
+	)
+	(text "[3/A8]"
+		(exclude_from_sim no)
+		(at 246.28 96.52 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "6bac6421-d296-54df-8c7f-a63157da6c51")
+	)
+	(text "[6/A2]"
+		(exclude_from_sim no)
+		(at 252.78 96.52 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "48a08c86-3de7-5427-a88e-d8a40f540ef6")
+	)
+	(wire
+		(pts
+			(xy 231.14 99.06)
+			(xy 233.68 99.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4064b7df-aee2-50e9-927a-6d13e0ee75f7")
+	)
+	(global_label "INT"
+		(shape passive)
+		(at 233.68 99.06 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e8b0ac4b-1f97-5df8-a8a1-804a30822e7e")
+	)
+	(text "[4/B2]"
+		(exclude_from_sim no)
+		(at 239.78 99.06 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "f8917ddf-39cf-532d-a7b3-5988ced77da7")
+	)
+	(text "K14"
+		(exclude_from_sim no)
+		(at 246.98 99.06 0)
+		(effects
+			(font
+				(size 1 1)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "a50f6852-11d4-554e-9d52-faff8fbdf1ce")
+	)
+	(no_connect
+		(at 231.14 101.6)
+		(uuid "94ee6d15-e652-53c5-bfa7-52b393f0bf72")
+	)
+	(wire
+		(pts
+			(xy 218.44 111.76)
+			(xy 218.44 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1ec02456-feae-5b45-bab5-6281547d6764")
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 218.44 114.3 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "908261b9-548c-5454-9992-b97ff57d942b")
+		(property "Reference" "#PWR083"
+			(at 218.44 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 218.44 118.3 0)
+			(effects
+				(font
+					(size 1 1)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 218.44 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 218.44 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 218.44 114.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7ce20d15-aeb0-50e2-a62b-2455bdfc14be")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR083")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:Crystal")
+		(at 279.4 91.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "7d074c76-c42b-58e9-aeb8-de966bb08d05")
+		(property "Reference" "Y1"
+			(at 279.4 88.265 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "32.768KHz ±20ppm 12.5pF"
+			(at 279.4 94.615 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 279.4 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4e01e5b3-3870-5bde-b625-c3f3549018cf")
+		)
+		(pin "2"
+			(uuid "8c707e25-4aa2-5e8d-962a-d41a6b5e1f68")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "Y1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "OSCO"
+		(shape passive)
+		(at 275.59 91.44 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c8170040-579f-54bd-a93b-b583202d3f79")
+	)
+	(global_label "OSCI"
+		(shape passive)
+		(at 283.21 91.44 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "beb037fc-b890-5fc6-90ca-c2c06fe9e11f")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 279.4 101.6 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "4c81b4b4-15ff-5ff8-b11f-445290161324")
+		(property "Reference" "C26"
+			(at 279.4 98.298 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "6.0pF"
+			(at 279.4 104.902 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 279.4 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "69165776-a156-5b01-b61e-ac80bd9561b4")
+		)
+		(pin "2"
+			(uuid "ef904e70-bece-5ad3-9ead-eae161819b9d")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C26")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 275.59 101.6 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b50a67ff-20ff-512f-8936-859ec8e4756e")
+		(property "Reference" "#PWR084"
+			(at 275.59 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 272.19 101.6 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 275.59 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 275.59 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 275.59 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c8b8dd11-9d7e-5635-bfbf-301ebd3202bc")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR084")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "OSCI"
+		(shape passive)
+		(at 283.21 101.6 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d8ca5f06-164d-50f5-b0dd-223c38bb238b")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 279.4 111.76 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "311c642f-bc87-5ba2-9370-f430a7605d2d")
+		(property "Reference" "C28"
+			(at 279.4 108.458 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "6.0pF"
+			(at 279.4 115.062 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 279.4 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e0157a1a-8117-5c16-8444-bf36c0792773")
+		)
+		(pin "2"
+			(uuid "8175e6e2-5c3f-5d47-b05d-d505ddd9ecb6")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C28")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 275.59 111.76 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bc6cec79-c6b4-5152-a507-de4e6993c005")
+		(property "Reference" "#PWR085"
+			(at 275.59 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 272.19 111.76 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 275.59 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 275.59 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 275.59 111.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "022ab6f2-9375-5277-afd4-f3893ea290d0")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR085")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "OSCO"
+		(shape passive)
+		(at 283.21 111.76 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "72bbc277-1f39-594a-9426-539f248097ec")
+	)
+	(symbol
+		(lib_id "kleidos:C")
+		(at 279.4 121.92 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bcbbad17-e1f6-541f-afab-ac5c6b27a0f5")
+		(property "Reference" "C27"
+			(at 279.4 118.618 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "100nF"
+			(at 279.4 125.222 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 279.4 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 279.4 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5366f455-58a8-594f-970b-72e4d9ee4946")
+		)
+		(pin "2"
+			(uuid "df084236-4bf6-5045-a87d-c824f5325daf")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "C27")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "kleidos:GND")
+		(at 275.59 121.92 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2ed4a092-c922-5c50-a05f-891af6987a63")
+		(property "Reference" "#PWR086"
+			(at 275.59 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 272.19 121.92 90)
+			(effects
+				(font
+					(size 1 1)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 275.59 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 275.59 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 275.59 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "021c9616-8b96-57c9-b58f-05f406e7c56c")
+		)
+		(instances
+			(project "m5stickc-plus2"
+				(path "/866adc6b-647f-5ba7-a3ea-d9d68c3b767f/a24ba1ad-fe6e-5a93-8033-2d1e83821dbf"
+					(reference "#PWR086")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "VBAT_IN"
+		(shape passive)
+		(at 283.21 121.92 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "54a456b4-80b4-5877-96ca-5726f40f335a")
+	)
+	(text "[3/D4]"
+		(exclude_from_sim no)
+		(at 293.71 121.92 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "9f5a28dd-0898-5444-bfb5-547eecf3c067")
+	)
+	(text "[4/A4]"
+		(exclude_from_sim no)
+		(at 300.21 121.92 0)
+		(effects
+			(font
+				(size 1 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "47f19de4-750e-548f-8c65-a186db4be58a")
+	)
+	(rectangle
+		(start 175.26 74.93)
+		(end 312.42 132.08)
+		(stroke
+			(width 0.254)
+			(type dash)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "a0e43775-d326-5626-8da2-f6653800ff62")
+	)
+	(text "Real-time clock"
+		(exclude_from_sim no)
+		(at 177.165 76.835 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "e01a752c-c690-5c86-ae88-192bdca42662")
+	)
+	(text "Contents"
+		(exclude_from_sim no)
+		(at 308 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "3607bd17-b2d1-5fbc-bd8a-98d9386d9110")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 321.5827 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "773bc24a-aa1a-54c7-8c35-e98e6b88f0fe")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 331.0197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#1")
+		)
+		(uuid "979513cf-ce75-5134-951d-28ac6be6d7d6")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 336.4947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "dbbbbee8-b33f-5312-84f9-e61d7b792174")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 341.9697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "8ba77b56-4895-5335-a23d-60d95de6d747")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 347.4447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "7dc583c8-5780-528d-9315-e874d2dd12a9")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 352.9197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "58bf6110-d142-5661-b8c4-592e76f439e2")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 358.3947 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "5badca98-ef8b-58e6-bd3c-e3ba6b075ef6")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 363.8697 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "49aaaa6a-060c-5ab8-a8df-bea5a1a0b1a0")
+	)
+	(text "[8]"
+		(exclude_from_sim no)
+		(at 369.3447 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "57a9466d-fb12-5c80-b1a0-0c8ba8e3f4cd")
+	)
+	(text "[9]"
+		(exclude_from_sim no)
+		(at 374.8197 250 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "b70ca5bd-eb0e-5bca-8e28-f8f474168e66")
+	)
+	(embedded_fonts no)
+)

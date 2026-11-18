@@ -1,0 +1,262 @@
+{
+  "schema": 1,
+  "board": "cardputer",
+  "node_name": "CardputerADV",
+  "output": "cardputer/model/cardputer.glb",
+  "copyright": "Case geometry (top and bottom shells, keyboard, StampS3A module, top-edge part): M5Stack, M5_Hardware Products/K132-Adv_Cardputer-Adv/Structures/Cardputer-Adv.stl @d99c537a, MIT License, Copyright (c) 2021 M5Stack. Display, interior, stickers, legend strips, screws, header and materials: Kleidos (MIT). Printed legends (the keys', the brand panel's, the StampS3A label's and the back, top-edge and left-side stickers'): the legends of Kleidos's own front drawing, their glyphs outlines of Inter 4.1 (SIL Open Font License 1.1, Copyright (c) 2016 The Inter Project Authors).",
+  "notes": "The STL holds the device twice over plus extra copies of some parts, laid along its +Y; only the assembly at STL y -42..42 is kept: top shell, bottom shell, the 56-key keyboard mat, the StampS3A module and a small part in the top edge's stadium recess (a button cap or light pipe; the STL does not say which). Its LCD carrier is dropped: the LCD box below covers it. Turned -90 deg about Z, the STL's frame becomes the build frame (+Y up the screen, +Z out of the screen, +X to the right). The origin is the center of the 84 x 54 x 19.6 mm body (shells x -42..42, y -27..27, z -9..10.6; the StampS3A label stands 0.08 mm proud). The shells are hollow and open (a 1 mm seam all round between them at z -1..0, the left side at y 11..25 z -1..5.2, the EXT header slot in the top edge, the speaker grille, back holes), so an opaque interior fills them as on the StickS3. The legend strips and the CARDPUTER ADV sticker sit in the shells' own 0.2 mm pockets.",
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "file": "Cardputer-Adv.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K132-Adv_Cardputer-Adv/Structures/Cardputer-Adv.stl",
+    "commit": "d99c537a05aebb07eb4d28d6e3c3ac8d35b8b271",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/d99c537a05aebb07eb4d28d6e3c3ac8d35b8b271/Products/K132-Adv_Cardputer-Adv/Structures/Cardputer-Adv.stl",
+    "sha256": "50c2b2a72694dd7461125489d99a2f863630bb0c224f86f98f95dda15ae45c00",
+    "bytes": 6775684,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "transform": [{"rotate": {"axis": "z", "deg": -90}}],
+  "split": true,
+  "select": {"max_le": [43, null, null]},
+  "parts": [
+    {
+      "name": "keys",
+      "match": {"faces_gt": 30000},
+      "ops": [
+        {"slice": {"normal": [0, 0, 1], "origin": [0, 0, 5.55], "cap": false}},
+        {"decimate": {"face_count": 3360}}
+      ],
+      "note": "The key mat: only the 56 caps above the deck's underside (z 5.5) are ever seen, 60 triangles a key; the membrane below is cut away."
+    },
+    {
+      "name": "front",
+      "match": {"extent_gt": [83.5, 53.5, 11.0]},
+      "ops": [{"decimate": {"face_count": 9000}}],
+      "note": "Halved for the web; 7000 starts to crease the faces beside the M5 deboss."
+    },
+    {
+      "name": "back",
+      "match": {"extent_gt": [83.5, 53.5, 8.5]},
+      "ops": [{"decimate": {"face_count": 3600}}],
+      "note": "2800 loses a letter of the embossed CARDPUTER on the back."
+    },
+    {"name": "stamp", "match": {"min_ge": [15.0, 7.0, 5.0], "extent_gt": [23, 17, 4]}},
+    {"name": "top_part", "match": {"min_ge": [5.0, 17.0, 0.5], "max_le": [15.0, 27.5, 6.0]}, "ops": [{"decimate": {"face_count": 200}}]}
+  ],
+  "volumes": {
+    "fill": [
+      [-40.35, 40.35, -25.35, 19.6, -7.45, 5.6],
+      [-38.2, 38.2, 19.6, 25.3, -7.45, 5.6],
+      [-40.1, 15.5, 8.45, 25.3, 5.6, 8.55]
+    ],
+    "lcd": [
+      [-22.0, 4.6, 8.45, 24.75, 8.55, 9.04]
+    ],
+    "under_label": [
+      [16.6, 39.0, 8.3, 24.7, 5.0, 10.8]
+    ],
+    "note": "fill: the opaque interior every opening shows, inside both shells' inner faces (lower body up into the deck plate, narrowed at the bottom shell's cut top corners; the upper block left of the StampS3A, under the screw counterbores' floor at z 8.6). lcd: the LCD module under the window, from the filler's top (z 8.55) up: below that it lay inside the filler, its side on the filler's side at y 8.45, two faces a depth test could not tell apart (the cull loses nothing, the filler's box holding every corner the lower part held). under_label: what the StampS3A label hides, 0.3 mm in from its edges (culling only)."
+  },
+  "cull": {"parts": ["front", "back", "stamp"], "volumes": ["fill", "lcd", "under_label"], "margin": 0.06},
+  "center_mm": [0.0, 0.0, 0.8],
+  "front_frame": {"left_x": -42.0, "top_y": 27.0},
+  "face_frames": {"top": {"left_x": -42.0, "back_z": -9.0}, "left": {"back_z": -9.0, "top_y": 27.0}},
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "planar_min_area": 1.5,
+  "materials": [
+    {"name": "case", "rgb": [244, 244, 246], "rough": 0.6},
+    {"name": "base", "rgb": [74, 74, 76], "rough": 0.62},
+    {"name": "key", "rgb": [27, 27, 29], "rough": 0.5},
+    {"name": "legend", "rgb": [246, 246, 244], "rough": 0.55},
+    {"name": "tile_orange", "rgb": [255, 102, 51], "rough": 0.55},
+    {"name": "tile_blue", "rgb": [58, 110, 165], "rough": 0.55},
+    {"name": "tile_green", "rgb": [51, 201, 149], "rough": 0.55},
+    {"name": "tile_gray", "rgb": [217, 217, 220], "rough": 0.55},
+    {"name": "tile_black", "rgb": [17, 17, 19], "rough": 0.5},
+    {"name": "sticker", "rgb": [252, 252, 250], "rough": 0.55},
+    {"name": "stamp", "rgb": [40, 42, 42], "rough": 0.45},
+    {"name": "lcd_black", "rgb": [10, 10, 12], "rough": 0.14},
+    {"name": "screen", "rgb": [8, 8, 10], "rough": 1.0, "unlit": true},
+    {"name": "glass", "rgb": [0, 0, 0], "rough": 0.04, "alpha": 0.06},
+    {"name": "screw", "rgb": [150, 150, 154], "rough": 0.4, "metal": 0.85},
+    {"name": "hole", "rgb": [3, 3, 4], "rough": 1.0}
+  ],
+  "meshes": [
+    {"name": "case_front", "part": "front", "material": "case", "smooth_deg": 40.0},
+    {"name": "case_back", "part": "back", "material": "base", "smooth_deg": 40.0},
+    {"name": "keys", "part": "keys", "material": "key", "smooth_deg": 50},
+    {
+      "name": "legend_strips",
+      "note": "The four white legend stickers, each in its 0.2 mm pocket above a key row (pockets x -40.76..40.80, z 6.8). The colored blocks printed on them (legend_orange, legend_black, legend_blue, legend_green, legend_gray) stand on their face (z 6.90) and rise two position steps: a block that reached a strip's edge from inside the strip shared the strip's side there, two faces a depth test could not tell apart.",
+      "material": "legend",
+      "shapes": [
+        {"prism": {"axis": "z", "range": [6.79, 6.90], "profile": {"rounded_rect": [-40.72, 40.76, 1.80, 5.44], "r": 0.3}}},
+        {"prism": {"axis": "z", "range": [6.79, 6.90], "profile": {"rounded_rect": [-40.72, 40.76, -5.70, -1.80], "r": 0.3}}},
+        {"prism": {"axis": "z", "range": [6.79, 6.90], "profile": {"rounded_rect": [-40.72, 40.76, -13.20, -9.30], "r": 0.3}}},
+        {"prism": {"axis": "z", "range": [6.79, 6.90], "profile": {"rounded_rect": [-40.72, 40.76, -20.70, -16.80], "r": 0.3}}}
+      ]
+    },
+    {
+      "name": "legend_orange",
+      "note": "esc's flag with its slanted lower edge, the upper half of del above its diagonal, and fn, with the corners front.svg draws them with (append_cardputer_esc, append_cardputer_del): the flag's four corners are the drawing's, and del's diagonal runs from (76.98, 22.27) to (81.70, 24.14) as the drawing's does. del's block ends at the model's strip (y 21.60 and 25.20), which is the vendor pocket's and shorter than the drawing's.",
+      "material": "tile_orange",
+      "shapes": [
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"polygon": [[2.42, 21.66], [7.07, 21.66], [7.00, 22.78], [2.37, 23.58]]}}},
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"polygon": [[76.98, 21.60], [81.70, 21.60], [81.70, 24.14], [76.98, 22.27]]}}},
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"rect": [2.37, 7.02, 36.30, 40.20]}}}
+      ]
+    },
+    {
+      "name": "legend_black",
+      "note": "The lower half of del under its diagonal, and ok.",
+      "material": "tile_black",
+      "shapes": [
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"polygon": [[76.98, 22.27], [81.70, 24.14], [81.70, 25.20], [76.98, 25.20]]}}},
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"rect": [76.98, 81.65, 36.30, 40.20]}}}
+      ]
+    },
+    {
+      "name": "legend_blue",
+      "material": "tile_blue",
+      "shapes": [{"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"rect": [8.10, 12.85, 36.30, 40.20]}}}]
+    },
+    {
+      "name": "legend_green",
+      "material": "tile_green",
+      "shapes": [{"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"rect": [7.91, 12.65, 43.80, 47.70]}}}]
+    },
+    {
+      "name": "legend_gray",
+      "note": "tab, ctrl and alt.",
+      "material": "tile_gray",
+      "shapes": [
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"rect": [2.37, 7.07, 28.80, 32.70]}}},
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"rect": [2.17, 6.82, 43.80, 47.70]}}},
+        {"frame": "front", "prism": {"axis": "z", "range": [6.90, 6.92], "profile": {"rect": [13.64, 18.38, 43.80, 47.70]}}}
+      ]
+    },
+    {
+      "name": "key_legends",
+      "note": "What front.svg prints on the four strips and their colored blocks, as geometry (legend_mesh.py): the 56 keys' legends, the shifted legends in blue, the orange arrows behind four of them. One mesh an ink color, in one plane 0.03 mm over the blocks (z 6.92) and 0.05 mm over the strips (z 6.90), three and five position steps: one step more than the blocks stand over the strips, so a depth buffer loses the blocks before it loses a legend. The keys themselves are plain black buttons: this board prints every legend on the case, on the strips, so a pressed key takes no legend with it.",
+      "legends": {"front": "../svg/front.svg", "plane": "keys", "on": "legend_strips", "z": 6.95, "flatness": 0.004, "rough": 0.55}
+    },
+    {
+      "name": "sticker",
+      "note": "The CARDPUTER ADV sticker in its 0.2 mm pocket (x -40.5..-22.75, y 10.1..25.55, z 10.4); the pocket's arc around the left screw (center (-29, 8.68), r 3.3) is drawn as three steps.",
+      "material": "sticker",
+      "shapes": [
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rounded_rect": [-40.46, -22.79, 11.80, 25.51], "r": 0.8}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rounded_rect": [-40.46, -31.95, 10.14, 12.60], "r": 0.8}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rounded_rect": [-26.05, -22.79, 10.14, 12.60], "r": 0.8}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rect": ["-29.0 - 2.95", "-29.0 - 2.35", 10.60, 12.0]}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rect": ["-29.0 + 2.35", "-29.0 + 2.95", 10.60, 12.0]}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rect": ["-29.0 - 2.35", "-29.0 - 1.87", 11.0, 12.0]}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rect": ["-29.0 + 1.87", "-29.0 + 2.35", 11.0, 12.0]}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rect": ["-29.0 - 1.87", "-29.0 - 1.33", 11.4, 12.0]}}},
+        {"prism": {"axis": "z", "range": [10.39, 10.52], "profile": {"rect": ["-29.0 + 1.33", "-29.0 + 1.87", 11.4, 12.0]}}}
+      ]
+    },
+    {
+      "name": "panel_legends",
+      "note": "What front.svg prints on the CARDPUTER ADV sticker (its brand-panel group): the four cyan corner marks, CARDPUTER, the ADV capitals, and the microphone (orange capsule, black cradle, stand and foot), 0.03 mm over the sticker's face (z 10.52) and under the shell's own face around the pocket (z 10.60).",
+      "legends": {"front": "../svg/front.svg", "plane": "panel", "on": "sticker", "z": 10.55, "flatness": 0.004, "rough": 0.55}
+    },
+    {"name": "stamp", "part": "stamp", "material": "stamp", "smooth_deg": 40},
+    {
+      "name": "stamp_label",
+      "note": "The StampS3A's label paper over the module's top face (x 16.3..39.3, y 8.0..25.0, its face z 10.70, over the vendor's label face at z 10.68), its corners chamfered 0.7 mm like the module's, the front's label outline; what is printed on it is stamp_legends. Its material is the brand panel's sticker: one paper.",
+      "material": "sticker",
+      "shapes": [{"prism": {"axis": "z", "range": [10.62, 10.70], "profile": {"polygon": [[17.00, 8.00], [38.60, 8.00], [39.30, 8.70], [39.30, 24.30], [38.60, 25.00], [17.00, 25.00], [16.30, 24.30], [16.30, 8.70]]}}}]
+    },
+    {
+      "name": "stamp_legends",
+      "note": "What front.svg prints on the StampS3A's label (its stamp-label group): the name block, the Espressif, M5, FCC, CE, WEEE and Japan radio marks, the boot button, USB, the LCD port's pin list and the pins' dots, pills and names, 0.03 mm over the label's face (z 10.70), nothing above it.",
+      "legends": {"front": "../svg/front.svg", "plane": "stamp", "on": "stamp_label", "z": 10.73, "flatness": 0.004, "rough": 0.55}
+    },
+    {
+      "name": "lcd",
+      "material": "lcd_black",
+      "shapes": [{"prism": {"axis": "z", "volume": "lcd", "profile": {"rounded": 0.6}}}]
+    },
+    {"name": "screen", "material": "screen", "screen": {"z": 9.06}},
+    {"name": "glass", "material": "glass", "glass": {"rect": [-21.2, 3.8, 9.05, 24.0], "z": 9.08}},
+    {"name": "internal", "note": "The inside seen through the openings, in the holes' black: the model is at the 45 materials the strictest reader holds, and the back's sky blue took the slot the inside's own near-black had.", "material": "hole", "shapes": [{"volume": "fill"}]},
+    {
+      "name": "screws",
+      "note": "The two screw heads in the counterbores beside the window (holes at (-29.0, 9.03) and (12.5, 9.03), floor z 8.6).",
+      "material": "screw",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [-29.0, 9.03], "r": 1.8, "range": [8.6, 9.5], "sections": 24}},
+        {"cylinder": {"axis": "z", "c": [12.5, 9.03], "r": 1.8, "range": [8.6, 9.5], "sections": 24}}
+      ]
+    },
+    {
+      "name": "screw_sockets",
+      "material": "hole",
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [-29.0, 9.03], "r": 0.76, "range": [9.49, 9.51], "sections": 6}},
+        {"cylinder": {"axis": "z", "c": [12.5, 9.03], "r": 0.76, "range": [9.49, 9.51], "sections": 6}}
+      ]
+    },
+    {
+      "name": "header",
+      "note": "The EXT 2.54-14P (2 x 7) header in the bottom shell's slot on the top edge (x -9.3..9.2, z -6..-1), its face 0.5 mm in.",
+      "material": "tile_black",
+      "shapes": [{"box": [-8.89, 8.89, 23.0, 26.5, -5.98, -1.02]}]
+    },
+    {
+      "name": "header_funnels",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "26.5 + 0.010", "facing": 1, "u_center": 0.0,
+                                "v_center": "(-5.98 + -1.02) / 2", "cols": 7, "rows": 2,
+                                "pitch": 2.54, "size": 1.5}}]
+    },
+    {
+      "name": "header_holes",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "y", "at": "26.5 + 0.020", "facing": 1, "u_center": 0.0,
+                                "v_center": "(-5.98 + -1.02) / 2", "cols": 7, "rows": 2,
+                                "pitch": 2.54, "size": 0.8}}]
+    },
+    {"name": "top_part", "part": "top_part", "material": "key", "smooth_deg": 40},
+    {
+      "name": "back_label",
+      "note": "The sticker over the whole back, in the bottom shell's 0.2 mm pocket (its face z -8.8; the shell's rim and the CARDPUTER lip z -9.0), its outline the pocket's 0.05 mm in, round the two screw bosses; what is printed on it is back_legends. Its material is the brand panel's sticker: one paper.",
+      "material": "sticker",
+      "shapes": [{"prism": {"axis": "z", "range": [-8.92, -8.79], "profile": {"polygon": [[-40.45, -21.996], [-40.393, -22.339], [-39.982, -22.835], [-39.494, -22.95], [-18.011, -22.89], [-11.825, -16.754], [-11.48, -16.521], [-11.091, -16.45], [11.091, -16.45], [11.489, -16.524], [11.825, -16.754], [18.011, -22.89], [39.496, -22.95], [39.839, -22.893], [40.345, -22.482], [40.45, -21.995], [40.45, 17.995], [40.374, 18.386], [39.888, 18.9], [37.499, 18.95], [17.011, 19.001], [10.758, 25.162], [10.45, 25.383], [10.076, 25.45], [-10.076, 25.45], [-10.45, 25.383], [-10.758, 25.162], [-16.915, 19.064], [-17.405, 18.95], [-37.5, 18.95], [-39.772, 18.93], [-40.39, 18.407], [-40.45, 8.67]], "holes": [[[11.562, 11.909], [12.503, 12.05], [13.452, 11.905], [14.297, 11.472], [14.966, 10.805], [15.407, 9.948], [15.55, 8.997], [15.405, 8.048], [14.972, 7.203], [14.305, 6.534], [13.448, 6.093], [12.497, 5.95], [11.548, 6.095], [10.703, 6.528], [10.034, 7.195], [9.593, 8.052], [9.45, 9.003], [9.595, 9.952], [10.028, 10.797], [10.695, 11.466]], [[-27.195, 11.466], [-26.528, 10.797], [-26.091, 9.938], [-25.95, 8.997], [-26.091, 8.062], [-26.531, 7.198], [-27.203, 6.528], [-28.062, 6.091], [-29.003, 5.95], [-29.938, 6.091], [-30.802, 6.531], [-31.472, 7.203], [-31.909, 8.062], [-32.05, 9.003], [-31.909, 9.938], [-31.469, 10.802], [-30.797, 11.472], [-29.938, 11.909], [-28.997, 12.05], [-28.062, 11.909]]]}}}]
+    },
+    {
+      "name": "back_legends",
+      "note": "What back.svg prints on the back sticker: the EXT header's pins, the audio chain, the power path, the I2C devices, the key matrix, the LCD's pins, M5 STACK and the ADV flag, 0.03 mm out of the paper's face (z -8.92) towards the back's viewer, inside the shell's rim (z -9.0).",
+      "legends": {"drawing": "../svg/back.svg", "face": "back", "plane": "label", "on": "back_label", "z": -8.95, "flatness": 0.004, "rough": 0.55}
+    },
+    {
+      "name": "top_label",
+      "note": "The sticker along the top edge, in the top shell's 0.2 mm pocket (its face y 26.8, x -39.5..39.14, z 0..9.5; the shell's face round it y 27.0), its outline the pocket's 0.05 mm in. It covers the pocket's one closed recess (x -13.9..-1.7, z 6.1..7.3), which the product's sticker hides. What is printed on it is top_legends.",
+      "material": "sticker",
+      "shapes": [{"prism": {"axis": "y", "range": [26.79, 26.92], "profile": {"polygon": [[-39.45, 0.05], [-33.459, 0.05], [-33.405, 1.702], [-33.075, 2.123], [-32.625, 2.368], [-32.231, 2.38], [-31.757, 2.207], [-31.46, 1.89], [-31.334, 1.609], [-31.29, 1.302], [-31.29, 0.05], [-30.55, 0.05], [-30.55, 5.402], [-30.458, 6.063], [-30.212, 6.677], [-29.807, 7.204], [-29.28, 7.61], [-28.534, 7.898], [-25.56, 7.92], [-24.728, 7.615], [-24.196, 7.207], [-23.785, 6.672], [-23.502, 5.934], [-23.45, 0.05], [-19.549, 0.05], [-19.53, 1.975], [-19.243, 2.314], [-16.166, 2.35], [-14.969, 3.176], [-13.299, 3.68], [-11.979, 3.629], [-10.534, 3.177], [-9.334, 2.35], [-6.378, 2.335], [-6.103, 2.194], [-5.961, 1.909], [-5.95, 0.05], [4.85, 0.05], [4.85, 3.501], [5.005, 4.452], [5.431, 5.292], [6.108, 5.969], [6.957, 6.398], [7.899, 6.55], [21.631, 6.51], [22.409, 6.216], [22.949, 5.801], [23.354, 5.273], [23.609, 4.66], [23.69, 4.001], [23.69, 0.05], [39.09, 0.05], [39.09, 8.494], [38.965, 9.011], [38.479, 9.393], [38.136, 9.45], [-38.494, 9.45], [-38.954, 9.345], [-39.364, 8.906], [-39.45, 8.495]]}}}]
+    },
+    {
+      "name": "top_legends",
+      "note": "What top.svg prints on the top sticker: STAMP S3A, BtnG0, OFF/ON, the microSD card's pins, BtnRst and IR G44, 0.03 mm out of the paper's face (y 26.92), under the shell's face (y 27.0).",
+      "legends": {"drawing": "../svg/top.svg", "face": "top", "plane": "strip", "on": "top_label", "y": 26.95, "flatness": 0.004, "rough": 0.55}
+    },
+    {
+      "name": "side_label",
+      "note": "The sticker on the left side round the Grove port, in the top shell's 0.2 mm pocket (its face x -41.8; the shell's face round it x -42.0), its outline the pocket's 0.05 mm in.",
+      "material": "sticker",
+      "shapes": [{"prism": {"axis": "x", "range": [-41.92, -41.79], "profile": {"polygon": [[4.101, 0.05], [5.65, 0.05], [5.65, 2.299], [5.665, 2.335], [5.701, 2.35], [10.313, 2.348], [10.35, 2.299], [10.35, 0.05], [12.761, 0.05], [12.821, 3.209], [12.839, 3.239], [12.871, 3.25], [13.821, 3.25], [13.85, 5.2], [13.862, 5.231], [13.892, 5.249], [24.108, 5.249], [24.138, 5.231], [24.15, 5.2], [24.179, 3.25], [25.0, 3.25], [24.96, 7.503], [24.628, 7.929], [24.28, 8.08], [9.915, 8.1], [9.495, 8.014], [4.369, 2.928], [4.13, 2.565]]}}}]
+    },
+    {
+      "name": "side_legends",
+      "note": "What left.svg prints on the left sticker: PORT.A's pins and name and the 5 V switch's two settings, 0.03 mm out of the paper's face (x -41.92), under the shell's face (x -42.0).",
+      "legends": {"drawing": "../svg/left.svg", "face": "left", "plane": "side", "on": "side_label", "x": -41.95, "flatness": 0.004, "rough": 0.55}
+    }
+  ]
+}

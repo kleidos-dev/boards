@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "board": "m5stack-core2-v13",
+  "node_name": "Core2v13",
+  "output": "m5stack-core2-v13/model/m5stack-core2-v13.glb",
+  "copyright": "Case geometry (front shell with its power and reset flexures, bottom cover): M5Stack, M5_Hardware Products/K010-V13_Core2_v1.3/Structures/Core2_v1.3.stl @dccc8047, MIT License, Copyright (c) 2021 M5Stack. Glass, display, touch rings, connectors, M-BUS header, label, screws, filler and materials: Kleidos (MIT).",
+  "notes": "The STL holds the device twice (an assembly at x -37.09..16.91 mm and an exploded copy far along -x), each as two pieces: the white front shell (54 x 54 x 15.5 mm, open at the front, its power and reset buttons molded in as flexures) and the gray bottom cover (53.2 x 53.2 x 7.9 mm, 1 mm proud of the shell at the back). Its axes already are the build frame (+Y towards the label end, +Z out of the screen, +X towards the speaker grille): the transform only moves the assembly to x 0..54, y 0..54, z -16.5..0, the front at z = 0. There is no glass, display or connector: the 51 x 51 mm black glass sits in the shell's 1.5 mm recess, flush with the frame; the screen and the cover glass lie just above it; the Port A (Grove), USB-C, M-BUS header, top label and back screws are added from the vendor photos; an opaque filler closes every opening onto the empty inside.",
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "file": "Core2_v1.3.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K010-V13_Core2_v1.3/Structures/Core2_v1.3.stl",
+    "commit": "dccc804775037bb1c1457b7d31bf3ba583150d57",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/dccc804775037bb1c1457b7d31bf3ba583150d57/Products/K010-V13_Core2_v1.3/Structures/Core2_v1.3.stl",
+    "sha256": "223b148fc19892a77d84aaaa6940c9fce1667d393259bd75316d3b6f85052424",
+    "bytes": 1315284,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "transform": [{"translate": [37.0912, 234.9429, 422.2113]}],
+  "split": true,
+  "select": {"min_ge": [-0.5, null, null], "max_le": [54.5, null, null]},
+  "parts": [
+    {"name": "shell", "match": {"extent_gt": [null, null, 15.0]}},
+    {"name": "bottom", "match": {"extent_lt": [null, null, 10.0]}}
+  ],
+  "volumes": {
+    "fill": [
+      [1.7, 8.2, 1.7, 8.2, -14.9, -1.45],
+      [1.7, 8.2, 45.8, 52.3, -14.9, -1.45],
+      [1.7, 8.2, 8.2, 45.8, -15.6, -1.45],
+      [8.2, 23.0, 1.7, 52.3, -15.6, -1.45],
+      [23.0, 31.0, 1.7, 41.0, -15.6, -1.45],
+      [23.0, 31.0, 41.0, 52.3, -11.3, -1.45],
+      [31.0, 36.2, 1.7, 52.3, -15.6, -1.45],
+      [36.2, 50.6, 1.7, 52.3, -11.5, -1.45],
+      [50.6, 52.0, 8.2, 18.6, -15.6, -1.45],
+      [50.6, 52.3, 18.6, 45.8, -15.6, -1.45],
+      [50.6, 52.3, 1.7, 8.2, -11.5, -1.45],
+      [50.6, 52.3, 45.8, 52.3, -11.5, -1.45]
+    ],
+    "note": "fill: the opaque inside every opening shows (the side cut-outs, the button gaps, the grille, the bottom cover's slots and the M-BUS slot), from 0.1 mm inside the shell's walls (not beside the notch in the right wall's back edge, y 8..18, where the bottom cover shows) to just under the glass and down into the bottom cover; it stops above the left screws' heads (-14.9), above the keyhole's pocket (-11.3) and inside the M-BUS pocket's shelf, above the right screws (-11.5)."
+  },
+  "cull": {"parts": ["shell", "bottom"], "volumes": ["fill"], "margin": 0.06},
+  "center_mm": [27.0, 27.0, -8.25],
+  "front_frame": {"left_x": 0.0, "top_y": 54.0},
+  "face_frames": {"top": {"left_x": 0.0, "back_z": -16.5, "note": "The top side's drawing (svg/top.svg): x from the case's left edge, down from the back edge at z -16.5."}},
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "planar_min_area": 1.5,
+  "materials": [
+    {"name": "case_white", "hex": "#FDFDFD", "rough": 0.55},
+    {"name": "bottom_gray", "rgb": [84, 84, 86], "rough": 0.6},
+    {"name": "glass_black", "hex": "#030304", "rough": 0.08},
+    {"name": "screen", "rgb": [8, 8, 10], "rough": 1.0, "unlit": true},
+    {"name": "glass", "rgb": [0, 0, 0], "rough": 0.04, "alpha": 0.06},
+    {"name": "ring_print", "hex": "#6b645f", "rough": 0.35},
+    {"name": "internal", "rgb": [16, 16, 18], "rough": 0.95},
+    {"name": "usb_metal", "rgb": [196, 196, 200], "rough": 0.32, "metal": 1.0},
+    {"name": "black_plastic", "rgb": [26, 26, 28], "rough": 0.55},
+    {"name": "grove_red", "rgb": [128, 50, 50], "rough": 0.55},
+    {"name": "brass", "rgb": [200, 158, 84], "rough": 0.38, "metal": 1.0},
+    {"name": "header_black", "rgb": [17, 17, 18], "rough": 0.5},
+    {"name": "header_funnel", "rgb": [8, 8, 9], "rough": 0.7},
+    {"name": "hole", "rgb": [3, 3, 4], "rough": 1.0},
+    {"name": "label", "rgb": [222, 222, 218], "rough": 0.5},
+    {"name": "screw", "rgb": [52, 52, 56], "rough": 0.45, "metal": 0.8},
+    {"name": "sticker", "rgb": [250, 250, 248], "rough": 0.5},
+    {"name": "foot", "rgb": [20, 20, 22], "rough": 0.9}
+  ],
+  "meshes": [
+    {"name": "case_shell", "part": "shell", "material": "case_white", "smooth_deg": 40.0},
+    {"name": "case_bottom", "part": "bottom", "material": "bottom_gray", "smooth_deg": 40.0},
+    {
+      "name": "front_glass",
+      "note": "The black glass front (51 x 51 mm, the shell recess's R3.5 corners), flush with the frame.",
+      "material": "glass_black",
+      "smooth_deg": 40,
+      "shapes": [{"prism": {"axis": "z", "range": [-1.5, -0.02],
+                            "profile": {"rounded_rect": [1.5, 52.5, 1.5, 52.5], "r": 3.5}}}]
+    },
+    {"name": "screen", "note": "One quantization step above the black glass, and the cover glass one more.", "material": "screen", "screen": {"z": -0.010}},
+    {"name": "glass", "material": "glass", "glass": {"rect": [6.71, 47.57, 11.72, 42.32], "z": 0.0, "frame": "front"}},
+    {
+      "name": "touch_a",
+      "note": "The printed ring of each touch button: 2.08 mm across its centerline, 0.19 mm line (measurements.json).",
+      "material": "ring_print",
+      "shapes": [{"frame": "front", "prism": {"axis": "z", "range": [-0.03, -0.01],
+                  "profile": {"stadium": [13.54, 45.11, "2.08 + 0.19", "2.08 + 0.19"], "inner": ["2.08 - 0.19", "2.08 - 0.19"], "res": 5}}}]
+    },
+    {
+      "name": "touch_b",
+      "material": "ring_print",
+      "shapes": [{"frame": "front", "prism": {"axis": "z", "range": [-0.03, -0.01],
+                  "profile": {"stadium": [27.04, 45.11, "2.08 + 0.19", "2.08 + 0.19"], "inner": ["2.08 - 0.19", "2.08 - 0.19"], "res": 5}}}]
+    },
+    {
+      "name": "touch_c",
+      "material": "ring_print",
+      "shapes": [{"frame": "front", "prism": {"axis": "z", "range": [-0.03, -0.01],
+                  "profile": {"stadium": [40.51, 45.11, "2.08 + 0.19", "2.08 + 0.19"], "inner": ["2.08 - 0.19", "2.08 - 0.19"], "res": 5}}}]
+    },
+    {"name": "internal", "material": "internal", "shapes": [{"volume": "fill"}]},
+    {
+      "name": "usb_c_shell",
+      "note": "The USB-C receptacle in the left side (opening y 22.45..31.54, z -6.48..-9.79).",
+      "material": "usb_metal",
+      "smooth_deg": 40,
+      "shapes": [
+        {"prism": {"axis": "x", "range": [0.45, 7.5],
+                   "profile": {"stadium": [27.0, -8.13, 8.94, 3.26], "inner": ["8.94 - 0.5", "3.26 - 0.5"]}}}
+      ]
+    },
+    {
+      "name": "usb_c_inside",
+      "material": "black_plastic",
+      "shapes": [
+        {"prism": {"axis": "x", "range": [6.6, 7.0],
+                   "profile": {"stadium": [27.0, -8.13, "8.94 - 0.5", "3.26 - 0.5"]}}},
+        {"prism": {"axis": "x", "range": [1.35, 6.7],
+                   "profile": {"rect": ["27.0 - 3.3", "27.0 + 3.3", "-8.13 - 0.35", "-8.13 + 0.35"]}}}
+      ]
+    },
+    {
+      "name": "grove",
+      "note": "The red Port A (HY2.0-4P) housing in the left side (opening y 7.87..18.12, z -6.48..-11.73): its back, then the walls around the plug's cavity (0.7 mm).",
+      "material": "grove_red",
+      "shapes": [
+        {"box": [4.6, 6.0, 7.92, 18.07, -11.68, -6.53]},
+        {"box": [0.35, 4.6, 7.92, "7.92 + 0.7", -11.68, -6.53]},
+        {"box": [0.35, 4.6, "18.07 - 0.7", 18.07, -11.68, -6.53]},
+        {"box": [0.35, 4.6, "7.92 + 0.7", "18.07 - 0.7", -11.68, "-11.68 + 0.7"]},
+        {"box": [0.35, 4.6, "7.92 + 0.7", "18.07 - 0.7", "-6.53 - 0.7", -6.53]}
+      ]
+    },
+    {
+      "name": "grove_pins",
+      "material": "brass",
+      "shapes": [
+        {"box": [1.6, 4.6, "9.997 - 0.32", "9.997 + 0.32", "-9.10 - 0.32", "-9.10 + 0.32"]},
+        {"box": [1.6, 4.6, "11.997 - 0.32", "11.997 + 0.32", "-9.10 - 0.32", "-9.10 + 0.32"]},
+        {"box": [1.6, 4.6, "13.997 - 0.32", "13.997 + 0.32", "-9.10 - 0.32", "-9.10 + 0.32"]},
+        {"box": [1.6, 4.6, "15.997 - 0.32", "15.997 + 0.32", "-9.10 - 0.32", "-9.10 + 0.32"]}
+      ]
+    },
+    {
+      "name": "mbus_header",
+      "note": "The 2x15 M-BUS female header in the bottom cover's slot (x 43.2..49.6, y 7.5..46.6), its face 0.7 mm inside the back.",
+      "material": "header_black",
+      "shapes": [{"box": ["46.45 - 2.55", "46.45 + 2.55", "27.05 - 19.05", "27.05 + 19.05", -15.8, -10.9]}]
+    },
+    {
+      "name": "mbus_funnels",
+      "material": "header_funnel",
+      "shapes": [{"quad_grid": {"axis": "z", "at": "-15.8 - 0.010", "facing": -1, "u_center": 46.45,
+                                "v_center": 27.05, "cols": 2, "rows": 15, "pitch": 2.54, "size": 1.5}}]
+    },
+    {
+      "name": "mbus_holes",
+      "material": "hole",
+      "shapes": [{"quad_grid": {"axis": "z", "at": "-15.8 - 0.020", "facing": -1, "u_center": 46.45,
+                                "v_center": 27.05, "cols": 2, "rows": 15, "pitch": 2.54, "size": 0.8}}]
+    },
+    {
+      "name": "label",
+      "note": "The rating label in the top side's 0.3 mm recess (x 10.90..27.00, z -14.20..-1.80).",
+      "material": "label",
+      "shapes": [{"box": [10.92, 26.98, 53.70, 53.92, -14.18, -1.82]}]
+    },
+    {
+      "name": "screws",
+      "note": "The four back screws, each at the bottom of its countersink.",
+      "material": "screw",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [4.993, 4.997], "r": 1.95, "range": [-15.0, -14.42]}},
+        {"cylinder": {"axis": "z", "c": [4.993, 48.997], "r": 1.95, "range": [-15.0, -14.42]}},
+        {"cylinder": {"axis": "z", "c": [48.994, 4.997], "r": 1.95, "range": [-15.0, -14.42]}},
+        {"cylinder": {"axis": "z", "c": [48.994, 48.997], "r": 1.95, "range": [-15.0, -14.42]}}
+      ]
+    },
+    {
+      "name": "screw_slots",
+      "material": "hole",
+      "shapes": [
+        {"box": ["4.993 - 1.1", "4.993 + 1.1", "4.997 - 0.2", "4.997 + 0.2", -15.03, -14.99]},
+        {"box": ["4.993 - 0.2", "4.993 + 0.2", "4.997 - 1.1", "4.997 + 1.1", -15.03, -14.99]},
+        {"box": ["4.993 - 1.1", "4.993 + 1.1", "48.997 - 0.2", "48.997 + 0.2", -15.03, -14.99]},
+        {"box": ["4.993 - 0.2", "4.993 + 0.2", "48.997 - 1.1", "48.997 + 1.1", -15.03, -14.99]},
+        {"box": ["48.994 - 1.1", "48.994 + 1.1", "4.997 - 0.2", "4.997 + 0.2", -15.03, -14.99]},
+        {"box": ["48.994 - 0.2", "48.994 + 0.2", "4.997 - 1.1", "4.997 + 1.1", -15.03, -14.99]},
+        {"box": ["48.994 - 1.1", "48.994 + 1.1", "48.997 - 0.2", "48.997 + 0.2", -15.03, -14.99]},
+        {"box": ["48.994 - 0.2", "48.994 + 0.2", "48.997 - 1.1", "48.997 + 1.1", -15.03, -14.99]}
+      ]
+    },
+    {
+      "name": "back_label",
+      "note": "The back sticker's paper in the bottom cover's 0.2 mm pocket (its floor at z -16.30, the vendor's outline less 0.05 mm, every corner R2), 0.08 mm thick; what is printed on it is back_legends.",
+      "material": "sticker",
+      "shapes": [{"prism": {"axis": "z", "range": [-16.38, -16.30], "profile": {"polygon": [[36.28, 50.6],[36.214, 51.105],[36.019, 51.575],[35.709, 51.979],[35.305, 52.289],[34.835, 52.484],[34.33, 52.55],[18.13, 52.55],[17.625, 52.484],[17.155, 52.289],[16.751, 51.979],[16.441, 51.575],[16.246, 51.105],[16.18, 50.6],[16.18, 47.1],[16.11, 46.569],[15.905, 46.075],[15.58, 45.65],[15.155, 45.325],[14.661, 45.12],[14.13, 45.05],[3.39, 45.05],[2.885, 44.984],[2.415, 44.789],[2.011, 44.479],[1.701, 44.075],[1.506, 43.605],[1.44, 43.1],[1.44, 10.9],[1.506, 10.395],[1.701, 9.925],[2.011, 9.521],[2.415, 9.211],[2.885, 9.016],[3.39, 8.95],[14.13, 8.95],[14.661, 8.88],[15.155, 8.675],[15.58, 8.35],[15.905, 7.925],[16.11, 7.431],[16.18, 6.9],[16.18, 3.4],[16.246, 2.895],[16.441, 2.425],[16.751, 2.021],[17.155, 1.711],[17.625, 1.516],[18.13, 1.45],[34.33, 1.45],[34.835, 1.516],[35.305, 1.711],[35.709, 2.021],[36.019, 2.425],[36.214, 2.895],[36.28, 3.4]]}}}]
+    },
+    {
+      "name": "back_legends",
+      "note": "What back.svg prints on the sticker (its back-label group): the Espressif tile and the chip block, the M-BUS table, the parts and their pins, three position steps out from the paper's face (z -16.38).",
+      "legends": {"drawing": "../svg/back.svg", "face": "back", "plane": "sticker", "on": "back_label", "z": "-16.38 - 0.03", "flatness": 0.004, "rough": 0.5}
+    },
+    {
+      "name": "label_legends",
+      "note": "What top.svg prints on the rating label (its rating-label group): CE, WEEE, FCC, Japan's radio mark and number, the FCC ID, the input band and the gray CORE2 v1.3 band, three steps out from the label's face (y 53.92).",
+      "legends": {"drawing": "../svg/top.svg", "face": "top", "plane": "rating", "on": "label", "y": "53.92 + 0.03", "flatness": 0.004, "rough": 0.5}
+    },
+    {
+      "name": "feet",
+      "note": "The four black rubber feet beside the corner screws, each in its 5.2 mm pocket of the bottom cover (centers 4.03 mm from the top and bottom edges, 12.01 mm from each side), from the pocket's floor (z -16.30) to 0.02 mm short of the rim (z -16.50).",
+      "material": "foot",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [41.99, 49.97], "r": 2.55, "range": [-16.48, -16.30]}},
+        {"cylinder": {"axis": "z", "c": [11.99, 49.97], "r": 2.55, "range": [-16.48, -16.30]}},
+        {"cylinder": {"axis": "z", "c": [41.99, 4.02], "r": 2.55, "range": [-16.48, -16.30]}},
+        {"cylinder": {"axis": "z", "c": [11.99, 4.02], "r": 2.55, "range": [-16.48, -16.30]}}
+      ]
+    }
+  ]
+}

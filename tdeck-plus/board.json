@@ -1,0 +1,940 @@
+{
+  "$schema": "../_shared/board.schema.json",
+  "id": "tdeck-plus",
+  "identity": {
+    "name": "T-Deck Plus",
+    "aka": ["LILYGO T-Deck Plus"],
+    "vendor": "LilyGO",
+    "sku": "T-Deck-Plus",
+    "revision": "V1.0",
+    "links": {
+      "docs": "https://wiki.lilygo.cc/products/t-deck-series/t-deck-plus/",
+      "shop": "https://lilygo.cc/products/t-deck",
+      "repository": "https://github.com/Xinyuan-LilyGO/T-Deck"
+    },
+    "src": ["lilygo-wiki"]
+  },
+  "physical": {
+    "width_mm": 73.14,
+    "height_mm": 114.98,
+    "depth_mm": 20.4,
+    "notes": "Outline of the shell: width and height of the front face, depth front to back. LilyGO's documentation states 100 x 68 x 11 mm, which differs from the shell model; no source states a weight.",
+    "src": ["shell-step-measured", "owner-unit-verified"]
+  },
+  "components": [
+    {
+      "id": "soc-module",
+      "role": "soc",
+      "part": "ESP32-S3-WROOM-1",
+      "manufacturer": "Espressif",
+      "designator": "U1",
+      "quantity": 1,
+      "specs": {
+        "ordering_code": "ESP32-S3-WROOM-1-N16R8",
+        "chip": "ESP32-S3R8",
+        "cpu": "Xtensa LX7, dual core, up to 240 MHz",
+        "wifi": "2.4 GHz 802.11 b/g/n",
+        "bluetooth": "Bluetooth 5 (LE)",
+        "antenna": "on-board PCB antenna",
+        "crystal_mhz": 40,
+        "module_size_mm": [18.0, 25.5, 3.1],
+        "usb": "native USB on IO19 (D-) and IO20 (D+)",
+        "gpio_not_available": ["IO35", "IO36", "IO37"]
+      },
+      "connects_to": [
+        {
+          "to": "reset-button",
+          "pins": {"EN (CHIP_PU)": "S1 to GND"},
+          "pulls": [{"signal": "EN", "direction": "up", "ohms": 10000, "to": "VDD3V3", "designator": "R6"}],
+          "notes": "C9 (1 uF) from EN to GND forms the power-on delay; C5 and C6 (22 uF each) decouple the module's 3V3 pin."
+        },
+        {
+          "to": "usb-c",
+          "bus": "USB 2.0 full speed (native USB of the ESP32-S3)",
+          "pins": {"IO19": "D- (A7, B7)", "IO20": "D+ (A6, B6)"}
+        }
+      ],
+      "notes": "The schematic names the module ESP32-S3-WROOM-1 without its ordering code; N16R8 is the one WROOM-1 code with 16 MB of Quad SPI flash and 8 MB of Octal SPI PSRAM, the memory LilyGO states, and its datasheet places an ESP32-S3R8 inside it. LilyGO's pages call the MCU 'ESP32-S3FN16R8', a name that is not in Espressif's ESP32-S3 series table. Notes on the sheet: IO35, IO36 and IO37 serve the in-package Octal PSRAM and cannot be used for anything else; GPIO46 is pulled down by default, and GPIO46 high with GPIO0 low is not a usable strap combination.",
+      "src": ["tdeck-schematic", "lilygo-wiki", "esp32-s3-wroom-1-datasheet", "esp32-s3-datasheet"]
+    },
+    {
+      "id": "flash",
+      "role": "flash",
+      "quantity": 1,
+      "specs": {"capacity_mb": 16, "interface": "Quad SPI", "location": "inside the ESP32-S3-WROOM-1 module"},
+      "notes": "The flash of the module; LilyGO states 16 MB and its board definition sets 80 MHz QIO.",
+      "src": ["lilygo-wiki", "esp32-s3-wroom-1-datasheet", "tdeck-board-definition"]
+    },
+    {
+      "id": "psram",
+      "role": "psram",
+      "quantity": 1,
+      "specs": {"capacity_mb": 8, "interface": "Octal SPI (OPI)", "location": "in the ESP32-S3R8 package inside the module", "pins_used": ["IO35", "IO36", "IO37"]},
+      "src": ["lilygo-wiki", "esp32-s3-wroom-1-datasheet", "tdeck-board-definition"]
+    },
+    {
+      "id": "display-panel",
+      "role": "display_panel",
+      "quantity": 1,
+      "specs": {
+        "diagonal_in": 2.8,
+        "technology": "IPS LCD",
+        "viewing_angle": "full",
+        "resolution_px": [320, 240],
+        "interface": "SPI",
+        "connector": "P2, 18 pins"
+      },
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "SPI (shared with the TF card and the LoRa module)",
+          "pins": {
+            "SCL (P2.3)": "IO40 (ESP32_CLK)",
+            "D/C (P2.4)": "IO11",
+            "CSX (P2.5)": "IO12",
+            "SDA (P2.6)": "IO41 (ESP32_MOSI)",
+            "SDO (P2.7)": "IO38 (ESP_MISO)",
+            "RESET (P2.2)": "no GPIO: RC network on VDD3V3",
+            "VDD (P2.9)": "VDD3V3",
+            "LED-A (P2.10)": "V3V",
+            "GND": "P2.1, P2.8"
+          },
+          "pulls": [{"signal": "RESET", "direction": "up", "ohms": 10000, "to": "VDD3V3", "designator": "RY34"}],
+          "notes": "CW22 (100 nF) from RESET to GND completes the power-on reset. Pins 15 to 18 are not connected. CW1 (10 uF) decouples LED-A; CW2 (10 uF) and CW3 (100 nF) decouple VDD."
+        },
+        {
+          "to": "backlight-driver",
+          "pins": {"LED-K (P2.11)": "LED4 sink (LEDK1)", "LED-K (P2.12)": "LED3 sink (LEDK2)", "LED-K (P2.13)": "LED2 sink (LEDK3)", "LED-K (P2.14)": "LED1 sink (LEDK4)"}
+        }
+      ],
+      "notes": "The panel's own part number is not published; its logic is fed from VDD3V3 and its backlight anode from the switched V3V.",
+      "src": ["tdeck-schematic", "lilygo-spec-image", "lilygo-wiki"]
+    },
+    {
+      "id": "display-controller",
+      "role": "display_controller",
+      "part": "ST7789",
+      "manufacturer": "Sitronix",
+      "quantity": 1,
+      "specs": {"interface": "SPI with a D/C line", "location": "on the display panel"},
+      "notes": "LilyGO revised its ST7789 initialization sequence on 2024-07-26 (commit 6adb888 of the T-Deck repository).",
+      "src": ["lilygo-wiki", "lilygo-spec-image"]
+    },
+    {
+      "id": "backlight-driver",
+      "role": "other",
+      "part": "AW9364DNR",
+      "manufacturer": "Awinic",
+      "designator": "U9",
+      "quantity": 1,
+      "specs": {
+        "function": "4-channel LED current sink with 1-wire dimming",
+        "channels": 4,
+        "max_current_per_channel_ma": 20,
+        "vin_v": [2.8, 5.5],
+        "package": "DFN2x2-8L"
+      },
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "pins": {"EN": "IO42 (ESP_LCD_EN)", "VIN": "V3V", "PGND, AGND, EP": "GND"},
+          "pulls": [{"signal": "EN", "direction": "up", "ohms": 100000, "to": "V3V", "designator": "R3Y"}],
+          "notes": "R3Y is marked NC (not fitted) on the sheet. CW5 (10 uF/10 V) decouples VIN."
+        }
+      ],
+      "notes": "Its four sinks take the four LED-K pins of the display connector P2; the backlight anode sits on V3V.",
+      "src": ["tdeck-schematic", "aw9364-datasheet"]
+    },
+    {
+      "id": "touch-controller",
+      "role": "touch_controller",
+      "part": "GT911",
+      "manufacturer": "Goodix",
+      "quantity": 1,
+      "specs": {
+        "touch_points": 5,
+        "supply_v": [2.8, 3.3],
+        "host_interface_v": [1.8, 3.3],
+        "i2c_addresses": ["0x5D", "0x14"],
+        "address_select": "level of INT during reset",
+        "connector": "P4, 6 pins"
+      },
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "I2C, VDD3V3 segment (II2C_SDA IO18, II2C_SCL IO8)",
+          "pins": {
+            "SDA (P4.4)": "IO18",
+            "SCL (P4.5)": "IO8",
+            "INT (P4.3)": "IO16 (ESP_TP_INT)",
+            "RST (P4.2)": "no GPIO: RC network on VDD3V3",
+            "VCC (P4.6)": "VDD3V3",
+            "GND (P4.1)": "GND"
+          },
+          "pulls": [
+            {"signal": "RST", "direction": "up", "ohms": 10000, "to": "VDD3V3", "designator": "RY35"},
+            {"signal": "SDA", "direction": "up", "ohms": 4700, "to": "VDD3V3", "designator": "RC4"},
+            {"signal": "SCL", "direction": "up", "ohms": 4700, "to": "VDD3V3", "designator": "RC2"}
+          ],
+          "notes": "CW24 (100 nF) from RST to GND; CW6 (10 uF) and CW7 (100 nF) decouple VCC. The address is 0x5D or 0x14 by the INT level at reset (GT911 datasheet), and no GPIO drives RST. A touch-enable network (Q25 PMBT3906, D30, R49, R70, R74, C73, net TP_EN) is drawn inside a compile-mask box on the sheet; on the owner's unit it does nothing (bench: eight falling edges on IO16 with V3V dead switched V3V on in none of the 40 ms after them), so it is not fitted as printed there; whether a part is absent or differs needs the board opened."
+        }
+      ],
+      "notes": "The controller sits on the touch panel, reached through connector P4; the standard T-Deck has no touchscreen.",
+      "src": ["tdeck-schematic", "lilygo-wiki", "gt911-datasheet", "bench-tp-en"]
+    },
+    {
+      "id": "keyboard-controller",
+      "role": "keyboard_controller",
+      "part": "ESP32-C3",
+      "manufacturer": "Espressif",
+      "designator": "U5",
+      "quantity": 1,
+      "specs": {
+        "variant": "ESP32-C3 without in-package flash (external flash U3)",
+        "i2c_role": "slave",
+        "i2c_address": "0x55",
+        "matrix": "7 rows x 5 columns",
+        "backlight_pwm_hz": 1000,
+        "i2c_commands": {"0x01": "backlight duty", "0x02": "Alt+B backlight duty", "0x03": "raw matrix mode", "0x04": "key mode"}
+      },
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "I2C, V3V segment (behind the Q1/Q2 level shifters)",
+          "address": "0x55",
+          "pins": {"GPIO2 (SDA)": "I2C_SDA", "GPIO10 (SCL)": "I2C_SCL", "GPIO8 (C3_INT)": "IO46"},
+          "pulls": [
+            {"signal": "I2C_SDA", "direction": "up", "ohms": 4700, "to": "V3V", "designator": "R14"},
+            {"signal": "I2C_SCL", "direction": "up", "ohms": 4700, "to": "V3V", "designator": "R13"},
+            {"signal": "C3_INT", "direction": "up", "ohms": 4700, "to": "V3V", "designator": "R12"}
+          ],
+          "src": ["tdeck-schematic", "tdeck-keyboard-sketch"]
+        },
+        {
+          "to": "keyboard-connector",
+          "pins": {
+            "GPIO0": "ROW1", "GPIO3": "ROW2", "GPIO19": "ROW3", "SPIHD (GPIO12)": "ROW4", "GPIO18": "ROW5", "MTCK (GPIO6)": "ROW6", "MTDO (GPIO7)": "ROW7",
+            "GPIO1": "COL1", "MTMS (GPIO4)": "COL2", "MTDI (GPIO5)": "COL3", "VDD_SPI (GPIO11)": "COL4", "SPIWP (GPIO13)": "COL5"
+          },
+          "notes": "The stock firmware reads the rows as inputs and the columns as inputs with pull-up.",
+          "src": ["tdeck-schematic", "tdeck-keyboard-sketch"]
+        },
+        {
+          "to": "keyboard-backlight-switch",
+          "pins": {"GPIO9 (BL_CTRL)": "Q3 gate"},
+          "pulls": [{"signal": "BL_CTRL", "direction": "up", "ohms": 4700, "to": "V3V", "designator": "R11"}],
+          "notes": "GPIO9 is also the C3's boot strap, which is why BL_CTRL reaches the programming header J1."
+        },
+        {
+          "to": "c3-programming-header",
+          "pins": {"U0TXD (GPIO21)": "J1.6 UART_TX", "U0RXD (GPIO20)": "J1.5 UART_RX", "GPIO9": "J1.4 BL_CTRL (BOOT)", "CHIP_EN": "J1.3 RESET"},
+          "pulls": [{"signal": "CHIP_EN", "direction": "up", "ohms": 10000, "to": "V3V", "designator": "R19"}],
+          "notes": "C37 (1 uF) from CHIP_EN to GND."
+        }
+      ],
+      "notes": "Powered from the switched V3V (VDD3P3, VDD3P3_RTC, VDD3P3_CPU, VDDA). Its stock firmware (LilyGO's Keyboard_ESP32C3 sketch) answers at 0x55; the INT line on GPIO8 is wired to the S3's IO46.",
+      "src": ["tdeck-schematic", "tdeck-keyboard-sketch", "esp32-c3-datasheet"]
+    },
+    {
+      "id": "c3-flash",
+      "role": "flash",
+      "part": "W25Q32FVSS",
+      "manufacturer": "Winbond",
+      "designator": "U3",
+      "quantity": 1,
+      "specs": {"capacity_mbit": 32, "capacity_mb": 4, "supply_v": [2.7, 3.6], "package": "SOIC-8 208-mil"},
+      "connects_to": [
+        {
+          "to": "keyboard-controller",
+          "bus": "SPI flash bus of the ESP32-C3",
+          "pins": {"CS": "SPICS0", "DO": "SPIQ", "CLK": "SPICLK (through R17, 200 ohm)", "DI": "SPID", "WP": "V3V", "HOLD": "VCC (V3V)"},
+          "pulls": [{"signal": "CS", "direction": "up", "ohms": 10000, "to": "V3V", "designator": "R10"}]
+        }
+      ],
+      "notes": "Program storage of the keyboard controller, not of the main SoC.",
+      "src": ["tdeck-schematic", "w25q32fv-datasheet"]
+    },
+    {
+      "id": "c3-crystal",
+      "role": "crystal",
+      "designator": "U4",
+      "quantity": 1,
+      "specs": {"frequency_mhz": 40, "tolerance_ppm": 10, "pins": 4},
+      "connects_to": [
+        {"to": "keyboard-controller", "pins": {"XIN": "XTAL_P", "XOUT": "XTAL_N"}, "notes": "R15 (2.2 nH, marked reserved) sits in the XTAL_P path."}
+      ],
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "keyboard-connector",
+      "role": "connector",
+      "part": "BM14B(0.8)-24DS-0.4V(53)",
+      "designator": "JP1",
+      "quantity": 1,
+      "specs": {"pitch_mm": 0.4, "contacts": 24},
+      "connects_to": [
+        {
+          "to": "external",
+          "pins": {
+            "1, 4, 5, 11-16, 28": "GND / AGND",
+            "6": "ROW1", "7": "COL1", "8": "ROW2", "9": "COL2", "10": "COL3",
+            "17": "COL4", "18": "ROW3", "19": "COL5", "20": "ROW4", "21": "ROW5", "22": "ROW6", "27": "ROW7",
+            "24, 26 (LDDA_1_4, LDDA_1_2)": "V3V",
+            "23, 25 (LDDA_2_3, LDDA_3_4)": "LEDK (Q3 drain)",
+            "2, 3 (MIC_VDD, MIC)": "not connected"
+          },
+          "notes": "The far side is the keyboard board: the key matrix and its backlight LEDs."
+        }
+      ],
+      "notes": "The schematic symbol numbers 28 pins, the 24 contacts of the part name plus the ground pins drawn at its corners.",
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "keyboard-matrix",
+      "role": "other",
+      "quantity": 1,
+      "specs": {"function": "QWERTY keyboard (LilyGO T-Keyboard)", "keys": 35, "matrix": "7 rows x 5 columns", "backlight": "LEDs between V3V and LEDK, switched by Q3", "colors": ["black", "white"]},
+      "notes": "On a separate board joined through JP1; its LED count and switch part are not published.",
+      "src": ["tdeck-schematic", "tdeck-keyboard-sketch", "lilygo-pinmap-image"]
+    },
+    {
+      "id": "keyboard-backlight-switch",
+      "role": "other",
+      "part": "BSS138",
+      "designator": "Q3",
+      "quantity": 1,
+      "specs": {"function": "N-MOSFET low-side switch of the keyboard backlight"},
+      "connects_to": [
+        {
+          "to": "keyboard-connector",
+          "pins": {"G": "BL_CTRL (ESP32-C3 GPIO9)", "D": "LEDK", "S": "GND"},
+          "pulls": [{"signal": "G", "direction": "down", "designator": "R18"}],
+          "notes": "R18 is marked NC (not fitted)."
+        }
+      ],
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "i2c-level-shifter",
+      "role": "other",
+      "part": "BSS123",
+      "designator": "Q1, Q2",
+      "quantity": 2,
+      "specs": {"function": "bidirectional MOSFET level shifter between the VDD3V3 and V3V segments of the I2C bus"},
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "I2C",
+          "pins": {"Q1 S": "I2C_SCL (V3V side)", "Q1 D": "II2C_SCL (VDD3V3 side, IO8)", "Q2 S": "I2C_SDA (V3V side)", "Q2 D": "II2C_SDA (VDD3V3 side, IO18)", "G (both)": "V3V"},
+          "pulls": [
+            {"signal": "I2C_SCL", "direction": "up", "ohms": 4700, "to": "V3V", "designator": "RC1"},
+            {"signal": "I2C_SDA", "direction": "up", "ohms": 4700, "to": "V3V", "designator": "RC3"},
+            {"signal": "II2C_SCL", "direction": "up", "ohms": 4700, "to": "VDD3V3", "designator": "RC2"},
+            {"signal": "II2C_SDA", "direction": "up", "ohms": 4700, "to": "VDD3V3", "designator": "RC4"}
+          ],
+          "notes": "The ESP32-S3 and the touch controller are on the VDD3V3 segment; the ES7210 and the keyboard controller are on the V3V segment, which also carries R13 and R14 (4.7 kOhm to V3V) near the ESP32-C3."
+        }
+      ],
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "trackball",
+      "role": "other",
+      "designator": "T1",
+      "quantity": 1,
+      "specs": {
+        "function": "trackball, read by four Hall sensors (UZ1 to UZ4) and a press switch (KEY1)",
+        "directions": {"up": "IO3 (UZ3, G_S1)", "down": "IO15 (UZ1, G_S3)", "left": "IO1 (UZ4, G_S4)", "right": "IO2 (UZ2, G_S2)", "press": "IO0 (KEY1)"}
+      },
+      "notes": "Directions, as the Kleidos firmware maps them (PIN_TRACKBALL_UP, _DOWN, _LEFT, _RIGHT and _CLICK in variants/tdeck/variant.h) and as the owner verified on his unit on 2026-11-17, each direction acting as the ball is rolled: UP IO3 (UZ3, G_S1), DOWN IO15 (UZ1, G_S3), LEFT IO1 (UZ4, G_S4), RIGHT IO2 (UZ2, G_S2), press IO0 (KEY1, BOOT). LilyGO's pin map image names them otherwise (UP IO2, DOWN IO3, LEFT IO1, RIGHT IO15, press IO0) and agrees only on LEFT and the press; the sheet names no direction. Its four pads are drawn to GND.",
+      "src": ["tdeck-schematic", "owner-unit", "lilygo-pinmap-image"]
+    },
+    {
+      "id": "trackball-hall-sensors",
+      "role": "other",
+      "part": "AN48841B",
+      "manufacturer": "Panasonic",
+      "designator": "UZ1, UZ2, UZ3, UZ4",
+      "quantity": 4,
+      "specs": {"function": "CMOS Hall IC for alternating magnetic field directions", "supply_v": [2.5, 5.25], "output": "CMOS inverter (no pull-up needed)", "package": "SMINI-5"},
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "pins": {"UZ1 OUT": "IO15 (G_S3)", "UZ2 OUT": "IO2 (G_S2)", "UZ3 OUT": "IO3 (G_S1)", "UZ4 OUT": "IO1 (G_S4)", "VCC (all)": "V3V"},
+          "notes": "Each sensor has its own 100 nF decoupling capacitor. By direction (owner observed on his unit, 2026-11-17, with the Kleidos firmware's map): UZ3 up, UZ1 down, UZ4 left, UZ2 right."
+        }
+      ],
+      "src": ["tdeck-schematic", "an48841b-datasheet", "owner-unit"]
+    },
+    {
+      "id": "trackball-switch",
+      "role": "button",
+      "part": "TS-1187AB",
+      "designator": "KEY1",
+      "quantity": 1,
+      "specs": {"function": "press of the trackball, BOOT strap"},
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "pins": {"A0, A1": "IO0 (GPIO_0)", "B0, B1": "GND"},
+          "pulls": [{"signal": "GPIO_0", "direction": "up", "ohms": 100000, "to": "VDD3V3", "designator": "RY31"}]
+        }
+      ],
+      "notes": "LilyGO: with the microphone in use, the GPIO0 button is not available.",
+      "src": ["tdeck-schematic", "tdeck-readme", "lilygo-wiki"]
+    },
+    {
+      "id": "reset-button",
+      "role": "button",
+      "designator": "S1",
+      "quantity": 1,
+      "specs": {"function": "reset of the ESP32-S3 (EN / CHIP_PU)", "location": "left edge"},
+      "src": ["tdeck-schematic", "lilygo-spec-image"]
+    },
+    {
+      "id": "power-switch",
+      "role": "other",
+      "part": "K3-1391D-5MM",
+      "designator": "SW1",
+      "quantity": 1,
+      "specs": {"function": "slide switch between the battery/USB power-path node and the +5V net", "location": "right edge"},
+      "notes": "It cuts both the battery and the USB supply to the system; the charger, fed straight from VBUS, is upstream of it.",
+      "src": ["tdeck-schematic", "lilygo-spec-image"]
+    },
+    {
+      "id": "buck-regulator",
+      "role": "regulator",
+      "part": "SY8089AAC",
+      "manufacturer": "Silergy",
+      "designator": "U8",
+      "quantity": 1,
+      "specs": {"topology": "synchronous step-down", "input_net": "+5V", "output_net": "VDD3V3", "inductor": "L5, SWPA5020S100MT", "feedback": "R23 100 kOhm 1 % (top), R24 22 kOhm 1 % (bottom), C42 22 pF across R23"},
+      "connects_to": [
+        {
+          "to": "power-switch",
+          "pins": {"IN": "+5V", "EN": "divider RY1 / RY2 (100 kOhm / 100 kOhm) from +5V", "LX": "L5 to VDD3V3"},
+          "notes": "C40 (22 uF/16 V) and C41 (100 nF) on the input; C43 (100 nF) and C44 (22 uF/10 V) on VDD3V3."
+        }
+      ],
+      "notes": "VDD3V3 is the always-on rail of a running board: the module, the touch controller, the display logic, the GPS and the I2C pull-ups RC2/RC4 hang on it.",
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "rail-switch",
+      "role": "other",
+      "part": "SI2301",
+      "designator": "Q4, Q6",
+      "quantity": 2,
+      "specs": {"function": "P-MOSFET high-side switches of the peripheral rails, both driven by PWR_EN (IO10)"},
+      "connects_to": [
+        {
+          "to": "rail-switch-driver",
+          "pins": {"Q4": "+5V to BAT (feeds the amplifier and the battery divider)", "Q6": "VDD3V3 to V3V (feeds the keyboard controller, the hall sensors, the ES7210, the LoRa module, the TF card and the backlight)", "gates": "common node, pulled low by Q7"},
+          "pulls": [{"signal": "gates", "direction": "up", "ohms": 100000, "to": "+5V", "designator": "RQ1"}]
+        }
+      ],
+      "notes": "LilyGO: on battery, GPIO10 must be set high before the peripherals work.",
+      "src": ["tdeck-schematic", "lilygo-wiki"]
+    },
+    {
+      "id": "rail-switch-driver",
+      "role": "other",
+      "part": "PMBT3904",
+      "designator": "Q7",
+      "quantity": 1,
+      "specs": {"function": "NPN transistor that pulls the Q4/Q6 gates low through R26 (1 kOhm)"},
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "pins": {"B": "IO10 (PWR_EN) through D3 (1N4148) and R27 (10 kOhm)", "C": "Q4/Q6 gates through R26 (1 kOhm)", "E": "GND"},
+          "pulls": [{"signal": "B", "direction": "down", "ohms": 100000, "to": "GND", "designator": "R28"}],
+          "notes": "A second input, VBUS through D2 (1N4148), is marked NC; a third, TP_EN through D4, sits inside a compile-mask box."
+        }
+      ],
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "battery-switch",
+      "role": "other",
+      "part": "SI2307",
+      "designator": "Q5",
+      "quantity": 1,
+      "specs": {"function": "P-MOSFET that connects VBAT to the power-path node when VBUS is absent"},
+      "connects_to": [
+        {
+          "to": "battery",
+          "pins": {"S": "VBAT", "D": "power-path node (SW1 pin 2)", "G": "VBUS"},
+          "pulls": [{"signal": "G", "direction": "down", "ohms": 100000, "to": "GND", "designator": "RD4"}]
+        }
+      ],
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "vbus-diode",
+      "role": "other",
+      "part": "1N5819",
+      "designator": "D1",
+      "quantity": 1,
+      "specs": {"function": "Schottky diode from VBUS to the power-path node"},
+      "src": ["tdeck-schematic"]
+    },
+    {
+      "id": "charger",
+      "role": "charger",
+      "part": "TP4065B",
+      "manufacturer": "Nanjing Top Power ASIC",
+      "designator": "UP1",
+      "quantity": 1,
+      "specs": {"type": "linear CC/CV single-cell Li-ion charger", "prog_resistor_ohms": 2000, "package": "SOT23-5"},
+      "connects_to": [
+        {
+          "to": "battery",
+          "pins": {"VCC (4)": "VBUS", "BAT (3)": "VBAT", "PROG (5)": "R25 2 kOhm 1 % to GND", "CHRG (1)": "LED1 cathode", "GND (2)": "GND"},
+          "notes": "C39 (10 uF/10 V) and CW4 (100 nF) on VBUS; C45 (100 nF) and C46 (10 uF) on VBAT. The TP4065 datasheet tables 450 to 550 mA at RPROG = 2.2 kOhm; the board's 2 kOhm is not a tabled point."
+        }
+      ],
+      "notes": "The TP4065 datasheet lists 4.20 V and 4.35 V float-voltage versions and no 'B' suffix.",
+      "src": ["tdeck-schematic", "tp4065-datasheet"]
+    },
+    {
+      "id": "charge-led",
+      "role": "led",
+      "designator": "LED1",
+      "quantity": 1,
+      "specs": {"color": "blue", "function": "charge indicator: lit while charging, off when full", "location": "bottom side"},
+      "connects_to": [
+        {"to": "charger", "pins": {"anode": "VBUS through RW1 (2 kOhm)", "cathode": "CHRG"}}
+      ],
+      "notes": "No GPIO reaches it.",
+      "src": ["tdeck-schematic", "lilygo-wiki"]
+    },
+    {
+      "id": "battery",
+      "role": "battery",
+      "quantity": 1,
+      "specs": {"chemistry": "lithium polymer", "capacity_mah": 2000, "connector": "P3, 2 pins (1 VBAT, 2 GND)"},
+      "notes": "Its make and part number are not published.",
+      "src": ["lilygo-wiki", "lilygo-pinmap-image", "tdeck-schematic"]
+    },
+    {
+      "id": "battery-sense",
+      "role": "other",
+      "designator": "RD2, RD3, CD1",
+      "quantity": 1,
+      "specs": {"function": "battery voltage divider", "ratio": "1/2", "top_ohms": 100000, "bottom_ohms": 100000, "tolerance": "1 %", "filter": "CD1 10 nF across RD3"},
+      "connects_to": [
+        {"to": "soc-module", "pins": {"top": "BAT net (after Q4)", "tap": "IO4 (BAT_ADC)", "bottom": "GND"}}
+      ],
+      "notes": "It reads the BAT net, which Q4 switches from +5V, not the cell itself: with USB connected that net carries the USB-fed node, and with PWR_EN low it is off. RD1 (100 kOhm 1 %) sits across VBAT and GND on its own.",
+      "src": ["tdeck-schematic", "lilygo-wiki"]
+    },
+    {
+      "id": "usb-c",
+      "role": "connector",
+      "designator": "U7",
+      "quantity": 1,
+      "specs": {"type": "USB Type-C receptacle, 16 pins", "function": "power input and native USB of the ESP32-S3", "location": "bottom edge"},
+      "connects_to": [
+        {
+          "to": "external",
+          "pins": {"A4, A9, B4, B9": "VBUS", "A6, B6": "D+ (IO20)", "A7, B7": "D- (IO19)", "A1, A12, B1, B12": "GND", "A8, B8": "not connected"},
+          "pulls": [
+            {"signal": "CC1 (A5)", "direction": "down", "ohms": 5100, "to": "GND", "designator": "RC5"},
+            {"signal": "CC2 (B5)", "direction": "down", "ohms": 5100, "to": "GND", "designator": "RC6"}
+          ]
+        }
+      ],
+      "src": ["tdeck-schematic", "lilygo-wiki"]
+    },
+    {
+      "id": "tf-card-slot",
+      "role": "sd_slot",
+      "part": "MP3T-F",
+      "designator": "TF",
+      "quantity": 1,
+      "specs": {"card": "microSD (TF)", "mode": "SPI", "location": "right edge"},
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "SPI (shared with the display and the LoRa module)",
+          "pins": {"DATA3/CS (2)": "IO39 (ESP_SD_CS)", "CMD (3)": "IO41 (MOSI) through RU1 22 ohm", "CLK (5)": "IO40 through RU2 22 ohm", "DATA0 (7)": "IO38 (MISO) through RU3 22 ohm", "VDD (4)": "V3V", "DATA1, DATA2": "not connected"},
+          "pulls": [
+            {"signal": "ESP32_MOSI", "direction": "up", "ohms": 10000, "to": "V3V", "designator": "R3"},
+            {"signal": "ESP32_CLK", "direction": "up", "ohms": 10000, "to": "V3V", "designator": "R4"},
+            {"signal": "ESP_MISO", "direction": "up", "ohms": 10000, "to": "V3V", "designator": "R5"}
+          ],
+          "notes": "C10 (100 nF) and C11 (1 uF) decouple VDD. The card-detect contact is tied to the shell ground with the COM pins."
+        }
+      ],
+      "src": ["tdeck-schematic", "lilygo-wiki"]
+    },
+    {
+      "id": "lora-module",
+      "role": "lora",
+      "part": "HPD16A",
+      "designator": "U0",
+      "quantity": 1,
+      "specs": {
+        "radio": "Semtech SX1262",
+        "tx_power_dbm": 22,
+        "band_options_mhz": [433, 868, 915],
+        "optional": true,
+        "schematic_annotations": {"sleep_current_max_ua": 1.5, "tx_current_max_ma": 114, "rx_current_max_ma": 8.2, "supply_current_min_ma": 200}
+      },
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "SPI (shared with the display and the TF card)",
+          "pins": {"NSS (13)": "IO9", "SCK (12)": "IO40", "MOSI (11)": "IO41", "MISO (10)": "IO38", "NRESET (14)": "IO17", "BUSY (8)": "IO13", "DIO1 (7)": "IO45", "VCC (5)": "V3V", "DIO3 (3)": "not connected"},
+          "notes": "C50 (10 uF) and C51 (100 nF) decouple VCC. LilyGO: only one SPI device may be selected at a time, so the other chip selects must be high before talking to the radio."
+        },
+        {"to": "lora-antenna", "pins": {"ANT (1)": "XX2 through R50 (0 ohm)"}}
+      ],
+      "notes": "LilyGO sells the board with a 433, 868 or 915 MHz radio, or none. The current figures are design notes written on the schematic beside the module (the supply must deliver at least 200 mA), not datasheet values.",
+      "src": ["tdeck-schematic", "lilygo-spec-image", "lilygo-pinmap-image", "lilygo-wiki"]
+    },
+    {
+      "id": "lora-antenna",
+      "role": "antenna",
+      "designator": "XX2",
+      "quantity": 1,
+      "specs": {
+        "type": "external whip on the LoRa antenna seat",
+        "length_mm": 170,
+        "band_mhz": [860, 920],
+        "gain_dbi": [-1.43, -0.7],
+        "efficiency_percent": [19.8, 22.7]
+      },
+      "notes": "Figures from LilyGO's T-Deck Plus antenna report (860 to 920 MHz); its repository also holds T-Deck antenna sheets for 433 MHz and 868-915 MHz, so the antenna follows the radio band ordered. The case has an AUX opening for an extended antenna.",
+      "src": ["tdeck-plus-antenna-report", "tdeck-schematic", "lilygo-pinmap-image"]
+    },
+    {
+      "id": "gps",
+      "role": "gps",
+      "part": "MIA-M10Q",
+      "manufacturer": "u-blox",
+      "designator": "U1 (GPS board; U101 in the Kleidos schematic)",
+      "quantity": 1,
+      "specs": {
+        "gnss": ["GPS", "GLONASS", "Galileo", "BeiDou"],
+        "default_constellations": "GPS, Galileo and BeiDou B1I",
+        "uart_default": "38400 baud, 8N1",
+        "vcc_v": [1.76, 3.6],
+        "board": "T-Deck-GPS V1.0 daughterboard"
+      },
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "UART0 through the Grove seat P8",
+          "pins": {"RX": "IO43 (U0TXD)", "TX": "IO44 (U0RXD)", "VCC, V_IO": "VDD3V3", "TIMEPULSE": "not carried: PPS (J2.1 of the GPS board) reaches no mainboard pin"},
+          "notes": "No cable is published: the connection is known by function. The GPS board's own 5-pin connector J2 carries PPS, GPS_TX, GPS_RX, VDD3V3 and GND; the mainboard's P8 has four pins (GND, VDD3V3, UAR0_TX, UAR0_RX) and no PPS. On the owner's unit (MIA-M10Q board) the Kleidos firmware reads NMEA and UBX on IO44 and its UBX commands sent on IO43 take effect, and LilyGO gives the Grove pins (P8) to the GPS module; the GPS board's one connector J2 brings its supply, so it is fed from the always-on VDD3V3, the one supply P8 carries."
+        },
+        {"to": "gps-backup-cell", "pins": {"V_BCKP": "VRTC"}},
+        {"to": "gps-antenna-connector", "pins": {"RF_IN": "J3 through C6 (47 pF)"}, "notes": "The active-antenna feed runs from VCC_RF through R4 (10 ohm) and L1 (27 nH) with C5 (10 nF) to GND. The Kleidos schematic numbers the GPS board's parts +100 (J103, C106, R104, L101, C105), since they repeat the mainboard's designators."}
+      ],
+      "notes": "LilyGO also publishes a T-Deck-L76K V1.0 board (Quectel L76K, RESET_N pulled up by 10 kOhm R1 with C4 100 nF, VBACKUP from VRTC, the same 5-pin J2 and MS412FE backup cell). The GPS takes the Grove seat's pins, so the Grove connector cannot be used for anything else on the Plus.",
+      "src": ["gps-schematic", "l76k-schematic", "lilygo-wiki", "mia-m10q-datasheet", "tdeck-readme", "kleidos-gps-run"]
+    },
+    {
+      "id": "gps-backup-cell",
+      "role": "battery",
+      "part": "MS412FE",
+      "manufacturer": "Seiko Instruments",
+      "designator": "J1 (GPS board; J101 in the Kleidos schematic)",
+      "quantity": 1,
+      "specs": {"function": "backup supply of the GNSS receiver (VRTC)"},
+      "connects_to": [
+        {"to": "gps", "pins": {"1": "VRTC", "2": "GND"}, "notes": "Charged from VDD3V3 through D1 (1N4148) and R3 (1 kOhm), D101 and R103 in the Kleidos schematic."}
+      ],
+      "src": ["gps-schematic"]
+    },
+    {
+      "id": "gps-antenna-connector",
+      "role": "connector",
+      "designator": "J3 (GPS board; J103 in the Kleidos schematic)",
+      "quantity": 1,
+      "specs": {"type": "IPEX (U.FL-type) RF connector", "function": "GNSS antenna connector"},
+      "notes": "The GNSS antenna itself is not published.",
+      "src": ["gps-schematic"]
+    },
+    {
+      "id": "grove-seat",
+      "role": "connector",
+      "designator": "P8",
+      "quantity": 1,
+      "specs": {"type": "HY2.0-4P (Grove)", "pitch_mm": 2.0, "pins": 4, "location": "left edge"},
+      "connects_to": [
+        {"to": "gps", "pins": {"1": "GND", "2": "VDD3V3", "3": "UAR0_TX (IO43)", "4": "UAR0_RX (IO44)"}, "notes": "Pin order from the mainboard schematic; that these reach the GPS board's GND, VDD3V3, GPS_RX and GPS_TX is known by function (see gps), as no cable is published."}
+      ],
+      "notes": "Sold as the Grove interface on the T-Deck; on the Plus it is taken by the GPS.",
+      "src": ["tdeck-schematic", "tdeck-readme", "lilygo-spec-image", "kleidos-gps-run"]
+    },
+    {
+      "id": "audio-adc",
+      "role": "audio_codec",
+      "part": "ES7210",
+      "manufacturer": "Everest Semiconductor",
+      "designator": "U2",
+      "quantity": 1,
+      "specs": {"function": "4-channel microphone ADC with I2S/TDM output", "snr_db": 102, "resolution_bits": 24, "sample_rate_khz": [8, 100], "package": "QFN-32"},
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "I2C, V3V segment",
+          "address": "0x40",
+          "pins": {"CDATA": "I2C_SDA", "CCLK": "I2C_SCL"},
+          "pulls": [
+            {"signal": "AD1", "direction": "down", "ohms": 100000, "to": "ADC_GND", "designator": "R1"},
+            {"signal": "AD0", "direction": "down", "ohms": 100000, "to": "ADC_GND", "designator": "R2"}
+          ],
+          "notes": "Address 1000 0 AD1 AD0 with both straps low."
+        },
+        {
+          "to": "soc-module",
+          "bus": "I2S",
+          "pins": {"MCLK": "IO48", "SCLK": "IO47", "LRCK": "IO21", "SDOUT1/TDMOUT": "IO14 through R7 (1 kOhm)", "SDOUT2/TDMIN": "IO14 through R8 (1 kOhm)", "INT, DMIC_CLK": "not routed to the ESP32-S3"},
+          "notes": "VDDD, VDDP, VDDA and VDDM are on V3V (C3 100 nF, C4 10 uF, C23 and C24 1 uF). ADC_GND joins GND through R9 (0 ohm)."
+        },
+        {"to": "microphones", "pins": {"MIC1P/N to MIC4P/N": "through 1 uF coupling capacitors", "MICBIAS12": "MIC1, MIC2", "MICBIAS34": "MIC3, MIC4"}}
+      ],
+      "src": ["tdeck-schematic", "es7210-datasheet", "lilygo-wiki"]
+    },
+    {
+      "id": "microphones",
+      "role": "microphone",
+      "part": "MSM381A3729H9CP",
+      "designator": "MIC1, MIC2, MIC3, MIC4",
+      "quantity": 4,
+      "specs": {"type": "MEMS microphone, differential output"},
+      "notes": "The schematic draws four; LilyGO's back view labels two openings, Mic1 and Mic2. Each one's ground goes through a 0 ohm resistor (Rm1 to Rm4).",
+      "src": ["tdeck-schematic", "lilygo-wiki", "lilygo-spec-image"]
+    },
+    {
+      "id": "audio-amp",
+      "role": "audio_amp",
+      "part": "MAX98357A",
+      "manufacturer": "Analog Devices (Maxim Integrated)",
+      "designator": "U6",
+      "quantity": 1,
+      "specs": {"class": "D, digital PCM input", "vdd_v": [2.5, 5.5], "output_w": "3.2 W into 4 ohm at 5 V", "gain_db": 12},
+      "connects_to": [
+        {
+          "to": "soc-module",
+          "bus": "I2S",
+          "pins": {"LRCLK": "IO5 (ESP_I2S_WS)", "BCLK": "IO7 (ESP_I2S_BCK)", "DIN": "IO6 (ESP_I2S_DA)", "SD_MODE": "net ESP_GPIO_MODE through R21 (0 ohm); no GPIO", "GAIN_SLOT": "AGND through R20 (0 ohm)", "VDD": "BAT through L4 (600 ohm, 500 mA ferrite bead)"},
+          "pulls": [{"signal": "SD_MODE", "direction": "up", "ohms": 100000, "to": "V3V", "designator": "R22"}],
+          "notes": "GAIN_SLOT to GND sets 12 dB (datasheet). C35 (10 uF) and C36 (100 nF) decouple VDD; AGND joins GND through R16 (0 ohm)."
+        },
+        {"to": "speaker", "pins": {"OUTP": "P1.2 through L2 (220 ohm at 100 MHz)", "OUTN": "P1.1 through L3 (220 ohm at 100 MHz)"}, "notes": "CP1 to CP6 (10 pF and 33 pF) filter the outputs to AGND."}
+      ],
+      "src": ["tdeck-schematic", "max98357a-datasheet"]
+    },
+    {
+      "id": "speaker",
+      "role": "speaker",
+      "designator": "P1",
+      "quantity": 1,
+      "specs": {"connector": "P1 (SPEEK), 2 pins", "location": "bottom-right corner, behind the PCB", "grille": null, "case_openings": "six holes on the lower side edge"},
+      "notes": "The case has no speaker grille: six holes on the lower side edge, and the speaker sits at the bottom-right corner, behind the PCB (owner observed on his unit, 2026-11-17; he did not say from which side right is taken). LilyGO's specification image labels 'BAT&SPK' on the back. Its part and impedance are not published.",
+      "src": ["tdeck-schematic", "lilygo-spec-image", "owner-unit"]
+    },
+    {
+      "id": "c3-programming-header",
+      "role": "connector",
+      "designator": "J1",
+      "quantity": 1,
+      "specs": {"pitch_mm": 2.0, "pins": 6, "function": "UART programming header of the keyboard controller", "location": "beside the reset button"},
+      "connects_to": [
+        {"to": "keyboard-controller", "pins": {"1": "V3V", "2": "GND", "3": "RESET (CHIP_EN)", "4": "BL_CTRL (GPIO9, BOOT)", "5": "UART_RX (GPIO20)", "6": "UART_TX (GPIO21)"}}
+      ],
+      "src": ["tdeck-schematic", "lilygo-wiki", "tdeck-readme"]
+    },
+    {
+      "id": "tripod-nut",
+      "role": "other",
+      "quantity": 1,
+      "specs": {"thread": "1/4 inch", "location": "back of the case"},
+      "src": ["lilygo-spec-image"]
+    }
+  ],
+  "absent": [
+    {"role": "pmic", "notes": "Power is a buck regulator, a linear charger and MOSFET rail switches.", "src": ["tdeck-schematic"]},
+    {"role": "fuel_gauge", "notes": "The battery is read through a resistor divider on IO4.", "src": ["tdeck-schematic"]},
+    {"role": "rtc", "notes": "No RTC chip on the sheet; the GNSS receiver has its own backup cell.", "src": ["tdeck-schematic"]},
+    {"role": "imu", "src": ["tdeck-schematic"]},
+    {"role": "magnetometer", "src": ["tdeck-schematic"]},
+    {"role": "buzzer", "src": ["tdeck-schematic"]},
+    {"role": "ir_led", "src": ["tdeck-schematic"]},
+    {"role": "io_expander", "src": ["tdeck-schematic"]},
+    {"role": "usb_uart_bridge", "notes": "USB goes straight to the ESP32-S3's native USB pins.", "src": ["tdeck-schematic"]},
+    {"role": "esd", "notes": "No protection part is drawn on the USB lines.", "src": ["tdeck-schematic"]}
+  ],
+  "notes": "LilyGO publishes one mainboard schematic for the T-Deck family (dated 2023-06-01) and links it from the T-Deck Plus page; the GNSS parts come from its separate GPS daughterboard sheets (T-Deck-GPS V1.0, T-Deck-L76K V1.0). Three rails: VDD3V3 from the buck while SW1 is on, V3V and BAT switched from it by PWR_EN (IO10). Designators are the schematic's. The case has no speaker grille (owner observed on his unit, 2026-11-17): six holes on the lower side edge, the speaker behind the PCB at the bottom-right corner. The slot above the screen, drawn by measurements.json, svg/front.svg and the model, is of undocumented purpose: LILYGO's specification and pin-map images draw it without a label, and its documentation page and repository name nothing there.",
+  "sources": {
+    "lilygo-wiki": {
+      "url": "https://github.com/Xinyuan-LilyGO/documentation/blob/master/en/products/t-deck-series/t-deck-plus/index.md",
+      "title": "T-Deck Plus, LILYGO documentation (source of wiki.lilygo.cc)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "mirror_of": "https://wiki.lilygo.cc/products/t-deck-series/t-deck-plus/",
+      "notes": "Read as the Markdown source in LilyGO's documentation repository, which builds wiki.lilygo.cc; the page's old address under get_started/ answers 404 since the site moved (2026-11-17)."
+    },
+    "lilygo-spec-image": {
+      "url": "https://raw.githubusercontent.com/Xinyuan-LilyGO/documentation/master/public/products/t-deck-series/t-deck-plus/index/image/t-deck-info-en.jpg",
+      "title": "T-Deck Plus Specifications (LILYGO product image)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "found_via": "lilygo-wiki"
+    },
+    "lilygo-pinmap-image": {
+      "url": "https://raw.githubusercontent.com/Xinyuan-LilyGO/documentation/master/public/products/t-deck-series/t-deck-plus/index/image/t-deck-plus-en.jpg",
+      "title": "LILYGO T-Deck Plus PINMAP (product image)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "found_via": "lilygo-wiki"
+    },
+    "tdeck-schematic": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/schematic.pdf",
+      "title": "T-Deck mainboard schematic (LilyGO, Altium, dated 2023-06-01)",
+      "kind": "schematic",
+      "checked": "2026-11-16",
+      "found_via": "lilygo-wiki"
+    },
+    "gps-schematic": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/T-Deck-GPS%20V1.0%20%2024-03-29.pdf",
+      "title": "T-Deck-GPS V1.0 (MIA-M10Q) daughterboard schematic",
+      "kind": "schematic",
+      "checked": "2026-11-16"
+    },
+    "l76k-schematic": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/schematic/T-Deck-L76K%20V1.0%20%2024-08-12.pdf",
+      "title": "T-Deck-L76K V1.0 daughterboard schematic",
+      "kind": "schematic",
+      "checked": "2026-11-16"
+    },
+    "tdeck-readme": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/README.MD",
+      "title": "T-Deck repository README (LilyGO)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16"
+    },
+    "tdeck-keyboard-sketch": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/examples/Keyboard_ESP32C3/Keyboard_ESP32C3.ino",
+      "title": "Keyboard_ESP32C3, the keyboard controller's stock firmware (LilyGO)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16"
+    },
+    "tdeck-board-definition": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/boards/T-Deck.json",
+      "title": "T-Deck PlatformIO board definition (LilyGO)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16"
+    },
+    "tdeck-plus-antenna-report": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/datasheet/T-Deck-Plus-Antenna.pdf",
+      "title": "T-Deck Plus antenna test report (matching, efficiency, drawing; dated 2025-04-02)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "shell-step-measured": {
+      "url": "https://github.com/Xinyuan-LilyGO/T-Deck/blob/master/shell/T-Deck-Plus-Shell.stp",
+      "title": "Outline of LilyGO's T-Deck Plus shell model",
+      "kind": "measured",
+      "checked": "2026-11-16",
+      "method": "Bounding outline of the shell measured in LilyGO's T-Deck-Plus-Shell.stp for the Kleidos front drawing (svg/front.svg, measurements.json)."
+    },
+    "esp32-s3-wroom-1-datasheet": {
+      "url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf",
+      "title": "ESP32-S3-WROOM-1 / WROOM-1U datasheet (Espressif)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "esp32-s3-datasheet": {
+      "url": "https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf",
+      "title": "ESP32-S3 series datasheet (Espressif)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "esp32-c3-datasheet": {
+      "url": "https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf",
+      "title": "ESP32-C3 series datasheet (Espressif)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "w25q32fv-datasheet": {
+      "url": "https://www.winbond.com/resource-files/w25q32fv%20revj%2006032016.pdf",
+      "title": "W25Q32FV 3V 32M-bit serial flash datasheet, revision J (Winbond)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "aw9364-datasheet": {
+      "url": "https://doc.awinic.com/doc/202402/d1a46d65-a45d-494f-bfc9-3d6a6a93a860.pdf",
+      "title": "AW9364 4-channel 1-wire dimming LED driver datasheet, V2.4 (Awinic, Feb. 2024)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "gt911-datasheet": {
+      "url": "https://files.waveshare.com/wiki/common/GT911_Datasheet.pdf",
+      "title": "GT911 5-point capacitive touch controller datasheet, Rev.10 (Goodix), as Waveshare hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "an48841b-datasheet": {
+      "url": "https://www.farnell.com/datasheets/1916954.pdf",
+      "title": "AN48841B CMOS Hall IC datasheet (Panasonic), as Farnell hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "es7210-datasheet": {
+      "url": "https://files.waveshare.com/wiki/common/ES7210_DS.pdf",
+      "title": "ES7210 datasheet, revision 21.0 (Everest Semiconductor, January 2023), as Waveshare hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "max98357a-datasheet": {
+      "url": "https://cdn-shop.adafruit.com/product-files/3006/MAX98357A-MAX98357B.pdf",
+      "mirror_of": "https://www.analog.com/media/en/technical-documentation/data-sheets/MAX98357A-MAX98357B.pdf",
+      "title": "MAX98357A/MAX98357B datasheet (Maxim Integrated), as Adafruit hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "notes": "analog.com did not answer from the machine that wrote this file on 2026-11-16."
+    },
+    "tp4065-datasheet": {
+      "url": "https://hobbielektronika.hu/forum/getfile.php?id=342341",
+      "title": "TP4065 linear Li-ion charger datasheet (Nanjing Top Power ASIC, Chinese), as a forum attachment",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "notes": "No copy from the maker was found; re-check against an authoritative copy."
+    },
+    "mia-m10q-datasheet": {
+      "url": "https://content.u-blox.com/sites/default/files/documents/MIA-M10Q_DataSheet_UBX-22015849.pdf",
+      "title": "MIA-M10Q data sheet, UBX-22015849 R08 (u-blox, 2026-01-30)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "kleidos-gps-run": {
+      "title": "The GPS receiver run on the owner's T-Deck Plus by the Kleidos firmware (2026-11-17)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Kleidos tdeck_debug on the owner's unit (MIA-M10Q board): NMEA and UBX read at 38400 baud on IO44, UBX commands on IO43 (the verified GPS park, whose deep-sleep floor was measured at the cell with the bench meter on 2026-10-29); recorded in the Kleidos firmware repository: PIN_GPS_TX, PIN_GPS_RX and GPS_BAUD_RATE in variants/tdeck/variant.h, and docs/research/peripheral-parking.md section 11."
+    },
+    "bench-tp-en": {
+      "title": "TP_EN edge detector probe on the owner's T-Deck Plus (Kleidos boards bench record tdeck-plus/schematic/bench/2026-11-17-tp-en-edge-detector.md)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Case closed, the touch controller asleep and V3V cut with its back-feeding pads released: eight falling edges on IO16 from a throwaway probe in the Kleidos tdeck_debug image, V3V sensed on IO46 through R12 every 8 us or so for 40 ms after each."
+    },
+    "owner-unit": {
+      "title": "Owner observed on his unit, 2026-11-17",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Seen and tried by the owner on his own T-Deck Plus and reported on 2026-11-17: the case's openings and where the speaker sits, by eye; the trackball rolled each way with the Kleidos firmware running its map (UP IO3, DOWN IO15, LEFT IO1, RIGHT IO2, press IO0), each direction acting as rolled. No instrument, and no pad sampled."
+    },
+    "owner-unit-verified": {
+      "title": "Verified against the owner's physical unit, 2026-11-18",
+      "kind": "measured",
+      "checked": "2026-11-18",
+      "method": "The owner compared his own T-Deck Plus with this repository's front drawing (svg/front.svg) and 3D model (model/) on 2026-11-18: the model and the drawing match the real board. A check by eye, no instrument. The original source of the measurement was not recorded (sources.md)."
+    }
+  }
+}

@@ -1,0 +1,1922 @@
+(kicad_sch
+	(version 20250114)
+	(generator "kleidos_boards")
+	(generator_version "1.0")
+	(uuid "112ced76-bebc-5999-ac18-3b948c03eafc")
+	(paper "A3")
+	(title_block
+		(title "LILYGO T-Deck Plus: Contents")
+		(date "2026-11-17")
+		(rev "3")
+		(company "Kleidos boards: connectivity documented from the vendor's public documentation")
+		(comment 1 "Sources: LilyGO T-Deck schematic 2023-06-01, GPS sheets; README.md")
+		(comment 2 "Values as documented. Layout and symbols: Kleidos boards")
+		(comment 3 "License: MIT. github.com/kleidos-dev/boards")
+		(comment 4 "With Kleidos additions and corrections, listed on page 1")
+	)
+	(lib_symbols)
+	(text "LILYGO T-Deck Plus schematic"
+		(exclude_from_sim no)
+		(at 25.4 22.86 0)
+		(effects
+			(font
+				(size 3 3)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "879c1dbb-159a-5653-8956-8f9093b27f17")
+	)
+	(text "Kleidos boards: every part, pin and net, connectivity documented from the vendor's public documentation, with Kleidos additions and corrections"
+		(exclude_from_sim no)
+		(at 25.4 29.21 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "0a22a962-f40a-58eb-aa1a-ec83ee49cd66")
+	)
+	(text "Pages:"
+		(exclude_from_sim no)
+		(at 25.4 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+		)
+		(uuid "c527ad70-e381-5760-aa26-6c8994e0344c")
+	)
+	(text "[1]"
+		(exclude_from_sim no)
+		(at 34.837 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "c42667c7-8ab7-5d20-b5e6-01b7b0c0a35d")
+	)
+	(text "[2]"
+		(exclude_from_sim no)
+		(at 40.312 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#2")
+		)
+		(uuid "05f2cd5a-a167-5ae0-acc3-7d6e5bc5c191")
+	)
+	(text "[3]"
+		(exclude_from_sim no)
+		(at 45.787 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "8edb3f83-6dfe-5199-a54e-84a884f8e366")
+	)
+	(text "[4]"
+		(exclude_from_sim no)
+		(at 51.262 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "0ecd9794-5bb7-5a2b-bd68-f75cddd97490")
+	)
+	(text "[5]"
+		(exclude_from_sim no)
+		(at 56.737 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "b5ce9288-7400-5c3e-a26a-1fd5eead01c7")
+	)
+	(text "[6]"
+		(exclude_from_sim no)
+		(at 62.212 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "57579a5b-e3a1-59eb-844f-1824d62ecf12")
+	)
+	(text "[7]"
+		(exclude_from_sim no)
+		(at 67.687 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#7")
+		)
+		(uuid "66f7508d-3de0-5b24-8699-f916a969cb27")
+	)
+	(text "[8]"
+		(exclude_from_sim no)
+		(at 73.162 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "fba7e2fd-162f-50a0-9dc4-991f477960be")
+	)
+	(text "[9]"
+		(exclude_from_sim no)
+		(at 78.637 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "f0a5460e-ebca-585c-a934-057917f81baf")
+	)
+	(text "[10]"
+		(exclude_from_sim no)
+		(at 84.112 36.83 0)
+		(effects
+			(font
+				(size 1.5 1.5)
+			)
+			(justify left)
+			(href "#10")
+		)
+		(uuid "aa505a60-1cb9-553c-810a-fcf60dd9d335")
+	)
+	(sheet
+		(at 25.4 40.64)
+		(size 172.72 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "e3dc7ba6-0938-57a8-813b-2b08ba46f652")
+		(property "Sheetname" "Contents, continued"
+			(at 27.94 43.18 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "contents_continued.kicad_sch"
+			(at 25.4 59.0084 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "2")
+				)
+			)
+		)
+	)
+	(text "Page 2"
+		(exclude_from_sim no)
+		(at 195.58 43.18 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "945425db-042c-5289-8e66-1c15e586e4f8")
+	)
+	(text "The rest of the Kleidos additions and corrections, which page 1 has no room for, each id leading to where it\nis marked; then the revision history."
+		(exclude_from_sim no)
+		(at 27.94 48.26 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "8f474646-c453-5125-b8aa-c03851aaaee5")
+	)
+	(sheet
+		(at 25.4 60.96)
+		(size 172.72 27.94)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "397449ec-0063-56ae-81b8-3d8481effb86")
+		(property "Sheetname" "Power input, charging and rails"
+			(at 27.94 63.5 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 25.4 89.4884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "3")
+				)
+			)
+		)
+	)
+	(text "Page 3"
+		(exclude_from_sim no)
+		(at 195.58 63.5 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "f7524315-dbc8-50db-8647-257467f8c551")
+	)
+	(text "USB-C input, the Li-ion charger and battery, the power path and switch, the 3.3 V buck, and the V3V and BAT\nswitches PWR_EN controls.\n\nMain parts: U7 USB-C, UP1 TP4065B, P3 battery, D1 1N5819, Q5 SI2307, SW1, U8 SY8089AAC, Q4 Q6 SI2301, Q7\nPMBT3904, LED1"
+		(exclude_from_sim no)
+		(at 27.94 68.58 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "c34b7d12-3fbf-54b3-9443-bca6e59d8a86")
+	)
+	(sheet
+		(at 25.4 92.71)
+		(size 172.72 27.94)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "885dbc63-a9e3-5c6a-8fb4-2682321e7e40")
+		(property "Sheetname" "ESP32-S3, TF card, trackball and LoRa"
+			(at 27.94 95.25 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "soc.kicad_sch"
+			(at 25.4 121.2384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "4")
+				)
+			)
+		)
+	)
+	(text "Page 4"
+		(exclude_from_sim no)
+		(at 195.58 95.25 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "0911b131-6328-54d0-b39f-e214798df06c")
+	)
+	(text "The ESP32-S3-WROOM-1 with reset, boot key and the UART header, the TF card on the shared SPI bus, the\ntrackball's Hall sensors and key, and the LoRa module with its antenna.\n\nMain parts: U1 ESP32-S3-WROOM-1, S1, KEY1, P8, TF MP3T-F, UZ1-UZ4 AN48841B, T1, U0 HPD16A, XX2"
+		(exclude_from_sim no)
+		(at 27.94 100.33 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "dd62781c-c47b-531c-a3b3-145741111390")
+	)
+	(sheet
+		(at 25.4 124.46)
+		(size 172.72 27.94)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "c860ea51-28e9-5793-8c50-611257b9e846")
+		(property "Sheetname" "Keyboard controller, display and touch"
+			(at 27.94 127 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "keyboard.kicad_sch"
+			(at 25.4 152.9884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "5")
+				)
+			)
+		)
+	)
+	(text "Page 5"
+		(exclude_from_sim no)
+		(at 195.58 127 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "c021a713-514a-5e84-a72f-f89df47dff0d")
+	)
+	(text "The ESP32-C3 that scans the keyboard, with its flash, crystal and UART header; the keyboard connector and\nits backlight switch; the LCD connector with its backlight driver; the touch connector.\n\nMain parts: U5 ESP32-C3, U3 W25Q32FVSS, U4 40 MHz, J1, JP1 keyboard, Q3 BSS138, P2 LCD, U9 AW9364DNR, P4\ntouch"
+		(exclude_from_sim no)
+		(at 27.94 132.08 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "443fe674-5456-5557-84d8-db77b0aadc56")
+	)
+	(sheet
+		(at 25.4 156.21)
+		(size 172.72 27.94)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "6f0b76b2-d3e2-5dc0-a63a-e70f8a9c2214")
+		(property "Sheetname" "Microphones, audio ADC and speaker"
+			(at 27.94 158.75 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "audio.kicad_sch"
+			(at 25.4 184.7384 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "6")
+				)
+			)
+		)
+	)
+	(text "Page 6"
+		(exclude_from_sim no)
+		(at 195.58 158.75 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "b9eb6410-86c0-5a9d-b469-27428ec2636f")
+	)
+	(text "The four MEMS microphones and the ES7210 ADC with the I2C level shifter to the ESP32-S3 side; the MAX98357A\namplifier, its filter and the speaker.\n\nMain parts: U2 ES7210, MIC1-MIC4 MSM381A3729H9CP, Q1 Q2 BSS123, U6 MAX98357A, P1 speaker"
+		(exclude_from_sim no)
+		(at 27.94 163.83 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "8d608856-1471-5666-9603-03adcc620074")
+	)
+	(sheet
+		(at 25.4 187.96)
+		(size 172.72 27.94)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "092028da-aae8-5169-8774-0254dab93aae")
+		(property "Sheetname" "GPS daughterboards"
+			(at 27.94 190.5 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "gps.kicad_sch"
+			(at 25.4 216.4884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "7")
+				)
+			)
+		)
+	)
+	(text "Page 7"
+		(exclude_from_sim no)
+		(at 195.58 190.5 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "ba685521-1ec6-59fc-ad96-b83857cd00d5")
+	)
+	(text "The two GPS daughterboards LilyGO publishes for the T-Deck: the MIA-M10Q board (parts +100) and the L76K\nboard (parts +200), each with its backup cell, antenna connector and 5-pin connector.\n\nMain parts: U101 MIA-M10Q, J101 J201 MS412FE, J102 J202, J103 J203 IPEX, U201 L76K"
+		(exclude_from_sim no)
+		(at 27.94 195.58 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "2fe173bc-38d8-5af9-8460-5a125941b9c5")
+	)
+	(sheet
+		(at 25.4 219.71)
+		(size 172.72 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "cc697a99-e199-5ba8-9983-ba519df95bb9")
+		(property "Sheetname" "Power tree and rails"
+			(at 27.94 222.25 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "tree.kicad_sch"
+			(at 25.4 238.0784 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "8")
+				)
+			)
+		)
+	)
+	(text "Page 8"
+		(exclude_from_sim no)
+		(at 195.58 222.25 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "83eceb46-3e47-5ad4-badc-5a5792243d0c")
+	)
+	(text "How power flows from the USB-C input and the battery to every rail, and each rail's nominal voltage, source\nand enable. Every box leads to where it is drawn."
+		(exclude_from_sim no)
+		(at 27.94 227.33 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "b257a397-a859-52e8-9150-c29d0c45921e")
+	)
+	(sheet
+		(at 25.4 240.03)
+		(size 172.72 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "f598dd29-fc87-5d17-9835-e4be1c5f75db")
+		(property "Sheetname" "Nets and signals"
+			(at 27.94 242.57 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "nets.kicad_sch"
+			(at 25.4 258.3984 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "9")
+				)
+			)
+		)
+	)
+	(text "Page 9"
+		(exclude_from_sim no)
+		(at 195.58 242.57 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "d7479369-a885-5858-925c-7db7010cce8e")
+	)
+	(text "Every rail and every net drawn on more than one page, with the page/zone of its labels; the ESP32-S3 and\nESP32-C3 GPIO, the I2C addresses, every pull-up and pull-down."
+		(exclude_from_sim no)
+		(at 27.94 247.65 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "1b72df09-6769-5f82-95f6-aafda449c710")
+	)
+	(sheet
+		(at 25.4 260.35)
+		(size 172.72 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke
+			(width 0.254)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "f74f4675-11bb-542e-bca4-a599e40bd119")
+		(property "Sheetname" "Parts"
+			(at 27.94 262.89 0)
+			(effects
+				(font
+					(size 2 2)
+					(bold yes)
+				)
+				(justify left top)
+			)
+		)
+		(property "Sheetfile" "parts.kicad_sch"
+			(at 25.4 278.7184 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "tdeck-plus"
+				(path "/112ced76-bebc-5999-ac18-3b948c03eafc"
+					(page "10")
+				)
+			)
+		)
+	)
+	(text "Page 10"
+		(exclude_from_sim no)
+		(at 195.58 262.89 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify right top)
+		)
+		(uuid "d2abe182-00d9-5a47-bd0e-dd43e95a2187")
+	)
+	(text "Every part: its value as printed, what it is, its nets, whether it is fitted and where it is drawn. A\nreference on the drawing leads to its row, the row back to it."
+		(exclude_from_sim no)
+		(at 27.94 267.97 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "0769a91f-3fc6-5b49-92d7-2e6c19e90ece")
+	)
+	(text "How to read it"
+		(exclude_from_sim no)
+		(at 215.9 40.64 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "db73c6ba-3112-503e-bbd0-669223c48d3a")
+	)
+	(text "Click a box on the left to open its page. \"Contents\" and the page\nnumbers at the bottom right of every page lead back here and to each page.\n\nCyan lines are connections: wires and pin ends, all one width.\nA dot joins lines; a cross on a pin end means the pin is not connected.\nPins connect by net labels (the boxed names): pins whose labels carry\nthe same name are on one net, on any page.\n[3/C4] after a label: page 3 carries that net too, its label in zone C4\n(column 4, row C of the border). Click it to land on that label.\nNo [page/zone]: the net is on this page only.\nClick a part's reference to find its row in the parts list; the row's\npage/zone leads back. A part crossed out in red is not fitted (DNP).\nWhite: parts and their references. Grey: values, pin names, pin numbers.\nA dashed frame is a block of the circuit, titled at its top left.\nAn amber K3 marks a Kleidos addition or correction: it leads to its row below."
+		(exclude_from_sim no)
+		(at 215.9 45.085 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "4f1d741e-d9ac-5836-84ca-0945776f875a")
+	)
+	(text "Notes"
+		(exclude_from_sim no)
+		(at 215.9 96.06 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "8af41809-8bd1-5c8b-a2d0-bf041ebc1e10")
+	)
+	(text "Every part, pin and net of the T-Deck Plus mainboard and of its two GPS\ndaughterboards, with the values the vendor documents: connectivity\ndocumented from the vendor's public documentation, with Kleidos additions and\ncorrections listed on page 1 (LilyGO's T-Deck schematic of 2023-06-01 and\nits T-Deck-GPS V1.0 and T-Deck-L76K V1.0 sheets, cited in README.md and\nnetlist.yaml). Layout and symbols are this project's. No footprints, no PCB.\nValues are as the vendor prints them (100K%1, 1uF/6.3V). A value of NC\nmeans not fitted: those parts are marked DNP.\nDesignators are the vendor's. The GPS boards reuse the main board's, so\ntheirs are +100 (MIA-M10Q board) and +200 (L76K board), and their nets\ncarry M10_ and L76K_: no cable to the main board is published (what P8\ncarries to the GPS board: K3, K7, K8).\nNets the vendor left unnamed carry names of ours (U8_FB, PWR_GATE...).\nZones: columns 1-8 and rows A-F, 50 mm apart, printed in the border."
+		(exclude_from_sim no)
+		(at 215.9 100.505 0)
+		(effects
+			(font
+				(size 1.75 1.75)
+			)
+			(justify left top)
+		)
+		(uuid "79e224f4-0b51-5ebc-adb9-39585d5c1627")
+	)
+	(text "Kleidos additions and corrections"
+		(exclude_from_sim no)
+		(at 215.9 148.505 0)
+		(effects
+			(font
+				(size 2 2)
+				(bold yes)
+			)
+			(justify left top)
+		)
+		(uuid "2b4a7c8e-d2d2-5b26-822d-d188a780234b")
+	)
+	(text "Id"
+		(exclude_from_sim no)
+		(at 215.9 154.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "e4b0e952-6b1f-58f0-95dc-f17885ff23da")
+	)
+	(text "Kind"
+		(exclude_from_sim no)
+		(at 222.25 154.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "7a81abc8-c92d-56ee-8e1a-39e8fff4b3a9")
+	)
+	(text "What"
+		(exclude_from_sim no)
+		(at 236.22 154.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "b873ace5-86de-53ac-bb91-9b16a5de5a46")
+	)
+	(text "Source"
+		(exclude_from_sim no)
+		(at 302.26 154.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+			)
+			(justify left)
+		)
+		(uuid "1df5327d-504b-5936-aa46-d202d5719e0b")
+	)
+	(polyline
+		(pts
+			(xy 215.9 156.455)
+			(xy 356.87 156.455)
+		)
+		(stroke
+			(width 0.15)
+			(type solid)
+		)
+		(fill
+			(type none)
+		)
+		(uuid "77c8ce3d-68f6-591f-a0a6-638e5f5c5e5a")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 158.195 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0ea02fc1-3249-51c8-a56a-d6470452183e")
+	)
+	(text "VBAT: P3 takes a 2000 mAh lithium-polymer cell."
+		(exclude_from_sim no)
+		(at 236.22 158.195 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "308aad6b-4204-52b6-9805-8af7d82715f7")
+	)
+	(text "vendor-doc: LilyGO docs page, specifications"
+		(exclude_from_sim no)
+		(at 302.26 158.195 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "459e6ebb-7440-552c-a4f3-5f1bc2bd5414")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 160.735 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "70d7aedb-3775-5cb8-bb22-4b22a9963d0d")
+	)
+	(text "UP1_CHRG: LED1 lights while UP1 charges, blinks with no"
+		(exclude_from_sim no)
+		(at 236.22 160.735 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "287c0e87-0e03-5722-9074-6e47c9511954")
+	)
+	(text "cell."
+		(exclude_from_sim no)
+		(at 236.22 163.275 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "65939c47-a5c1-5dbd-83f7-3fcd3173d45d")
+	)
+	(text "datasheet: TP4065 datasheet Rev 1.2, pp. 4, 9"
+		(exclude_from_sim no)
+		(at 302.26 160.735 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ded1fc6b-2100-5be2-bc98-b0d1eaf21257")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 165.815 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c386e8f6-671d-5cfc-bd62-564cf8d48f97")
+	)
+	(text "VDD3V3 also feeds the GPS board, through P8 pin 2."
+		(exclude_from_sim no)
+		(at 236.22 165.815 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0a9f50f1-adf0-58ac-9bb6-b80435e09f81")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 302.26 165.815 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1331dc01-f3f8-5d43-9a0a-e1bd59071a19")
+	)
+	(text "variants/tdeck/variant.h: HAS_GPS, PIN_GPS_TX,"
+		(exclude_from_sim no)
+		(at 302.26 168.355 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4a234334-9789-56a6-b6d8-33f1623fa9da")
+	)
+	(text "PIN_GPS_RX"
+		(exclude_from_sim no)
+		(at 302.26 170.895 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5ac11342-b0e4-5d19-b6b5-3b73194afcb5")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 173.435 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4ac4116a-9b4e-50fa-b657-f94672bc99d6")
+	)
+	(text "U1 is the WROOM-1-N16R8 (16 MB flash); IO35-37 serve its"
+		(exclude_from_sim no)
+		(at 236.22 173.435 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cbd0ebe9-0d51-567f-bba9-f0fc8cc40e3f")
+	)
+	(text "8 MB Octal PSRAM."
+		(exclude_from_sim no)
+		(at 236.22 175.975 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e110df5b-7112-50f2-8262-5cc5c65e14d0")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 302.26 173.435 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5ce1addf-f319-509f-b3a4-10fad2578e30")
+	)
+	(text "variants/tdeck/tdeck.ini:"
+		(exclude_from_sim no)
+		(at 302.26 175.975 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a37cc63a-3289-55c5-8249-711d204cd3c7")
+	)
+	(text "board_upload.flash_size = 16MB"
+		(exclude_from_sim no)
+		(at 302.26 178.515 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e6e5a608-be15-5381-bd89-b9670d9aebb7")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 181.055 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3cf2de64-05df-5530-bf1a-8c9087b53b42")
+	)
+	(text "GPIO45 (VDD_SPI strap) latched 0 at every reset."
+		(exclude_from_sim no)
+		(at 236.22 181.055 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "162c78a5-9a8e-5f03-91f7-4d8cf2f2dddc")
+	)
+	(text "bench: bench/2026-11-17-gpio46-strap.md"
+		(exclude_from_sim no)
+		(at 302.26 181.055 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a961c3d8-c378-5a7c-801f-0df2e39a6cc1")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 183.595 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9d41a01e-8678-5aa5-bacc-ded3f8015fc7")
+	)
+	(text "U0_ANT: U0 (HPD16A) carries a Semtech SX1262."
+		(exclude_from_sim no)
+		(at 236.22 183.595 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1ae5bdec-4c05-5a67-80b9-fcdfcb47f8e1")
+	)
+	(text "vendor-doc: LilyGO docs page, specifications"
+		(exclude_from_sim no)
+		(at 302.26 183.595 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a6752714-de28-5566-8083-6f1a8c0edd10")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 186.135 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3339ce86-8392-5245-8549-c9891990761e")
+	)
+	(text "UAR0_TX reaches the GPS board's GPS_RX (J102.3) through"
+		(exclude_from_sim no)
+		(at 236.22 186.135 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0d454e32-f2dd-5468-9710-58ba293aca0e")
+	)
+	(text "P8 pin 3."
+		(exclude_from_sim no)
+		(at 236.22 188.675 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "791678b6-0796-5eb7-a66f-6f93ed3e3d11")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 302.26 186.135 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "84a1302c-541e-509a-8443-20624fecf201")
+	)
+	(text "variants/tdeck/variant.h: HAS_GPS, PIN_GPS_TX,"
+		(exclude_from_sim no)
+		(at 302.26 188.675 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c3df92df-d412-5c9f-a272-9ff5b2f88de5")
+	)
+	(text "PIN_GPS_RX"
+		(exclude_from_sim no)
+		(at 302.26 191.215 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "87f443c6-0d4b-5aee-8d8e-baa9911887b6")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 193.755 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e6df2423-0cbe-5eda-96fc-c8c9795191ca")
+	)
+	(text "UAR0_RX comes from GPS_TX (J102.2) through P8 pin 4; PPS"
+		(exclude_from_sim no)
+		(at 236.22 193.755 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6d8a6f43-1ce3-5b3d-be7b-6ed313ce5b7d")
+	)
+	(text "is not carried."
+		(exclude_from_sim no)
+		(at 236.22 196.295 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dad9d00e-5610-5311-a19c-bf57d3aba7c3")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 302.26 193.755 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "269f5c6a-c5f7-5548-acbc-60592a5cb2d0")
+	)
+	(text "variants/tdeck/variant.h: HAS_GPS, PIN_GPS_TX,"
+		(exclude_from_sim no)
+		(at 302.26 196.295 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "cd2d12b4-8661-58c4-bcd0-a91a1f9abba1")
+	)
+	(text "PIN_GPS_RX"
+		(exclude_from_sim no)
+		(at 302.26 198.835 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1a60ac15-a9e8-590b-bba4-167d80930d0f")
+	)
+	(text "correction"
+		(exclude_from_sim no)
+		(at 222.25 201.375 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2c8716c0-45b9-5174-9e18-35e20c988cd8")
+	)
+	(text "U5 pin 4 is XTAL_32K_P (GPIO0). The vendor's print: pin"
+		(exclude_from_sim no)
+		(at 236.22 201.375 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f889ee9a-3def-52d5-9584-3184cbd3ed90")
+	)
+	(text "4 named XTAL_OUT"
+		(exclude_from_sim no)
+		(at 236.22 203.915 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2c2d6f34-7430-5302-8fa6-5fd55729f506")
+	)
+	(text "datasheet: ESP32-C3 datasheet v2.5, Table 2-1"
+		(exclude_from_sim no)
+		(at 302.26 201.375 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "043a3a2d-f955-5da5-a6a0-380d3294adc0")
+	)
+	(text "correction"
+		(exclude_from_sim no)
+		(at 222.25 206.455 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6473203a-0af5-5dba-a92a-63528a46a15f")
+	)
+	(text "U5 pin 5 is XTAL_32K_N (GPIO1). The vendor's print: pin"
+		(exclude_from_sim no)
+		(at 236.22 206.455 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "164e5437-4ca8-5eca-bd8b-bc34b2917cb6")
+	)
+	(text "5 named XTAL_IN"
+		(exclude_from_sim no)
+		(at 236.22 208.995 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "da2a220e-928a-5f05-b093-efb07be94a43")
+	)
+	(text "datasheet: ESP32-C3 datasheet v2.5, Table 2-1"
+		(exclude_from_sim no)
+		(at 302.26 206.455 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1bcaa331-10df-5cf2-a15d-3d95f51584de")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 211.535 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "93e477b1-d3d9-5317-93c0-5d54f562392f")
+	)
+	(text "ESP_LCD_DC: P2's panel is a 2.8-inch 320x240 ST7789."
+		(exclude_from_sim no)
+		(at 236.22 211.535 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e8361c03-407e-5064-9006-5ddfc3d1696e")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 302.26 211.535 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e8f2d060-9a77-56ed-bc85-06bd47301161")
+	)
+	(text "variants/tdeck/variant.h: DISPLAY_TYPE_ST7789,"
+		(exclude_from_sim no)
+		(at 302.26 214.075 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bd3864c4-8c16-57b6-ad8f-38193be828a0")
+	)
+	(text "DISPLAY_WIDTH, DISPLAY_HEIGHT,"
+		(exclude_from_sim no)
+		(at 302.26 216.615 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2f57a52f-f72b-5c2c-94c2-13572ab846a8")
+	)
+	(text "DISPLAY_DIAGONAL_MM_X10"
+		(exclude_from_sim no)
+		(at 302.26 219.155 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8eb3dc2c-a51e-5d4e-9d4c-d26d096528a0")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 221.695 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "857850e9-3a16-5949-a24f-3545ab1fad12")
+	)
+	(text "ESP_TP_INT: P4's touch controller is a Goodix GT911."
+		(exclude_from_sim no)
+		(at 236.22 221.695 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "43239a85-c823-5c3b-a805-bba09554c6a7")
+	)
+	(text "firmware: Kleidos firmware,"
+		(exclude_from_sim no)
+		(at 302.26 221.695 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "583c840c-5b1d-5d13-92ef-cfb96cf08556")
+	)
+	(text "src/drivers/touch/gt911.h: Gt911::begin (accepts"
+		(exclude_from_sim no)
+		(at 302.26 224.235 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "09193599-b050-5d69-989e-33a8191834c3")
+	)
+	(text "an address only on a GT9xx product id)"
+		(exclude_from_sim no)
+		(at 302.26 226.775 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8737fb4f-e1a2-55d2-b785-b3ac66a53505")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 229.315 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c1536730-8b9b-5ef0-b91d-3bc858caf813")
+	)
+	(text "ES7210_INT: U2's interrupt output, used by nothing."
+		(exclude_from_sim no)
+		(at 236.22 229.315 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9ca6b431-ff16-5f4b-9324-745d5f9062da")
+	)
+	(text "datasheet: ES7210 datasheet rev. 21.0, p. 4"
+		(exclude_from_sim no)
+		(at 302.26 229.315 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "3bb3f74f-d704-52a0-b25e-48b113e2657e")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 231.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "683935ab-5c87-5662-9c69-76da97ff7580")
+	)
+	(text "DMIC_CLK: U2's digital-mic clock output, used by"
+		(exclude_from_sim no)
+		(at 236.22 231.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "546471bf-da08-5bd9-8686-e132af4d0d8b")
+	)
+	(text "nothing."
+		(exclude_from_sim no)
+		(at 236.22 234.395 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "63ebc3ae-c3fd-5de6-8305-a3c21ae7696f")
+	)
+	(text "datasheet: ES7210 datasheet rev. 21.0, p. 4"
+		(exclude_from_sim no)
+		(at 302.26 231.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "763dec54-54ca-56d1-ad62-e0fa935c1b81")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 236.935 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "630f2d4e-ea3e-506a-a291-9d2bed987a57")
+	)
+	(text "R22 sets SD_MODE near 1.65 V: U6 plays the left channel."
+		(exclude_from_sim no)
+		(at 236.22 236.935 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dfbd1d22-6236-55d5-9139-e6df1d94ef5e")
+	)
+	(text "datasheet: MAX98357A datasheet Rev 7, Table 5"
+		(exclude_from_sim no)
+		(at 302.26 236.935 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8c1a8057-1427-5c74-a017-f0a2d8840a44")
+	)
+	(text "addition"
+		(exclude_from_sim no)
+		(at 222.25 239.475 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c65bd910-a8f2-5d07-b2cc-c3b259353149")
+	)
+	(text "R20 (GAIN_SLOT to AGND) sets U6's gain to 12 dB."
+		(exclude_from_sim no)
+		(at 236.22 239.475 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0985c247-d559-52fd-b8b9-cb669f88aa36")
+	)
+	(text "datasheet: MAX98357A datasheet Rev 7, gain AV"
+		(exclude_from_sim no)
+		(at 302.26 239.475 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d22b867b-6f37-56cc-99d6-7eceabc35b04")
+	)
+	(text "correction"
+		(exclude_from_sim no)
+		(at 222.25 242.015 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "9def3523-1d68-5098-afb3-0f935e5cfacb")
+	)
+	(text "U6 pin 10 is OUTN. The vendor's print: pins 9 and 10"
+		(exclude_from_sim no)
+		(at 236.22 242.015 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bb19443a-63a2-5666-b020-eae483e8a9df")
+	)
+	(text "both named OUTP"
+		(exclude_from_sim no)
+		(at 236.22 244.555 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6e759eca-a57e-5a77-9a63-aa511c7d2a6a")
+	)
+	(text "datasheet: MAX98357A datasheet Rev 7, pin table"
+		(exclude_from_sim no)
+		(at 302.26 242.015 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "19a5691d-5f4e-5156-ba93-1197968f979c")
+	)
+	(text "K1"
+		(exclude_from_sim no)
+		(at 215.9 158.195 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "0e4fe063-4862-55cb-b66f-4d76ab6f1d7f")
+	)
+	(text "K2"
+		(exclude_from_sim no)
+		(at 215.9 160.735 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#3")
+		)
+		(uuid "256b0cc4-3b7a-59cd-ac47-e3c4bcf250ed")
+	)
+	(text "K3"
+		(exclude_from_sim no)
+		(at 215.9 165.815 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#8")
+		)
+		(uuid "51689086-850b-5700-9c0d-21454881d661")
+	)
+	(text "K4"
+		(exclude_from_sim no)
+		(at 215.9 173.435 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "e99e19eb-3369-5f80-9488-c693ca588786")
+	)
+	(text "K5"
+		(exclude_from_sim no)
+		(at 215.9 181.055 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "3a74aa0a-5fd0-5c0a-9655-9bc21952b001")
+	)
+	(text "K6"
+		(exclude_from_sim no)
+		(at 215.9 183.595 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "8f9d4a6a-c08f-59c3-8e06-edc22bcf8016")
+	)
+	(text "K7"
+		(exclude_from_sim no)
+		(at 215.9 186.135 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "beeefd77-4086-5cd9-bff6-9740f1a666fa")
+	)
+	(text "K8"
+		(exclude_from_sim no)
+		(at 215.9 193.755 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "6eb852b9-a948-5e51-9692-88d858da9bea")
+	)
+	(text "K9"
+		(exclude_from_sim no)
+		(at 215.9 201.375 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "5fbdcd6b-aec4-5187-9bbd-b55a2344920a")
+	)
+	(text "K10"
+		(exclude_from_sim no)
+		(at 215.9 206.455 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#5")
+		)
+		(uuid "9d498147-974b-5780-bd13-e7024832ef01")
+	)
+	(text "K11"
+		(exclude_from_sim no)
+		(at 215.9 211.535 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "48a126b5-2b6e-5a36-9c4d-1b8926e25d4d")
+	)
+	(text "K12"
+		(exclude_from_sim no)
+		(at 215.9 221.695 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#4")
+		)
+		(uuid "c7b2adcc-a102-5782-a90a-eb84e18e9179")
+	)
+	(text "K13"
+		(exclude_from_sim no)
+		(at 215.9 229.315 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "66e0066f-552a-5665-98fc-566564372cf2")
+	)
+	(text "K14"
+		(exclude_from_sim no)
+		(at 215.9 231.855 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "c766e6f8-eca5-5b25-8796-c9aa993d7d48")
+	)
+	(text "K15"
+		(exclude_from_sim no)
+		(at 215.9 236.935 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "74832690-1aef-5203-a415-1aa714843974")
+	)
+	(text "K16"
+		(exclude_from_sim no)
+		(at 215.9 239.475 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#9")
+		)
+		(uuid "69832f3e-2086-5edf-be5a-b3c4be474586")
+	)
+	(text "K17"
+		(exclude_from_sim no)
+		(at 215.9 242.015 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+				(bold yes)
+				(color 255 184 0 1)
+			)
+			(justify left)
+			(href "#6")
+		)
+		(uuid "ce80a6b3-b719-5c20-a4c8-f8c4188acc7f")
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)

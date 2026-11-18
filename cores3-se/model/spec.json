@@ -1,0 +1,323 @@
+{
+  "schema": 1,
+  "board": "cores3-se",
+  "node_name": "CoreS3SE",
+  "output": "cores3-se/model/cores3-se.glb",
+  "copyright": "Case geometry (frame with its molded power and reset keys): M5Stack, M5_Hardware Products/K128-SE_CoreS3-SE/Structures/CoreS3-SE.stl @dccc8047, MIT License, Copyright (c) 2021 M5Stack. Battery base shell and its two light diffusers: M5Stack, M5_Hardware Products/A014-D_Base_M5GO_Bottom3/Structures/Base_M5GO_Bottom3_Bottom_Shell.stl @f66b64a1, MIT License, Copyright (c) 2021 M5Stack. Glass, display, connectors, labels, feet, screws, insert, pins, filler and materials: Kleidos (MIT). Printed legends (the rating label's and the base's PORT tag's): the legends of Kleidos's own top drawing, their glyphs outlines of Inter 4.1 (SIL Open Font License 1.1, Copyright (c) 2016 The Inter Project Authors).",
+  "notes": "The STL holds the device twice: the assembly at z = -27..27 and an exploded copy further along -Z (its cover 64 mm away, its frame 132 mm away); only the assembly is kept. It is two parts: the 54 x 54 x 15.5 mm frame, open at the front, with the power key, the reset key, the speaker holes, the M5 mark and the side icons molded into it, and the orange back cover, which stands 1.0 mm proud of the frame (16.5 mm in all). A rotation of +90 degrees about X takes it into the build frame: the STL's +Y (the open front) becomes +Z and its -Z (the face with the label recess) becomes +Y, which puts the power key, USB-C and Grove on the left face and the microSD slot and reset key on the bottom face, as on the vendor photos. The STL has no glass, no display and no connectors, so the black glass (on the frame's ledge at z 9.7, under the rim's top at 11.2), the display window, the touch print, the USB-C receptacle, the Grove housing, the M-Bus header, the two labels, the rubber feet and the cover screws are added here from measurements.json, front.svg and the vendor photos. The board is modeled as the owner uses it, on the M5GO Battery Bottom3 (A014-D, 500 mAh), which replaces the back cover: the cover, its label, feet, screws and the M-Bus header in it are left out, and the base is stacked under the frame as a module from its own vendor file. That file is the base's shell alone, 54 x 54 x 9.0 mm, in the build frame already (its Grove side on +Y, the core's top edge; its open top on +Z), with its two light diffusers as separate pieces; a translation of -7.8 mm along Z puts its rim (z 3.5 in its file) on the frame's back ring (z -4.3), its corner lips nesting inside the frame. The shell holds the LEGO tubes, the 2 x 2 studs, the feet pockets, the screw counterbores and the debossed marks by the pogo pins; the four felt feet (9.0 mm across, 0.3 mm proud), the four M3 cap screws in the counterbores, the brass M3 insert, the four pogo pins, the two Grove housings (PORT.C blue, PORT.B black), the white PORT tag between them and the IR LED above it are added here from the shop photos, and the battery, the board and the header inside the shell are filler. The model's origin is the center of the 54 x 54 x 23.5 mm body, the frame's front rim (z 11.2) to the base's floor (z -12.3); the feet stand 0.3 mm below it.",
+  "source": {
+    "vendor": "M5Stack",
+    "format": "stl",
+    "file": "CoreS3-SE.stl",
+    "repository": "https://github.com/m5stack/M5_Hardware",
+    "path": "Products/K128-SE_CoreS3-SE/Structures/CoreS3-SE.stl",
+    "commit": "dccc804775037bb1c1457b7d31bf3ba583150d57",
+    "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/dccc804775037bb1c1457b7d31bf3ba583150d57/Products/K128-SE_CoreS3-SE/Structures/CoreS3-SE.stl",
+    "sha256": "529349b80662f2bb83e87a3d59075d91ab54aa3e2d5356d72d69fded36767354",
+    "bytes": 1435084,
+    "license": "MIT",
+    "copyright": "Copyright (c) 2021 M5Stack",
+    "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+  },
+  "transform": [{"rotate": {"axis": "x", "deg": 90}}],
+  "split": true,
+  "select": {"max_le": [null, 28, null]},
+  "parts": [
+    {"name": "frame", "match": {"extent_gt": [53.5, null, null]}}
+  ],
+  "modules": [
+    {
+      "name": "bottom3",
+      "note": "M5Stack's M5GO Battery Bottom3 (A014-D), the battery base the owner's CoreS3 SE stands on. Its file is the shell and its two light diffusers; the shell is the one piece 54 mm across.",
+      "source": {
+        "vendor": "M5Stack",
+        "format": "stl",
+        "file": "Base_M5GO_Bottom3_Bottom_Shell.stl",
+        "repository": "https://github.com/m5stack/M5_Hardware",
+        "path": "Products/A014-D_Base_M5GO_Bottom3/Structures/Base_M5GO_Bottom3_Bottom_Shell.stl",
+        "commit": "f66b64a1ee5502887d28921f654b24b3b36e9721",
+        "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/f66b64a1ee5502887d28921f654b24b3b36e9721/Products/A014-D_Base_M5GO_Bottom3/Structures/Base_M5GO_Bottom3_Bottom_Shell.stl",
+        "sha256": "4c51536c900ee1ecb837f898d8c1b42153fc55bdce24c9c699fe6557860f3098",
+        "bytes": 510184,
+        "license": "MIT",
+        "copyright": "Copyright (c) 2021 M5Stack",
+        "license_note": "MIT (the repository's LICENSE). The STL is not redistributed: only its address and digest are recorded, and the model's asset.copyright names it."
+      },
+      "transform": [{"translate": [0.0, 0.0, -7.8]}],
+      "split": true,
+      "parts": [
+        {"name": "base_shell", "match": {"extent_gt": [53.5, null, null]}},
+        {"name": "base_diffusers", "match": {}}
+      ]
+    }
+  ],
+  "volumes": {
+    "fill": [
+      [-25.15, 25.15, -25.15, 25.15, -0.7, 8.6],
+      [3.5, 10.0, -25.15, -22.0, -3.0, -0.7],
+      [-25.15, -21.5, 9.0, 17.0, -3.0, -0.7],
+      [-24.5, 24.5, -24.5, 24.5, -8.7, -0.6]
+    ],
+    "hidden": [
+      [-25.3, 25.3, -25.3, 25.3, -0.75, 9.9],
+      [-16.06, -0.04, 25.0, 26.8, -2.96, 9.36]
+    ],
+    "note": "fill: the opaque interior the openings show (main interior; behind the two bottom slits; behind the power key's gap; the base's battery and board, from just above its studs' block to the core's interior, which the LEGO tubes, the Grove opening, the notches and the floor's holes look into). hidden: never drawn, only culls the shell faces nothing can show: the frame's ribs and ledge under the opaque glass and inside the filler, and the top label's recess floor and the hole under it."
+  },
+  "cull": {"parts": ["frame", "base_shell"], "volumes": ["fill", "hidden"], "margin": 0.06},
+  "center_mm": [0.0, 0.0, -0.55],
+  "front_frame": {"left_x": -27.0, "top_y": 27.0},
+  "face_frames": {
+    "top": {"left_x": -27.0, "back_z": -12.3},
+    "note": "The top side's drawing (svg/top.svg) runs from the case's left edge as the front is seen and down from the stack's back edge, the base's floor."
+  },
+  "measurements": "../measurements.json",
+  "quant_mm": 0.01,
+  "planar_min_area": 1.5,
+  "materials": [
+    {"name": "case", "hex": "#E4E4E6", "rough": 0.62},
+    {"name": "shell_turquoise", "rgb": [66, 176, 194], "rough": 0.6},
+    {"name": "diffuser", "rgb": [120, 205, 219], "rough": 0.45},
+    {"name": "glass_black", "rgb": [10, 10, 12], "rough": 0.1},
+    {"name": "window_black", "rgb": [3, 3, 4], "rough": 0.2},
+    {"name": "screen", "rgb": [8, 8, 10], "rough": 1.0, "unlit": true},
+    {"name": "glass", "rgb": [0, 0, 0], "rough": 0.04, "alpha": 0.06},
+    {"name": "touch_print", "hex": "#B8493E", "rough": 0.4},
+    {"name": "mic_ring", "rgb": [54, 54, 58], "rough": 0.5},
+    {"name": "hole", "rgb": [3, 3, 4], "rough": 1.0},
+    {"name": "internal", "rgb": [16, 16, 18], "rough": 0.95},
+    {"name": "usb_metal", "rgb": [196, 196, 200], "rough": 0.32, "metal": 1.0},
+    {"name": "black_plastic", "rgb": [26, 26, 28], "rough": 0.55},
+    {"name": "grove_red", "rgb": [196, 48, 58], "rough": 0.5},
+    {"name": "brass", "rgb": [200, 158, 84], "rough": 0.38, "metal": 1.0},
+    {"name": "label_white", "rgb": [238, 238, 234], "rough": 0.6},
+    {"name": "rubber", "rgb": [24, 24, 26], "rough": 0.9},
+    {"name": "screw", "rgb": [160, 160, 164], "rough": 0.4, "metal": 0.85},
+    {"name": "grove_blue", "rgb": [8, 178, 212], "rough": 0.5}
+  ],
+  "meshes": [
+    {"name": "case_frame", "part": "frame", "material": "case", "smooth_deg": 40.0},
+    {"name": "base_shell", "part": "base_shell", "material": "shell_turquoise", "smooth_deg": 40.0},
+    {"name": "base_diffusers", "part": "base_diffusers", "material": "diffuser", "smooth_deg": 40.0},
+    {
+      "name": "glass_front",
+      "note": "The black glass, back-printed outside the window: the frame's rim opening (1.47 mm inside the outline, R3.53, front.svg), sitting on the ledge (z 9.7). The print, the screen and the clear glass stack above it 0.02 mm apart, all under the rim's top (z 11.2).",
+      "material": "glass_black",
+      "shapes": [{"frame": "front", "prism": {"axis": "z", "range": [9.72, 11.12],
+                            "profile": {"rounded_rect": [1.47, 52.53, 1.47, 52.53], "r": 3.53, "res": 8}}}]
+    },
+    {
+      "name": "window",
+      "note": "The print's window over the panel (front.svg: 6.2-47.8 x 11.3-42.7 mm).",
+      "material": "window_black",
+      "shapes": [{"box": [6.2, 47.8, 11.3, 42.7, 11.12, 11.14], "frame": "front"}]
+    },
+    {"name": "screen", "material": "screen", "screen": {"z": 11.16}},
+    {"name": "glass", "material": "glass", "glass": {"rect": [6.2, 47.8, 11.3, 42.7], "z": 11.18, "frame": "front"}},
+    {
+      "name": "touch_ring",
+      "note": "The red touch print's ring (2.58 mm across, 0.28 mm stroke, at 27.0, 46.40).",
+      "material": "touch_print",
+      "shapes": [{"frame": "front", "prism": {"axis": "z", "range": [11.12, 11.14],
+                            "profile": {"stadium": [27.0, 46.4, 2.86, 2.86], "inner": [2.30, 2.30], "res": 8}}}]
+    },
+    {
+      "name": "touch_chevrons",
+      "note": "The print's four chevrons as front.svg strokes them: polylines (18.41, 45.58) - (17.722, 46.37) - (18.41, 47.16) and their mirrors at tips x 21.432, 32.568 and 36.278, 0.18 mm wide, mitered at the tip and cut square at the ends; each outline is that stroke's (shapely buffer 0.09, flat caps, miter joins), to 0.1 um.",
+      "material": "touch_print",
+      "shapes": [
+        {"prism": {"axis": "z", "range": [11.12, 11.14], "profile": {"polygon": [[17.6027, 46.37], [18.3421, 45.5209], [18.4779, 45.6391], [17.8413, 46.37], [18.4779, 47.1009], [18.3421, 47.2191]]}}, "frame": "front"},
+        {"prism": {"axis": "z", "range": [11.12, 11.14], "profile": {"polygon": [[21.3127, 46.37], [22.0521, 45.5209], [22.1879, 45.6391], [21.5513, 46.37], [22.1879, 47.1009], [22.0521, 47.2191]]}}, "frame": "front"},
+        {"prism": {"axis": "z", "range": [11.12, 11.14], "profile": {"polygon": [[32.4487, 46.37], [31.8121, 45.6391], [31.9479, 45.5209], [32.6873, 46.37], [31.9479, 47.2191], [31.8121, 47.1009]]}}, "frame": "front"},
+        {"prism": {"axis": "z", "range": [11.12, 11.14], "profile": {"polygon": [[36.1587, 46.37], [35.5221, 45.6391], [35.6579, 45.5209], [36.3973, 46.37], [35.6579, 47.2191], [35.5221, 47.1009]]}}, "frame": "front"}
+      ]
+    },
+    {
+      "name": "mic_rings",
+      "material": "mic_ring",
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [13.07, 47.22], "r": 0.66, "range": [11.12, 11.14], "sections": 16}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [40.93, 47.22], "r": 0.66, "range": [11.12, 11.14], "sections": 16}, "frame": "front"}
+      ]
+    },
+    {
+      "name": "mic_holes",
+      "material": "hole",
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [13.07, 47.22], "r": 0.58, "range": [11.14, 11.15], "sections": 16}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [40.93, 47.22], "r": 0.58, "range": [11.14, 11.15], "sections": 16}, "frame": "front"}
+      ]
+    },
+    {"name": "internal", "material": "internal", "shapes": [{"volume": "fill"}]},
+    {
+      "name": "usb_c_shell",
+      "note": "The USB-C receptacle in the left face (opening y 22.42..31.58, z 1.38..4.76).",
+      "material": "usb_metal",
+      "smooth_deg": 40,
+      "shapes": [
+        {"frame": "front", "prism": {"axis": "x", "range": [0.4, 7.4],
+                   "profile": {"stadium": [27.0, 3.07, 8.94, 3.26], "inner": ["8.94 - 0.5", "3.26 - 0.5"]}}}
+      ]
+    },
+    {
+      "name": "usb_c_inside",
+      "material": "black_plastic",
+      "shapes": [
+        {"frame": "front", "prism": {"axis": "x", "range": [6.6, 7.0],
+                   "profile": {"stadium": [27.0, 3.07, "8.94 - 0.5", "3.26 - 0.5"]}}},
+        {"frame": "front", "prism": {"axis": "x", "range": [1.3, 6.7],
+                   "profile": {"rect": ["27.0 - 3.3", "27.0 + 3.3", "3.07 - 0.35", "3.07 + 0.35"]}}}
+      ]
+    },
+    {
+      "name": "grove",
+      "note": "The HY2.0-4P (Port A) housing filling its opening in the left face (y 35.84..46.16, z -0.56..4.76).",
+      "material": "grove_red",
+      "shapes": [{"box": [0.35, 6.0, 35.9, 46.1, -0.5, 4.7], "frame": "front"}]
+    },
+    {
+      "name": "grove_socket",
+      "material": "hole",
+      "shapes": [{"box": [0.33, 0.35, 36.9, 45.1, 0.2, 3.9], "frame": "front"}]
+    },
+    {
+      "name": "grove_pins",
+      "material": "brass",
+      "shapes": [
+        {"box": [0.31, 0.33, "38.0 - 0.25", "38.0 + 0.25", 2.6, 3.1], "frame": "front"},
+        {"box": [0.31, 0.33, "40.0 - 0.25", "40.0 + 0.25", 2.6, 3.1], "frame": "front"},
+        {"box": [0.31, 0.33, "42.0 - 0.25", "42.0 + 0.25", 2.6, 3.1], "frame": "front"},
+        {"box": [0.31, 0.33, "44.0 - 0.25", "44.0 + 0.25", 2.6, 3.1], "frame": "front"}
+      ]
+    },
+    {
+      "name": "top_label",
+      "note": "The regulatory label in its 0.3 mm recess in the top face (x 10.90..27.00, z -3.00..9.40).",
+      "material": "label_white",
+      "shapes": [{"box": [10.92, 26.98, 0.03, 0.31, -2.98, 9.38], "frame": "front"}]
+    },
+    {
+      "name": "base_feet",
+      "note": "The base's four felt feet, 9.0 mm across, filling the shell's pockets (their ceilings 0.4 and 0.25 mm deep) and standing 0.3 mm below its floor (z -12.3), as the shop's side photos show them.",
+      "material": "rubber",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [13.0, 9.0], "r": 4.45, "range": [-12.6, -11.92], "sections": 32}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [41.0, 9.0], "r": 4.45, "range": [-12.6, -11.92], "sections": 32}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [13.0, 45.0], "r": 4.45, "range": [-12.6, -12.07], "sections": 32}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [41.0, 45.0], "r": 4.45, "range": [-12.6, -12.07], "sections": 32}, "frame": "front"}
+      ]
+    },
+    {
+      "name": "base_screws",
+      "note": "The four M3 cap screws that hold the base to the frame, their heads (5.5 mm across) in the shell's 5.9 mm counterbores, 0.2 mm inside its floor; the counterbore's floor is at z -9.3.",
+      "material": "screw",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [5.0, 5.0], "r": 2.75, "range": [-12.1, -9.32]}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [49.0, 5.0], "r": 2.75, "range": [-12.1, -9.32]}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [5.0, 49.0], "r": 2.75, "range": [-12.1, -9.32]}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [49.0, 49.0], "r": 2.75, "range": [-12.1, -9.32]}, "frame": "front"}
+      ]
+    },
+    {
+      "name": "base_screw_sockets",
+      "material": "hole",
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [5.0, 5.0], "r": 1.45, "range": [-12.12, -12.11], "sections": 6}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [49.0, 5.0], "r": 1.45, "range": [-12.12, -12.11], "sections": 6}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [5.0, 49.0], "r": 1.45, "range": [-12.12, -12.11], "sections": 6}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [49.0, 49.0], "r": 1.45, "range": [-12.12, -12.11], "sections": 6}, "frame": "front"}
+      ]
+    },
+    {
+      "name": "base_insert",
+      "note": "The brass M3 insert in its pocket at (27.0, 4.93), 4.4 mm across with a 2.5 mm bore, its face 0.1 mm inside the floor; the bore looks up into the filler.",
+      "material": "brass",
+      "smooth_deg": 40,
+      "shapes": [
+        {"frame": "front", "prism": {"axis": "z", "range": [-12.2, -10.82],
+                   "profile": {"stadium": [27.0, 4.93, 4.4, 4.4], "inner": [2.5, 2.5], "res": 8}}}
+      ]
+    },
+    {
+      "name": "base_pogo_pins",
+      "note": "The four charging pins in their 1.8 mm holes at y 47.29, their tips 0.15 mm inside the floor.",
+      "material": "brass",
+      "smooth_deg": 40,
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [23.2, 47.29], "r": 0.45, "range": [-12.15, -10.4], "sections": 12}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [25.72, 47.29], "r": 0.45, "range": [-12.15, -10.4], "sections": 12}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [28.28, 47.29], "r": 0.45, "range": [-12.15, -10.4], "sections": 12}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [30.8, 47.29], "r": 0.45, "range": [-12.15, -10.4], "sections": 12}, "frame": "front"}
+      ]
+    },
+    {
+      "name": "base_pogo_holes",
+      "material": "hole",
+      "shapes": [
+        {"cylinder": {"axis": "z", "c": [23.2, 47.29], "r": 0.78, "range": [-11.71, -11.7], "sections": 12}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [25.72, 47.29], "r": 0.78, "range": [-11.71, -11.7], "sections": 12}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [28.28, 47.29], "r": 0.78, "range": [-11.71, -11.7], "sections": 12}, "frame": "front"},
+        {"cylinder": {"axis": "z", "c": [30.8, 47.29], "r": 0.78, "range": [-11.71, -11.7], "sections": 12}, "frame": "front"}
+      ]
+    },
+    {
+      "name": "base_port_c",
+      "note": "PORT.C's HY2.0-4P housing in the shell's top opening (x 12.9..41.1, z -9.5..-4.3), measured on the shop's straight photo of that side (10.4 px/mm): x 31.1..41.05, its face 0.6 mm inside the top face.",
+      "material": "grove_blue",
+      "shapes": [{"box": [31.1, 41.05, 0.6, 3.0, -9.46, -4.35], "frame": "front"}]
+    },
+    {
+      "name": "base_port_b",
+      "note": "PORT.B's housing, x 12.95..22.9.",
+      "material": "black_plastic",
+      "shapes": [{"box": [12.95, 22.9, 0.6, 3.0, -9.46, -4.35], "frame": "front"}]
+    },
+    {
+      "name": "base_port_sockets",
+      "material": "hole",
+      "shapes": [
+        {"box": [31.975, 40.175, 0.58, 0.6, -8.7, -4.85], "frame": "front"},
+        {"box": [13.825, 22.025, 0.58, 0.6, -8.7, -4.85], "frame": "front"}
+      ]
+    },
+    {
+      "name": "base_port_pins",
+      "material": "brass",
+      "shapes": [
+        {"box": ["14.9 - 0.25", "14.9 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"},
+        {"box": ["16.9 - 0.25", "16.9 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"},
+        {"box": ["18.9 - 0.25", "18.9 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"},
+        {"box": ["20.9 - 0.25", "20.9 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"},
+        {"box": ["33.1 - 0.25", "33.1 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"},
+        {"box": ["35.1 - 0.25", "35.1 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"},
+        {"box": ["37.1 - 0.25", "37.1 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"},
+        {"box": ["39.1 - 0.25", "39.1 + 0.25", 0.56, 0.58, -6.25, -5.75], "frame": "front"}
+      ]
+    },
+    {
+      "name": "base_port_tag",
+      "note": "The white PORT sticker on the shell's tab between the two housings (the tab x 23.1..30.9, its face at y 0.35..0.41 with the draft), under the notch that holds the IR LED: x 23.15..30.85, z -9.42..-5.85, 0.04 mm thick and clear of the tab's face.",
+      "material": "label_white",
+      "shapes": [{"box": [23.15, 30.85, 0.30, 0.34, -9.42, -5.85], "frame": "front"}]
+    },
+    {
+      "name": "base_ir_led",
+      "note": "The IR LED in the tab's notch above the tag (x 25.6..28.4, z -5.8 up), 1.7 mm across at z -5.05, its dome 0.15 mm inside the tab's face.",
+      "material": "black_plastic",
+      "smooth_deg": 40,
+      "shapes": [{"cylinder": {"axis": "y", "c": [27.0, -5.05], "r": 0.85, "range": [0.45, 1.8], "sections": 16}, "frame": "front"}]
+    },
+    {
+      "name": "label_legends",
+      "note": "The frame's rating label, drawn on the top side's plane rating, three steps out from the label's paper (y 26.97).",
+      "legends": {"drawing": "../svg/top.svg", "face": "top", "plane": "rating", "on": "top_label", "y": "26.97 + 0.03"}
+    },
+    {
+      "name": "port_tag_legends",
+      "note": "The base's PORT tag, drawn on the top side's plane port-tag, three steps out from the sticker (y 26.70).",
+      "legends": {"drawing": "../svg/top.svg", "face": "top", "plane": "port-tag", "on": "base_port_tag", "y": "26.70 + 0.03"}
+    }
+  ]
+}

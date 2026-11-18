@@ -1,0 +1,1165 @@
+{
+  "$schema": "../_shared/board.schema.json",
+  "id": "cores3-se",
+  "identity": {
+    "name": "CoreS3-SE",
+    "aka": ["M5CoreS3 SE"],
+    "vendor": "M5Stack",
+    "sku": "K128-SE",
+    "links": {
+      "docs": "https://docs.m5stack.com/en/core/CoreS3%20SE",
+      "repository": "https://github.com/m5stack/M5_Hardware/tree/master/Products/K128-SE_CoreS3-SE"
+    },
+    "src": ["m5-docs", "m5-docs-pdf", "m5-docs-2024"]
+  },
+  "physical": {
+    "width_mm": 54.0,
+    "height_mm": 54.0,
+    "depth_mm": 15.5,
+    "weight_g": 37.8,
+    "notes": "Product size and weight as the vendor's specification table gives them; none of them is measured on a unit. The depth, 15.5 mm, is the frame's: the vendor's dimension drawing (the CoreS3-Lite's, which the CoreS3-SE page links as its model size) prints 15.5 mm for the frame and 16.5 mm over the back cover, and the vendor's CoreS3-SE.stl holds a 54.0 x 54.0 x 15.5 mm frame with the back cover standing 1.0 mm proud of it (16.5 mm in all). The owner's hand measurement of 2026-07-15, 15.0 mm, was taken without a caliper and is not used. Package 133.0 x 93.5 x 22.5 mm, gross weight 54.5 g. Operating temperature 0 to 40 °C. The box holds the controller and an L-shaped 2.0 mm hex key for M2.5 screws. The vendor's 2024 export of the same page gave 38.4 g and a 133.4 x 95 x 21 mm package.",
+    "src": ["m5-docs", "m5-docs-pdf", "m5-docs-2024", "m5-size-drawing", "m5-stl-extents", "owner-unit-verified"]
+  },
+  "components": [
+    {
+      "id": "esp32s3",
+      "role": "soc",
+      "part": "ESP32-S3",
+      "manufacturer": "Espressif",
+      "designator": "U5",
+      "quantity": 1,
+      "specs": {
+        "cores": 2,
+        "core": "Xtensa 32-bit LX7",
+        "max_clock_mhz": 240,
+        "package": "QFN56 7 x 7 mm",
+        "in_package_flash": null,
+        "in_package_psram": null,
+        "vdd_spi_v": "3.3 on this board: the GPIO45 strap reads 0 (no external pull, the chip's weak pull-down) and no eFuse forces VDD_SPI; the part allows 3.3 or 1.8",
+        "rom_kb": 384,
+        "sram_kb": 512,
+        "gpios": 45,
+        "wifi": "IEEE 802.11 b/g/n, 2.4 GHz",
+        "bluetooth": "Bluetooth 5 (LE)",
+        "usb": "USB OTG and USB Serial/JTAG on GPIO19/GPIO20",
+        "gpios_on_m5_bus": "G0, G1, G2, G5, G6, G7, G8, G9, G10, G11, G12, G13, G14, G17, G18, G35, G36, G37, G43, G44"
+      },
+      "connects_to": [
+        {
+          "to": "pmic",
+          "pins": {
+            "CHIP_PU (pin 4)": "AXP2101 PWROK (net AXP_PG)"
+          },
+          "pulls": [
+            {"signal": "CHIP_PU (AXP_PG)", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R2"}
+          ],
+          "notes": "C23 1 uF holds AXP_PG to GND. The same net is the reset key S1's line (through R38 510 ohm, C18 1 nF to GND), the AW9523B's RSTN and M5-Bus pin 6.",
+          "src": ["sch"]
+        },
+        {
+          "to": "boot-comparator",
+          "pins": {
+            "GPIO0 (pin 5)": "LMV331 pin 4 (net ESP_BOOT)"
+          },
+          "pulls": [
+            {"signal": "GPIO0 (ESP_BOOT)", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R4"}
+          ],
+          "notes": "GPIO0 is also the ES7210's MCLK (through R34 51 ohm), the green LED2's cathode and M5-Bus pin 24.",
+          "src": ["sch"]
+        }
+      ],
+      "notes": "The schematic names U5 'ESP32-S3' and draws flash (U6) and PSRAM (U7) as separate chips, matching the datasheet's ESP32-S3 ordering code with no in-package memory. VDD3P3 (pins 2, 3) is VDDP_3V3, fed from VDD_3V3 through L4 2.0 nH (C110 470 nF, C122 4.7 uF); VDD3P3_RTC (20), VDD3P3_CPU (46) and VDDA (55, 56) are VDD_3V3; VDD_SPI (29) is FLASH_VCC. The nets the schematic names CAM_D2 to CAM_D9, CAM_HREF, CAM_PCLK and CAM_VSYNC (GPIO15, 16, 38, 39, 40, 41, 42, 45, 46, 47, 48) reach no fitted part on the SE: the camera connector is outside its compiled design. GPIO21 (pin 27) is I2C_INT, the AW9523B's interrupt output. GPIO43 (U0TXD) reaches M5-Bus pin 14 through R48 499 ohm and GPIO44 (U0RXD) pin 13 directly; the schematic labels the pair UART_PRINT. The schematic notes 'VSPI: 0=3.3V 1=1.8V' beside GPIO45; the board puts no pull on GPIO45 or GPIO46, so both straps read 0 on the chip's weak pull-downs, and the bench read VDD_SPI_FORCE = 0, VDD_SPI_TIEH = 0, GPIO45 and GPIO46 low with only the pull-down on, and esptool's 'Flash voltage set by a strapping pin: 3.3V'.",
+      "src": ["sch", "esp32s3-ds", "m5-docs", "bench-efuse-strap"]
+    },
+    {
+      "id": "flash",
+      "role": "flash",
+      "part": "GD25Q128/W25Q128",
+      "designator": "U6",
+      "quantity": 1,
+      "specs": {
+        "capacity_mbit": 128,
+        "capacity_mb": 16,
+        "supply": "FLASH_VCC (the ESP32-S3's VDD_SPI), 3.3 V: as the schematic labels the part, and as the strap sets it on the bench",
+        "interface": "SPI with four data lines"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "SPI flash",
+          "pins": {
+            "nCS (1)": "SPICS0 (pin 32)",
+            "CLK (6)": "SPICLK (pin 33)",
+            "DO/IO1 (2)": "SPIQ (pin 34)",
+            "DI/IO0 (5)": "SPID (pin 35)",
+            "nWP/IO2 (3)": "SPIWP (pin 31)",
+            "nHOLD/IO3 (7)": "SPIHD (pin 30)"
+          }
+        }
+      ],
+      "notes": "The schematic's value is 'GD25Q128/W25Q128/128Mbit/3.3V': either part can be fitted. The bench unit's flash is neither: JEDEC manufacturer 0x46, device 0x4018 (128 Mbit, 16 MB, as printed), not GigaDevice (0xC8) or Winbond (0xEF), and ESP-IDF's probe falls back to its generic driver; its maker is not identified (the part's marking needs the case opened), so the part stays as printed. Decoupled by C35 4.7 uF and C36 470 nF.",
+      "src": ["sch", "m5-docs", "bench-efuse-strap"]
+    },
+    {
+      "id": "psram",
+      "role": "psram",
+      "part": "ESPSRAM",
+      "designator": "U7",
+      "quantity": 1,
+      "specs": {
+        "capacity_mb": 8,
+        "interface": "quad SPI, sharing CLK and the four data lines with the flash",
+        "supply": "FLASH_VCC"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "SPI (PSRAM)",
+          "pins": {
+            "nCS (1)": "SPICS1 (pin 28)",
+            "SCLK (6)": "SPICLK (pin 33)",
+            "SO/SIO1 (2)": "SPIQ (pin 34)",
+            "SI/SIO0 (5)": "SPID (pin 35)",
+            "SIO2 (3)": "SPIWP (pin 31)",
+            "SIO3 (7)": "SPIHD (pin 30)"
+          }
+        }
+      ],
+      "notes": "The schematic's value is 'ESPSRAM'; the vendor gives 8 MB quad PSRAM. The bench unit's debug firmware found and tested 8 MB in quad mode at 80 MHz, and the eFuses show no PSRAM in the ESP32-S3's package, so the 8 MB is this chip. Decoupled by C37 4.7 uF and C38 470 nF.",
+      "src": ["sch", "m5-docs", "bench-efuse-strap"]
+    },
+    {
+      "id": "xtal-40m",
+      "role": "crystal",
+      "designator": "X1",
+      "quantity": 1,
+      "specs": {
+        "frequency_mhz": 40,
+        "tolerance_ppm": 10,
+        "load_capacitance_pf": 20,
+        "package": "2520",
+        "load_capacitors": "C44 and C51, 12 pF each"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "pins": {
+            "1": "XTAL_P (pin 54) through R33 22 nH",
+            "3": "XTAL_N (pin 53)"
+          }
+        }
+      ],
+      "notes": "The schematic gives the value '40Mhz/10ppm/20pF/2520' and no part number. Pins 2 and 4 are GND.",
+      "src": ["sch"]
+    },
+    {
+      "id": "antenna",
+      "role": "antenna",
+      "part": "PROANT440",
+      "designator": "ANT1",
+      "quantity": 1,
+      "specs": {
+        "band": "2.4 GHz (Wi-Fi and Bluetooth LE of the ESP32-S3)",
+        "matching": "C68 1.8 nH in series, C69 2.7 pF and C86 2.4 pF to GND; R35 0 ohm to the antenna; L9 and C121 not fitted (NC)"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "pins": {"feed (1)": "LNA_IN (pin 1), net ESP_LNA, through the matching network and R35 0 ohm"}
+        }
+      ],
+      "notes": "The schematic gives 'PROANT440' as the value of ANT1.",
+      "src": ["sch"]
+    },
+    {
+      "id": "ipex",
+      "role": "connector",
+      "part": "IPEX",
+      "designator": "J4",
+      "quantity": 1,
+      "specs": {
+        "kind": "coaxial RF connector footprint",
+        "pins": 3
+      },
+      "connects_to": [
+        {
+          "to": "antenna",
+          "notes": "J4 pin 1 reaches the RF line only through R36, which the schematic marks NC (not fitted), so as drawn the external-antenna path is open and the chip antenna is fed through R35 0 ohm. Pins 2 and 3 are GND."
+        }
+      ],
+      "src": ["sch"]
+    },
+    {
+      "id": "pmic",
+      "role": "pmic",
+      "part": "AXP2101",
+      "manufacturer": "X-Powers",
+      "designator": "U1",
+      "quantity": 1,
+      "specs": {
+        "interface": "I2C (TWSI)",
+        "i2c_address": "0x34",
+        "package": "QFN-40 5 x 5 mm",
+        "input_voltage_v": "3.9 to 5.5",
+        "charger": "linear, 100 mA to 1 A, CV accuracy +/-0.5 %",
+        "charge_current_on_this_board": "5 V at 198 mA (vendor's specification table)",
+        "fuel_gauge": "E-gauge 3.0",
+        "dcdc1": "1.5 to 3.4 V, 2 A; on this board VDD_3V3 (L1 1.0 uH WPN201610M1R0MT, C8 22 uF), the ESP32-S3 and the board's 3.3 V logic",
+        "dcdc2": "not used on this board (LX2 and FB2 open)",
+        "dcdc3": "0.5 to 3.4 V in three ranges, 2 A; on this board VCC_3V3 (L3 1.0 uH, C15 22 uF), the M5-Bus 3V3 pin",
+        "dcdc4": "not used on this board (LX4 and FB4 open)",
+        "aldo1": "0.5 to 3.5 V, 300 mA; on this board VDD_1V8 (the AW88298's DVDD)",
+        "aldo2": "0.5 to 3.5 V, 300 mA; on this board VDDA_3V3 (the ES7210's supplies)",
+        "aldo3": "0.5 to 3.5 V, 300 mA; on this board VDDCAM_3V3, which reaches no fitted load on the SE",
+        "aldo4": "0.5 to 3.5 V, 300 mA; on this board VDD_3V3_SD (the microSD slot)",
+        "bldo1": "0.5 to 3.5 V, 300 mA; on this board AVDD, which reaches only C13 and C126 on the SE",
+        "bldo2": "0.5 to 3.5 V, 300 mA; on this board DVDD, which reaches only C12 and C127 on the SE",
+        "dldo1": "0.5 to 3.3 V, 300 mA, LDO or switch, its input DCDC1 inside the chip (VDD_3V3 here); on this board VCC_BL, the LCD backlight (LCD1 pin 9)",
+        "dldo2": "not used on this board (pin 11 open)",
+        "cpusldo": "not used on this board (pin 10 open)",
+        "rtcldo": "1.8/2.5/3/3.3 V, 30 mA; on this board VRTC (pin 28) is RTC_VDD, the BM8563's supply",
+        "vbackup": "not connected",
+        "gpio1": "not connected",
+        "power_off_current_ua": "the datasheet V1.0 gives two figures: under 20 (BATFET off, RTCLDO on) in its features list, and typically 40 with only a battery present in 6.5.4; this board's is not measured",
+        "board_consumption": "battery 4.2 V: standby 104.64 uA, working 109.67 mA; USB 5 V: working 166.27 mA (vendor's specification table)"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "internal I2C (I2C_SYS)",
+          "address": "0x34",
+          "pins": {"SDA (39)": "GPIO12", "SCL (40)": "GPIO11"},
+          "pulls": [
+            {"signal": "I2C_SYS_SDA", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R20"},
+            {"signal": "I2C_SYS_SCL", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R32"}
+          ],
+          "notes": "The schematic carries the note 'I2C NEED REVERSED' beside these two lines; the nets connect SDA to GPIO12 and SCL to GPIO11 as listed.",
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "rtc",
+          "pins": {"IRQ (38)": "BM8563 INT (pin 3), net AXP_WAKEUP"},
+          "pulls": [
+            {"signal": "AXP_WAKEUP", "direction": "up", "ohms": 10000, "to": "RTC_VDD", "designator": "R15"}
+          ],
+          "notes": "The line reaches no ESP32-S3 pin: only the AXP2101's IRQ, the BM8563's INT and R15.",
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "keys",
+          "pins": {"PWRON (30)": "S2 through R39 510 ohm (net PWR_KEY)", "PWROK (29)": "S1 through R38 510 ohm (net AXP_PG)"},
+          "notes": "C97 1 nF on PWR_KEY and C18 1 nF on AXP_PG to GND. D1 and D2 across the keys are marked NC.",
+          "src": ["sch"]
+        },
+        {
+          "to": "led-charge",
+          "pins": {"CHGLED (1)": "LED1 pin 2 (net AXP_CHG_LED)"},
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "battery-header",
+          "pins": {"BAT (33)": "J5 pin 2 (VBAT)"},
+          "notes": "C4 2.2 uF on VBAT. VBAT is also M5-Bus pin 30.",
+          "src": ["sch"]
+        },
+        {
+          "to": "switch-pmu-usb",
+          "pins": {"VBUS (37)": "net VBUS, the outputs of U18 (from USB) and U19 (from the bus)"},
+          "notes": "C1 10 uF on VBUS. TS (31) sits on R29 10 kohm from BUS_OUT and R30 10 kohm to GND.",
+          "src": ["sch"]
+        }
+      ],
+      "notes": "VSYS (34), VIN1-4, ALDOIN and BLDOIN are one net, AXP_PS, the system rail that also feeds the 5 V boost and the audio amplifier; L2 1.0 uH sits between it and SW (35). VMID (36) has C9 10 uF, VREF (2) C20 2.2 uF. Rail voltages on this board are as the schematic's net names give them (VDD_3V3, VCC_3V3, VDD_1V8, VDDA_3V3, VDD_3V3_SD); the schematic states no voltage figure for a rail. The vendor says power management combines the AXP2101 with the AW9523B to set the direction of the power path (BUS_OUT_EN, USB_OTG_EN).",
+      "src": ["sch", "axp2101-ds", "m5-docs"]
+    },
+    {
+      "id": "boost-5v",
+      "role": "regulator",
+      "part": "SY7088",
+      "manufacturer": "Silergy",
+      "designator": "U3",
+      "quantity": 1,
+      "specs": {
+        "topology": "synchronous boost",
+        "input_voltage_v": "2.3 to 5.25",
+        "input": "AXP_PS (the AXP2101's VSYS)",
+        "output": "BUS_5V",
+        "feedback_reference_v": 1.2,
+        "feedback_divider": "R11 15 kohm (OUT to FB), R12 4.7 kohm (FB to GND)",
+        "output_voltage_v": 5.03,
+        "inductor": "L5 2.2 uH WPN3012H2R2MT",
+        "capacitors": "C24, C25, C26 22 uF at the input; C27, C28 22 uF at the output"
+      },
+      "connects_to": [
+        {
+          "to": "io-expander",
+          "pins": {"EN (3)": "AW9523B P1_7 (net BOOST_EN) through R13 47 ohm"},
+          "pulls": [
+            {"signal": "EN", "direction": "down", "ohms": 10000, "designator": "R14"}
+          ],
+          "notes": "C29 1 uF from EN to GND.",
+          "src": ["sch"]
+        },
+        {
+          "to": "switch-boost-bus",
+          "pins": {"OUT (7, 8)": "U14 VIN (net BUS_5V)"},
+          "src": ["sch"]
+        }
+      ],
+      "notes": "The output voltage is computed from the datasheet's VOUT = 1.2 V x (RH/RL + 1) and the schematic's divider; it is not a vendor-stated figure.",
+      "src": ["sch", "sy7088-ds"]
+    },
+    {
+      "id": "switch-boost-bus",
+      "role": "other",
+      "part": "ME1502AM5G",
+      "manufacturer": "Microne",
+      "designator": "U14, U17",
+      "quantity": 2,
+      "specs": {
+        "function": "5 V USB high-side load switch with adjustable current limit, 70 mohm on-resistance, SOT23-5",
+        "enable": "active high (the A suffix)",
+        "current_limit": "Ioc = 60 kohm / RSET; RSET is 60 kohm on both, about 1 A (computed)",
+        "u14": "BUS_5V (boost output) to BUS_OUT, enabled by BUS_OUT_EN; the schematic's 'Boost' path; RSET R17 60 kohm",
+        "u17": "BUS_OUT to VUSB (the USB-C VBUS pin), enabled by USB_OTG_EN; the schematic's 'OTG' path; RSET R44 60 kohm"
+      },
+      "connects_to": [
+        {
+          "to": "io-expander",
+          "pins": {"U14 EN (4)": "AW9523B P0_1 (BUS_OUT_EN)", "U17 EN (4)": "AW9523B P0_5 (USB_OTG_EN)"},
+          "src": ["sch"]
+        },
+        {
+          "to": "m5-bus",
+          "pins": {"U14 VOUT (1)": "BUS_OUT, M5-Bus pin 28 and Port A pin 3"},
+          "src": ["sch"]
+        },
+        {
+          "to": "usb-c",
+          "pins": {"U17 VOUT (1)": "VUSB, the connector's VBUS"},
+          "src": ["sch"]
+        }
+      ],
+      "notes": "BUS_OUT carries C125 220 uF (6R3AVEA221M0645), C118 22 uF, C106 and C108 470 nF; the vendor gives the Grove output as up to 940 mA at 4.2 V on battery and 680 mA at 5 V on USB.",
+      "src": ["sch", "me1502-ds", "m5-docs"]
+    },
+    {
+      "id": "switch-pmu-usb",
+      "role": "other",
+      "part": "ME1502CM5G",
+      "manufacturer": "Microne",
+      "designator": "U18, U19",
+      "quantity": 2,
+      "specs": {
+        "function": "5 V USB high-side load switch with adjustable current limit, 70 mohm on-resistance, SOT23-5",
+        "enable": "active low (the C suffix)",
+        "current_limit": "Ioc = 60 kohm / RSET; RSET is 30 kohm on both, about 2 A (computed)",
+        "u18": "VUSB (USB-C) to VBUS (the AXP2101's input), on while USB_OTG_EN is low; the schematic's 'USB' path; RSET R45 30 kohm",
+        "u19": "BUS_OUT to VBUS, on while BUS_OUT_EN is low, so the board can be powered from the bus; the schematic's 'PMU' path; RSET R46 30 kohm"
+      },
+      "connects_to": [
+        {
+          "to": "io-expander",
+          "pins": {"U18 EN (4)": "AW9523B P0_5 (USB_OTG_EN)", "U19 EN (4)": "AW9523B P0_1 (BUS_OUT_EN)"},
+          "src": ["sch"]
+        },
+        {
+          "to": "usb-c",
+          "pins": {"U18 VIN (5)": "VUSB"},
+          "src": ["sch"]
+        }
+      ],
+      "notes": "With the A-suffix pair, the two enable lines make the vendor's four power-path circuits: USB in or USB out (OTG) by USB_OTG_EN, bus out (boost) or bus in by BUS_OUT_EN. VBUS carries C112 and C113 22 uF; VUSB C111 22 uF and C107 470 nF.",
+      "src": ["sch", "me1502-ds", "m5-docs"]
+    },
+    {
+      "id": "rtc",
+      "role": "rtc",
+      "part": "BM8563",
+      "designator": "U4",
+      "quantity": 1,
+      "specs": {
+        "interface": "I2C, up to 400 kbit/s",
+        "i2c_address": "0x51",
+        "supply_v": "1.5 to 5.5",
+        "sleep_current_ua_typ": "0.25 (VDD 3.0 V, 25 °C)",
+        "timebase": "32.768 kHz crystal",
+        "interrupt": "open drain",
+        "functions": "alarm, timer, programmable clock output, low-voltage detector"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "internal I2C (I2C_SYS)",
+          "address": "0x51",
+          "pins": {"SDA (5)": "GPIO12", "SCL (6)": "GPIO11"},
+          "pulls": [
+            {"signal": "I2C_SYS_SDA", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R20"},
+            {"signal": "I2C_SYS_SCL", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R32"}
+          ],
+          "src": ["sch", "m5-docs", "bench-i2c-scan"]
+        },
+        {
+          "to": "xtal-32k",
+          "pins": {"OSCI (1)": "Y1 pin 2", "OSCO (2)": "Y1 pin 1"},
+          "notes": "C30 and C32, 6 pF each, to GND.",
+          "src": ["sch"]
+        }
+      ],
+      "notes": "VDD (8) is fed from RTC_VDD (the AXP2101's VRTC) through D8 1N5819 and R16 100 ohm, with C33 1 uF and C34 22 uF. A footprint for a backup cell, BAT1 (XH414HG-IV01E), sits on the same node and carries the designator 'BAT1/NC': not fitted. CLKOUT (7) is not connected. INT (3) is the AXP2101's IRQ line (see the PMIC's connections).",
+      "src": ["sch", "bm8563-ds", "m5-docs"]
+    },
+    {
+      "id": "xtal-32k",
+      "role": "crystal",
+      "part": "9H03200034",
+      "manufacturer": "TXC",
+      "designator": "Y1",
+      "quantity": 1,
+      "specs": {
+        "frequency_khz": 32.768,
+        "load_capacitors": "C30 and C32, 6 pF each"
+      },
+      "notes": "The schematic gives 'TXC/9H03200034'; the frequency is the BM8563's timebase per its datasheet.",
+      "src": ["sch", "bm8563-ds"]
+    },
+    {
+      "id": "boot-comparator",
+      "role": "other",
+      "part": "LMV331",
+      "designator": "U2",
+      "quantity": 1,
+      "specs": {
+        "function": "comparator of the reset key's delay circuit",
+        "output": "open collector (pin 4): it only pulls ESP_BOOT low; R4 10 kohm pulls it up",
+        "supply": "VDD_3V3 (pin 5), C21 2.2 uF",
+        "inputs": "pin 1: the node of C22 10 uF (to VDD_3V3), R3 680 kohm (to VDD_3V3), D5 1N4148WS (to GND) and R5 270 kohm in series with D3 1N4148WS from AXP_PG; pin 3: the R7 10 kohm / R8 10 kohm divider of VDD_3V3"
+      },
+      "connects_to": [
+        {
+          "to": "led-download",
+          "pins": {"4": "LED2 pin 2 (net ESP_BOOT)"},
+          "src": ["sch"]
+        }
+      ],
+      "notes": "The vendor describes it as a built-in delay circuit: holding the reset key until the internal green LED lights, then releasing it, puts the ESP32-S3 in download mode. Its output pulls ESP_BOOT (GPIO0) low and lights LED2.",
+      "src": ["sch", "m5-docs", "lmv331-ds"]
+    },
+    {
+      "id": "io-expander",
+      "role": "io_expander",
+      "part": "AW9523B",
+      "manufacturer": "Awinic",
+      "designator": "U10",
+      "quantity": 1,
+      "specs": {
+        "interface": "I2C",
+        "i2c_address": "0x58",
+        "address_straps": "AD0 (18) and AD1 (24) to GND",
+        "ios": "16 (P0_0 to P0_7, P1_0 to P1_7), each GPIO or LED current source",
+        "supply": "VCC (21) on VDD_3V3; 2.5 to 5.5 V",
+        "interrupt": "INTN, active low, 8 us deglitch",
+        "p0_0": "TOUCH_RST, the touch panel's reset (CTP1 pin 6)",
+        "p0_1": "BUS_OUT_EN (U14 and U19 enables)",
+        "p0_2": "AW_RST, the AW88298's RSTN",
+        "p0_3": "ES_INT, the ES7210's INT",
+        "p0_4": "TF_SW, the microSD slot's card-detect switch",
+        "p0_5": "USB_OTG_EN (U17 and U18 enables)",
+        "p0_6": "not connected",
+        "p0_7": "not connected",
+        "p1_0": "CAM_RST, which reaches no fitted part on the SE",
+        "p1_1": "LCD_RST, the LCD's reset (LCD1 pin 6)",
+        "p1_2": "TOUCH_INT, the touch panel's interrupt (CTP1 pin 5)",
+        "p1_3": "AW_INT, the AW88298's INTN",
+        "p1_4": "not connected",
+        "p1_5": "not connected",
+        "p1_6": "not connected",
+        "p1_7": "BOOST_EN, the SY7088's enable",
+        "power_on_state": "after power-on or a reset every pin is an output at 0, which AD0 and AD1 on GND select (datasheet V1.5, Table 1); P0 starts open drain (GCR bit 4 = 0, Table 10), so it drives its 0 low"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "internal I2C (I2C_SYS)",
+          "address": "0x58",
+          "pins": {"SDA (20)": "GPIO12", "SCL (19)": "GPIO11", "INTN (22)": "GPIO21 (net I2C_INT)", "RSTN (23)": "CHIP_PU (net AXP_PG)"},
+          "pulls": [
+            {"signal": "I2C_SYS_SDA", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R20"},
+            {"signal": "I2C_SYS_SCL", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R32"},
+            {"signal": "INTN (I2C_INT)", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R23"}
+          ],
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "sd-slot",
+          "pins": {"P0_4 (10)": "SW (9), net TF_SW"},
+          "pulls": [
+            {"signal": "TF_SW", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R28"}
+          ],
+          "src": ["sch"]
+        }
+      ],
+      "notes": "The vendor's pin map gives P1_1 to LCD_RST, P1_2 and P0_0 to the touch panel's INT and RST, and P0_2 and P1_3 to the AW88298's reset and interrupt; the other assignments come from the schematic.",
+      "src": ["sch", "aw9523b-ds", "m5-docs"]
+    },
+    {
+      "id": "display-panel",
+      "role": "display_panel",
+      "designator": "LCD1",
+      "quantity": 1,
+      "specs": {
+        "type": "IPS LCD",
+        "diagonal_in": 2.0,
+        "resolution_px": [320, 240],
+        "cover": "high-strength glass panel",
+        "connector": "10-pin (M5_LCD_10P)",
+        "interface": "SPI with a data/command line"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "SPI (shared with the microSD slot)",
+          "pins": {
+            "MOSI (pin 2)": "GPIO37 (SPI_MOSI)",
+            "SCK (pin 4)": "GPIO36 (SPI_SCK)",
+            "CS (pin 5)": "GPIO3 (LCD_CS)",
+            "DC (pin 7)": "GPIO35 (net SPI_MISO, shared with the microSD slot's DO)"
+          },
+          "pulls": [
+            {"signal": "SPI_MOSI", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R18"},
+            {"signal": "SPI_SCK", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R19"},
+            {"signal": "SPI_MISO", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R21"},
+            {"signal": "LCD_CS", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R49"}
+          ],
+          "notes": "The schematic puts LCD1 pin 7 on the SPI_MISO net; the vendor's pin map names that GPIO35 line DC for the ILI9342C and SPI_MISO for the card.",
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "io-expander",
+          "pins": {"RST (pin 6)": "AW9523B P1_1 (LCD_RST)"},
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "pmic",
+          "pins": {"BL (pin 9)": "AXP2101 DLDO1 (VCC_BL)", "VDD (pin 8)": "VDD_3V3 (AXP2101 DCDC1)"},
+          "notes": "C17 2.2 uF on VCC_BL. Pins 1 and 10 are GND; pin 3 is not connected.",
+          "src": ["sch", "m5-docs"]
+        }
+      ],
+      "src": ["m5-docs", "sch"]
+    },
+    {
+      "id": "display-controller",
+      "role": "display_controller",
+      "part": "ILI9342C",
+      "manufacturer": "Ilitek",
+      "quantity": 1,
+      "specs": {
+        "description": "a-Si TFT LCD single-chip driver",
+        "resolution": "320RGB x 240",
+        "colors": "262K",
+        "interface_on_this_board": "SPI"
+      },
+      "connects_to": [
+        {
+          "to": "display-panel",
+          "notes": "The controller is inside the LCD module; its signals are the module connector's pins."
+        }
+      ],
+      "notes": "The vendor names the controller ILI9342C.",
+      "src": ["m5-docs", "ili9342c-ds"]
+    },
+    {
+      "id": "touch",
+      "role": "touch_controller",
+      "part": "FT6336U",
+      "designator": "CTP1",
+      "quantity": 1,
+      "specs": {
+        "type": "capacitive",
+        "interface": "I2C",
+        "i2c_address": "0x38",
+        "touch_area_px": "320 x 280",
+        "connector": "8-pin (M5_TOUCH_8P)",
+        "cipher_register_0xA3": "0x64",
+        "focaltech_id_register_0xA8": "0x20"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "internal I2C (I2C_SYS)",
+          "address": "0x38",
+          "pins": {"SDA (pin 3)": "GPIO12", "SCL (pin 4)": "GPIO11"},
+          "pulls": [
+            {"signal": "I2C_SYS_SDA", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R20"},
+            {"signal": "I2C_SYS_SCL", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R32"}
+          ],
+          "src": ["sch", "m5-docs", "bench-i2c-scan"]
+        },
+        {
+          "to": "io-expander",
+          "pins": {"INT (pin 5)": "AW9523B P1_2 (TOUCH_INT)", "RST (pin 6)": "AW9523B P0_0 (TOUCH_RST)"},
+          "pulls": [
+            {"signal": "TOUCH_INT", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R27"}
+          ],
+          "notes": "VDD (pin 1) is VDD_3V3, pin 2 GND; pins 7 and 8 are not connected.",
+          "src": ["sch", "m5-docs"]
+        }
+      ],
+      "notes": "The vendor gives a touch area of 320 x 280 pixels against the 320 x 240 panel: the touch glass reaches below the display. The two register values were read on a CoreS3 SE.",
+      "src": ["m5-docs", "sch", "kleidos-regread"]
+    },
+    {
+      "id": "audio-amp",
+      "role": "audio_amp",
+      "part": "AW88298",
+      "manufacturer": "Awinic",
+      "designator": "U8",
+      "quantity": 1,
+      "specs": {
+        "type": "digital smart K class audio amplifier with an integrated 10.25 V boost",
+        "resolution_bits": "16 (vendor); I2S data width 16, 20, 24 or 32 bits (datasheet)",
+        "audio_interface": "I2S/TDM, 8 to 96 kHz",
+        "control_interface": "I2C, 400 kHz",
+        "i2c_address": "0x36",
+        "address_straps": "AD1 (12) to GND, AD2 (23) to VDD_3V3",
+        "supplies": "VDD (9) on AXP_PS; IOVDD (18) on VDD_3V3; DVDD (20) on VDD_1V8 (AXP2101 ALDO1); boost inductor L6 1.0 uH WPN201610M1R0MT from AXP_PS to SW; PVDD/VBST on AW_PVDD with C59 and C60 10 uF/25 V",
+        "output": "VOP/VON through ferrite beads FB2/FB1 to SPK_VOP/SPK_VON, C58 and C52 0.1 nF to GND"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "I2S",
+          "pins": {"BCK (15)": "GPIO34 (I2S_BCK)", "WCK (17)": "GPIO33 (I2S_WCK)", "DATAI (16)": "GPIO13 (I2S_DATO)"},
+          "notes": "DATAO (19) is not connected.",
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "esp32s3",
+          "bus": "internal I2C (I2C_SYS)",
+          "address": "0x36",
+          "pins": {"SDA (13)": "GPIO12", "SCL (14)": "GPIO11"},
+          "pulls": [
+            {"signal": "I2C_SYS_SDA", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R20"},
+            {"signal": "I2C_SYS_SCL", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R32"}
+          ],
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "io-expander",
+          "pins": {"RSTN (11)": "AW9523B P0_2 (AW_RST)", "INTN (10)": "AW9523B P1_3 (AW_INT)"},
+          "pulls": [
+            {"signal": "AW_INT", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R26"}
+          ],
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "speaker",
+          "pins": {"VOP (2)": "SPK_VOP through FB2", "VON (1)": "SPK_VON through FB1"},
+          "src": ["sch"]
+        }
+      ],
+      "src": ["sch", "aw88298-ds", "m5-docs"]
+    },
+    {
+      "id": "speaker",
+      "role": "speaker",
+      "quantity": 1,
+      "specs": {
+        "power_w": 1,
+        "vendor_designation": "9028"
+      },
+      "notes": "The vendor's table writes the speaker as '1W@9028'. It is not a schematic component: it lands on the SPK_VOP and SPK_VON nets of the amplifier's output, which also feed the ES7210's third channel as an echo reference.",
+      "src": ["m5-docs", "sch"]
+    },
+    {
+      "id": "audio-adc",
+      "role": "audio_codec",
+      "part": "ES7210",
+      "manufacturer": "Everest Semiconductor",
+      "designator": "U9",
+      "quantity": 1,
+      "specs": {
+        "type": "four-channel audio ADC",
+        "resolution_bits": 24,
+        "sample_rate_khz": "8 to 100",
+        "snr_db": 102,
+        "thd_n_db": -85,
+        "package": "QFN-32",
+        "interface": "I2S/PCM/TDM, master or slave; I2C control",
+        "i2c_address": "0x40",
+        "address_straps": "AD0 (1) and AD1 (2) to GNDA",
+        "supplies": "VDDP, VDDD, VDDA and VDDM on VDDA_3V3 (AXP2101 ALDO2); GNDA tied to GND by R22 0 ohm",
+        "channel_1": "MIC1P/MIC1N from microphone U12 through C88 and C91 1 uF",
+        "channel_2": "MIC2P/MIC2N from microphone U13 through C93 and C96 1 uF",
+        "channel_3": "MIC3P/MIC3N (AEC_P/AEC_N) from the speaker outputs through R40 and R42 150 kohm and C102 and C105 1 uF, C103 and C104 22 pF to GND; R41 and R43 NC",
+        "channel_4": "MIC4P and MIC4N tied to GNDA",
+        "mic_bias": "MICBIAS12 (24) is VBIAS_MIC, the microphones' supply; MICBIAS34 (26) has only C70 1 uF"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "I2S",
+          "pins": {"MCLK (5)": "GPIO0 through R34 51 ohm", "SCLK (9)": "GPIO34 (I2S_BCK)", "LRCK (10)": "GPIO33 (I2S_WCK)", "SDOUT1/TDMOUT (11)": "GPIO14 (I2S_DATI)"},
+          "notes": "SDOUT2/TDMIN (12) and DMIC_CLK (14) are not connected.",
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "esp32s3",
+          "bus": "internal I2C (I2C_SYS)",
+          "address": "0x40",
+          "pins": {"CDATA (3)": "GPIO12", "CCLK (4)": "GPIO11"},
+          "pulls": [
+            {"signal": "I2C_SYS_SDA", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R20"},
+            {"signal": "I2C_SYS_SCL", "direction": "up", "ohms": 2200, "to": "VDD_3V3", "designator": "R32"}
+          ],
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "io-expander",
+          "pins": {"INT (13)": "AW9523B P0_3 (ES_INT)"},
+          "pulls": [
+            {"signal": "ES_INT", "direction": "up", "ohms": 10000, "to": "VDD_3V3", "designator": "R24"}
+          ],
+          "src": ["sch"]
+        },
+        {
+          "to": "microphones",
+          "pins": {"MIC1P (16)": "U12 OUT through C88", "MIC2P (19)": "U13 OUT through C93"},
+          "src": ["sch"]
+        }
+      ],
+      "notes": "The vendor calls it an audio decoder chip with dual-microphone input. The chip identity registers 0x3D/0x3E read 0x72/0x10 on a CoreS3 SE.",
+      "src": ["sch", "es7210-ds", "m5-docs", "kleidos-regread"]
+    },
+    {
+      "id": "microphones",
+      "role": "microphone",
+      "part": "MSM381A3729H9BPC",
+      "designator": "U12, U13",
+      "quantity": 2,
+      "specs": {
+        "output": "analog (OUT pin 4 into the ES7210's MICxP through a 1 uF capacitor)",
+        "supply": "VDD (pin 1) from VBIAS_MIC through ferrite beads L7 and L8 (HZ1005U102TFB01), C89/C90 and C94/C95 decoupling"
+      },
+      "notes": "Two microphones; their sound holes sit in the front glass. Pin 3 of each (a GND pin in the schematic's symbol) reaches the ES7210's MICxN through C91 or C96 1 uF; C87 and C92, 22 pF, run from each output to GNDA.",
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "sd-slot",
+      "role": "sd_slot",
+      "part": "MicroSD-SPI",
+      "designator": "U11",
+      "quantity": 1,
+      "specs": {
+        "card": "microSD, up to 16 GB",
+        "interface": "SPI",
+        "supply": "VDD_3V3_SD (AXP2101 ALDO4), C84 2.2 uF, C85 22 uF, C116 470 nF",
+        "card_detect": "SW (9) to AW9523B P0_4"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "SPI (shared with the LCD)",
+          "pins": {"CS (2)": "GPIO4 (TF_CS)", "DI (3)": "GPIO37 (SPI_MOSI)", "SCLK (5)": "GPIO36 (SPI_SCK)", "DO (7)": "GPIO35 (SPI_MISO)"},
+          "notes": "No pull is drawn on TF_CS. RSV (1) and RSV/IRQ (8) are not connected; the shell pins are GND.",
+          "src": ["sch", "m5-docs"]
+        }
+      ],
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "led-charge",
+      "role": "led",
+      "designator": "LED1",
+      "quantity": 1,
+      "specs": {
+        "color": "red",
+        "function": "AXP2101 charge indicator",
+        "drive": "between RTC_VDD (through R1 2 kohm) and the AXP2101's CHGLED pin"
+      },
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "led-download",
+      "role": "led",
+      "designator": "LED2",
+      "quantity": 1,
+      "specs": {
+        "color": "green",
+        "function": "download-mode indicator (internal)",
+        "drive": "between VDD_3V3 (through R10 2 kohm) and the ESP_BOOT line (GPIO0)"
+      },
+      "notes": "The vendor: hold the reset key until the internal green LED lights, then release it; the LED goes off and the device is in download mode.",
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "keys",
+      "role": "button",
+      "part": "SMT_SW_TS_015",
+      "designator": "S1, S2",
+      "quantity": 2,
+      "specs": {
+        "s1": "reset key, on the bottom edge: pulls AXP_PG (the ESP32-S3's CHIP_PU and the AXP2101's PWROK) to GND through R38 510 ohm",
+        "s2": "power key, on the left side: pulls the AXP2101's PWRON to GND through R39 510 ohm (net PWR_KEY)",
+        "power_key_use": "click: power on; long press: power off",
+        "reset_key_use": "click: reset; long press until the green LED lights: download mode"
+      },
+      "notes": "The schematic's value for both is 'SMT_SW_TS_015'. Neither key reaches an ESP32-S3 GPIO.",
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "usb-c",
+      "role": "connector",
+      "part": "USB-TYPEC",
+      "designator": "J1",
+      "quantity": 1,
+      "specs": {
+        "kind": "USB Type-C",
+        "usb": "USB OTG and USB Serial/JTAG of the ESP32-S3 (no USB-to-UART bridge)",
+        "cc": "CC1 (A5) and CC2 (B5) each pulled to GND by 5.1 kohm (R6, R9)",
+        "vbus": "net VUSB, C123 22 uF"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "USB",
+          "pins": {"D+ (A6, B6)": "GPIO20 (pin 26) through R47 22 ohm", "D- (A7, B7)": "GPIO19 (pin 25) through R25 22 ohm"},
+          "pulls": [
+            {"signal": "CC1", "direction": "down", "ohms": 5100, "designator": "R6"},
+            {"signal": "CC2", "direction": "down", "ohms": 5100, "designator": "R9"}
+          ],
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "usb-esd",
+          "pins": {"D+": "D4", "D-": "D6"},
+          "src": ["sch"]
+        },
+        {
+          "to": "switch-pmu-usb",
+          "pins": {"VBUS": "U18 VIN (net VUSB)"},
+          "notes": "U17 drives the same net when the board supplies USB devices (OTG).",
+          "src": ["sch"]
+        }
+      ],
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "usb-header",
+      "role": "connector",
+      "designator": "J6",
+      "quantity": 1,
+      "specs": {
+        "pins": 4,
+        "pitch_mm": 2.0,
+        "pin_1": "VUSB",
+        "pin_2": "GND",
+        "pin_3": "USB D- (connector side of R25)",
+        "pin_4": "USB D+ (connector side of R47)"
+      },
+      "notes": "The schematic's value is 'HDR4接插件-2MM' (a 4-pin, 2 mm header). It carries the USB-C connector's lines inside the board.",
+      "src": ["sch"]
+    },
+    {
+      "id": "battery-header",
+      "role": "connector",
+      "part": "SMT_HDR_2x1.25mm",
+      "designator": "J5",
+      "quantity": 1,
+      "specs": {
+        "pins": 2,
+        "pitch_mm": 1.25,
+        "pin_1": "GND",
+        "pin_2": "VBAT (AXP2101 BAT)"
+      },
+      "notes": "The SE ships with no battery (see absent).",
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "port-a",
+      "role": "connector",
+      "designator": "J3",
+      "quantity": 1,
+      "specs": {
+        "kind": "HY2.0-4P (Grove), PORT.A, I2C",
+        "pin_1": "BUS_PA_SCL, GPIO1 (white)",
+        "pin_2": "BUS_PA_SDA, GPIO2 (yellow)",
+        "pin_3": "BUS_OUT, 5 V (red)",
+        "pin_4": "GND (black)",
+        "max_output_current": "4.2 V at 940 mA on battery; 5 V at 680 mA on USB"
+      },
+      "connects_to": [
+        {
+          "to": "esp32s3",
+          "bus": "PORT.A (I2C)",
+          "pins": {"SCL (pin 1)": "GPIO1", "SDA (pin 2)": "GPIO2"},
+          "notes": "No pull-up is drawn on these two lines.",
+          "src": ["sch", "m5-docs"]
+        },
+        {
+          "to": "external",
+          "notes": "The port's far side, also reachable on M5-Bus pins 19 and 20.",
+          "src": ["sch"]
+        }
+      ],
+      "notes": "The vendor's pin map calls the port HY2.0-4P; the schematic's symbol for J3 is named 'GH2.0-4P'. The schematic fits this one 4-pin port; the PORT.B (GPIO9/GPIO8) and PORT.C (GPIO18/GPIO17) signals of the vendor's port table reach only the M5-Bus. The 2024 export of the vendor page gives PORT-A's color as red.",
+      "src": ["sch", "m5-docs", "m5-docs-2024"]
+    },
+    {
+      "id": "m5-bus",
+      "role": "connector",
+      "part": "M5.BUS",
+      "designator": "BUS1",
+      "quantity": 1,
+      "specs": {
+        "pins": 30,
+        "pin_1": "GND",
+        "pin_2": "GPIO10 (ADC)",
+        "pin_3": "GND",
+        "pin_4": "GPIO8 (PB_IN)",
+        "pin_5": "GND",
+        "pin_6": "RST: EN, net AXP_PG (CHIP_PU)",
+        "pin_7": "GPIO37 (MOSI)",
+        "pin_8": "GPIO5",
+        "pin_9": "GPIO35 (MISO)",
+        "pin_10": "GPIO9 (PB_OUT)",
+        "pin_11": "GPIO36 (SCK)",
+        "pin_12": "3V3 (VCC_3V3, AXP2101 DCDC3)",
+        "pin_13": "GPIO44 (RXD0)",
+        "pin_14": "GPIO43 (TXD0), through R48 499 ohm",
+        "pin_15": "GPIO18 (PC_RX)",
+        "pin_16": "GPIO17 (PC_TX)",
+        "pin_17": "GPIO12 (internal SDA)",
+        "pin_18": "GPIO11 (internal SCL)",
+        "pin_19": "GPIO2 (PORT.A SDA)",
+        "pin_20": "GPIO1 (PORT.A SCL)",
+        "pin_21": "GPIO6",
+        "pin_22": "GPIO7",
+        "pin_23": "GPIO13 (I2S DOUT)",
+        "pin_24": "GPIO0 (net ESP_BOOT; the I2S MCLK line)",
+        "pin_25": "not connected",
+        "pin_26": "GPIO14 (I2S DIN)",
+        "pin_27": "not connected",
+        "pin_28": "5V (BUS_OUT)",
+        "pin_29": "not connected",
+        "pin_30": "BAT (VBAT)"
+      },
+      "connects_to": [
+        {
+          "to": "external",
+          "notes": "Stacking modules and bases."
+        }
+      ],
+      "notes": "Pin functions as the vendor's M5-Bus table names them, checked net by net against the schematic. The vendor's table labels pin 24 'I2S_LRCK'; the schematic net on that pin is ESP_BOOT (GPIO0), which the vendor's own audio pin map gives as I2S_MCLK, while the word clock is GPIO33.",
+      "src": ["sch", "m5-docs"]
+    },
+    {
+      "id": "usb-esd",
+      "role": "esd",
+      "part": "ESD5Z3V3",
+      "designator": "D4, D6",
+      "quantity": 2,
+      "specs": {
+        "protects": "USB D+ (D4) and D- (D6) at the connector, to GND"
+      },
+      "src": ["sch"]
+    },
+    {
+      "id": "rail-tvs",
+      "role": "esd",
+      "part": "PTVSLC3D3V3B",
+      "designator": "D7",
+      "quantity": 1,
+      "specs": {
+        "protects": "VDD_3V3, to GND"
+      },
+      "src": ["sch"]
+    },
+    {
+      "id": "rtc-diode",
+      "role": "other",
+      "part": "1N5819",
+      "designator": "D8",
+      "quantity": 1,
+      "specs": {
+        "function": "in series with R16 100 ohm from RTC_VDD to the BM8563's VDD"
+      },
+      "src": ["sch"]
+    },
+    {
+      "id": "delay-diodes",
+      "role": "other",
+      "part": "1N4148WS",
+      "designator": "D3, D5",
+      "quantity": 2,
+      "specs": {
+        "function": "part of the reset key's delay network in front of the LMV331"
+      },
+      "src": ["sch"]
+    }
+  ],
+  "absent": [
+    {"role": "battery", "notes": "The vendor's comparison table gives the SE no battery (the CoreS3-Lite has 200 mAh, the CoreS3 500 mAh). J5 and M5-Bus pin 30 carry VBAT for one.", "src": ["m5-docs", "sch"]},
+    {"role": "imu", "notes": "No BMI270 (fitted on the CoreS3 and CoreS3-Lite). The schematic still draws a BMI270 and an MPU6886 block, outside the SE's compiled design.", "src": ["m5-docs", "sch"]},
+    {"role": "magnetometer", "notes": "No BMM150 (fitted on the CoreS3 and CoreS3-Lite).", "src": ["m5-docs", "sch"]},
+    {"role": "other", "notes": "No camera (GC0308 on the CoreS3 and CoreS3-Lite). The camera connector and its 20 MHz clock are drawn outside the SE's compiled design.", "src": ["m5-docs", "sch"]},
+    {"role": "other", "notes": "No proximity and light sensor (LTR-553ALS-WA on the CoreS3 and CoreS3-Lite).", "src": ["m5-docs"]},
+    {"role": "usb_uart_bridge", "notes": "The USB-C data lines reach the ESP32-S3's own USB pins.", "src": ["sch"]},
+    {"role": "buzzer", "notes": "Sound comes from the speaker only.", "src": ["sch", "m5-docs"]},
+    {"role": "keyboard_controller", "src": ["sch"]},
+    {"role": "ir_led", "src": ["sch"]},
+    {"role": "gps", "src": ["sch"]},
+    {"role": "lora", "src": ["sch"]}
+  ],
+  "notes": "Every wiring fact comes from the vendor's schematic Sch_M5_CoreS3_SE_v1.0 (Altium, seven sheets: AXP, PSU, ESP32S3, AUDIO, GPIO, POWER_PATH, ETC), read from the netlist its PDF carries in its bookmarks, and is cross-checked against the vendor's pin map. The schematic is the CoreS3 design with the camera, the IMUs and the compass drawn grey; those blocks are absent from its netlist, and so from this file. Ferrite beads, decoupling capacitors and mounting holes (PHD1 to PHD3) are named where they belong to a connection, not listed as components.",
+  "sources": {
+    "m5-docs": {
+      "url": "https://docs.m5stack.switch-science.com/en/core/CoreS3%20SE",
+      "mirror_of": "https://docs.m5stack.com/en/core/CoreS3%20SE",
+      "title": "CoreS3-SE (K128-SE), M5Stack documentation",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "notes": "Read at Switch Science's mirror of docs.m5stack.com: the original host and M5Stack's file hosts timed out or refused connections from the machine that wrote this file on 2026-11-16. The page gives the description, the specification table, the pin map, the M5-Bus table, the comparison with the CoreS3 and CoreS3-Lite, and the links to the schematic and datasheets."
+    },
+    "m5-docs-pdf": {
+      "url": "https://web.archive.org/web/20261030113258/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/static/pdf/static/en/core/CoreS3-SE.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/static/pdf/static/en/core/CoreS3-SE.pdf",
+      "title": "CoreS3-SE documentation page as PDF, update time 2026-09-29 (M5Stack)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "The vendor's own PDF export of the docs page, read at the Internet Archive's copy of 2026-10-30. Its specification table matches the mirror's."
+    },
+    "m5-docs-2024": {
+      "url": "https://media.distrelec.com/Web/Downloads/_t/ds/K128-SE_eng_tds.pdf",
+      "title": "M5CoreS3 SE (K128-SE) documentation page as PDF, update time 2024-05-24 (M5Stack), as Distrelec hosts it",
+      "kind": "vendor_docs",
+      "checked": "2026-11-16",
+      "notes": "An older print of the vendor's page under the name M5CoreS3 SE. It adds an I2C address table (AXP2101 0x34, AW88298 0x36, FT6336U 0x38, ES7210 0x40, BM8563 0x51, AW9523 0x58) and port colors; its weight and package figures differ from today's page."
+    },
+    "sch": {
+      "url": "https://web.archive.org/web/20260513112150/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/498/Sch_M5_CoreS3_SE_v1.0.pdf",
+      "mirror_of": "https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/498/Sch_M5_CoreS3_SE_v1.0.pdf",
+      "title": "CoreS3-SE schematic, Sch_M5_CoreS3_SE_v1.0 (Altium, seven A4 sheets, printed 2025-06-03)",
+      "kind": "schematic",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs",
+      "notes": "Read at the Internet Archive's copy of 2026-05-13 (SHA-256 ff105808b6073ab487c63e0af776418a58bcf386c2b63f97e3083f5698847e2f); the vendor's host refused connections. Net membership was taken from the per-sheet netlist in the PDF's bookmarks."
+    },
+    "esp32s3-ds": {
+      "url": "https://documentation.espressif.com/esp32-s3_datasheet_en.pdf",
+      "title": "ESP32-S3 Series Datasheet, version 2.2 (Espressif)",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "axp2101-ds": {
+      "url": "https://web.archive.org/web/20260318131712/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/AXP2101_Datasheet_V1.0_en.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/AXP2101_Datasheet_V1.0_en.pdf",
+      "title": "AXP2101 single-cell NVDC PMU with E-gauge, datasheet V1.0 (X-Powers), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs"
+    },
+    "aw9523b-ds": {
+      "url": "https://web.archive.org/web/20260813154406/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/CoreS3/AW9523B-EN.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/products/core/CoreS3/AW9523B-EN.pdf",
+      "title": "AW9523B 16 multi-function LED driver and GPIO controller, datasheet V1.5 (Awinic), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs"
+    },
+    "aw88298-ds": {
+      "url": "https://web.archive.org/web/20260318131710/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/AW88298.PDF",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/AW88298.PDF",
+      "title": "AW88298 I2S/TDM input 10.25 V boost digital smart K audio amplifier, datasheet V1.6 (Awinic), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs"
+    },
+    "bm8563-ds": {
+      "url": "https://web.archive.org/web/20260318131701/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/BM8563.PDF",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/BM8563.PDF",
+      "title": "BM8563 I2C real-time clock/calendar datasheet (Chinese), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs"
+    },
+    "es7210-ds": {
+      "url": "https://web.archive.org/web/20261018160724/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/ES7210.PDF",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/K128%20CoreS3/ES7210.PDF",
+      "title": "ES7210 high performance four channels audio ADC datasheet (Everest Semiconductor), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "found_via": "m5-docs"
+    },
+    "sy7088-ds": {
+      "url": "https://web.archive.org/web/20260831051721/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/SY7088-Silergy.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/SY7088-Silergy.pdf",
+      "title": "SY7088 synchronous boost regulator datasheet (Silergy), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "ili9342c-ds": {
+      "url": "https://web.archive.org/web/20260910203533/https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/ILI9342C-ILITEK.pdf",
+      "mirror_of": "https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/docs/datasheet/core/ILI9342C-ILITEK.pdf",
+      "title": "ILI9342C a-Si TFT LCD single chip driver datasheet (Ilitek), as M5Stack hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16"
+    },
+    "me1502-ds": {
+      "url": "https://static.chipdip.ru/lib/087/DOC043087044.pdf",
+      "title": "ME1502 70 mohm 5 V USB high-side adjustable current-limit load switch datasheet V02 (Microne, Chinese), as ChipDip hosts it",
+      "kind": "datasheet",
+      "checked": "2026-11-16",
+      "notes": "Gives the A (EN active high) and C (EN active low) ordering codes and Ioc = 60 kohm / Rset."
+    },
+    "kleidos-regread": {
+      "title": "FT6336U and ES7210 identity registers read on a CoreS3 SE (Kleidos register introspection)",
+      "kind": "measured",
+      "checked": "2026-11-11",
+      "method": "Register reads over I2C from the board's own ESP32-S3 with the Kleidos debug firmware (cores3_se_debug, REG dumps of ft6x36 0xA3/0xA8 and es7210 0x3D/0x3E), recorded in the Kleidos repository at docs/hardware/introspection/ft6x36.md and es7210.md."
+    },
+    "lmv331-ds": {
+      "url": "https://www.ti.com/lit/ds/symlink/lmv331.pdf",
+      "title": "LMV331 Single, LMV393 Dual, LMV339 Quad General-Purpose Low-Voltage Comparators, SLCS136V, revised May 2025 (Texas Instruments)",
+      "kind": "datasheet",
+      "checked": "2026-11-17",
+      "notes": "1 Features: open-collector output; Table 4-1: OUT is pin 4 of the 5-pin package."
+    },
+    "bench-efuse-strap": {
+      "title": "eFuses, strapping latch, flash ID and PSRAM read on the owner's CoreS3 SE (Kleidos boards bench record cores3-se/schematic/bench/2026-11-17-efuse-strap-flash-psram.md)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "Over the board's USB-C port, case closed, read-only: espefuse summary, esptool flash-id and read-mem (v5.3.1), and the boot log and GPIO? / HEAP? console commands of the Kleidos cores3_se_debug image already on the board."
+    },
+    "bench-i2c-scan": {
+      "title": "Internal I2C bus scan and AW9523B register state on the owner's CoreS3 SE (Kleidos boards bench record cores3-se/schematic/bench/2026-11-17-i2c-scan.md)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "I2CSCAN and REGS? on the debug serial console of the Kleidos cores3_se_debug image, the board on its PIN screen, nothing written to any chip."
+    },
+    "m5-size-drawing": {
+      "url": "https://web.archive.org/web/20251018174855/https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1162/cores3-lite.pdf",
+      "mirror_of": "https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1162/cores3-lite.pdf",
+      "title": "CoreS3-Lite dimension drawing, which the CoreS3-SE page links as its Model Size PDF (M5Stack)",
+      "kind": "vendor_docs",
+      "checked": "2026-11-17",
+      "found_via": "m5-docs",
+      "notes": "Read at the Internet Archive's copy of 2025-10-18 (SHA-256 e2a72bdaf3d09cd7addb24fe39750675dfb282c514a172a0e67ffa2d32419dff); the vendor's host timed out. One sheet, unit mm: 54 x 54, R5, and on the edge view 15.5 for the frame and 16.5 over the back cover. It is the CoreS3-Lite's shell; the page gives the SE no other drawing."
+    },
+    "m5-stl-extents": {
+      "url": "https://raw.githubusercontent.com/m5stack/M5_Hardware/dccc804775037bb1c1457b7d31bf3ba583150d57/Products/K128-SE_CoreS3-SE/Structures/CoreS3-SE.stl",
+      "title": "Extents of the parts of M5Stack's CoreS3-SE.stl (M5_Hardware at dccc8047, SHA-256 529349b80662f2bb83e87a3d59075d91ab54aa3e2d5356d72d69fded36767354)",
+      "kind": "measured",
+      "checked": "2026-11-17",
+      "method": "The file's assembly split into its connected parts with trimesh 5.2.0 and each part's bounding box read: the frame 54.0 x 54.0 x 15.5 mm, the back cover 53.2 x 53.2 x 7.9 mm reaching 1.0 mm behind the frame, 16.5 mm in all. The extents of the vendor's CAD file, not a measurement of a unit; the model in model/ is built from the same file, and _shared/check_board_model.py reports its case meshes 15.5 mm deep."
+    },
+    "owner-unit-verified": {
+      "title": "Verified against the owner's physical unit, 2026-11-18",
+      "kind": "measured",
+      "checked": "2026-11-18",
+      "method": "The owner compared his own CoreS3-SE with this repository's front drawing (svg/front.svg) and 3D model (model/) on 2026-11-18: the model and the drawing match the real board. A check by eye, no instrument. The original source of the measurement was not recorded (sources.md)."
+    }
+  }
+}
