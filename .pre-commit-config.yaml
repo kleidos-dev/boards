@@ -9,3 +9,9 @@ repos:
         entry: python3 .github/commit-check/check_commit_msg.py
         language: system
         stages: [commit-msg]
+      - id: readme-banner
+        name: the README banner is social's (.github/readme/SHA256SUMS)
+        entry: shasum -a 256 -c .github/readme/SHA256SUMS
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
