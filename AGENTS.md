@@ -16,7 +16,7 @@ Rules for any agent changing this repository. [README.md](README.md) says what i
 .venv/bin/python _shared/check_board_specs.py
 .venv/bin/python -I _shared/check_metadata.py
 .venv/bin/python -m pytest tests
-.venv/bin/python _shared/export_schematic.py <board>   # when a schematic changed (needs kicad-cli 10.0.8)
+.venv/bin/python _shared/export_schematic.py <board>   # when a schematic, its theme or media_meta.py changed (kicad-cli 10.0.8; CI wants its bytes)
 ```
 
 Regenerate what a script owns instead of editing it by hand (`_shared/emit_board_readme.py`, `_shared/emit_front_svg.py --contact-sheet`, `_shared/kicad_schematic.py <board>`, `_shared/build_board_glb.py <board>/model/spec.json`), and commit the regenerated files with the change that caused them. CI (`.github/workflows/check.yml`) runs the same checks, the schematic ones in KiCad 10.0.8's container.

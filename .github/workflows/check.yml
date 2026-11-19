@@ -175,12 +175,19 @@ jobs:
           for netlist in */schematic/netlist.yaml; do
             python3 _shared/check_schematic_links.py "${netlist%%/*}" --list
           done
-      - name: A fresh export (theme, line widths, links), every board with a schematic
+      # The export is reproducible in this container (fonts, objects, metadata,
+      # trailer /ID), so the committed PDF must be its bytes: a schematic, theme
+      # or metadata change that was not exported again fails here.
+      - name: A fresh export (theme, line widths, links), byte for byte the committed PDF
         run: |
           set -euo pipefail
           for netlist in */schematic/netlist.yaml; do
             board="${netlist%%/*}"
             python3 _shared/export_schematic.py "$board" --out "$RUNNER_TEMP/export/$board"
+            if ! cmp -s "$RUNNER_TEMP/export/$board/$board.pdf" "$board/schematic/$board.pdf"; then
+              echo "::error file=$board/schematic/$board.pdf::not what a fresh export gives; run _shared/export_schematic.py $board in KiCad 10.0.8's container and commit the PDF"
+              exit 1
+            fi
           done
       - name: Schematic tests, the generator included
         run: python3 -m pytest -rs tests/test_schematic.py
