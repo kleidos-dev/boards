@@ -164,7 +164,8 @@ def test_the_golden_bytes_hold_nothing_private_and_no_machine_trace() -> None:
 def test_the_xmp_structure_is_not_mistaken_for_tool_noise() -> None:
     """Namespace URIs and prefixes (ns.adobe.com, photoshop:) are structure, never a deny hit."""
     packet = mm.xmp_packet(golden_record())
-    assert "ns.adobe.com" in packet and "photoshop:Credit" in packet
+    assert re.search(r'xmlns:photoshop="http://ns\.adobe\.com/photoshop/1\.0/"', packet)
+    assert re.search(r"<photoshop:Credit>", packet)
     assert mm.deny_hits(packet) == []
 
 
