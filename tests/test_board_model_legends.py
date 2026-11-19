@@ -71,6 +71,7 @@ sys.path.insert(0, str(SHARED))
 import board_faces  # noqa: E402
 import glb_legends  # noqa: E402
 import legend_source  # noqa: E402
+import media_meta  # noqa: E402
 
 #: Every test here reads a board model; the checkers' planted-defect selftests and
 #: the fixture rebuild are ``selftest`` too (``tests/conftest.py``).
@@ -815,6 +816,12 @@ def builder_float(name: str) -> float:
     raise AssertionError(f"build_board_glb.py names no number {name}")
 
 
+def content(data: bytes) -> bytes:
+    """A model less its own metadata (each file's record names that file), laid out as the builder's are."""
+    js, bin_ = glb_legends.read(data)
+    return glb_legends.write(media_meta.gltf_without_metadata(js), bin_)
+
+
 @pytest.mark.parametrize("board", sorted(BOARDS))
 def test_a_board_has_two_levels_of_detail_the_master_and_the_webs(board: str) -> None:
     """The master keeps every print; the web's is the master with only the prints a reader sees.
@@ -827,7 +834,8 @@ def test_a_board_has_two_levels_of_detail_the_master_and_the_webs(board: str) ->
     beside the master as it is, under the builder's two rules (a print whose
     strokes cover fewer than ``WEB_MIN_STROKE_PX`` pixels at that scale is
     left out, curves flattened to ``WEB_FLATNESS_PX`` there); less its prints
-    it is the master less its prints, byte for byte; and it holds no ink, no
+    it is the master less its prints, byte for byte once each file's own
+    metadata (its title and address) is set aside; and it holds no ink, no
     print mesh and no triangle of print the master does not.
     """
     web, master_record = web_record(board), record(board)
@@ -843,7 +851,7 @@ def test_a_board_has_two_levels_of_detail_the_master_and_the_webs(board: str) ->
     assert web["flatness_px"] == builder_float("WEB_FLATNESS_PX") == 0.25
     assert web["px_per_mm"] > 0
     master = model_bytes(board)
-    assert glb_legends.strip(lighter) == glb_legends.strip(master), \
+    assert content(glb_legends.strip(lighter)) == content(glb_legends.strip(master)), \
         "the web level differs from its master in more than its prints"
     js, _ = glb_legends.read(master)
     web_js, _ = glb_legends.read(lighter)

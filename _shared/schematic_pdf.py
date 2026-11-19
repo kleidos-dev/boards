@@ -20,23 +20,36 @@ schematic) and, with ``pypdf``:
   swapped) with one entry per page and, under it, its parts or its tables,
   each at its place;
 - removes every script: the document's ``/JavaScript`` name tree and any
-  action that runs one.
+  action that runs one;
+- writes the document's metadata from its record (``media_meta.record``): the
+  Info dictionary (title, author, subject, keywords, creator, producer and
+  the title block's date as both dates, never the export's clock), the same
+  facts as an uncompressed XMP stream, ``/Lang`` and ``/DisplayDocTitle``,
+  and a file identifier derived from the schematic's sources rather than a
+  random one (``metadata()``).
 
 Usage: ``python3 _shared/schematic_pdf.py <board> <pdf>`` (rewrites the PDF in
 place). ``export_schematic.py`` runs it after kicad-cli.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import sys
+import uuid
 from pathlib import Path
 
 from pypdf import PdfReader, PdfWriter
-from pypdf.generic import (ArrayObject, DictionaryObject, Fit, FloatObject, NameObject, NumberObject,
+from pypdf.generic import (ArrayObject, BooleanObject, ByteStringObject, DecodedStreamObject,
+                           DictionaryObject, Fit, FloatObject, NameObject, NumberObject,
                            TextStringObject)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
 from paths import ROOT  # noqa: E402
+
+#: The theme the PDF is drawn in, one of the sources its identifier is derived from.
+THEME_FILE = ROOT / "_shared" / "kicad-theme-kleidos-dark.json"
 
 PT = 72 / 25.4
 
@@ -102,6 +115,48 @@ def link(rect_pt, dest, alt: str) -> DictionaryObject:
         NameObject("/Dest"): dest,
         NameObject("/Contents"): TextStringObject(alt),
     })
+
+
+def sources_digest(board: str) -> hashlib._Hash:
+    """SHA-256 of what the PDF is drawn from: every sheet of the schematic, then the theme."""
+    digest = hashlib.sha256()
+    for sheet in sorted((ROOT / board / "schematic").glob("*.kicad_sch")):
+        digest.update(sheet.read_bytes())
+    digest.update(THEME_FILE.read_bytes())
+    return digest
+
+
+def identifiers(board: str, meta: media_meta.MediaMeta) -> tuple[bytes, str, str]:
+    """(trailer /ID, XMP DocumentID, XMP InstanceID): derived, never random.
+
+    The /ID is the first 16 bytes of the sources' digest; the document's id
+    is a name-based UUID of its address, its instance's one of its address
+    and the sources' digest, so a new schematic is a new instance of the
+    same document.
+    """
+    digest = sources_digest(board)
+    document = "uuid:" + str(uuid.uuid5(uuid.NAMESPACE_URL, meta.identifier_url))
+    instance = "uuid:" + str(uuid.uuid5(uuid.NAMESPACE_URL,
+                                        f"{meta.identifier_url}#{digest.hexdigest()}"))
+    return digest.digest()[:16], document, instance
+
+
+def metadata(writer: PdfWriter, board: str) -> None:
+    """Write the document's metadata from its record (``media_meta``, the standard's 5.8)."""
+    meta = media_meta.record(f"{board}/schematic/{board}.pdf")
+    file_id, document, instance = identifiers(board, meta)
+    writer.metadata = {NameObject(k): TextStringObject(v)
+                       for k, v in media_meta.pdf_info(meta).items()}
+    stream = DecodedStreamObject()
+    stream.set_data(media_meta.pdf_xmp(meta, document, instance).encode("utf-8"))
+    stream[NameObject("/Type")] = NameObject("/Metadata")
+    stream[NameObject("/Subtype")] = NameObject("/XML")
+    root = writer._root_object
+    root[NameObject("/Metadata")] = writer._add_object(stream)
+    root[NameObject("/Lang")] = TextStringObject(meta.language)
+    root[NameObject("/ViewerPreferences")] = DictionaryObject(
+        {NameObject("/DisplayDocTitle"): BooleanObject(True)})
+    writer._ID = ArrayObject([ByteStringObject(file_id), ByteStringObject(file_id)])
 
 
 def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
@@ -173,7 +228,7 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
             writer.add_outline_item(title=kid["title"], page_number=kid["to"]["page"] - 1,
                                     parent=top_item, fit=Fit.xyz(left, top, zoom))
     writer._root_object[NameObject("/PageMode")] = NameObject("/UseOutlines")
-    writer.add_metadata({"/Producer": "KiCad PDF, links by kleidos-boards schematic_pdf.py"})
+    metadata(writer, board)
     with open(pdf, "wb") as fh:
         writer.write(fh)
     return errors

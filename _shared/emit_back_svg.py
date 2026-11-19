@@ -55,6 +55,7 @@ from typing import Callable, Dict, List, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import emit_front_svg as fronts  # noqa: E402  (beside this file; -I leaves it off the path)
+import media_meta  # noqa: E402
 import back_plus_se  # noqa: E402
 import cardputer_faces  # noqa: E402
 import coreink_back  # noqa: E402
@@ -270,6 +271,11 @@ def build_face(device_id: str, face: str) -> str:
     return ''.join(out)
 
 
+def stamped(path: Path, svg: str) -> str:
+    """*svg* with the metadata of the file it is written to (``media_meta.stamp_svg``)."""
+    return media_meta.stamp_svg(svg, media_meta.record(path.relative_to(ROOT).as_posix()))
+
+
 def main(argv: List[str]) -> int:
     unknown = [d for d in argv if d not in BOARDS]
     if unknown:
@@ -280,11 +286,11 @@ def main(argv: List[str]) -> int:
         if argv and device_id not in argv:
             continue
         path = ROOT / device_id / 'svg' / 'back.svg'
-        path.write_text(build_back(device_id), encoding='utf-8')
+        path.write_text(stamped(path, build_back(device_id)), encoding='utf-8')
         for board, face in FACE_PRINTS:
             if board == device_id:
-                (ROOT / board / 'svg' / f'{face}.svg').write_text(build_face(board, face),
-                                                                  encoding='utf-8')
+                path = ROOT / board / 'svg' / f'{face}.svg'
+                path.write_text(stamped(path, build_face(board, face)), encoding='utf-8')
         print(f'ok  {device_id}')
     return 0
 

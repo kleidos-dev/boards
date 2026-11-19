@@ -831,6 +831,9 @@ def planted_pdf(planted_repo):
     for f in (ROOT / "_shared").iterdir():
         if f.suffix in (".py", ".json"):
             shutil.copy(f, shared / f.name)
+    # what the PDF's metadata is written from: the board's identity and REUSE's license
+    shutil.copy(ROOT / ADD_BOARD / "board.json", planted_repo / ADD_BOARD / "board.json")
+    shutil.copy(ROOT / "REUSE.toml", planted_repo / "REUSE.toml")
     out = subprocess.run([sys.executable, str(shared / "export_schematic.py"), ADD_BOARD],
                          capture_output=True, text=True, check=False)
     assert out.returncode == 0, out.stdout + out.stderr

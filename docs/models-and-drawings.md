@@ -13,7 +13,7 @@ See [`../_shared/schema.md`](../_shared/schema.md) for the drawing and measureme
 | `fronts-contact-sheet.svg` | `_shared/emit_front_svg.py --contact-sheet` |
 | `<board>/measurements.json` | maintained by hand against the front |
 | `<board>/board.json` | maintained by hand, every value with its source; held to `_shared/board.schema.json` by `_shared/check_board_specs.py` |
-| `<board>/icon.svg` | drawn by hand: a 64 px pictogram of the board |
+| `<board>/icon.svg` | drawn by hand: a 64 px pictogram of the board; its metadata (the SPDX comment, the root's accessible name, `<title>`, `<desc>` and `<metadata>`) is written by `_shared/stamp_icon_meta.py` (`--check` reports a stale one) ("Embedded metadata", below) |
 | `<board>/model/spec.json` | maintained by hand: the pinned vendor file, which of its parts to keep, the turn into the model's frame, the screen's depth, the parts the shell lacks and the materials (format in `_shared/build_board_glb.py`) |
 | `<board>/model/<board>.glb`, `<board>/model/source.json` | `_shared/build_board_glb.py <board>/model/spec.json`: the board's master model, every part, every triangle and every print kept, its printed legends read from the legend groups of `<board>/svg/front.svg` (and of `back.svg` and the other faces' drawings, for a print on those faces), and its provenance (vendor file, and a module's, digest, builder version, libraries, parameters, size, and for each legends mesh the digest of the groups it was built from). The StickS3's is the one the Kleidos site's first renders were drawn from; its spec also has `sticks3/build_sticks3_glb.py`, which keeps the command line its model was first built with |
 | `<board>/model/<board>.obj`, `<board>/model/<board>.mtl` | `_shared/export_obj.py`, which the builder runs whenever it writes a board's master (or `python -I _shared/export_obj.py [<board> ...]` on its own): the master as Wavefront OBJ and its material library, written from the GLB alone, in millimetres, Y up, one object per part; `source.json` records both under `obj` ("Formats: GLB and OBJ", below) |
@@ -22,9 +22,9 @@ See [`../_shared/schema.md`](../_shared/schema.md) for the drawing and measureme
 | `_shared/check_board_model.py` output | nothing in the tree: its views and report go to `--out` (a temporary directory by default) |
 | `<board>/schematic/netlist.yaml`, `<board>/schematic/layout.yaml` | maintained by hand: every part, pin and net with its source (the vendor's published schematic, page and version), and how to draw them ("Schematics", below) |
 | `<board>/schematic/*.kicad_sch`, `<board>.kicad_sym`, `<board>.kicad_pro`, `sym-lib-table`, `links.json` | `_shared/kicad_schematic.py <board>`, from `netlist.yaml` and `layout.yaml` |
-| `<board>/schematic/<board>.pdf` | `_shared/export_schematic.py <board>` (kicad-cli 10.0.8, then `_shared/schematic_pdf.py` for the links, named destinations and bookmarks) |
+| `<board>/schematic/<board>.pdf` | `_shared/export_schematic.py <board>` (kicad-cli 10.0.8, then `_shared/schematic_pdf.py` for the links, named destinations, bookmarks and the document's metadata) |
 | `<board>/schematic/svg/` | `_shared/export_schematic.py <board>`, one SVG per page, written when it runs and ignored by git (`.gitignore`): the PDF is the kept form |
-| `models-contact-sheet.png` | `_shared/models_contact_sheet.py`, from the nine models: every board at one scale, three-quarter over front, shaded and tone mapped as the Kleidos site's own renderer tone maps a case (`_shared/model_raster.py`, Khronos PBR Neutral), so a face toward the viewer shows the model's base color |
+| `models-contact-sheet.png`, `models-contact-sheet.json` | `_shared/models_contact_sheet.py`, from the nine models: every board at one scale, three-quarter over front, shaded and tone mapped as the Kleidos site's own renderer tone maps a case (`_shared/model_raster.py`, Khronos PBR Neutral), so a face toward the viewer shows the model's base color; the JSON records the PNG's digest and the digests of the models it was drawn from (`--check` draws it again and compares) |
 
 The Kleidos site cuts the web models it publishes (`media/fleet-<board>.ksm`) from each board's web level of detail with its own `site/tools/build-web-model.mjs`, reading `<board>/model/web.json`, which ties the web level to the master it was built beside; nothing of that cut is kept here.
 
@@ -116,7 +116,7 @@ python -I _shared/check_board_model.py --selftest
 
 It draws the front, left and top views, and the back with `back.svg` over it where the board has one (depth-buffered, by `_shared/model_raster.py`) with the `front.svg` outline, the `measurements.json` box and the active area over them, reports how far the model is from each, in mm, and the screen's clearance, and exits 1 when the clearance is short, when two meshes share a depth ("No two materials at one depth", below) or, with `--max-dev-mm`, when a deviation passes that bound. On a board that prints legends it also holds every legend of the model to where `front.svg` draws it (below) and to an opaque material of its own ink, lays the drawing's legend outlines over the front view, and exits 1 when one is off. It reads the model as a glTF reader draws it, each mesh where its node and the nodes above it place it (`model_raster.read_glb`), so a legend moved by a node's translation is a legend moved. `--selftest` plants defects in the Cardputer's model (in its triangles, in its drawing, and in the file itself: a node's translation, the root's, an ink's material turned red) and fails unless that check catches each, and unless it passes a drawing changed only where no model reads; it also plants depth ties in the T-Deck Plus's and the Cardputer's models (below) and fails unless the depth check catches each. Beyond the builder's libraries it needs `matplotlib==3.11.2`, and `cascadio==0.1.1` on every board, an STL one too: `_shared/render_views.py`, which draws the silhouettes, imports it whatever the model. `_shared/models_contact_sheet.py` redraws `models-contact-sheet.png` from the nine models (it needs `pillow==13.0.0`).
 
-The spec format is documented at the top of the builder. Version 1.1.0 added polygon profiles and discs, spheres, volumes written in the front frame, a `cull` operation a part can run before it is decimated, `same_box` culling, and strict keys: a key the builder would not read fails the build instead of being ignored. Version 1.2.0 added a part mesh's `inside` and `outside`, which split a part between two meshes by a volume, every face to one of them and none cut, the part shaded whole first so the two meshes meet without a crease (the Plus SE's clear front wall and its opaque walls are one part), a prism's `faces`, which keeps only the caps and sides it names (the Plus SE's lining keeps the faces a view through the clear wall reaches, not those inside the solid walls), and holds a material's `alpha` above 0 and below 1. A material with `alpha` is core glTF `alphaMode: BLEND`, no extension and no texture; `model_raster.py` draws such meshes after every opaque one, farthest first, writing no depth, as a glTF reader does, and leaves out only the `glass` mesh, which a page replaces with its own cover glass. Version 1.3.0 added the `legends` mesh, and 1.4.0 its `plane` and `on`, the `stroke_mm` and `on` its meshes carry, a limit of materials and `--without-legends` (below); 1.4.1 set that limit to 29, what the strictest reader holds, where 1.4.0 let 31 through, and made a legends mesh's record the digest of what it reads from the drawing where 1.4.0 wrote the whole file's. 1.4.1 also refuses a model in which two meshes of different materials share a depth ("No two materials at one depth", below), and lets a model have 45 materials since the readers' table grew to 48: neither changes a byte it writes, so both keep the version. Version 1.5.0 added prints on the other faces (a legends mesh's `drawing`, `face` and a height along that face's normal, and the spec's `face_frames`) and `modules`, the further vendor files a model is built from, with `--module-source`; it builds the nine models' bytes as 1.4.1 did, so they keep the `source.json` they have. The five models that shared one (the Plus SE, the Plus2, the CoreInk, the Cardputer ADV and the T-Deck Plus) were rebuilt by 1.4.1 and carry the `source.json` it writes; the other four are the bytes 1.1.0 built, which 1.4.1 rebuilds byte for byte, and keep the `source.json` 1.1.0 wrote. Version 1.6.0 added a model built from no vendor file (`source` with `format` `none` and only `license`, `copyright` and `license_note`, and no `transform`, `parts` or `auto` frame) and the `loft` shape, the side surface through two or more sections of one count of points, for a chamfer or a slope no prism draws; it builds every other spec's bytes as 1.5.0 did.
+The spec format is documented at the top of the builder. Version 1.1.0 added polygon profiles and discs, spheres, volumes written in the front frame, a `cull` operation a part can run before it is decimated, `same_box` culling, and strict keys: a key the builder would not read fails the build instead of being ignored. Version 1.2.0 added a part mesh's `inside` and `outside`, which split a part between two meshes by a volume, every face to one of them and none cut, the part shaded whole first so the two meshes meet without a crease (the Plus SE's clear front wall and its opaque walls are one part), a prism's `faces`, which keeps only the caps and sides it names (the Plus SE's lining keeps the faces a view through the clear wall reaches, not those inside the solid walls), and holds a material's `alpha` above 0 and below 1. A material with `alpha` is core glTF `alphaMode: BLEND`, no extension and no texture; `model_raster.py` draws such meshes after every opaque one, farthest first, writing no depth, as a glTF reader does, and leaves out only the `glass` mesh, which a page replaces with its own cover glass. Version 1.3.0 added the `legends` mesh, and 1.4.0 its `plane` and `on`, the `stroke_mm` and `on` its meshes carry, a limit of materials and `--without-legends` (below); 1.4.1 set that limit to 29, what the strictest reader holds, where 1.4.0 let 31 through, and made a legends mesh's record the digest of what it reads from the drawing where 1.4.0 wrote the whole file's. 1.4.1 also refuses a model in which two meshes of different materials share a depth ("No two materials at one depth", below), and lets a model have 45 materials since the readers' table grew to 48: neither changes a byte it writes, so both keep the version. Version 1.5.0 added prints on the other faces (a legends mesh's `drawing`, `face` and a height along that face's normal, and the spec's `face_frames`) and `modules`, the further vendor files a model is built from, with `--module-source`; it builds the nine models' bytes as 1.4.1 did, so they keep the `source.json` they have. The five models that shared one (the Plus SE, the Plus2, the CoreInk, the Cardputer ADV and the T-Deck Plus) were rebuilt by 1.4.1 and carry the `source.json` it writes; the other four are the bytes 1.1.0 built, which 1.4.1 rebuilds byte for byte, and keep the `source.json` 1.1.0 wrote. Version 1.6.0 added a model built from no vendor file (`source` with `format` `none` and only `license`, `copyright` and `license_note`, and no `transform`, `parts` or `auto` frame) and the `loft` shape, the side surface through two or more sections of one count of points, for a chamfer or a slope no prism draws; it builds every other spec's bytes as 1.5.0 did. Version 1.7.0 writes each model's embedded metadata ("Embedded metadata", below): `asset` with its `generator`, its `copyright` notice and its `extras`, the `KHR_xmp_json_ld` packet and the scene's name, all from the file's record; a spec's `generator` key is gone and its `copyright` holds the credits of the model's parts alone, and a model whose legends are glyphs of Inter must name Inter there. It changes no byte of the binary chunk: every model and web level was rebuilt by it, and less its metadata each is the one 1.6.0 built, byte for byte.
 
 ### Printed legends
 
@@ -180,15 +180,15 @@ The OBJ's header names the GLB and its SHA-256, and its numbers are fixed decima
 
 | Board | GLB bytes (gzip) | OBJ bytes (gzip) | MTL bytes | Objects | Vertices | Triangles |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| `sticks3` | 765,884 (285,585) | 1,951,921 (382,862) | 4,147 | 51 | 40,742 | 38,703 |
-| `m5stickc-plus2` | 531,580 (200,617) | 1,355,672 (270,038) | 3,382 | 39 | 28,095 | 26,618 |
-| `m5stickc-plus1` | 551,392 (205,582) | 1,388,766 (276,473) | 4,172 | 47 | 28,786 | 27,282 |
-| `m5stickc-plus-se` | 542,856 (202,540) | 1,359,642 (271,516) | 4,360 | 51 | 28,159 | 26,641 |
-| `coreink` | 678,152 (263,940) | 1,734,949 (359,680) | 3,788 | 47 | 36,410 | 33,244 |
-| `cores3-se` | 418,272 (155,462) | 1,131,054 (219,617) | 2,497 | 36 | 22,682 | 19,316 |
-| `m5stack-core2-v13` | 963,924 (360,766) | 2,650,653 (492,447) | 4,005 | 48 | 52,247 | 49,064 |
-| `cardputer` | 1,390,768 (521,410) | 3,815,410 (717,939) | 4,362 | 91 | 75,586 | 67,996 |
-| `tdeck-plus` | 406,196 (137,940) | 1,001,695 (187,752) | 2,860 | 38 | 21,659 | 18,949 |
+| `sticks3` | 768,704 (287,360) | 1,952,769 (383,272) | 4,673 | 51 | 40,742 | 38,703 |
+| `m5stickc-plus2` | 534,464 (201,527) | 1,356,515 (270,479) | 3,938 | 39 | 28,095 | 26,618 |
+| `m5stickc-plus1` | 554,120 (206,879) | 1,389,426 (276,880) | 4,734 | 47 | 28,786 | 27,282 |
+| `m5stickc-plus-se` | 545,776 (203,574) | 1,360,497 (272,124) | 4,928 | 51 | 28,159 | 26,641 |
+| `coreink` | 680,864 (264,889) | 1,735,573 (360,012) | 4,314 | 47 | 36,410 | 33,244 |
+| `cores3-se` | 421,120 (156,221) | 1,131,672 (219,987) | 3,037 | 36 | 22,682 | 19,316 |
+| `m5stack-core2-v13` | 966,912 (362,090) | 2,651,534 (492,862) | 4,565 | 48 | 52,247 | 49,064 |
+| `cardputer` | 1,393,616 (522,348) | 3,816,084 (718,443) | 4,912 | 91 | 75,586 | 67,996 |
+| `tdeck-plus` | 408,860 (139,041) | 1,002,203 (188,057) | 3,422 | 38 | 21,659 | 18,949 |
 
 ### Two levels of detail: the master and the web's
 
@@ -206,7 +206,7 @@ python -I _shared/build_board_glb.py \
 
 The site then cuts its web model from it (`node tools/build-web-model.mjs --board <board> --whole`, in the Kleidos repository's `site/`).
 
-The cutter refuses a web level whose bytes are not the ones `web.json` records, one built beside another master than `source.json` records (rebuild it after the master) and one built for a smaller scale than the site now draws; `tests/test_board_model_legends.py` holds the web level less its prints to the master less its prints, byte for byte.
+The cutter refuses a web level whose bytes are not the ones `web.json` records, one built beside another master than `source.json` records (rebuild it after the master) and one built for a smaller scale than the site now draws; `tests/test_board_model_legends.py` holds the web level less its prints to the master less its prints, byte for byte once each file's own metadata (its title and its address) is set aside.
 
 ### Prints on other faces
 
@@ -347,6 +347,25 @@ The generator takes a few optional keys where a board differs from the StickS3; 
 
 Several `pwr_flags` on one sheet are stacked upwards from the first, clear of the page row.
 
+## Embedded metadata
+
+Every drawing, model, schematic and picture here says inside itself what it is, who made it, under which license and where it lives, so the facts travel with a copy and indexers read them (the Kleidos media metadata standard, profile `kleidos-media-meta/1`). The values come from one record per file, `_shared/media_meta.py` `record()`, derived from the file's path and the repository's own sources and never typed per file: the board's name, vendor, SKU and revision from its `board.json` `identity`, a model's credits from its `model/spec.json` `copyright`, the license and the holders from `REUSE.toml` (e-mail addresses removed). The builder that writes a file writes its metadata with the same module, and `_shared/check_metadata.py` holds every committed file to its record. Nothing in it is a machine's: no clock, path, user, host or tool version; the one date is a schematic's title-block date.
+
+| Files | What they carry |
+| --- | --- |
+| Drawings (`svg/*.svg`, `icon.svg`, `fronts-contact-sheet.svg`) | The SPDX comment first; on the root `role="img"`, `aria-labelledby` and `lang`; a descriptive `<title>` and `<desc>` (with the vendor's trademark note); a Dublin Core and ccREL `<metadata>` block (title, description, creator, publisher, the copyright line, the file's address, language, keywords, the IPTC digital source type `digitalCreation` and the license URL) between REUSE's ignore markers, so REUSE reads no notice out of it. The drawing itself is untouched: `legend_source.digest()` and every `legends_sha256` are what they were. The contact sheet's tiles keep each front's title and leave its block in its own file |
+| Models (`model/*.glb`, the face fixture) | `asset.generator` (`Kleidos build_board_glb.py`), `asset.copyright` (the copyright line, the license with its URL, the credits of the parts and the trademark note), `asset.extras` (title, description, creator, license and its URL, holders, address, project, keywords), the same facts as a `KHR_xmp_json_ld` packet (used, never required) and the scene named after the board |
+| OBJ and MTL | REUSE's SPDX tags first, then, between REUSE's ignore markers, the title, description, address, project and terms |
+| Schematic PDFs | The Info dictionary (title, author, subject, keywords, `/Creator` `KiCad 10.0.8 Eeschema`, `/Producer` `kleidos-boards schematic_pdf.py`, both dates the title block's), the same facts as an uncompressed XMP stream, `/Lang`, `/DisplayDocTitle` and a trailer `/ID` derived from the schematic's sources and theme rather than random; two clean exports in KiCad 10.0.8's container give the same bytes |
+| `models-contact-sheet.png` | Text chunks (`Title`, `Author`, `Description`, `Copyright`, `License`, `Comment`) and an XMP packet (with the IPTC fields Google reads: creator, credit line, copyright notice, licensor URL, web statement of rights, digital source type, alt text) before the image data; no color chunk, no time chunk |
+
+```bash
+.venv/bin/python -I _shared/check_metadata.py              # every media file against its record
+.venv/bin/python -I _shared/stamp_icon_meta.py [--check]    # the icons' metadata
+```
+
+The checker reads every tracked media file and fails on a missing or different field (`M001`, `M002`), a license or holder other than REUSE's (`M003`), private data in a value (`M004`), a chunk, key or namespace outside the profile (`M005`), an order or format error (`M006`), two slots of one fact that disagree (`M007`), a media file with no record and no exemption (`M008`), the wrong profile for a picture's size (`M009`), a Spanish file without its Spanish values (`M010`), a text file's metadata outside REUSE's ignore markers (`M011`) and a picture with no digital source type (`M012`). Exempt, with the reason in the checker: Inter's font files (third-party, pinned) and the face fixture's STLs and drawings (test data `face_fixture.py` writes byte for byte). The identity patterns it also looks for are not in the public tree: it reads them from the untracked `_shared/deny-local.txt` or from the `KLEIDOS_DENY_EXTRA` variable, which CI sets from the repository secret of that name; with `--require-identity` a missing list fails the check, which CI passes once that secret exists (until then it warns and checks the generic classes). `tests/test_media_metadata.py` runs the checker over the tree, holds every record's license and holders to `reuse spdx`, pins the writers to the golden files in `tests/fixtures/meta/`, plants a defect for each rule, and holds `models-contact-sheet.json` to the models as they are.
+
 ## Tests and CI
 
 `tests/` holds three kinds of test, told apart by pytest markers (`tests/conftest.py`):
@@ -369,29 +388,29 @@ The digests of the committed models, master and web level, for a reader that pin
 
 | Board | Master `sha256` | Bytes | Web level `sha256` | Bytes |
 | --- | --- | ---: | --- | ---: |
-| `sticks3` | `f3ef032f917abff5f5ea8939804002e1fbc30327d135ed004b74ebd49139f3bf` | 765,884 | `c55e5336e075fc9003fc9d1a5b683d53eb15394aa8ebc883a21feb711563aec0` | 660,248 |
-| `m5stickc-plus2` | `00c63dfe3d3e03d9c873188eb7c576fc4707175e1ab5c3395308f40c8f412c2d` | 531,580 | `430fb57ce1a56ccc8c9bc23b2e0cb01b6b4b836d8b601e359f0f61323c523c56` | 474,064 |
-| `m5stickc-plus1` | `ac78bd53264652842adbb8e9d69422d9a0150c4fe5987d55c34585bb2de61169` | 551,392 | `dfa3069cc55da3bd9fa93f9b8f24298096c1f141e157d5db9fa32b416ec5ffb9` | 483,468 |
-| `m5stickc-plus-se` | `e70443aaf37c958564092c7e06a2455e70f3ef285b6a58e45a9f33d6266e65ef` | 542,856 | `ab4038b247152f2db3d021c2b95dad012686f5718dbf578c7d8ec9981db66a13` | 475,144 |
-| `coreink` | `46878b2460d3f4ff6b3eb268f8bb02060841a376aff7d8314271d9356027e993` | 678,152 | `e422076d4809a176a6ef48dfacd2142553a154dd6b9b02ba334e1cd8e3e49076` | 561,768 |
-| `cores3-se` | `65989de5fa2003395b1d2ad523ccf81f8d087a3fb8d3d62c3a5d33ef2ec6d49f` | 418,272 | `3cae28255cf94c69def326db5d134ee1a066723afc1a8cb34f4c1614134332bb` | 406,260 |
-| `m5stack-core2-v13` | `2e52119fbc1a9da3acdbb8a4920af18f06d577e4d47836a88142863e98391af2` | 963,924 | `3f4ba486cf47ee7f56dd52caa28433bd85b1e43ea60d698115f092297b1303ff` | 827,020 |
-| `cardputer` | `f0c9c55163cf81293797884e09390919440041311a2a8fa3607542c3025b77ed` | 1,390,768 | `b0d3b184328e82d3aa0e011540421fd8f73b17b495d8bc2e5fd4190a269c452f` | 949,036 |
-| `tdeck-plus` | `2ea45ef998b5da3f85212265f03d735f37a426f057af2a34ff5fcf4947961932` | 406,196 | `319051b0d6e67f87c83a98cc6c14648241d7f90322bcdceb21bc5ea20e974eac` | 377,620 |
+| `sticks3` | `3c0bd335e954677b032e28dfa888953b91265c21240ff54faa0e41877499b6de` | 768,704 | `f85c6658a710982db2e8d62f7d2dab2425d96431a255ab540f8aa4ccd97cbc0a` | 663,076 |
+| `m5stickc-plus2` | `8661ef768cf870721e788a6209c0b94079ebbb11fcf3443664b6e844b2e160c0` | 534,464 | `c97f41d4c7c25228a321d3163ce39271c0a4f7b48187353a30c2111e5b68d962` | 476,956 |
+| `m5stickc-plus1` | `14ff38aaa827f8c8c95dfdcf93724bcff53a1481cea48a11f329ea2f32c9563d` | 554,120 | `d451659bb803d26bfc88df93b3a3109bec4868e9c9e1eba756d804591a9102e0` | 486,204 |
+| `m5stickc-plus-se` | `0d7a5f482d6b933d59a24a854661a0c5ebea5a424cf61f0ade63b6697cd9e070` | 545,776 | `e3015e8d28ea5f4537f19d453de3b85cdb9e525a76d17cb665f09797a3700eff` | 478,072 |
+| `coreink` | `dffa0cd31ec6bc778b20cf4b2606280d26738f63412aee38c1fbca67a08fc953` | 680,864 | `d272489241264ad6a956d411c847f2eaf635f80d48ca16640933a3a30e7f2795` | 564,492 |
+| `cores3-se` | `407e1bc929ab6abfeb44a5a314f088ea8a27ed73e39c93643eeb5cd7838505a9` | 421,120 | `1ec8a3b8122106116cdf9b813e00478c65da302b518f392ed14f163be661739b` | 409,120 |
+| `m5stack-core2-v13` | `08d70d8d89852b309138f5e9fadff637522a86218f75fa92311d294b87e63a76` | 966,912 | `676ff630bef3be80272220f76c75098fe489039511086baf96f57f05089e0440` | 830,020 |
+| `cardputer` | `797688a946f5e1dbedf5027328cbc95101469a9a83f5170f21dc2a61668ca7f4` | 1,393,616 | `3d592f32221322c19a9048535a0e974e7e1601f11eef159f797d84d6a021d81d` | 951,896 |
+| `tdeck-plus` | `f960cccd6273deea4b2117c167b7d709b0495f303fe966ee007651abab663faa` | 408,860 | `b9fc6a120d77e12d8ed398ff049f3714ffa82b379c39fd391cc8bc36bd191e9d` | 380,292 |
 
 The OBJ and MTL written from each master (`source.json`, `obj`):
 
 | Board | OBJ `sha256` | Bytes | MTL `sha256` | Bytes |
 | --- | --- | ---: | --- | ---: |
-| `sticks3` | `e952ebf3383bb565a275ef6b91712753c811b8b30942a33ac6b594e41262c593` | 1,951,921 | `196e3bd75b22be7417045459239e49ad2d26d17ada723bfaf624704ab42432ad` | 4,147 |
-| `m5stickc-plus2` | `71622b96f5dc701bd28fed6a6894780a4a38a570e4bad25fa490b3d6bd5df744` | 1,355,672 | `4a25368c74344273dd2007d450d2b844d5674e0775321078d78cbb9b55be77da` | 3,382 |
-| `m5stickc-plus1` | `18a39d4322f9b01d0ecaa4b9766c72317166734f01e9965d0f5b04b4bd4a362d` | 1,388,766 | `61a0755839771032060ee8ca2252c89950302383bd03233f0acc0d8ac4ef9299` | 4,172 |
-| `m5stickc-plus-se` | `54b58d9968c996dbd5892f4ad93ae088221a7c7387f3e63fe2146b6148a6f25f` | 1,359,642 | `9352b7ed6c76cd21bf8ddde68c679a55ae594a2b3ee4ddeb9eef8b8404547f64` | 4,360 |
-| `coreink` | `1137701ab8461bab3241a9e85eba157c3ff4f1297b583cee61957609562beb67` | 1,734,949 | `cdfea3798174dfd1dd00cad9cccc71364149613e670ee048249a6416e9f478bb` | 3,788 |
-| `cores3-se` | `4021c8e655328b2fcd066126fc30a6bfeadf022f61020caeac02cb4e883e220f` | 1,131,054 | `af383f9ffbb19291d00004326217b3ff2a623c4148dd4b8c822893ed7115b8a4` | 2,497 |
-| `m5stack-core2-v13` | `53924953df07688448cd9eb44438b54f58499a80660f5f669146fe08ec4f8d89` | 2,650,653 | `c7b48209c609980a8b5101ef0e0ea0647757a68536f14deacf12c8a9beb980c1` | 4,005 |
-| `cardputer` | `fd8234dcaf1796b52718b4fdb140190b5d8bd634521ef40631b0453bec3c754d` | 3,815,410 | `85db700b6a0baad96533553372ae35cbd3fef4f6d82015b2426358fd1c106f8c` | 4,362 |
-| `tdeck-plus` | `d266d1290324d8247448e07d23d8acc575b84c1a90e0ce868668804f7ccaa336` | 1,001,695 | `122a2729c633375ea6c9584b3b7c81546f27d5ba8a545a7da6ed684890aa477a` | 2,860 |
+| `sticks3` | `c8bfc707bcadd5ab654b8ea1ccdd3678e555d081baca064eb53380311aa445a7` | 1,952,769 | `b116b737e5de9fa8a23ffb054769ca4e25cbb23f0fee5b2bcd22cdf3d2067204` | 4,673 |
+| `m5stickc-plus2` | `346847a3136e2f7742607ba3871b5d77b551b52d8382faaa6bde3384cc77a33f` | 1,356,515 | `8d85db34b550e2d3c0034c5a0a23055f6e7e3d8f0b4c4952b2c168543f47a3ca` | 3,938 |
+| `m5stickc-plus1` | `cf2aa04f272c17301d52a18c55ca0ca67eedcc37015fdd1a326a5ce54f724483` | 1,389,426 | `07dde3b0a241d01090336f9d6784b46a737e2d67ff16d8400639444f7cc91410` | 4,734 |
+| `m5stickc-plus-se` | `1cd1b207be97b14de8df9076fd839de64b8209237a78171b50e96cfa40b14e0f` | 1,360,497 | `d01e43d396451e53828ac742888247193b36bc73c060fdc808617574f685eca9` | 4,928 |
+| `coreink` | `6dc22699346c445b289f1a37cd4c6eed7ce0d60a849c3aa08dc4bec2f11ffa2a` | 1,735,573 | `8f0976fd62530a7733c28d66b5f6907bf7dc8082cdd05031fafe867db4f2a575` | 4,314 |
+| `cores3-se` | `7d19aa2b6bb16383cd9841f84956a11a045d0d122b67df43a035d9ddaf442257` | 1,131,672 | `0bab751b42264c642a157220a1bf3f1946a0254d12fabbae9541205e70d2e277` | 3,037 |
+| `m5stack-core2-v13` | `d69aaf43e3727175a82510ecc67388e541be8ba2839bbeb62be399e3a2f0187d` | 2,651,534 | `cfd1f8a1789adad24e55fd2d286ad59df9b77ef807bc42265bd6e0c8cee5311a` | 4,565 |
+| `cardputer` | `d4e7b4cade8c9b35dd5b7c336b0e8b80f96c1de4d228c7fe040cdd200b03d8ef` | 3,816,084 | `15529465c698fbdf0eaf99cb65ee01519f56f5130f66fbfb927973fd70c32197` | 4,912 |
+| `tdeck-plus` | `e77b9cce650f214e6e9527f40ad7dde8c786bf76d9d92d8e46f5b1bb7d80b154` | 1,002,203 | `51207bb641f2f564783bb401c411f57554bdaf3c66fee09294d4805f569e2c20` | 3,422 |
 
 ## Per-board workflow
 

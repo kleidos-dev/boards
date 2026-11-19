@@ -57,9 +57,10 @@ python3 -m venv .venv
 .venv/bin/python _shared/export_schematic.py sticks3          # ERC, netlist check, PDF and its links, SVG pages (needs kicad-cli)
 .venv/bin/python _shared/build_board_glb.py sticks3/model/spec.json --fetch --check   # a model, byte for byte
 .venv/bin/python _shared/export_obj.py --check                 # every OBJ and MTL is what its GLB gives
+.venv/bin/python -I _shared/check_metadata.py                 # every media file carries its embedded metadata
 ```
 
-[`.github/workflows/check.yml`](.github/workflows/check.yml) runs the first four on every push and pull request: the licenses, the tree, the specifications and the contracts always; the board models' tests when a model's inputs changed; the checkers' slower planted-defect selftests when a checker or its fixtures changed, weekly and on demand. A fourth job, in KiCad 10.0.8's container, holds every schematic to its `netlist.yaml` (the ERC, the netlist pin for pin, every Kleidos entry marked and listed, the generator giving back the committed files) and every link of its PDF to the place it names. Not in CI: regenerating the drawings, and rebuilding a model from its vendor's CAD file, which downloads that file.
+[`.github/workflows/check.yml`](.github/workflows/check.yml) runs the first four and the metadata check on every push and pull request: the licenses, the tree, the specifications, the embedded metadata and the contracts always; the board models' tests when a model's inputs changed; the checkers' slower planted-defect selftests when a checker or its fixtures changed, weekly and on demand. A fourth job, in KiCad 10.0.8's container, holds every schematic to its `netlist.yaml` (the ERC, the netlist pin for pin, every Kleidos entry marked and listed, the generator giving back the committed files) and every link of its PDF to the place it names. Not in CI: regenerating the drawings, and rebuilding a model from its vendor's CAD file, which downloads that file.
 
 Agents working here read [`AGENTS.md`](AGENTS.md) and the two skills under [`.claude/skills/`](.claude/skills/).
 
@@ -71,6 +72,8 @@ Everything this project wrote is under the [MIT License](LICENSE), free for anyo
 - The M5Stack cases inside eight of the board models (`<board>/model/*.glb` and `<board>/model/<board>.obj`) and their picture (`models-contact-sheet.png`): M5Stack's, under the MIT License too, "Copyright (c) 2021 M5Stack". The T-Deck Plus's model is this project's own throughout, built from no vendor file.
 - One function of `_shared/model_raster.py`, the Khronos PBR Neutral tone mapper: Khronos's, under the [Apache License 2.0](LICENSES/Apache-2.0.txt).
 - Inter (`fonts/inter/`): [SIL Open Font License 1.1](LICENSES/OFL-1.1.txt).
+
+Every drawing, model, schematic and picture also carries its title, description, author, copyright line, license and address inside the file, written by the script that writes it and checked by `_shared/check_metadata.py` ([`docs/models-and-drawings.md`](docs/models-and-drawings.md), "Embedded metadata").
 
 Vendor files (photos, renders, drawings, schematics, datasheets, CAD files) are cited by address and never copied here; [`NOTICE.md`](NOTICE.md) has the details, including the terms of the vendor geometry inside the 3D models. `REUSE.toml` states the license of every file; [`LICENSE`](LICENSE) is the MIT License as GitHub shows it, the same text as `LICENSES/MIT.txt`.
 

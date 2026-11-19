@@ -154,6 +154,8 @@ To composite a screenshot, place an `<image>` at the `screen-active` x / y / wid
 
 `emit_front_svg.py` regenerates every front; `emit_front_svg.py <device_id> …` regenerates only the named ones; `--contact-sheet` also rebuilds `fronts-contact-sheet.svg`. It is the only writer of either file, and the `measurements.json` files are maintained by hand against them.
 
+Every drawing opens with its embedded metadata, which `media_meta.stamp_svg` writes as the emitter writes the file: the SPDX comment, `role="img"`, `aria-labelledby` and `lang` on the root, the descriptive `<title>` and `<desc>`, and a Dublin Core and ccREL `<metadata>` block between REUSE's ignore markers (`docs/models-and-drawings.md`, "Embedded metadata"). None of it is drawing: a reader that composites or strips a front leaves it or drops it, and the legend digests do not read it.
+
 ### Back drawings (`back.svg`)
 
 What a board prints on its back (a sticker of pin names and marks, a rating label, a wordmark) is drawn in its `svg/back.svg`, seen from behind with the board's top up, so a print reads there as it reads on the hardware. Its frame is the **back frame** (`_shared/board_faces.py`): 1 mm a unit, x across from the case's left edge *as seen from behind* (its right edge as the front is seen), y down from its top edge. Nothing is drawn mirrored: the model builder lays the back's prints on the model's back through that frame.

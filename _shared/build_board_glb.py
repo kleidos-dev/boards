@@ -279,6 +279,7 @@ import board_faces  # noqa: E402  (beside this file; -I leaves it off the path)
 import export_obj  # noqa: E402
 import glb_legends  # noqa: E402
 import legend_source  # noqa: E402
+import media_meta  # noqa: E402
 import model_raster  # noqa: E402
 
 #: Bumped when the same spec and source would build different bytes, or when
@@ -294,11 +295,13 @@ import model_raster  # noqa: E402
 #: mesh's ``drawing``, ``face`` and a height along that face's normal, the
 #: spec's ``face_frames`` and ``modules``, and ``--module-source``; 1.6.0: a
 #: model of no vendor file, ``source`` ``format`` ``none``, and the ``loft``
-#: shape). A refusal that
+#: shape; 1.7.0: the model's embedded metadata, ``asset`` with ``extras`` and the
+#: ``KHR_xmp_json_ld`` packet, from ``media_meta.record``, the spec's
+#: ``generator`` gone and its ``copyright`` the credits only). A refusal that
 #: changes no byte of what the builder writes, as the one of two meshes of
 #: different materials at one depth (``model_raster.coplanar_overlaps``), keeps
 #: the version, and so does a limit that moves with its readers' table.
-BUILDER_VERSION = '1.6.0'
+BUILDER_VERSION = '1.7.0'
 #: How many materials the strictest reader of a model keeps a table of, and how
 #: many of its own it puts there after the model's: the Kleidos site's renderer,
 #: whose lit shader holds ``MATERIAL_SLOTS`` (the Kleidos repository's ``site/src/scripts/film/gl/shaders.ts``).
@@ -346,7 +349,7 @@ class SpecError(ValueError):
 
 #: Every key each kind of spec object may hold (``note`` is admitted anywhere).
 KEYS = {
-    'spec': {'schema', 'board', 'node_name', 'output', 'generator', 'copyright', 'source',
+    'spec': {'schema', 'board', 'node_name', 'output', 'copyright', 'source',
              'tessellation', 'transform', 'split', 'clean', 'select', 'parts', 'volumes',
              'cull', 'center_mm', 'center_from', 'front_frame', 'face_frames', 'measurements',
              'quant_mm', 'planar_min_area', 'materials', 'meshes', 'notes', 'modules'},
@@ -1114,7 +1117,7 @@ class Glb:
         for key in ('extensionsUsed', 'extensionsRequired'):
             if not self.gltf.get(key):
                 self.gltf.pop(key, None)
-        js = json.dumps(self.gltf, separators=(',', ':')).encode()
+        js = json.dumps(self.gltf, separators=(',', ':'), ensure_ascii=False).encode()
         while len(js) % 4:
             js += b' '
         total = 12 + 8 + len(js) + 8 + len(self.bin)
@@ -1652,8 +1655,12 @@ def build(spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modu
     meas = measurements(spec)
 
     g = Glb(spec['node_name'], center, quant_mm)
-    g.gltf['asset']['generator'] = spec.get('generator', 'kleidos build_board_glb.py')
-    g.gltf['asset']['copyright'] = spec['copyright']
+    # what the model says it is, who made it, its license: the record of the
+    # file this build is written as (the master, or its web level of detail)
+    meta = media_meta.record(rel(web_path(spec)) if web_ppm is not None else spec['output'])
+    asset, packets, scene_name = media_meta.gltf_metadata(meta)
+    g.gltf['asset'] = asset
+    g.gltf['scenes'][0]['name'] = scene_name
 
     for m in spec['materials']:
         rgb = m.get('rgb')
@@ -1844,6 +1851,12 @@ def build(spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modu
                         f'strictest reader has room for (the landing film\'s shader table '
                         f'holds {READER_SLOTS}, and its scene puts {READER_OWN} of its own '
                         f'after the model\'s: the finger, the nail and the cover glass)')
+
+    if any(entry.get('fonts') for entry in legends) and 'Inter' not in spec['copyright']:
+        raise SpecError('copyright: the legends are glyphs of Inter, and the credits name no '
+                        'Inter (its copyright and the SIL Open Font License 1.1)')
+    g.gltf['extensionsUsed'].append(media_meta.GLTF_META_EXTENSION)
+    g.gltf['extensions'] = packets
 
     out_path = Path(out_path)
     staged = out_path.with_name(out_path.name + '.part')

@@ -33,7 +33,8 @@ What the web model's cutter reads, and why the model is built to it:
 - ``extensionsRequired`` is ``KHR_mesh_quantization`` alone (the cutter keeps
   the quantized positions and normals as they are, and has no Draco or Meshopt
   decoder); ``KHR_materials_unlit`` is used for the screen, not required;
-- no URL anywhere in the JSON chunk.
+- no external resource in the JSON chunk (no ``uri``): the addresses in its
+  embedded metadata (``asset``, the ``KHR_xmp_json_ld`` packet) are text.
 
 The ``screen`` mesh is the glass contract: float positions, its node unscaled,
 ``extras.resolution`` ``[135, 240]``, and UVs in the glTF convention, (0, 0) at
