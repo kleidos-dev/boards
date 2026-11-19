@@ -20,7 +20,11 @@ every file under the root) and fails on:
 - a path under a ``reference/``, ``reference_candidates/``, ``raw/`` or
   ``photos/`` folder, a ``*_reference.svg`` or a ``*-silhouette.svg``;
 - an SVG that embeds an image (``<image``, ``data:image``) or draws a vendor
-  demo screen (``id="screen-demo"``);
+  demo screen (``id="screen-demo"``), but the README banner
+  (``.github/readme/banner-*.svg``), a byte copy of the social repository's
+  that carries the Kleidos firmware's own unlock screens on these fronts,
+  admitted only while its bytes are the ones ``.github/readme/SHA256SUMS``
+  holds;
 - a text file (prose, data, code, KiCad sources) that names something private
   (``AGENTS.md``, "Nothing private"): a serial-port device path, a MAC
   address, a private IPv4 address, a home-directory path, or an e-mail address
@@ -34,6 +38,7 @@ Usage: ``python3 _shared/check_public_tree.py [ROOT]``; exit 1 on a finding.
 """
 from __future__ import annotations
 
+import hashlib
 import re
 import subprocess
 import sys
@@ -96,6 +101,22 @@ def own_model_export(root: Path, rel: Path) -> bool:
             and (root / parts[0] / "model" / "spec.json").is_file())
 
 
+def own_readme_banner(root: Path, rel: Path) -> bool:
+    """True for the README banner, social's byte copy, whose bytes are the ones its ``SHA256SUMS`` holds.
+
+    The banner draws this repository's fronts with the Kleidos firmware's own
+    unlock screens embedded as pictures (never a vendor's). A file at that
+    place with any other bytes is not admitted.
+    """
+    if not (rel.parent == Path(".github/readme") and rel.name.startswith("banner-") and rel.suffix == ".svg"):
+        return False
+    sums = root / ".github" / "readme" / "SHA256SUMS"
+    if not sums.is_file():
+        return False
+    pinned = dict(reversed(line.split("  ", 1)) for line in sums.read_text(encoding="utf-8").splitlines() if "  " in line)
+    return pinned.get(rel.as_posix()) == hashlib.sha256((root / rel).read_bytes()).hexdigest()
+
+
 def own_fixture_stl(root: Path, rel: Path) -> bool:
     """True for an STL of the face fixture whose bytes are the ones ``face_fixture.py`` writes.
 
@@ -150,7 +171,7 @@ def findings(root: Path) -> list[str]:
             found.append(f"{rel}: a vendor file type ({suffix})")
         elif name.endswith("_reference.svg") or name.endswith("-silhouette.svg"):
             found.append(f"{rel}: a reference overlay or a traced silhouette")
-        elif suffix == ".svg" and path.is_file():
+        elif suffix == ".svg" and path.is_file() and not own_readme_banner(root, rel):
             text = path.read_text(encoding="utf-8", errors="replace")
             for marker in SVG_MARKERS:
                 if marker.search(text):
