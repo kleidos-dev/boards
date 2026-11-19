@@ -77,6 +77,14 @@ jobs:
         run: python3 _shared/check_public_tree.py
       - name: Board specifications
         run: python3 _shared/check_board_specs.py
+      # Every drawing, model, schematic and picture against its metadata
+      # record. The identity patterns come from the KLEIDOS_DENY_EXTRA secret;
+      # until it is set the check warns and looks for the generic classes
+      # only. Once it is, add --require-identity so a missing list fails.
+      - name: Embedded metadata
+        env:
+          KLEIDOS_DENY_EXTRA: ${{ secrets.KLEIDOS_DENY_EXTRA }}
+        run: python3 _shared/check_metadata.py
       - name: Tests, the board models' apart
         run: python3 -m pytest -rs -m "not models" tests
 

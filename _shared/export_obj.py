@@ -32,6 +32,14 @@ zeros dropped (positions 4, normals 4, texture coordinates 5, colours 4), LF
 line endings, the GLB's order throughout. The header names the GLB and its
 SHA-256, so an OBJ says which master it was written from.
 
+Each file opens with its embedded metadata (``media_meta.obj_header`` and
+``mtl_header``, from the file's record): the SPDX tags ``REUSE.toml`` states
+for it, then, between REUSE's ignore markers, its title, description,
+address, project and terms (the license with its URL, the credits of the
+model's parts, the trademark notes). Only that block comes from somewhere
+other than the GLB: the board's ``board.json``, its ``model/spec.json`` and
+``REUSE.toml``.
+
 The builder (``build_board_glb.py``) runs this whenever it writes a board's
 master and records the two files' digests in ``model/source.json`` under
 ``obj``; ``tests/test_board_model_obj.py`` fails when the committed files or
@@ -59,11 +67,12 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import model_raster  # noqa: E402  (beside this file; -I leaves it off the path)
+import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
+import model_raster  # noqa: E402
 from paths import BOARDS, ROOT  # noqa: E402
 
 #: Bumped when the same GLB would give other bytes.
-EXPORTER_VERSION = '1.0.0'
+EXPORTER_VERSION = '1.1.0'
 #: Decimal places of each kind of number written.
 POSITION_PLACES, NORMAL_PLACES, UV_PLACES, COLOR_PLACES = 4, 4, 5, 4
 
@@ -108,9 +117,9 @@ def glb_json(data: bytes) -> dict:
     return json.loads(data[20:20 + length])
 
 
-def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict) -> str:
-    """The material library: every material of the GLB, in its order."""
-    out = [f'# {board}: materials of {Path(glb_name).stem}.obj, written from {glb_name} '
+def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict, head: list[str]) -> str:
+    """The material library: its metadata *head*, then every material of the GLB, in its order."""
+    out = [*head, f'# {board}: materials of {Path(glb_name).stem}.obj, written from {glb_name} '
            f'by _shared/export_obj.py {EXPORTER_VERSION}',
            f'# Source: {glb_name}, sha256 {glb_sha}',
            '# Kd: base colour in sRGB; d: alpha (1 opaque); Pr, Pm: roughness and metalness '
@@ -146,8 +155,9 @@ def export(glb_path: Path, board: str) -> tuple[bytes, bytes, dict]:
     vertices = sum(len(m.positions) for m in meshes)
     triangles = sum(len(m.faces) for m in meshes)
     objects = len({m.name for m in meshes})
-    copyright_ = js.get('asset', {}).get('copyright')
-    head = [f'# {board}: Wavefront OBJ written from {glb_path.name} by _shared/export_obj.py '
+    obj_path, mtl_path = paths(glb_path)
+    head = [*media_meta.obj_header(media_meta.record(rel(obj_path))),
+            f'# {board}: Wavefront OBJ written from {glb_path.name} by _shared/export_obj.py '
             f'{EXPORTER_VERSION}',
             f'# Source: {glb_path.name}, sha256 {sha}',
             '# Units: millimetres (1 unit = 1 mm), as measurements.json; the GLB stores metres.',
@@ -155,8 +165,6 @@ def export(glb_path: Path, board: str) -> tuple[bytes, bytes, dict]:
             'right.',
             f'# {objects} objects, {vertices} vertices, {triangles} triangles; '
             f'materials in {stem}.mtl.']
-    if copyright_:
-        head.append(f'# {" ".join(copyright_.split())}')
     head.append(f'mtllib {stem}.mtl')
     lines = head
     normal_index: dict[str, int] = {}
@@ -192,7 +200,8 @@ def export(glb_path: Path, board: str) -> tuple[bytes, bytes, dict]:
         if mesh.uv is not None:
             vt_base += len(mesh.uv)
     obj = ('\n'.join(lines) + '\n').encode()
-    mtl = mtl_text(board, glb_path.name, sha, js).encode()
+    mtl = mtl_text(board, glb_path.name, sha, js,
+                   media_meta.mtl_header(media_meta.record(rel(mtl_path)))).encode()
     counts = {'objects': objects, 'vertices': vertices, 'normals': len(normal_index),
               'triangles': triangles, 'materials': len(js.get('materials', []))}
     return obj, mtl, counts

@@ -43,6 +43,18 @@ SPDX-FileCopyrightText = ["2026 José M. Requena Plens <jmrplens@kleidos.dev>",
                           "2021 M5Stack"]
 SPDX-License-Identifier = "MIT"
 
+# This project's own model files whose text quotes the credits of a model's
+# parts (a spec's and a record's copyright fields, an OBJ's or an MTL's
+# metadata block): REUSE would read each quoted credit as a copyright notice
+# of the file, so the license and the holder are stated here alone. The
+# M5Stack models' OBJs take the row above. The metadata writers' golden files
+# (tests/fixtures/meta/) quote such notices too, as test data.
+[[annotations]]
+path = ["*/model/*.json", "*/model/*.mtl", "tdeck-plus/model/*.obj", "tests/fixtures/meta/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-License-Identifier = "MIT"
+
 # Inter 4.1, unmodified (fonts/VERSIONS.md).
 [[annotations]]
 path = ["fonts/inter/**"]

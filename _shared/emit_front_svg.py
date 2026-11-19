@@ -92,6 +92,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, List, Tuple
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
+
 ROOT = Path(__file__).resolve().parent.parent
 
 MARGIN_LEFT_MM = 12.0
@@ -3602,7 +3605,17 @@ def namespace_ids(body: str, prefix: str) -> str:
 
 def contact_sheet_tile(device_id: str, front_svg: str, tile_x: float,
                        tile_y: float) -> str:
-    """One tile: its frame, then the front scaled into the inner box."""
+    """One tile: its frame, then the front scaled into the inner box.
+
+    The front's own metadata (its SPDX comment, description and RDF block)
+    stays in its file: the tile keeps only its title, the sheet has its own.
+    """
+    title = re.search(r"<title\b[^>]*>([^<]*)</title>", front_svg)
+    front_svg = media_meta.unstamp_svg(front_svg)
+    if title:
+        front_svg = re.sub(r"(<svg\b[^>]*>\n)",
+                           lambda m: m.group(1) + f"<title>{title.group(1)}</title>\n",
+                           front_svg, count=1)
     match = _SVG_ROOT_RE.match(front_svg)
     if not match:
         raise ValueError(f"{device_id}: front.svg has no <svg> root")
@@ -3640,7 +3653,6 @@ def build_contact_sheet(fronts: List[Tuple[str, str]]) -> str:
         f'viewBox="0 0 {f(sheet_w)} {f(sheet_h)}" width="{SHEET_PIXEL_W}" '
         f'height="{pixel_h}" shape-rendering="geometricPrecision" '
         'font-family="Inter, Helvetica, Arial, sans-serif">\n',
-        '<title>Kleidos device front.svg contact sheet</title>\n',
         f'<rect x="0" y="0" width="{f(sheet_w)}" height="{f(sheet_h)}" '
         'fill="#f6f7f9"/>\n',
         text(SHEET_MARGIN, 21.0, "Kleidos front.svg assets", size=6.0,
@@ -3657,7 +3669,7 @@ def build_contact_sheet(fronts: List[Tuple[str, str]]) -> str:
             SHEET_MARGIN + col * (SHEET_TILE_W + SHEET_GAP),
             SHEET_TOP + row * (SHEET_TILE_H + SHEET_GAP)))
     out.append(SVG_CLOSE)
-    return "".join(out)
+    return media_meta.stamp_svg("".join(out), media_meta.record(CONTACT_SHEET_PATH.name))
 
 
 def write_contact_sheet() -> None:
@@ -3694,6 +3706,8 @@ def main(argv: List[str]) -> int:
             spec.device_id, spec.name, spec.body_w, spec.body_h,
             **spec.builder_kwargs,
         )
+        svg = media_meta.stamp_svg(
+            svg, media_meta.record(out_path.relative_to(ROOT).as_posix()))
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(svg, encoding="utf-8")
         print(f"ok  {spec.device_id:<22s}  {spec.body_w}×{spec.body_h} mm")

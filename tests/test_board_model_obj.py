@@ -80,7 +80,9 @@ def test_the_obj_and_mtl_are_what_the_glb_gives(board: str) -> None:
         assert hashlib.sha256(data).hexdigest() == obj[f"{kind}_sha256"]
         assert len(data) == obj[f"{kind}_bytes"]
         assert b"\r" not in data and data.endswith(b"\n")
-    header = (ROOT / obj["obj"]).read_text(encoding="utf-8").splitlines()[:8]
+    # the leading comments: the metadata block, then the exporter's header
+    lines = (ROOT / obj["obj"]).read_text(encoding="utf-8").splitlines()
+    header = lines[:next(i for i, line in enumerate(lines) if not line.startswith("#"))]
     assert f"# Source: {board}.glb, sha256 {rec['model_sha256']}" in header
     assert any(line.startswith("# Units: millimetres") for line in header)
     assert obj["triangles"] == rec["triangles"] and obj["materials"] == rec["materials"]

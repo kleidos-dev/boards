@@ -71,7 +71,7 @@ def write(js, bin_):
     body = bytearray(bin_)
     while len(body) % 4:
         body.append(0)
-    text = json.dumps(js, separators=(',', ':')).encode()
+    text = json.dumps(js, separators=(',', ':'), ensure_ascii=False).encode()
     while len(text) % 4:
         text += b' '
     total = 12 + 8 + len(text) + 8 + len(body)

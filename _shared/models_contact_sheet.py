@@ -14,23 +14,37 @@ The glass carries a test card through the ``screen`` mesh's UVs (blue quadrant
 on the image's top-left, with a white corner mark), so the sheet also shows
 that a capture would read upright on every board.
 
+The PNG carries the sheet's embedded metadata (``media_meta.png_with_metadata``:
+its title, author, description, copyright, license and address as text
+chunks, and the same as an XMP packet, before the image data); Pillow is given
+no text and no color profile. ``models-contact-sheet.json`` records the PNG's
+digest beside the digests of the models it was drawn from, so a model rebuilt
+since is a sheet to draw again (``tests/test_media_metadata.py``).
+
 Needs numpy and Pillow (the builder's numpy, plus ``pip install pillow==13.0.0``).
 The output is the same bytes for the same models and these versions.
 
 Usage::
 
     python -I _shared/models_contact_sheet.py \\
-        [--out models-contact-sheet.png] [--ppm 5]
+        [--out models-contact-sheet.png] [--ppm 5] [--check]
+
+``--check`` draws the sheet into a temporary file and exits 1 when it is not
+the committed one, byte for byte.
 """
 
 import argparse
+import hashlib
+import io
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+import media_meta  # noqa: E402
 import model_raster  # noqa: E402
 import numpy as np  # noqa: E402
 from PIL import Image, ImageDraw, ImageFont  # noqa: E402
@@ -47,6 +61,8 @@ MUTED = (110, 110, 116)
 SUPERSAMPLE = 3
 GAP_MM = 9.0
 MARGIN_MM = 8.0
+SHEET = 'models-contact-sheet.png'
+RECORD = 'models-contact-sheet.json'
 
 
 def board_entry(board):
@@ -74,7 +90,17 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n', 1)[0])
     parser.add_argument('--out', type=Path, default=CAD / 'models-contact-sheet.png')
     parser.add_argument('--ppm', type=float, default=5.0, help='pixels per mm (default 5)')
+    parser.add_argument('--check', action='store_true',
+                        help='draw into a temporary file and compare it with the committed sheet')
     args = parser.parse_args(argv)
+    if args.check:
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / SHEET
+            code = main(['--out', str(out), '--ppm', str(args.ppm)])
+            same = code == 0 and out.read_bytes() == (CAD / SHEET).read_bytes()
+        print(('PASS: ' if same else 'FAIL: ') + f'{SHEET} is '
+              + ('' if same else 'not ') + 'what the models give')
+        return 0 if same else 1
     ppm = args.ppm
     entries = [board_entry(b) for b in BOARDS]
     for e in entries:
@@ -133,10 +159,29 @@ def main(argv=None):
               font=small_font, fill=INK)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
+    buffer = io.BytesIO()
     sheet.quantize(colors=256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(
-        args.out, optimize=True)
-    print(f'wrote {args.out}: {sheet.size[0]}x{sheet.size[1]}, {args.out.stat().st_size} bytes')
+        buffer, format='PNG', optimize=True)
+    data = media_meta.png_with_metadata(buffer.getvalue(), media_meta.record(SHEET))
+    args.out.write_bytes(data)
+    if args.out.resolve() == (CAD / SHEET).resolve():
+        (CAD / RECORD).write_text(json.dumps(sheet_record(data, entries, ppm), indent=2,
+                                             ensure_ascii=False) + '\n', encoding='utf-8')
+    print(f'wrote {args.out}: {sheet.size[0]}x{sheet.size[1]}, {len(data)} bytes')
     return 0
+
+
+def sheet_record(data, entries, ppm):
+    """What ``models-contact-sheet.json`` records: the PNG and the models it was drawn from."""
+    return {
+        'sheet': SHEET,
+        'sha256': hashlib.sha256(data).hexdigest(),
+        'bytes': len(data),
+        'ppm': ppm,
+        'models': {e['board']: {'model': str(e['glb'].relative_to(REPO).as_posix()),
+                                'model_sha256': hashlib.sha256(e['glb'].read_bytes()).hexdigest()}
+                   for e in entries},
+    }
 
 
 if __name__ == '__main__':
