@@ -30,12 +30,12 @@ title_block:
   comments:
     - "Sources: M5Stack CoreInk schematic (coreink_sch.pdf) and docs; README.md"
     - "Values as documented. Layout and symbols: Kleidos boards"
-    - "License: MIT. github.com/kleidos-dev/boards"
 
 revisions:
   - {rev: 1, date: "2026-11-17", change: "First drawing: every part, pin and net, connectivity documented from the vendor's public documentation; contents, page/zone links, power tree, nets and signals, parts list (no part on the print is marked not fitted, so none carries a DNP mark), no script in the PDF."}
   - {rev: 2, date: "2026-11-17", change: "Kleidos additions K1-K28, listed above: U1's four NC pins, the ESP32 strapping, input-only, RTC and in-package flash pins, the panel's reads on GPIO23, the RTC address, three rails."}
   - {rev: 3, date: "2026-11-17", change: "K29: the status LED on GPIO10 is green, lit when the pin is low. An entry is marked wherever an index page shows its element again; a pin on no net says what it is on the nets page; the title block says the drawing carries entries."}
+  - {rev: 4, date: "2026-11-19", change: "The Kleidos drawing sheet, its mark in the title block."}
 
 grounds:
   GND: kleidos:GND

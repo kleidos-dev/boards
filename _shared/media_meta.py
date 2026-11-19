@@ -53,6 +53,10 @@ TRADEMARK_NOTE_M5 = ('M5Stack and M5 are trademarks of their owner; Kleidos is n
 TRADEMARK_NOTE_LILYGO = ('LILYGO and T-Deck are trademarks of their owner; Kleidos is not '
                          'affiliated with LILYGO.')
 TRADEMARK_BY_VENDOR = {'M5Stack': TRADEMARK_NOTE_M5, 'LILYGO': TRADEMARK_NOTE_LILYGO}
+TRADEMARK_NOTE_KLEIDOS = 'The Kleidos name and logo are subject to the terms in TRADEMARKS.md.'
+#: Every schematic PDF's title block shows the Kleidos mark, from the KiCad kit's drawing sheet.
+CREDIT_MARK = ('Title-block mark: the Kleidos mark, \u00a9 2026 Jos\u00e9 M. Requena Plens, GPL-3.0-or-later, '
+               "placed unchanged under the press permission in brand's TRADEMARKS.md.")
 
 REPO = 'boards'
 REPO_URL = 'https://github.com/kleidos-dev/boards'
@@ -405,7 +409,8 @@ def record(path: str | Path) -> MediaMeta:
                          "vendor's public documentation, with Kleidos additions and corrections "
                          'listed on page 1.'),
             alt=f'Schematic of the {who}.', keywords=_board_keywords(ident, 'schematic', 'KiCad'),
-            digital_source_type=None, media_type='application/pdf', trademarks=tm,
+            digital_source_type=None, media_type='application/pdf', credits=(CREDIT_MARK,),
+            trademarks=(*tm, TRADEMARK_NOTE_KLEIDOS),
             content_date=schematic_date(board), **common))
     if m.group('model') != board:
         raise MetaError(f'{rel}: no metadata record for this path')

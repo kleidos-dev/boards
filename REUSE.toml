@@ -59,6 +59,27 @@ precedence = "override"
 SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
 SPDX-License-Identifier = "MIT"
 
+# The Kleidos KiCad kit, byte copies of the brand repository's kicad/ at the
+# commit _shared/kicad/KIT.json records (written by brand's
+# tools/sync_kicad.py; never edited here). The two drawing sheets embed the
+# Kleidos mark, brand's artwork, under the GNU GPL version 3 or later with
+# brand's additional terms (TRADEMARKS.md there); the schematic PDFs show it
+# placed unchanged under brand's press permission and keep this project's
+# MIT License.
+[[annotations]]
+path = ["_shared/kicad/*.kicad_wks"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# The rest of the kit: the color themes, the resolved style, the helper that
+# runs kicad-cli with it and the manifest, MIT in brand as here.
+[[annotations]]
+path = ["_shared/kicad/*.json", "_shared/kicad/*.py"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-License-Identifier = "MIT"
+
 # Inter 4.1, unmodified (fonts/VERSIONS.md).
 [[annotations]]
 path = ["fonts/inter/**"]

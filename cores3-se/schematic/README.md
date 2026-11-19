@@ -2,7 +2,7 @@
 
 Kleidos boards: the CoreS3-SE's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net of the SE's netlist, with the values the vendor documents, laid out with this project's own layout and symbols. It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the filter and decoupling parts on each interface, every rail and what feeds it, the ESP32-S3 GPIO of every signal and the AW9523B expander pin of every control line.
 
-[`cores3-se.pdf`](cores3-se.pdf) has the ten pages, made to be read on a screen and followed by clicking (below); the export also writes one SVG per page into `svg/`, which git does not keep. Both are drawn in the Kleidos dark theme ([`_shared/kicad-theme-kleidos-dark.json`](../../_shared/kicad-theme-kleidos-dark.json)): graphite ground, parts in light grey, connections in cyan.
+[`cores3-se.pdf`](cores3-se.pdf) has the ten pages, made to be read on a screen and followed by clicking (below); the export also writes one SVG per page into `svg/`, which git does not keep. Both are drawn with the Kleidos KiCad kit ([`_shared/kicad/`](../../_shared/kicad/), copied from the brand repository): the dark theme (graphite ground, parts in light grey, connections in cyan) and the Kleidos drawing sheet, whose title block carries the Kleidos mark, the license and the source address.
 
 | Page | Sheet | What is on it |
 | --- | --- | --- |

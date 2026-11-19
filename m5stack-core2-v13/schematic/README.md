@@ -2,7 +2,7 @@
 
 Kleidos boards: the Core2 v1.3's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net of the two schematic sheets M5Stack publishes for this board, with the values printed there, laid out with this project's own layout and symbols, and 27 details the print leaves out or gets wrong, each settled by a datasheet, the vendor's own documents, the Kleidos firmware on this board or a bench probe, marked where it is drawn and listed below with its source. It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the decoupling and filter parts on each interface, every rail and what feeds it, and the ESP32 GPIO of every signal.
 
-[`m5stack-core2-v13.pdf`](m5stack-core2-v13.pdf) has the nine pages, made to be read on a screen and followed by clicking (below); the export also writes one SVG per page into `svg/`, which git does not keep. Both are drawn in the Kleidos dark theme ([`_shared/kicad-theme-kleidos-dark.json`](../../_shared/kicad-theme-kleidos-dark.json)): graphite ground, parts in light grey, connections in cyan.
+[`m5stack-core2-v13.pdf`](m5stack-core2-v13.pdf) has the nine pages, made to be read on a screen and followed by clicking (below); the export also writes one SVG per page into `svg/`, which git does not keep. Both are drawn with the Kleidos KiCad kit ([`_shared/kicad/`](../../_shared/kicad/), copied from the brand repository): the dark theme (graphite ground, parts in light grey, connections in cyan) and the Kleidos drawing sheet, whose title block carries the Kleidos mark, the license and the source address.
 
 | Page | Sheet | What is on it |
 | --- | --- | --- |
