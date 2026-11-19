@@ -43,8 +43,8 @@ jobs:
           # The checkers the selftests plant defects in, and their fixtures.
           # shellcheck disable=SC2034
           checkers='^(_shared/[^/]+\.py$|_shared/fixtures/|requirements\.txt$|tests/(conftest|test_board_model_legends)\.py$|\.github/workflows/check\.yml$)'
-          # Code under _shared/ that neither builds nor checks a model.
-          neither='^_shared/(kicad_schematic|export_schematic|check_schematic|check_schematic_links|schematic_pdf|check_board_specs|check_public_tree)\.py$'
+          # Code under _shared/ that neither builds nor checks a model, and the KiCad kit.
+          neither='^_shared/((kicad_schematic|export_schematic|check_schematic|check_schematic_links|schematic_pdf|check_board_specs|check_public_tree)\.py|kicad/.*)$'
           if [[ "$EVENT" != push && "$EVENT" != pull_request ]] || [[ -z "$BASE" || "$BASE" =~ ^0+$ ]] \
              || ! changed=$(git diff --name-only "$BASE" "$HEAD"); then
             echo "models=true" >> "$GITHUB_OUTPUT"
@@ -193,5 +193,5 @@ jobs:
               exit 1
             fi
           done
-      - name: Schematic tests, the generator included
-        run: python3 -m pytest -rs tests/test_schematic.py
+      - name: Schematic tests, the generator and the KiCad kit included
+        run: python3 -m pytest -rs tests/test_schematic.py tests/test_kicad_kit.py

@@ -65,39 +65,54 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
+import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from brand: kicad/KIT.json)
 from paths import ROOT  # noqa: E402
 
-GRID = 1.27
-PITCH = 2.54
-PIN_LEN = 2.54
-STUB = 2.54
+# The style's numbers come from the kit (kicad/style.json): the grid, the pin
+# pitch and length, the stub, the text sizes, the one line width, the zone
+# grid and the title block of the drawing sheet, the explicit colours.
+STYLE = kit.style()
+GRID = STYLE["lines"]["grid"]
+PITCH = STYLE["lines"]["pin_pitch"]
+PIN_LEN = STYLE["lines"]["pin_length"]
+STUB = STYLE["lines"]["stub"]
 CHAR_W = 1.12          # an estimate of KiCad's stroke font advance at 1.27 mm (with margin)
 LABEL_CHAR_W = 1.1     # a global label's length per character of its name
 LABEL_PAD = 1.6        # ... plus its outline's (both fitted on rendered labels of 6 to 13 characters)
-FONT = 1.27
+FONT = STYLE["text"]["body"]
 ROW = 8.89             # pitch of the flat two-pin rows
 GAP = 7.62             # between items in a row, between rows in a block
 COL_GAP = 7.62         # between columns of two-pin rows
 BLOCK_PAD = 5.08
 SHEET_GAP = 7.62
-REF_FONT = 1.0        # the "[n]" page links after a label
+REF_FONT = STYLE["text"]["small"]       # the "[n]" page links after a label
 REF_CHAR_W = 0.95      # their advance per character at REF_FONT (with margin)
 REF_GAP = 0.8
-ROOT_FONT = 1.75      # the contents page's running text
-LINE_PITCH = 1.7      # a multi-line text's line pitch, per unit of its size
+ROOT_FONT = STYLE["text"]["running"]   # the contents page's running text
+LINE_PITCH = STYLE["text"]["line_pitch"]   # a multi-line text's line pitch, per unit of its size
 # Wires and pin lines, in mils: one width for every connection. kicad-cli draws a
 # symbol's pins (and any symbol line left at the default width) at its own fixed
 # symbol line width, 6 mil, whatever the project's default line thickness says
 # (SCH_ITEM::GetEffectivePenWidth takes m_SymbolLineWidth for an item of a
 # library symbol, and the CLI never sets it); a pin has no width of its own. So
 # the wires take the pins' 6 mil, and a wire never meets a thinner pin.
-LINE_MIL = 6
+LINE_MIL = STYLE["lines"]["connection_mil"]
+BUS_MIL = STYLE["lines"]["bus_mil"]
 PAPER = {"A4": (297.0, 210.0), "A3": (420.0, 297.0), "A2": (594.0, 420.0)}
-# The zone grid KiCad's default drawing sheet prints in the border: columns
-# numbered from 1 and rows lettered from A, every 50 mm from the frame's outer
-# corner at (10, 10) mm. A cross-reference names a place as "page/zone": 3/C4.
-ZONE_ORIGIN = 10.0
-ZONE_STEP = 50.0
+# The zone grid the kit's drawing sheet prints in the border (KiCad's default
+# geometry): columns numbered from 1 and rows lettered from A, every 50 mm from
+# the frame's outer corner at (10, 10) mm. A cross-reference names a place as
+# "page/zone": 3/C4.
+ZONE_ORIGIN = float(STYLE["sheet"]["margin"])
+ZONE_STEP = float(STYLE["sheet"]["zone_step"])
+# What the title block takes from a page's right-bottom corner: nothing is
+# placed right of KEEPOUT_X and below KEEPOUT_Y mm from it; the page row
+# ("Page 3 of 9") goes NAV_X, NAV_Y mm from it, above the block.
+KEEPOUT_X = float(STYLE["sheet"]["keepout"]["right"])
+KEEPOUT_Y = float(STYLE["sheet"]["keepout"]["bottom"])
+NAV_X = float(STYLE["sheet"]["page_row"]["right"])
+NAV_Y = float(STYLE["sheet"]["page_row"]["bottom"])
 # Where a link's destination puts its target in the reader's window: the
 # target sits this far (mm) right of the window's left edge and below its top,
 # at this zoom (2.0: the 1.27 mm text reads at about 7 pt). The PDF step
@@ -105,7 +120,7 @@ ZONE_STEP = 50.0
 VIEW_LEFT = 30.0
 VIEW_TOP = 20.0
 VIEW_ZOOM = 2.0
-TABLE_PITCH = 2.54     # row pitch of the index pages' tables
+TABLE_PITCH = STYLE["text"]["table_row"]     # row pitch of the index pages' tables
 TABLE_GAP = 2.54       # between two columns of a table
 # Kleidos additions and corrections (``kleidos`` in netlist.yaml): what the
 # drawing shows beyond the vendor's print, or differently from it, each with its
@@ -114,8 +129,8 @@ TABLE_GAP = 2.54       # between two columns of a table
 # the contents page; an added connection's wires are also dotted, at the one
 # wire width (a pin that carries its label at its end gets a stub to show it).
 # A correction takes the marker only.
-MARK_COLOUR = (255, 184, 0)
-MARK_FONT = 1.0
+MARK_COLOUR = kit.explicit("dark")["addition"]
+MARK_FONT = STYLE["text"]["small"]
 MARK_CHAR_W = 1.1      # a marker's advance per character (bold, with margin)
 MARK_GAP = 1.5         # from what it follows
 TREE_MARK = 1.1        # a power-tree box's markers: this far above its top edge
@@ -134,7 +149,12 @@ ADD_SUBTITLE = "with Kleidos additions and corrections"
 ADD_BLOCK_LINE = "With Kleidos additions and corrections, listed on page 1"
 ADD_HEAD = ["Id", "Kind", "What", "Source"]   # the additions table, page 1 and its continuation
 ADD_WRAPS = [None, None, 56, 48]
-BLOCK_LINES = 4        # the comments KiCad's default drawing sheet prints in the title block
+BLOCK_LINES = STYLE["sheet"]["comment_lines"]   # the comments the kit's drawing sheet prints in the title block
+RULE_COLOUR = kit.explicit("dark")["rule"]      # a table's and the power tree's rules
+# What every page's title block prints from the project (kit.cell_findings
+# holds each line to its cell): the license and where the files live.
+LICENSE = "MIT"
+SOURCE_URL = "github.com/kleidos-dev/boards"
 NC_TEXT = "not connected"      # a pin on no net, in the GPIO tables
 
 
@@ -175,6 +195,23 @@ def not_fitted(value) -> bool:
     or says DNP as a word (DNP, RF_C(TBD:DNP))."""
     v = str(value).upper()
     return v.split("(")[0].strip() == "NC" or bool(re.search(r"(?<![A-Z0-9])DNP(?![A-Z0-9])", v))
+
+
+def title_block_lines(lay: dict, adds: bool) -> list[tuple[str, str]]:
+    """Every line the title blocks of a board print, with the kit's cell it goes in."""
+    tb = lay.get("title_block") or {}
+    lines = [("comments", str(tb.get("company", "")))]
+    lines += [("comments", str(c)) for c in list(tb.get("comments", [])) + ([ADD_BLOCK_LINE] if adds else [])]
+    titles = [(lay.get("root") or {}).get("title", "")] + [sh.get("name", "") for sh in lay.get("sheets", [])]
+    lines += [("title", f"{tb.get('title', '')}: {t}") for t in titles]
+    lines += [("file", sh["file"]) for sh in lay.get("sheets", []) if "file" in sh]
+    lines += [("license", LICENSE), ("source", SOURCE_URL)]
+    return lines
+
+
+def title_block_errors(lay: dict, adds: bool) -> list[str]:
+    """The title-block lines wider than their cell of the kit's drawing sheet."""
+    return kit.cell_findings(title_block_lines(lay, adds))
 
 
 def gpio_maps(net: dict, sh: dict) -> list[dict]:
@@ -1001,6 +1038,10 @@ class Builder:
         missing = sorted(set(self.comps) - set(where))
         if missing:
             raise SystemExit(f"components placed nowhere: {', '.join(missing)}")
+        wide = title_block_errors(self.lay, bool(self.adds))
+        if wide:
+            raise SystemExit("layout.yaml title_block: a line wider than its cell, which KiCad would condense:\n  "
+                             + "\n  ".join(wide))
         sheets_of: dict[str, set] = {}
         for ref, c in self.comps.items():
             for net in c["pins"].values():
@@ -1433,7 +1474,7 @@ class Builder:
         out: list = []
         W, H = PAPER[self.lay.get("paper", "A3")]
         margin = 12.7
-        sky = Skyline(margin, W - margin, margin, floor=H - 10.0, keepout=(W - 125.0, H - 48.0))
+        sky = Skyline(margin, W - margin, margin, floor=H - 10.0, keepout=(W - KEEPOUT_X, H - KEEPOUT_Y))
         for blk in sh["blocks"]:
             bitems, bbox, y = [], Box(), 0.0
             for row in blk["rows"]:
@@ -1464,7 +1505,7 @@ class Builder:
                         [Sym("uuid"), self.uid("frame", sh["file"], blk["title"])]])
             out.append([Sym("text"), blk["title"], [Sym("exclude_from_sim"), Sym("no")], at(bx + 1.905, by + 1.905, 0),
                         effects(2.0, justify="left top", bold=True), [Sym("uuid"), self.uid("title", sh["file"], blk["title"])]])
-            if bx + bw > W - 125.0 and by + bh > H - 48.0 and "at" not in blk:
+            if bx + bw > W - KEEPOUT_X and by + bh > H - KEEPOUT_Y and "at" not in blk:
                 print(f"warning: {sh['file']}: block {blk['title']!r} reaches into the title block's corner",
                       file=sys.stderr)
             if bx + bw > W - 5 or by + bh > H - 5:
@@ -1472,7 +1513,7 @@ class Builder:
                       f"({bx + bw:.0f} x {by + bh:.0f} mm of {W:.0f} x {H:.0f})", file=sys.stderr)
         for k, net in enumerate(sh.get("pwr_flags", [])):
             out += self.pwr_flag(net, snap(W - 130), snap(H - 45 - 17.78 * k))   # stacked, clear of the page row
-        out += self.nav(W - 112.0, H - 47.0, page)
+        out += self.nav(W - NAV_X, H - NAV_Y, page)
         return self.sheet_header(sh["name"]) + out + [[Sym("embedded_fonts"), Sym("no")]]
 
     # --- the index pages: tables of text, every place in them a link
@@ -1566,10 +1607,10 @@ class Builder:
         for t in tables:
             w = sum(t["widths"]) - TABLE_GAP
             h = 4.445 + (6.35 if t.get("sub") else 0) + TABLE_PITCH + 0.8 + t["lines"] * TABLE_PITCH
-            floor = H - 50.0 if x + w > W - 125.0 else H - 15.0
+            floor = H - 50.0 if x + w > W - KEEPOUT_X else H - 15.0
             if y > y0 and y + h > floor:
                 x, y = right + 10.16, y0
-                floor = H - 50.0 if x + w > W - 125.0 else H - 15.0
+                floor = H - 50.0 if x + w > W - KEEPOUT_X else H - 15.0
             if y + h > floor or x + w > W - 12.0:
                 print(f"warning: page {self.cur_page}: table {t['title']!r} runs off the sheet", file=sys.stderr)
             ty = self.heading(t["title"], x, y, items, t["title"], t.get("sub"))
@@ -1669,7 +1710,7 @@ class Builder:
         if sh.get("intro"):
             out.append(self.text(sh["intro"].strip(), 15.24, 25.4, FONT, "left", key=("intro",)))
         getattr(self, f"index_{sh['index']}")(sh, out)
-        out += self.nav(W - 112.0, H - 47.0, page)
+        out += self.nav(W - NAV_X, H - NAV_Y, page)
         return self.sheet_header(sh["name"]) + out + [[Sym("embedded_fonts"), Sym("no")]]
 
     def index_parts(self, sh, items):
@@ -1847,7 +1888,7 @@ class Builder:
                           items, key=("tree", nid), right_to_left=True)
             boxes[nid] = (cx, cy, cx + bw)
             bottom = max(bottom, y_top + h)
-        grey = (136, 153, 170)
+        grey = RULE_COLOUR
         for a, b in tree["edges"]:
             self.check_edge(a, b)
             ax0, ay, ax1 = boxes[a]
@@ -2007,8 +2048,8 @@ class Builder:
                 return wraps, self.widths(head, rows, wraps), y + 6.35 + TABLE_PITCH + 0.8 + lines * TABLE_PITCH
 
             wraps, widths, y_end = laid(70)
-            if y_end > H - 48.0:      # it reaches down beside the title block: keep its text left of the block
-                room = W - 125.0 - (x + widths[0] + widths[1])
+            if y_end > H - KEEPOUT_Y:      # it reaches down beside the title block: keep its text left of the block
+                room = W - KEEPOUT_X - (x + widths[0] + widths[1])
                 wraps, widths, y_end = laid(max(30, int(room / CHAR_W)))
             if y_end > H - 12.0:
                 print("warning: contents page: the revision history runs off the sheet", file=sys.stderr)
@@ -2201,6 +2242,7 @@ PRO_TEMPLATE = """{
       "intersheets_ref_suffix": "]"
     },
     "legacy_lib_dir": "",
+    "page_layout_descr_file": "../../_shared/kicad/kleidos-dark.kicad_wks",
     "legacy_lib_list": []
   },
   "net_settings": {
@@ -2222,7 +2264,10 @@ PRO_TEMPLATE = """{
     "netclass_patterns": []
   },
   "sheets": [],
-  "text_variables": {}
+  "text_variables": {
+    "LICENSE": "@LICENSE@",
+    "SOURCE_URL": "@SOURCE_URL@"
+  }
 }
 """
 
@@ -2251,7 +2296,8 @@ def main(argv: list[str]) -> int:
     extra = "".join(f',\n      "{rule}": "ignore"' for rule in b.lay.get("erc_ignore") or [])
     (b.dir / f"{args.board}.kicad_pro").write_text(PRO_TEMPLATE.replace("@BOARD@", args.board)
         .replace("@ERC_EXTRA@", extra)
-        .replace("@LINE_MIL@", str(LINE_MIL)).replace("@BUS_MIL@", str(2 * LINE_MIL)), encoding="utf-8")
+        .replace("@LINE_MIL@", str(LINE_MIL)).replace("@BUS_MIL@", str(BUS_MIL))
+        .replace("@LICENSE@", LICENSE).replace("@SOURCE_URL@", SOURCE_URL), encoding="utf-8")
     print(f"wrote {len(files) + 3} files to {b.dir.relative_to(ROOT)}")
     return 0
 

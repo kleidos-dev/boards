@@ -9,11 +9,13 @@ Runs, in ``<board>/schematic/``:
    pin, every Kleidos addition or correction marked and listed, and what the
    index pages and the title blocks say of them;
 3. ``kicad-cli sch export pdf``: ``<board>.pdf``, every sheet, in the Kleidos
-   dark theme (``kicad-theme-kleidos-dark.json`` beside this script), with
+   dark theme and on the Kleidos drawing sheet (the kit in ``kicad/`` beside
+   this script, copied from brand: ``kicad/KIT.json``), with
    KiCad's page links (a sheet's box on the contents page, the ``[page/zone]``
    after a net label, the places in the index pages, the page row on every
    page), but without the property pop-ups, which only Acrobat's scripting
-   opens; then ``schematic_pdf.py`` sends each link that names a place to that
+   opens; every page must draw the kit's mark once, one image object for all;
+   then ``schematic_pdf.py`` sends each link that names a place to that
    place, adds a link on every part's reference to its row in the parts list,
    writes the named destinations and the bookmarks, and removes every script;
 4. ``kicad-cli sch export svg``: one SVG per sheet into ``svg/``, renamed to
@@ -21,15 +23,14 @@ Runs, in ``<board>/schematic/``:
 5. ``check_schematic_links.py``: every link of the PDF leads to the page,
    and the place, it should; no script; the bookmarks list every page.
 
-Two checks guard the theme. kicad-cli falls back to its default theme without a
-word when ``--theme`` names one it cannot find, so every SVG's background must
-be the theme's; and every line drawn in the wire colour (wires, pin lines,
+kicad-cli runs through the kit's ``kleidos_kicad.py``, the same way as in every
+Kleidos repository: a settings folder of its own (``KICAD_CONFIG_HOME``) that
+asks for English and holds the themes, so the output is the same on every
+machine; ``--theme``, ``--drawing-sheet`` and the kit's face on every export.
+Two checks guard the theme: kicad-cli falls back to its default theme without
+a word when ``--theme`` names one it cannot find, so every SVG's background
+must be the theme's; and every line drawn in the wire colour (wires, pin lines,
 junctions) must have the one width the project sets.
-
-kicad-cli prints in the language of the KiCad install's settings, and so does
-the PDF ("File:" under each sheet). The script runs it with a settings folder
-of its own (``KICAD_CONFIG_HOME``) that asks for English and holds the theme,
-so the output is the same on every machine.
 
 Usage::
 
@@ -45,7 +46,6 @@ import json
 import os
 import re
 import shutil
-import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -53,37 +53,24 @@ from pathlib import Path
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
+import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from brand)
 from check_schematic import additions, compare, index_pages  # noqa: E402
 from paths import ROOT  # noqa: E402
 
-THEME_FILE = Path(__file__).resolve().parent / "kicad-theme-kleidos-dark.json"
-THEME = "kleidos-dark"           # the name kicad-cli is given: the file's name in colors/
+GROUND = "dark"                  # what is published and committed
+THEME = kit.theme_name(GROUND)   # the name kicad-cli is given: the theme file's name in colors/
+THEME_FILE = kit.theme_file(GROUND)
+SHEET_FILE = kit.sheet(GROUND)
 
 
 def theme_colours() -> dict[str, str]:
     """The theme's schematic colours as SVG writes them (#RRGGBB)."""
-    data = json.loads(THEME_FILE.read_text(encoding="utf-8"))["schematic"]
-    out = {}
-    for key, val in data.items():
-        m = re.fullmatch(r"rgba?\((\d+), (\d+), (\d+)(?:, [\d.]+)?\)", str(val))
-        if m:
-            out[key] = "#" + "".join(f"{int(c):02X}" for c in m.groups())
-    return out
+    return kit.theme_colors(GROUND)
 
 
-def kicad_config() -> str:
-    """A KiCad settings folder holding the language (English) and the theme."""
-    home = Path(tempfile.mkdtemp(prefix="kicad-cfg-"))
-    for version in ("9.0", "10.0", "11.0"):
-        (home / version / "colors").mkdir(parents=True)
-        (home / version / "kicad_common.json").write_text(
-            json.dumps({"system": {"language": "English"}}), encoding="utf-8")
-        shutil.copyfile(THEME_FILE, home / version / "colors" / f"{THEME}.json")
-    return str(home)
-
-
-def run(cli: str, args: list[str], cwd: Path, env: dict) -> subprocess.CompletedProcess:
-    return subprocess.run([cli, *args], cwd=cwd, env=env, capture_output=True, text=True)
+def run(cli: str, args: list[str], cwd: Path, env: dict):
+    return kit.run(args, cwd, env, cli)
 
 
 def line_mil(folder: Path, board: str) -> float:
@@ -96,27 +83,10 @@ def line_mil(folder: Path, board: str) -> float:
 
 
 def check_svg(svg: Path, colours: dict[str, str], width_mm: float, wires: bool = True) -> list[str]:
-    """The page background is the theme's, and every wire-coloured line has one width."""
-    text = svg.read_text(encoding="utf-8")
-    errors = []
-    bg = re.search(r'<g style="fill:(#[0-9A-F]{6});[^>]*>\s*<rect x="0\.0+" y="0\.0+"', text)
-    if not bg or bg.group(1) != colours["background"]:
-        errors.append(f"{svg.name}: background {bg.group(1) if bg else 'missing'}, "
-                      f"the theme's is {colours['background']} (was the theme found?)")
-    wire = colours["wire"]
-    widths = set()
-    for m in re.finditer(r'<g style="([^"]*)"', text):
-        style = m.group(1)
-        if f"stroke:{wire};" in style and "fill:none" in style:
-            w = re.search(r"stroke-width:([\d.]+)", style)
-            if w:
-                widths.add(round(float(w.group(1)), 4))
-    if widths and widths != {round(width_mm, 4)}:
-        errors.append(f"{svg.name}: lines in the wire colour take widths {sorted(widths)} mm, "
-                      f"not only {width_mm:.4f}")
-    if wires and not widths:
-        errors.append(f"{svg.name}: no line in the wire colour {wire}")
-    return errors
+    """The page background is the theme's, and every wire-coloured line has one width (the kit's check)."""
+    if round(width_mm, 4) != round(kit.connection_mm(), 4):
+        return [f"{svg.name}: the project's line width {width_mm:.4f} mm is not the kit's {kit.connection_mm():.4f}"]
+    return kit.svg_findings(svg, GROUND, wires)
 
 
 def main(argv: list[str]) -> int:
@@ -129,7 +99,7 @@ def main(argv: list[str]) -> int:
     folder = ROOT / args.board / "schematic"
     out_dir = (args.out or folder).resolve()
     sch = f"{args.board}.kicad_sch"
-    env = dict(os.environ, KICAD_CONFIG_HOME=kicad_config())
+    env = kit.environment()
     tmp = Path(tempfile.mkdtemp())
 
     erc = tmp / "erc.rpt"
@@ -160,10 +130,15 @@ def main(argv: list[str]) -> int:
 
     out_dir.mkdir(parents=True, exist_ok=True)
     pdf = out_dir / f"{args.board}.pdf"
-    out = run(args.kicad_cli, ["sch", "export", "pdf", "--theme", THEME, "--exclude-pdf-property-popups",
-                               "-o", str(pdf), sch], folder, env)
+    out = kit.export_pdf(folder / sch, pdf, env, GROUND, args.kicad_cli)
     if out.returncode:
         print(out.stdout, out.stderr)
+        return 1
+    from pypdf import PdfReader
+    errors = kit.pdf_findings(PdfReader(pdf), GROUND)
+    for e in errors:
+        print(f"FAIL the mark: {e}")
+    if errors:
         return 1
     import schematic_pdf
     errors = schematic_pdf.finish(args.board, pdf)
@@ -173,7 +148,7 @@ def main(argv: list[str]) -> int:
         return 1
     svg_tmp = tmp / "svg"
     svg_tmp.mkdir()
-    out = run(args.kicad_cli, ["sch", "export", "svg", "--theme", THEME, "-o", str(svg_tmp), sch], folder, env)
+    out = kit.export_svg(folder / sch, svg_tmp, env, GROUND, args.kicad_cli)
     if out.returncode:
         print(out.stdout, out.stderr)
         return 1
@@ -196,7 +171,7 @@ def main(argv: list[str]) -> int:
     if errors:
         return 1
     print(f"theme: {THEME}, background {colours['background']} on every page; "
-          f"wires and pin lines {width_mm:.4f} mm")
+          f"wires and pin lines {width_mm:.4f} mm; the drawing sheet {SHEET_FILE.name}, the mark on every page")
     dest = out_dir / "svg"
     if dest.exists():
         shutil.rmtree(dest)

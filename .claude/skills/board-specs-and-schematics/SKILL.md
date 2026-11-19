@@ -32,6 +32,7 @@ This repository holds, for every board Kleidos runs on, its drawings, measuremen
    | `<board>/svg/back.svg`, a side's `svg/<face>.svg` | `_shared/emit_back_svg.py` | the board's prints (`_shared/board_faces.py` and the per-board modules beside it) |
    | `<board>/schematic/*.kicad_sch`, `<board>.kicad_sym`, `<board>.kicad_pro`, `sym-lib-table`, `links.json` | `_shared/kicad_schematic.py <board>` | `schematic/netlist.yaml`, `schematic/layout.yaml` |
    | `<board>/schematic/<board>.pdf` (and `schematic/svg/`, one SVG per page, ignored by git) | `_shared/export_schematic.py <board>` (kicad-cli 10.0.8) | the generated KiCad files |
+   | `_shared/kicad/` (the Kleidos KiCad kit: drawing sheets, themes, `style.json`, `kleidos_kicad.py`, `KIT.json`) | brand's `tools/sync_kicad.py --copy` | brand's `kicad/` |
    | `<board>/model/<board>.glb`, `model/source.json` | `_shared/build_board_glb.py <board>/model/spec.json` | `model/spec.json`, the legend groups of the board's drawings |
    | `<board>/model/<board>.obj`, `<board>/model/<board>.mtl` (and `obj` in `source.json`) | `_shared/export_obj.py`, run by the builder whenever it writes the master, or on its own (`--check` reports a stale file) | the master GLB |
    | `<board>/model/<board>-web.glb`, `model/web.json` | the same builder with `--web-px-per-mm` | the master and the scale the site draws the board at |

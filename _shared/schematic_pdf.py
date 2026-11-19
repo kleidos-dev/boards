@@ -25,8 +25,11 @@ schematic) and, with ``pypdf``:
   Info dictionary (title, author, subject, keywords, creator, producer and
   the title block's date as both dates, never the export's clock), the same
   facts as an uncompressed XMP stream, ``/Lang`` and ``/DisplayDocTitle``,
-  and a file identifier derived from the schematic's sources rather than a
-  random one (``metadata()``).
+  and a file identifier derived from the schematic's sources (its sheets, the
+  kit's theme, drawing sheet and style) rather than a random one
+  (``metadata()``);
+- puts every page's ``/Font`` dictionary in key order (``kleidos_kicad.sort_fonts``),
+  so the rewrite gives the same bytes on every run.
 
 Usage: ``python3 _shared/schematic_pdf.py <board> <pdf>`` (rewrites the PDF in
 place). ``export_schematic.py`` runs it after kicad-cli.
@@ -45,11 +48,14 @@ from pypdf.generic import (ArrayObject, BooleanObject, ByteStringObject, Decoded
                            TextStringObject)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
+import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from brand)
 import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
 from paths import ROOT  # noqa: E402
 
-#: The theme the PDF is drawn in, one of the sources its identifier is derived from.
-THEME_FILE = ROOT / "_shared" / "kicad-theme-kleidos-dark.json"
+#: What the PDF is drawn with besides its sheets, the sources its identifier is derived from too:
+#: the kit's theme, drawing sheet and style.
+KIT_FILES = (kit.theme_file("dark"), kit.sheet("dark"), kit.STYLE)
 
 PT = 72 / 25.4
 
@@ -118,11 +124,12 @@ def link(rect_pt, dest, alt: str) -> DictionaryObject:
 
 
 def sources_digest(board: str) -> hashlib._Hash:
-    """SHA-256 of what the PDF is drawn from: every sheet of the schematic, then the theme."""
+    """SHA-256 of what the PDF is drawn from: every sheet of the schematic, then the kit's theme, sheet and style."""
     digest = hashlib.sha256()
     for sheet in sorted((ROOT / board / "schematic").glob("*.kicad_sch")):
         digest.update(sheet.read_bytes())
-    digest.update(THEME_FILE.read_bytes())
+    for path in KIT_FILES:
+        digest.update(path.read_bytes())
     return digest
 
 
@@ -229,6 +236,7 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
                                     parent=top_item, fit=Fit.xyz(left, top, zoom))
     writer._root_object[NameObject("/PageMode")] = NameObject("/UseOutlines")
     metadata(writer, board)
+    kit.sort_fonts(writer)
     with open(pdf, "wb") as fh:
         writer.write(fh)
     return errors

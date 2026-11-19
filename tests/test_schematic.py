@@ -156,6 +156,7 @@ def test_the_generator_gives_back_the_committed_files(board, tmp_path):
     (copy / "_shared").mkdir(parents=True)
     for f in (ROOT / "_shared").glob("*.py"):
         shutil.copy(f, copy / "_shared" / f.name)
+    shutil.copytree(ROOT / "_shared" / "kicad", copy / "_shared" / "kicad")
     (copy / board / "schematic").mkdir(parents=True)
     for name in ("netlist.yaml", "layout.yaml"):
         shutil.copy(folder / name, copy / board / "schematic" / name)
@@ -564,7 +565,7 @@ def test_the_layout_leaves_the_subtitle_and_title_block_wording_to_the_generator
     lay["root"]["subheading"] += f", {ks.ADD_SUBTITLE}"
     assert any("root subheading" in e and "the generator's to add" in e for e in ks.additions_errors(net, lay))
     net, lay = _with_additions()
-    lay["title_block"]["comments"] = lay["title_block"]["comments"][:3] + [ks.ADD_BLOCK_LINE]
+    lay["title_block"]["comments"] = (lay["title_block"]["comments"] + ["One more line"] * 3)[:3] + [ks.ADD_BLOCK_LINE]
     errors = ks.additions_errors(net, lay)
     assert any("title_block" in e and "the generator's to add" in e for e in errors)
     assert any("the drawing sheet prints" in e for e in errors)      # and no room is left for the generator's line
@@ -702,7 +703,7 @@ def test_an_entry_is_marked_wherever_an_index_page_shows_its_element_again(plant
     root = (folder / f"{ADD_BOARD}.kicad_sch").read_text(encoding="utf-8")
     assert f"public documentation, {ks.ADD_SUBTITLE}\"" in root
     for name in [f"{ADD_BOARD}.kicad_sch"] + [sh["file"] for sh in lay["sheets"]]:
-        assert f'(comment 4 "{ks.ADD_BLOCK_LINE}")' in (folder / name).read_text(encoding="utf-8"), name
+        assert re.search(r'\(comment \d "' + re.escape(ks.ADD_BLOCK_LINE) + r'"\)', (folder / name).read_text(encoding="utf-8")), name
 
 
 def _drop_text(path: Path, body: str, nth: int = 1):
@@ -746,7 +747,7 @@ def test_the_check_fails_index_pages_that_do_not_say_what_they_should(planted_re
     elif plant == "subtitle":
         top.write_text(top.read_text().replace(f", {ks.ADD_SUBTITLE}\"", '"', 1))
     elif plant == "title-block":
-        soc.write_text(soc.read_text().replace(f'(comment 4 "{ks.ADD_BLOCK_LINE}")', "", 1))
+        soc.write_text(re.sub(r'\(comment \d "' + re.escape(ks.ADD_BLOCK_LINE) + r'"\)', "", soc.read_text(), count=1))
     elif plant == "claims-without-entries":
         net = yaml.safe_load((folder / "netlist.yaml").read_text())
         net["kleidos"] = []
@@ -831,6 +832,8 @@ def planted_pdf(planted_repo):
     for f in (ROOT / "_shared").iterdir():
         if f.suffix in (".py", ".json"):
             shutil.copy(f, shared / f.name)
+    if not (shared / "kicad").exists():
+        shutil.copytree(ROOT / "_shared" / "kicad", shared / "kicad")
     # what the PDF's metadata is written from: the board's identity and REUSE's license
     shutil.copy(ROOT / ADD_BOARD / "board.json", planted_repo / ADD_BOARD / "board.json")
     shutil.copy(ROOT / "REUSE.toml", planted_repo / "REUSE.toml")
