@@ -1,5 +1,13 @@
 # SPDX-License-Identifier: MIT
-name: check
+#
+# The repository's gate on every push and pull request, in two stages
+# (the project's CI convention: cheap gates first, a failure skips what
+# depends on it):
+#
+#   📋 What changed ─┬─ 🔨 Board models        (when a model's inputs changed)
+#   🧪 Tree checks ──┼─ 🧪 Checker selftests   (when a checker changed)
+#                    └─ 🧫 Schematics          (unless only docs and models changed)
+name: CI
 
 on:
   push:
@@ -13,16 +21,22 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  # What a push or a pull request touched, for the two model jobs below. A
+  # What a push or a pull request touched, for the three heavy jobs below. A
   # scheduled or manual run, a push that opens a branch and anything git cannot
   # diff count as touching everything.
   changes:
+    name: "📋 What changed"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       models: ${{ steps.paths.outputs.models }}
       checkers: ${{ steps.paths.outputs.checkers }}
+      schematics: ${{ steps.paths.outputs.schematics }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -45,10 +59,13 @@ jobs:
           checkers='^(_shared/[^/]+\.py$|_shared/fixtures/|requirements\.txt$|tests/(conftest|test_board_model_legends)\.py$|\.github/workflows/check\.yml$)'
           # Code under _shared/ that neither builds nor checks a model, and the KiCad kit.
           neither='^_shared/((kicad_schematic|export_schematic|check_schematic|check_schematic_links|schematic_pdf|check_board_specs|check_public_tree)\.py|kicad/.*)$'
+          # The schematic job runs on any change but one that touches only
+          # prose and the 3D models' sources and contact sheets: those reach no
+          # schematic, so a docs-only change does not start KiCad.
+          noschematic='(\.md$|^[^/]+/(model|svg)/|^(models|fronts)-contact-sheet\.)'
           if [[ "$EVENT" != push && "$EVENT" != pull_request ]] || [[ -z "$BASE" || "$BASE" =~ ^0+$ ]] \
              || ! changed=$(git diff --name-only "$BASE" "$HEAD"); then
-            echo "models=true" >> "$GITHUB_OUTPUT"
-            echo "checkers=true" >> "$GITHUB_OUTPUT"
+            printf '%s\n' models=true checkers=true schematics=true >> "$GITHUB_OUTPUT"
             exit 0
           fi
           printf '%s\n' "$changed"
@@ -57,8 +74,14 @@ jobs:
             if printf '%s\n' "$relevant" | grep -Eq "${!name}"; then hit=true; else hit=false; fi
             echo "$name=$hit" | tee -a "$GITHUB_OUTPUT"
           done
+          if printf '%s\n' "$changed" | grep -Evq "$noschematic"; then hit=true; else hit=false; fi
+          echo "schematics=$hit" | tee -a "$GITHUB_OUTPUT"
 
+  # The cheap gate every heavy job below waits for: licences, the public
+  # tree, the specifications, the embedded metadata and the tests but the
+  # models'.
   check:
+    name: "🧪 Tree checks and tests"
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -95,7 +118,8 @@ jobs:
   # request that touches a model's inputs. The limit leaves room: the set took
   # 22 minutes in a Linux container on a developer's machine (2026-11-17).
   models:
-    needs: changes
+    name: "🔨 Board models"
+    needs: [changes, check]
     if: needs.changes.outputs.models == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -118,7 +142,8 @@ jobs:
   # Slow (each planted defect is a whole placement of a board), so only when
   # a checker or its fixtures change, weekly and on demand.
   selftests:
-    needs: changes
+    name: "🧪 Checker selftests"
+    needs: [changes, check]
     if: needs.changes.outputs.checkers == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -143,6 +168,9 @@ jobs:
   # checked-out tree. It brings its own Python and PyYAML (Debian's, not the versions
   # requirements.txt pins); pytest and pypdf are installed at the pinned ones.
   schematic:
+    name: "🧫 Schematics (KiCad ERC, netlist, export)"
+    needs: [changes, check]
+    if: needs.changes.outputs.schematics == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     container:
