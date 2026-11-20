@@ -75,10 +75,6 @@ jobs:
         run: reuse lint
       - name: No vendor file in the tree
         run: python3 _shared/check_public_tree.py
-      # A byte copy of social's banner: it changes there, then social's
-      # tools/sync_readme_banners.py --write copies it here.
-      - name: The README banner is social's, byte for byte
-        run: shasum -a 256 -c .github/readme/SHA256SUMS
       - name: Board specifications
         run: python3 _shared/check_board_specs.py
       # Every drawing, model, schematic and picture against its metadata

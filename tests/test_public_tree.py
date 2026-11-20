@@ -105,22 +105,11 @@ def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
         "board/model/case.obj: a vendor file type (.obj)"]
 
 
-def test_the_readme_banner_passes_only_with_the_bytes_its_sums_hold(tmp_path):
-    """``.github/readme/banner-*.svg`` embeds the firmware's unlock screens: admitted while ``SHA256SUMS`` pins it."""
-    import hashlib
-
+def test_a_banner_copy_with_embedded_screens_is_refused(tmp_path):
+    """The README banner is read from social by its address: a copy in the tree that embeds pictures is refused, wherever it lands."""
     readme = tmp_path / ".github" / "readme"
     readme.mkdir(parents=True)
-    banner = readme / "banner-dark.svg"
-    banner.write_text('<svg><image href="data:image/png;base64,AA=="/></svg>\n', encoding="utf-8")
+    (readme / "banner-dark.svg").write_text('<svg><image href="data:image/png;base64,AA=="/></svg>\n', encoding="utf-8")
     assert check_public_tree.findings(tmp_path) == [
         ".github/readme/banner-dark.svg: holds '<image\\\\b'",
         ".github/readme/banner-dark.svg: holds 'data:image'"]
-    digest = hashlib.sha256(banner.read_bytes()).hexdigest()
-    (readme / "SHA256SUMS").write_text(f"{digest}  .github/readme/banner-dark.svg\n", encoding="utf-8")
-    assert check_public_tree.findings(tmp_path) == []
-    banner.write_text('<svg><image href="data:image/png;base64,AB=="/></svg>\n', encoding="utf-8")
-    assert len(check_public_tree.findings(tmp_path)) == 2
-    elsewhere = tmp_path / "banner-dark.svg"
-    elsewhere.write_text('<svg><image href="x"/></svg>\n', encoding="utf-8")
-    assert "banner-dark.svg: holds '<image\\\\b'" in check_public_tree.findings(tmp_path)
