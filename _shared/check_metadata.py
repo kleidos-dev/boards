@@ -62,9 +62,6 @@ EXEMPT = (
                                             'byte by face_fixture.py'),
     ('_shared/fixtures/faces/svg/*.svg', "test data: the checks' drawings, written byte for byte "
                                          'by face_fixture.py'),
-    ('.github/readme/*.svg', "byte copies of the social repository's README banner: their metadata is "
-                             'written there and comes with each copy; .github/readme/SHA256SUMS holds '
-                             'their bytes'),
 )
 GLTF_ASSET_KEYS = {'version', 'generator', 'copyright', 'extensions', 'extras'}
 PNG_ALLOWED = {b'IHDR', b'PLTE', b'tRNS', b'gAMA', b'cHRM', b'sRGB', b'iCCP', b'pHYs', b'sBIT',

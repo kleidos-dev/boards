@@ -1,9 +1,9 @@
 <!-- BEGIN GENERATED: banner (kleidos-dev/social, tools/sync_readme_banners.py); do not edit by hand -->
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset=".github/readme/banner-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset=".github/readme/banner-light.svg">
-  <img src=".github/readme/banner-light.svg" width="100%" alt="Kleidos Boards: Drawings, measurements, schematics and 3D models of the boards Kleidos runs on.">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/kleidos-dev/social/main/svg/readme/boards/banner-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/kleidos-dev/social/main/svg/readme/boards/banner-light.svg">
+  <img src="https://raw.githubusercontent.com/kleidos-dev/social/main/svg/readme/boards/banner-light.svg" width="100%" alt="Kleidos Boards: Drawings, measurements, schematics and 3D models of the boards Kleidos runs on.">
 </picture>
 
 <!-- END GENERATED: banner -->
@@ -82,7 +82,7 @@ Everything this project wrote is under the [MIT License](LICENSE), free for anyo
 - The M5Stack cases inside eight of the board models (`<board>/model/*.glb` and `<board>/model/<board>.obj`) and their picture (`models-contact-sheet.png`): M5Stack's, under the MIT License too, "Copyright (c) 2021 M5Stack". The T-Deck Plus's model is this project's own throughout, built from no vendor file.
 - One function of `_shared/model_raster.py`, the Khronos PBR Neutral tone mapper: Khronos's, under the [Apache License 2.0](LICENSES/Apache-2.0.txt).
 - Inter (`fonts/inter/`): [SIL Open Font License 1.1](LICENSES/OFL-1.1.txt).
-- The banner at the top of this page (`.github/readme/`): a byte copy of the [`social`](https://github.com/kleidos-dev/social) repository's, written by its `tools/sync_readme_banners.py` and checked against its `SHA256SUMS`; artwork of the same author under the [GNU General Public License, version 3 or later](LICENSES/GPL-3.0-or-later.txt), the license of everything social draws. It shows this repository's fronts with the Kleidos firmware's own unlock screens.
+- The banner at the top of this page is not in this repository: the page reads it from the [`social`](https://github.com/kleidos-dev/social) repository (`svg/readme/boards/`), where it is artwork of the same author under the GNU General Public License, version 3 or later, the license of everything social draws. It shows this repository's fronts with the Kleidos firmware's own unlock screens.
 
 Every drawing, model, schematic and picture also carries its title, description, author, copyright line, license and address inside the file, written by the script that writes it and checked by `_shared/check_metadata.py` ([`docs/models-and-drawings.md`](docs/models-and-drawings.md), "Embedded metadata").
 
