@@ -34,7 +34,7 @@ python3 -m venv .venv
 
 ## What CI repeats, and what it does not
 
-`.github/workflows/check.yml` (workflow `CI`), on every push to `main` and every pull request. `changes` and `check` start together; the three heavy jobs wait for `check` (`needs:`), so a red licence, tree or contract check skips them:
+`.github/workflows/check.yml` (workflow `CI`), on every push to `main` and every pull request. `changes` and `check` start together; the three heavy jobs wait for `check` (`needs:`), so a red license, tree or contract check skips them:
 
 - `check` (`🧪 Tree checks and tests`, Python 3.15, the pinned `requirements.txt`): `reuse lint`, `check_public_tree.py`, `check_board_specs.py` and `pytest -m "not models" tests`. It has no KiCad, so the schematic tests that need it skip there and run in the `schematic` job.
 - `models` (`🔨 Board models`), when a model's inputs changed (a board's `model/`, `svg/` or `measurements.json`, `_shared/`, `fonts/`, `requirements.txt`, the model tests): `pytest -m "models and not selftest" tests`.

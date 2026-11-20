@@ -77,7 +77,7 @@ jobs:
           if printf '%s\n' "$changed" | grep -Evq "$noschematic"; then hit=true; else hit=false; fi
           echo "schematics=$hit" | tee -a "$GITHUB_OUTPUT"
 
-  # The cheap gate every heavy job below waits for: licences, the public
+  # The cheap gate every heavy job below waits for: licenses, the public
   # tree, the specifications, the embedded metadata and the tests but the
   # models'.
   check:
