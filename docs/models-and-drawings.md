@@ -376,7 +376,7 @@ The checker reads every tracked media file and fails on a missing or different f
 - `models`: every model held to what builds it as it is now (built from its drawings and spec as they are, its legends where its drawings print them, its materials at separate depths and within the readers' table, its web level the master less what a reader cannot see, its OBJ and MTL what its GLB gives, `tests/test_board_model_obj.py`), on every push and pull request that touches a model's inputs (a board's `model/`, `svg/` or `measurements.json`, `_shared/`, `fonts/`, `requirements.txt` or these tests);
 - `selftest` (also `models`): the checkers' own tests, each planting defects in a model or a drawing that the checker must catch, and the face fixture rebuilt byte for byte. They are slow, each planted defect a whole placement of a board, so CI runs them only when a checker's code (`_shared/*.py` but the schematic and specification scripts) or the fixtures change, every Monday and on demand.
 
-`.github/workflows/check.yml` decides which of the three jobs run in its `changes` job, from the paths a push or a pull request touched; a scheduled or manual run runs all three. Locally:
+`.github/workflows/check.yml` (workflow `CI`) decides which of the three jobs run in its `changes` job, from the paths a push or a pull request touched, and runs them only after the contracts job passed; a scheduled or manual run runs all three. Locally:
 
 ```bash
 .venv/bin/python -m pytest -m "not models" tests            # contracts

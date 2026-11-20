@@ -34,12 +34,12 @@ python3 -m venv .venv
 
 ## What CI repeats, and what it does not
 
-`.github/workflows/check.yml`, on every push to `main` and every pull request:
+`.github/workflows/check.yml` (workflow `CI`), on every push to `main` and every pull request. `changes` and `check` start together; the three heavy jobs wait for `check` (`needs:`), so a red license, tree or contract check skips them:
 
-- `check` (Python 3.15, the pinned `requirements.txt`): `reuse lint`, `check_public_tree.py`, `check_board_specs.py` and `pytest -m "not models" tests`. It has no KiCad, so the schematic tests that need it skip there and run in the `schematic` job.
-- `models`, when a model's inputs changed (a board's `model/`, `svg/` or `measurements.json`, `_shared/`, `fonts/`, `requirements.txt`, the model tests): `pytest -m "models and not selftest" tests`.
-- `selftests`, when a checker or its fixtures changed, every Monday and on demand: `pytest -m selftest tests`.
-- `schematic`, in the `kicad/kicad:10.0.8` container, which brings kicad-cli 10.0.8 (no KiCad library is read: every symbol is this project's): for every board with a `schematic/netlist.yaml`, the ERC and netlist check, the committed PDF's links, a fresh export to a temporary folder, and `tests/test_schematic.py`. The container has its own Python and PyYAML; the job installs only `pytest` and `pypdf` into it, at the versions `requirements.txt` pins.
+- `check` (`🧪 Tree checks and tests`, Python 3.15, the pinned `requirements.txt`): `reuse lint`, `check_public_tree.py`, `check_board_specs.py` and `pytest -m "not models" tests`. It has no KiCad, so the schematic tests that need it skip there and run in the `schematic` job.
+- `models` (`🔨 Board models`), when a model's inputs changed (a board's `model/`, `svg/` or `measurements.json`, `_shared/`, `fonts/`, `requirements.txt`, the model tests): `pytest -m "models and not selftest" tests`.
+- `selftests` (`🧪 Checker selftests`), when a checker or its fixtures changed, every Monday and on demand: `pytest -m selftest tests`.
+- `schematic` (`🧫 Schematics`), unless the change touches only Markdown, the models' `model/` and `svg/` folders and the contact sheets, in the `kicad/kicad:10.0.8` container, which brings kicad-cli 10.0.8 (no KiCad library is read: every symbol is this project's): for every board with a `schematic/netlist.yaml`, the ERC and netlist check, the committed PDF's links, a fresh export to a temporary folder, and `tests/test_schematic.py`. The container has its own Python and PyYAML; the job installs only `pytest` and `pypdf` into it, at the versions `requirements.txt` pins.
 
 Local only, never in CI:
 
