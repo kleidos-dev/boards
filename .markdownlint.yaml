@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: MIT
+#
+# The markdownlint rules for this repository's Markdown, read by CodeRabbit's
+# markdownlint (markdownlint-cli2) and by any local run. Every other rule keeps
+# markdownlint's default.
+
+# Markdown prose is never hard-wrapped (AGENTS.md): one line per paragraph and
+# per list item, so there is no line length to hold.
+MD013: false
+# Tables keep their own layout; the column style is not this rule's.
+MD060: false
+# The same heading may recur under different parents (each board's sections).
+MD024:
+  siblings_only: true
+# Inline HTML is part of the layout: each board README opens with its icon and
+# its front drawing as <img>, the root README with the banner's <picture>, and
+# table cells break lines with <br>.
+MD033: false
+# A board README's first line is that icon row and the root README's is the
+# banner block, so the first line is not the top-level heading.
+MD041: false

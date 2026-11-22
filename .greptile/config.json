@@ -1,0 +1,91 @@
+{
+  "strictness": 2,
+  "commentTypes": [
+    "logic",
+    "syntax",
+    "style"
+  ],
+  "autoReview": [
+    "open",
+    "push"
+  ],
+  "excludeAuthors": [
+    "dependabot[bot]",
+    "github-actions[bot]"
+  ],
+  "shouldUpdateDescription": false,
+  "updateSummaryOnly": false,
+  "statusCheck": true,
+  "statusCommentsEnabled": false,
+  "summarySection": {
+    "included": false
+  },
+  "issuesTableSection": {
+    "included": false
+  },
+  "confidenceScoreSection": {
+    "included": false
+  },
+  "sequenceDiagramSection": {
+    "included": false
+  },
+  "fixWithAI": true,
+  "hideFooter": true,
+  "instructions": "Review the diff and post inline comments with concrete suggestions. The rules of this repository are in AGENTS.md (listed in files.json) and in any AGENTS.md nearer the changed file: cite the rule a finding breaks. Never comment on the pull request's title or description. Files a script writes (the drawings, the board READMEs, the models and their records, the KiCad files and PDFs of the schematics) are skipped by ignorePatterns and reviewed through the script and its inputs: flag a change to an input whose generated files do not move with it.",
+  "ignorePatterns": "*/svg/*.svg\nfronts-contact-sheet.svg\n/*/README.md\n*/model/*.glb\n*/model/*.obj\n*/model/*.mtl\n*/model/source.json\n*/model/web.json\nmodels-contact-sheet.png\nmodels-contact-sheet.json\n*/schematic/*.kicad_sch\n*/schematic/*.kicad_sym\n*/schematic/*.kicad_pro\n*/schematic/sym-lib-table\n*/schematic/links.json\n*/schematic/*.pdf\n_shared/fixtures/faces/\n_shared/kicad/\n.github/commit-check/\nfonts/inter/\nLICENSES/\n/LICENSE",
+  "rules": [
+    {
+      "id": "no-vendor-file",
+      "severity": "high",
+      "rule": "No vendor file, ever: a product photo, render, vendor drawing, datasheet, CAD file or vendor schematic PDF is cited by its address, never added to the tree. The only PDF allowed is a board's own schematic export."
+    },
+    {
+      "id": "nothing-private",
+      "severity": "high",
+      "rule": "Nothing private in any file: no .env value, IP or MAC address, lab hostname, serial-port path, home-directory path or e-mail address other than the project's. A bench record says \"the board's USB port\"."
+    },
+    {
+      "id": "every-value-sourced",
+      "severity": "medium",
+      "scope": [
+        "*/board.json",
+        "*/measurements.json",
+        "*/schematic/netlist.yaml",
+        "*/schematic/layout.yaml",
+        "*/model/spec.json"
+      ],
+      "rule": "Every part, pin, value and dimension names its source (a vendor page, a datasheet, the vendor's published schematic with page and version, a bench probe); never a guessed value. A Kleidos addition or correction in netlist.yaml is a `kleidos` entry with a primary source; the firmware is cited by repository path and symbol, never a commit or a line."
+    },
+    {
+      "id": "metadata-from-record",
+      "severity": "medium",
+      "scope": [
+        "_shared/**"
+      ],
+      "rule": "Every media file's embedded metadata is written from _shared/media_meta.py record() by the script that writes the file, deterministic and with nothing of a machine (no clock, path, user, host, e-mail or tool version). A new kind of media file gets its record or a checker exemption with its reason in the same change."
+    },
+    {
+      "id": "regenerate-not-edit",
+      "severity": "medium",
+      "rule": "A file a script owns (docs/models-and-drawings.md, \"Who writes what\") is regenerated, never edited by hand, and committed with the change that caused it."
+    },
+    {
+      "id": "vendor-names",
+      "severity": "low",
+      "rule": "Vendor names as the boards print them: LILYGO, never a mixed-case form, except inside an address, a vendor file's name or a lowercase identifier."
+    },
+    {
+      "id": "markdown-not-wrapped",
+      "severity": "low",
+      "scope": [
+        "**/*.md"
+      ],
+      "rule": "Markdown prose is never hard-wrapped: one line per paragraph and one line per list item; code, tables and fenced blocks keep their own layout."
+    },
+    {
+      "id": "license-row",
+      "severity": "medium",
+      "rule": "Every file has a license in REUSE.toml (this project's own work MIT, only OSI-approved licenses, never Creative Commons); a new kind of file gets its row and a new third-party source its notice in NOTICE.md in the same change."
+    }
+  ]
+}

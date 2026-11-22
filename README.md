@@ -72,6 +72,8 @@ python3 -m venv .venv
 
 [`.github/workflows/check.yml`](.github/workflows/check.yml) runs the first four and the metadata check on every push and pull request: the licenses, the tree, the specifications, the embedded metadata and the contracts always; the board models' tests when a model's inputs changed; the checkers' slower planted-defect selftests when a checker or its fixtures changed, weekly and on demand. The jobs after the first wait for it to pass. A fourth job, in KiCad 10.0.8's container and unless a change touches only Markdown and the models' sources, holds every schematic to its `netlist.yaml` (the ERC, the netlist pin for pin, every Kleidos entry marked and listed, the generator giving back the committed files) and every link of its PDF to the place it names, and requires the committed PDF to be byte for byte a fresh export. Not in CI: regenerating the drawings, and rebuilding a model from its vendor's CAD file, which downloads that file.
 
+A fifth job, after the first, sends the code (`_shared/`, `sticks3/build_sticks3_glb.py` and the skills' tool) to SonarQube Cloud with the coverage of the first job's tests (`sonar-project.properties`, `.coveragerc`); it is required, so a missing `SONAR_TOKEN` or an analysis the server refuses fails CI. Pull requests are also read by two review bots, CodeRabbit (`.coderabbit.yaml`) and Greptile (`.greptile/`), both set to post inline comments and suggestions only, against `AGENTS.md`: neither touches a pull request's title or description, posts a summary or commits code, and neither reviews the files a script writes (they are reviewed through the script and its inputs).
+
 Agents working here read [`AGENTS.md`](AGENTS.md) and the two skills under [`.claude/skills/`](.claude/skills/).
 
 ## Licenses

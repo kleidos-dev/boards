@@ -1,0 +1,35 @@
+{
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "description": "The repository's rules for every contributor and agent: what is where, the checks, licensing, vendor files, sources, schematics, metadata, privacy. Review findings cite these rules."
+    },
+    {
+      "path": "docs/models-and-drawings.md",
+      "description": "Which script writes each file and how drawings, models, schematics and embedded metadata are made: the reference for whether a file is generated and what its builder must keep."
+    },
+    {
+      "path": "_shared/schema.md",
+      "description": "The contract every svg/front.svg answers and its field rules.",
+      "scope": [
+        "*/svg/**",
+        "*/measurements.json",
+        "_shared/emit_front_svg.py",
+        "_shared/emit_back_svg.py",
+        "tests/test_front_contract.py",
+        "tests/test_back_contract.py"
+      ]
+    },
+    {
+      "path": ".claude/skills/board-specs-and-schematics/SKILL.md",
+      "description": "What a board folder holds, who writes each file, the schematics' Kleidos entries and bench records, and the checks.",
+      "scope": [
+        "*/board.json",
+        "*/measurements.json",
+        "*/schematic/**",
+        "*/sources.md",
+        "_shared/**"
+      ]
+    }
+  ]
+}

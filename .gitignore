@@ -16,3 +16,8 @@ _autosave-*
 */schematic/svg/
 # the metadata checker's identity patterns: local only (CI reads them from a secret)
 _shared/deny-local.txt
+# the tests' coverage data and report, and the SonarCloud scanner's work folder
+.coverage
+.coverage.*
+coverage.xml
+.scannerwork/

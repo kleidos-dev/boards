@@ -1,0 +1,308 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# SPDX-License-Identifier: MIT
+#
+# CodeRabbit for the Kleidos repositories: line reviews and committable
+# suggestions, nothing else. The pull request's title and description are the
+# author's and stay exactly as written, and no summary of the pull request is
+# generated anywhere: not in the description, not in the walkthrough comment.
+#
+# This file is the whole configuration. It does not set inheritance, so no
+# value comes from a central repository or the web interface: what is not
+# written here is the schema default (reference/configuration, V2). The
+# canonical copy lives beside the commit-message gate in kleidos-dev/agents
+# and is synced into each repository; this repository adds only its own
+# path_filters, path_instructions, tools and guideline files, each marked
+# "boards:" below.
+language: en-US
+
+reviews:
+  # Balanced feedback, the default every owner repository has used so far.
+  # "assertive" is the knob for more comments; "quiet" for fewer.
+  profile: chill
+
+  # The summary is off, not relocated. high_level_summary: false keeps it out
+  # of the description; high_level_summary_in_walkthrough: false keeps it out
+  # of the walkthrough comment too. CodeRabbit still writes a summary wherever
+  # its placeholder appears in a description, so the placeholder is a string
+  # nobody types. The same goes for the title, which is only rewritten when its
+  # placeholder appears in the title (there is no boolean for it).
+  high_level_summary: false
+  high_level_summary_in_walkthrough: false
+  high_level_summary_placeholder: "coderabbit-summary-disabled"
+  auto_title_placeholder: "coderabbit-title-disabled"
+
+  # The walkthrough comment cannot be turned off (no V2 or V3 key removes it),
+  # so it is collapsed and every section it can drop is dropped. What stays is
+  # the review status (why a review was skipped or paused) and Merge Risk,
+  # which has no toggle.
+  collapse_walkthrough: true
+  changed_files_summary: false
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+  in_progress_fortune: false
+  poem: false
+  review_info: false
+  review_details: false
+  review_status: true
+
+  # Inline comments keep their "Prompt for Coding Agents" block: most fixes
+  # here are applied by an agent reading the review.
+  enable_prompt_for_ai_agents: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+    # Any base branch, so a stacked pull request is reviewed on its own diff
+    # rather than skipped for not targeting main (the default list is empty,
+    # which means the default branch only).
+    base_branches:
+      - ".*"
+    # Bot commits (dependency bumps, generated files) carry no reviewable
+    # intent.
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "github-actions[bot]"
+
+  # Reviews and suggestions only: no bot writes code into a pull request, and
+  # none of these adds its checkbox to the walkthrough. Committable suggestion
+  # blocks in inline comments are unaffected; the author applies them.
+  finishing_touches:
+    autofix:
+      enabled: false
+    unit_tests:
+      enabled: false
+    simplify:
+      enabled: false
+    fix_ci:
+      enabled: false
+    resolve_merge_conflict:
+      enabled: false
+
+  # These never edit the title or description, but each posts a verdict on
+  # them. Commit messages are already gated by commit-check.yml.
+  pre_merge_checks:
+    title:
+      mode: "off"
+    description:
+      mode: "off"
+    issue_assessment:
+      mode: "off"
+
+  # boards: what is not reviewed here. Each file below is written by a script
+  # (docs/models-and-drawings.md, "Who writes what") and reviewed through that
+  # script and its inputs, which CI holds it to byte for byte; or it is a copy
+  # reviewed where it is kept; or it is binary. These patterns also keep the
+  # files out of CodeRabbit's sparse checkout. Kept in review on purpose: every
+  # file written by hand (board.json, measurements.json, model/spec.json,
+  # netlist.yaml, layout.yaml, icon.svg, sources.md, the bench records, the
+  # schematic READMEs) and the metadata writers' golden files under
+  # tests/fixtures/meta/, which change only with their writer.
+  path_filters:
+    # The drawings: _shared/emit_front_svg.py and emit_back_svg.py write every
+    # svg/*.svg and the fronts' contact sheet.
+    - "!*/svg/*.svg"
+    - "!fronts-contact-sheet.svg"
+    # Each board's README, written from its board.json by
+    # _shared/emit_board_readme.py (the root README and the schematic READMEs
+    # are written by hand and stay in review).
+    - "!*/README.md"
+    # The models: _shared/build_board_glb.py and export_obj.py write the
+    # master, the web level, the OBJ and MTL and their records.
+    - "!*/model/*.glb"
+    - "!*/model/*.obj"
+    - "!*/model/*.mtl"
+    - "!*/model/source.json"
+    - "!*/model/web.json"
+    - "!models-contact-sheet.png"
+    - "!models-contact-sheet.json"
+    # The schematics: _shared/kicad_schematic.py writes the KiCad files and
+    # the links from netlist.yaml and layout.yaml; export_schematic.py writes
+    # the PDF.
+    - "!*/schematic/*.kicad_sch"
+    - "!*/schematic/*.kicad_sym"
+    - "!*/schematic/*.kicad_pro"
+    - "!*/schematic/sym-lib-table"
+    - "!*/schematic/links.json"
+    - "!*/schematic/*.pdf"
+    # The checks' face fixture: _shared/face_fixture.py and the builder write
+    # it byte for byte.
+    - "!_shared/fixtures/faces/**"
+    # The Kleidos KiCad kit, byte copies of the brand repository's kicad/
+    # (tests/test_kicad_kit.py holds them to KIT.json): reviewed in brand.
+    - "!_shared/kicad/**"
+    # The commit-message gate, synced from kleidos-dev/agents: reviewed there.
+    - "!.github/commit-check/**"
+    # Inter, unmodified, and the license texts, verbatim.
+    - "!fonts/inter/**"
+    - "!LICENSES/**"
+    - "!LICENSE"
+
+  # boards: the rules of AGENTS.md a reviewer can check on a diff. AGENTS.md
+  # itself, the two skills and the two contracts below (knowledge_base) are
+  # read as guidelines; these name the rules to cite.
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        Rules of this repository (AGENTS.md); cite the one a finding breaks.
+        No vendor file, ever: a product photo, render, vendor drawing,
+        datasheet, CAD file or vendor schematic PDF is cited by its address
+        and never added; the only PDF allowed is a board's own schematic
+        export. Nothing private: no .env value, IP or MAC address, lab
+        hostname, serial-port path, home-directory path or e-mail address
+        other than the project's (a bench record says "the board's USB
+        port"). Every value has a source (a vendor page, a datasheet, a
+        measurement), never a guess. Vendor names as the boards print them:
+        LILYGO, never a mixed-case form, except inside an address, a vendor
+        file's name or a lowercase identifier (tests/test_vendor_names.py).
+        English in every file. A file a script owns is regenerated, never
+        edited by hand, and committed with the change that caused it: flag a
+        change to a source (board.json, measurements.json, spec.json,
+        netlist.yaml, layout.yaml, a front's inputs) whose generated files do
+        not move with it, or the reverse.
+    - path: "**/*.md"
+      instructions: |
+        Markdown prose is never hard-wrapped: one line per paragraph and one
+        line per list item; code, tables and fenced blocks keep their own
+        layout. A schematic is "the board's connectivity documented from the
+        vendor's public documentation", never the vendor's schematic
+        "redrawn" or "copied".
+    - path: "*/{board,measurements}.json"
+      instructions: |
+        Maintained by hand. Every part, pin, value and dimension names where
+        it came from; board.json is held to _shared/board.schema.json by
+        _shared/check_board_specs.py. measurements.json must agree with the
+        board's current svg/front.svg (case radius and colour, the
+        screen-active rectangle, buttons, rings, keyboard geometry) and holds
+        no legend: a keyboard's prints are the front's alone.
+    - path: "*/schematic/{netlist,layout}.yaml"
+      instructions: |
+        Every value in netlist.yaml names its source: the vendor's published
+        schematic, its page and version. A detail the print lacks, or a
+        drawing error it corrects, is a `kleidos` entry with a primary source
+        (the chip's datasheet, the vendor's other documents, a bench probe,
+        or the Kleidos firmware cited by repository path and symbol, never a
+        commit or a line number); it is marked on the drawing and listed on
+        page 1. What is still uncertain stays out and is listed as open in
+        the board's schematic README.
+    - path: "*/schematic/bench/*.md"
+      instructions: |
+        A bench record is published as is: flag any serial-port path, MAC
+        address, IP address, hostname or home path, and any measured claim
+        without the probe, the instrument and the conditions it was taken
+        under.
+    - path: "*/icon.svg"
+      instructions: |
+        Drawn by hand, but its metadata (the SPDX comment, the root's
+        accessible name, <title>, <desc>, <metadata>) is written by
+        _shared/stamp_icon_meta.py, never by hand. No embedded image
+        (<image, data:image).
+    - path: "_shared/**/*.py"
+      instructions: |
+        The builders and checks. Output is deterministic, byte for byte
+        across machines: every media file's embedded metadata comes from
+        _shared/media_meta.py record() and carries nothing of a machine (no
+        clock, path, user, host, e-mail or tool version); a new kind of media
+        file gets its record there, or an exemption with its reason in
+        _shared/check_metadata.py, in the same change. emit_front_svg.py and
+        emit_back_svg.py are the only writers of the drawings and keep the
+        contract of _shared/schema.md. The schematic generator takes its
+        numbers from kicad/style.json (one wire width for wires and pin
+        lines), reads no KiCad library, and every cross-reference of the PDF
+        lands on the place it names, with no script in the PDF. A checker
+        change keeps its planted-defect selftests catching every defect. A
+        change to the model builder's output bumps its version, as its
+        docstring and docs/models-and-drawings.md record.
+    - path: "sticks3/build_sticks3_glb.py"
+      instructions: |
+        Kept only for the command line the StickS3 model was first built
+        with; the fleet's one builder is _shared/build_board_glb.py, and
+        sticks3/model/spec.json must still rebuild sticks3.glb byte for byte.
+    - path: "tests/**/*.py"
+      instructions: |
+        A test that reads a board model is marked `models`; a planted-defect
+        selftest or a fixture rebuild is marked `selftest` (tests/conftest.py,
+        and check.yml selects them with -m). A test pins the defect it
+        guards, so it must fail on the old behaviour.
+    - path: "{REUSE.toml,NOTICE.md}"
+      instructions: |
+        Every file has a license in REUSE.toml: what this project writes is
+        MIT; Inter OFL-1.1; the Khronos function Apache-2.0; M5Stack's case
+        geometry MIT with its notice; the KiCad kit's two drawing sheets
+        GPL-3.0-or-later. Never a Creative Commons license, only
+        OSI-approved ones. A new kind of file gets its row, and a new
+        third-party source its notice in NOTICE.md, in the same change.
+    - path: "requirements.txt"
+      instructions: |
+        Exact pins. The model builder's libraries are the versions each
+        model's model/source.json records under builder.packages: a bump of
+        one of them needs the models rebuilt and their records updated, or
+        the models' tests fail.
+    - path: ".github/workflows/*.yml"
+      instructions: |
+        Every action pinned to a full commit SHA with its version in a
+        comment, least-privilege permissions, persist-credentials: false on
+        every checkout, a timeout and an emoji name on every job, and needs:
+        so the cheap gates fail first. The schematic job runs in KiCad
+        10.0.8's container; the committed PDFs are byte for byte its export.
+    - path: ".claude/skills/**"
+      instructions: |
+        This folder is the source of this repository's own agent skills
+        (not a copy): keep them consistent with AGENTS.md and
+        docs/models-and-drawings.md, and keep the same rules (no vendor file,
+        nothing private) in what a skill tells an agent to do.
+
+  # boards: the linters that fit Python, YAML, workflows, Markdown and the
+  # skills. Pylint and Flake8 are off because Ruff covers the same ground and
+  # three Python linters would post one finding three times. markdownlint
+  # reads the repository's .markdownlint.json (no line-length rule, against
+  # the never-hard-wrap rule; inline HTML allowed for the README icons).
+  # Every other tool keeps its default.
+  tools:
+    ruff:
+      enabled: true
+    pylint:
+      enabled: false
+    flake8:
+      enabled: false
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+    zizmor:
+      enabled: true
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    presidio:
+      enabled: true
+    skillspector:
+      enabled: true
+
+chat:
+  # Replies stay plain text.
+  art: false
+
+issue_enrichment:
+  # No implementation plans posted on issues: the review is the product.
+  planning:
+    enabled: false
+
+knowledge_base:
+  code_guidelines:
+    # boards: guideline files beyond the defaults (AGENTS.md, CLAUDE.md and
+    # the root .claude/skills/*/SKILL.md are read already): the who-writes-what
+    # and the formats, the front contract, and the skill's references.
+    filePatterns:
+      - "docs/models-and-drawings.md"
+      - "_shared/schema.md"
+      - ".claude/skills/*/references/*.md"
