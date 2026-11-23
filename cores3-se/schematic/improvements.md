@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # CoreS3-SE schematic: improvement triage (2026-11-17)
 
 Working triage under the owner's rule of 2026-11-17 (AGENTS.md "Schematics"): a detail the vendor's print does not show goes in when a primary source makes it certain, a drawing error of the print is corrected when the evidence settles it, and what stays uncertain stays out and is listed as open. Applied on 2026-11-17 as the `kleidos` entries K1-K19 of `netlist.yaml`: A1 K1, A2 K2, A8 K3, B1 K4, B2 K5, B3 K6, C2 K7, C1 K8, C3 K9, C4 K10 (GPIO0) and K11 (GPIO3), C5 K12, C7 K13, C8 K14, C9 K15-K18 (U14, U17, U18, U19), C10 K19 (sourced from TI's LMV331 datasheet SLCS136V, now `lmv331-ds` in `board.json`). J1 is applied in `board.json`. On review C6, J3, F4 and J2 were settled from the datasheets and recorded in `board.json` (no drawing entry). Not applied: C11 and A11 (no entry proposed) and the open rows, which `README.md` lists under "Open questions". A "proposed K" line below names the entry's element, kind and source type as triaged.

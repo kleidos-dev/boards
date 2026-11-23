@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Build ``sticks3.glb``: the M5StickS3 case for the landing film, with a ``screen`` mesh
 
@@ -77,7 +78,7 @@ import build_board_glb  # noqa: E402  (the path above makes it importable)
 SPEC = HERE / "model" / "spec.json"
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Build the model from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("stl", type=Path, help="M5Stack's StickS3.stl at 48baa75a")

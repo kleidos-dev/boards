@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Render, crop, overlay and diff a board drawing against a reference image.
 
@@ -207,7 +208,7 @@ def mean_luma_diff(left_image: Any, right_image: Any) -> float:
     )
     histogram = diff.convert("L").histogram()
     total = sum(count * value for value, count in enumerate(histogram))
-    return total / (left_image.width * left_image.height)
+    return float(total / (left_image.width * left_image.height))
 
 
 def draw_label(draw: Any, position: tuple[int, int], label: str) -> None:

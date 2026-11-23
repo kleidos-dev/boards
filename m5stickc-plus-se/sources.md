@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5StickC Plus SE — sources
 
 What `measurements.json` and `svg/front.svg` were measured on. The vendor files themselves are not redistributed here: product photos and drawings stay the property of M5Stack and are cited here by address only (`NOTICE.md`).

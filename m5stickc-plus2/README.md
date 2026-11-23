@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 <img src="icon.svg" width="96" height="96" alt="StickC-Plus2 icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="226" height="320" alt="StickC-Plus2 front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # StickC-Plus2
@@ -42,14 +47,14 @@ The vendor gives the product size as 48.0 x 24.0 x 13.5 mm and the product weigh
 
 | Part | Role | Ref. | Qty | Key facts | Src |
 | --- | --- | --- | --- | --- | --- |
-| — | display panel | — | 1 | technology: colour TFT LCD; diagonal in: 1.14; resolution px: 135 / 240; controller: ST7789V2 | [1] [2] |
+| — | display panel | — | 1 | technology: color TFT LCD; diagonal in: 1.14; resolution px: 135 / 240; controller: ST7789V2 | [1] [2] |
 | ST7789V2 (Sitronix) | display controller | — | 1 | interface: 3-wire SPI with a bidirectional data line: no MISO on the connector, and the panel answers register reads on the MOSI pin (connector pin 4, GPIO15); bench 2026-11-17 read the ST7789 IDs 0x85 0x85 0x52 back on it, each byte one bit late; frame memory: 240 x RGB x 320 at 18 bpp (ST7789V datasheet); colors: 262K — The vendor names the driver IC ST7789V2 and links Sitronix's ST7789V datasheet (version 1.0) for it. | [1] [7] [2] [12] |
 
 ### Sensors and timekeeping
 
 | Part | Role | Ref. | Qty | Key facts | Src |
 | --- | --- | --- | --- | --- | --- |
-| BM8563 | rtc | U9 | 1 | interface: I2C, up to 400 kbit/s; i2c address: 0x51 (write 0xA2, read 0xA3); supply: VDD (pin 8) from VBAT_IN, the battery side of the power switch, decoupled by C27 100 nF; supply range v: 1.5 / 5.5; sleep current ua: 0.25; clkout: pin 7 not connected; interrupt: open-drain INT (pin 3) — The schematic symbol is labelled RTC8563; the vendor's documentation names the part BM8563 and links its datasheet. | [1] [2] [5] [11] |
+| BM8563 | rtc | U9 | 1 | interface: I2C, up to 400 kbit/s; i2c address: 0x51 (write 0xA2, read 0xA3); supply: VDD (pin 8) from VBAT_IN, the battery side of the power switch, decoupled by C27 100 nF; supply range v: 1.5 / 5.5; sleep current ua: 0.25; clkout: pin 7 not connected; interrupt: open-drain INT (pin 3) — The schematic symbol is labeled RTC8563; the vendor's documentation names the part BM8563 and links its datasheet. | [1] [2] [5] [11] |
 | MPU-6886 (TDK InvenSense) | imu | U10 | 1 | axes: 3-axis accelerometer + 3-axis gyroscope; accel range g: 2 / 4 / 8 / 16; gyro range dps: 250 / 500 / 1000 / 2000; fifo: 1 kB; vdd range v: 1.71 / 3.45; supply: VDD (pin 13) and VDDIO (pin 8) on +3.3V; C30 10 nF, C31 2.2 uF, C32 100 nF; REGOUT (pin 10) C29 100 nF; interface select: CS (pin 22) tied to +3.3V (I2C mode); address select: AD0/SDO (pin 9) tied to GND; interrupt: INT (pin 12) not connected; fsync: FSYNC (pin 11) not connected | [1] [2] [4] |
 
 ### Audio
@@ -63,9 +68,9 @@ The vendor gives the product size as 48.0 x 24.0 x 13.5 mm and the product weigh
 
 | Part | Role | Ref. | Qty | Key facts | Src |
 | --- | --- | --- | --- | --- | --- |
-| — | led | D24 | 1 | colour: red; series resistor: R30 300 ohm from VBAT_OUT — Shares its driver and control pin (G19) with the IR emitter; the vendor states the red LED and IR emitter share G19. | [1] [2] |
+| — | led | D24 | 1 | color: red; series resistor: R30 300 ohm from VBAT_OUT — Shares its driver and control pin (G19) with the IR emitter; the vendor states the red LED and IR emitter share G19. | [1] [2] |
 | — | ir led | IR1 | 1 | function: infrared emitter; series resistor: R15 22 ohm 1 % from VBAT_OUT | [1] [2] |
-| — | led | LED1 | 1 | colour: green; series resistor: R39 2 kohm 1 % from +5VOUT; programmable: no — The vendor: non-programmable, a sleep-state indicator; it lights when a long press of the power button turns the board off. | [1] [2] |
+| — | led | LED1 | 1 | color: green; series resistor: R39 2 kohm 1 % from +5VOUT; programmable: no — The vendor: non-programmable, a sleep-state indicator; it lights when a long press of the power button turns the board off. | [1] [2] |
 | — | button | S2 | 1 | name: Button A; type: push button to GND; esd: D8 PESDNC2FD3V3B | [1] [2] |
 | — | button | S1 | 1 | name: Button B; type: push button to GND; esd: D5 PESDNC2FD3V3B | [1] [2] |
 | — | button | S3 | 1 | name: Button C (power); type: push button pulling the WAKE net to GND; esd: D25 PESDNC2FD3V3B on WAKE — The vendor: a press of more than 2 s powers the board on (the program must then raise HOLD); more than 6 s powers it off without USB. | [1] [2] |
@@ -211,10 +216,10 @@ Components are the parts of the vendor's schematic v0.5 (three sheets). Resistor
 - [`icon.svg`](icon.svg): a 64 px pictogram of the board.
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
-- [`model/m5stickc-plus2.glb`](model/m5stickc-plus2.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
+- [`model/m5stickc-plus2.glb`](model/m5stickc-plus2.glb): the 3D model, glTF 2.0 binary in meters (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/m5stickc-plus2-web.glb`](model/m5stickc-plus2-web.glb): its web level of detail.
-- [`model/m5stickc-plus2.obj`](model/m5stickc-plus2.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
-- [`model/m5stickc-plus2.mtl`](model/m5stickc-plus2.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/m5stickc-plus2.obj`](model/m5stickc-plus2.obj): the same model as Wavefront OBJ, in millimeters, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/m5stickc-plus2.mtl`](model/m5stickc-plus2.mtl): the OBJ's materials: each part's color, transparency, roughness and metalness.
 - [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.

@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Every board's ``README.md`` is what ``_shared/emit_board_readme.py`` writes from its
 ``board.json``.

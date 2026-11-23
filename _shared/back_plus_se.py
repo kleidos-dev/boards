@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The M5StickC Plus SE's back label, drawn in the back frame
 
@@ -42,6 +43,7 @@ import math
 import sys
 from itertools import pairwise
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import emit_front_svg as fronts
@@ -239,7 +241,7 @@ def rect(x0: float, y0: float, x1: float, y1: float, ink: str, r: float = 0.0) -
     return fronts.rounded_rect(px(x0), py(y0), SX * (x1 - x0), SY * (y1 - y0), r=r * K, fill=ink)
 
 
-def circle(cx: float, cy: float, r: float, **style) -> str:
+def circle(cx: float, cy: float, r: float, **style: Any) -> str:
     if "stroke_w" in style:
         style["stroke_w"] *= K
     return fronts.circle(px(cx), py(cy), r * K, **style)

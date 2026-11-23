@@ -1,5 +1,5 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
 #
 # M5Stack CoreInk (K048): every component, every pin and the net it is on, as
 # the vendor's published schematic shows them: connectivity documented from
@@ -57,7 +57,7 @@ source:
       used_for: the SY7088's 1.2 V feedback reference, which with R43 / R44 gives SYS_P050 (Kleidos addition K26), as board.json cites it
       checked: 2026-11-16
     - title: Kleidos firmware repository (read 2026-11-17)
-      used_for: "behaviour the firmware relies on and that works on the real board, cited by file path and symbol in the Kleidos additions: the panel's reads on GPIO23 (K17); second sources for the power key's deep-sleep wake on GPIO27 and the RTC alarm path on GPIO19"
+      used_for: "behavior the firmware relies on and that works on the real board, cited by file path and symbol in the Kleidos additions: the panel's reads on GPIO23 (K17); second sources for the power key's deep-sleep wake on GPIO27 and the RTC alarm path on GPIO19"
       checked: 2026-11-17
     - url: https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/sleep_modes.html
       used_for: "ESP-IDF's Sleep Modes (Espressif), for the ESP32: the ext0 and ext1 deep-sleep wake sources take RTC GPIOs only; any other GPIO wakes the chip from light sleep only (K16, K18)"
@@ -459,9 +459,9 @@ components:
     value: IPEX
     page: 1
     block: MCU
-    note: "IPEX RF connector; the print gives no pin numbers: 1 here is the centre contact, 2 the shell."
+    note: "IPEX RF connector; the print gives no pin numbers: 1 here is the center contact, 2 the shell."
     pins:
-      "1": ANT_FEED   # centre
+      "1": ANT_FEED   # center
       "2": GND   # shell
   BUS1:
     value: M5_BUS_16P_H7.1
@@ -1496,7 +1496,7 @@ components:
     value: PTS_820_H2.5mm
     page: 1
     block: BUTTONS
-    note: "Reset key (labelled RESET); pin numbers ours."
+    note: "Reset key (labeled RESET); pin numbers ours."
     pins:
       "1": MCU_RST
       "2": GND
@@ -1504,7 +1504,7 @@ components:
     value: K1-1502SA-02
     page: 1
     block: BUTTONS
-    note: "Three-way dial switch, labelled MULTI-FUNCTION."
+    note: "Three-way dial switch, labeled MULTI-FUNCTION."
     pins:
       "1": GPIO37   # 1
       "2": GPIO39   # 2

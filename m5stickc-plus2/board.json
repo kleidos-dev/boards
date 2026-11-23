@@ -123,7 +123,7 @@
       "role": "display_panel",
       "quantity": 1,
       "specs": {
-        "technology": "colour TFT LCD",
+        "technology": "color TFT LCD",
         "diagonal_in": 1.14,
         "resolution_px": [135, 240],
         "controller": "ST7789V2"
@@ -474,7 +474,7 @@
         },
         {"to": "rtc-crystal", "bus": "oscillator", "pins": {"OSCI (pin 1)": "Y1", "OSCO (pin 2)": "Y1"}, "src": ["plus2-schematic"]}
       ],
-      "notes": "The schematic symbol is labelled RTC8563; the vendor's documentation names the part BM8563 and links its datasheet.",
+      "notes": "The schematic symbol is labeled RTC8563; the vendor's documentation names the part BM8563 and links its datasheet.",
       "src": ["m5-docs", "plus2-schematic", "bm8563-datasheet", "bench-i2c-scan"]
     },
     {
@@ -599,7 +599,7 @@
       "role": "led",
       "designator": "D24",
       "quantity": 1,
-      "specs": {"colour": "red", "series_resistor": "R30 300 ohm from VBAT_OUT"},
+      "specs": {"color": "red", "series_resistor": "R30 300 ohm from VBAT_OUT"},
       "notes": "Shares its driver and control pin (G19) with the IR emitter; the vendor states the red LED and IR emitter share G19.",
       "src": ["m5-docs", "plus2-schematic"]
     },
@@ -616,7 +616,7 @@
       "role": "led",
       "designator": "LED1",
       "quantity": 1,
-      "specs": {"colour": "green", "series_resistor": "R39 2 kohm 1 % from +5VOUT", "programmable": false},
+      "specs": {"color": "green", "series_resistor": "R39 2 kohm 1 % from +5VOUT", "programmable": false},
       "connects_to": [
         {"to": "power-off-timer", "bus": "status", "pins": {"cathode": "U8 output (3V3EN net)"}}
       ],

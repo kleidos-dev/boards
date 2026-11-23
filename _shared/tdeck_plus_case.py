@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Write the LILYGO T-Deck Plus case into its model's spec, from this repository's own data
 
@@ -54,10 +55,13 @@ from __future__ import annotations
 import json
 import math
 import sys
+from collections.abc import Sequence
 from itertools import pairwise
 from pathlib import Path
+from typing import Any
 
 import shapely.geometry as sg
+from shapely.geometry.base import BaseGeometry
 from shapely.ops import unary_union
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -95,29 +99,43 @@ def r3(v: float) -> float:
     return round(float(v) + 0.0, 3)
 
 
-def front_pt(x: float, y: float) -> tuple:
+def front_pt(x: float, y: float) -> tuple[Any, ...]:
     """A point of the front drawing (x across, y down) in the build frame."""
     return (x, H - y)
 
 
-def back_pt(x: float, y: float) -> tuple:
+def back_pt(x: float, y: float) -> tuple[Any, ...]:
     """A point of the back drawing (x across as seen from behind, y down)."""
     return (W - x, H - y)
 
 
-def ring(poly) -> list:
+def ring(poly: sg.Polygon) -> list[Any]:
     """A polygon's outline as the spec writes it, counterclockwise, not closed."""
     poly = sg.polygon.orient(poly, 1.0)
     return [[r3(x), r3(y)] for x, y in list(poly.exterior.coords)[:-1]]
 
 
-def holes(poly) -> list:
+def holes(poly: sg.Polygon) -> list[Any]:
     poly = sg.polygon.orient(poly, 1.0)
     return [[[r3(x), r3(y)] for x, y in list(h.coords)[:-1]] for h in poly.interiors]
 
 
-def prism(poly, z0, z1, faces=None, axis="z") -> dict:
-    p = {"axis": axis, "range": [r3(z0), r3(z1)], "profile": {"polygon": ring(poly)}}
+def _one_polygon(shape: BaseGeometry) -> sg.Polygon:
+    """A prism's profile: one polygon."""
+    if not isinstance(shape, sg.Polygon):
+        raise ValueError(f"a prism profile is one polygon, not a {shape.geom_type}")
+    return shape
+
+
+def prism(
+    shape: BaseGeometry, z0: float, z1: float, faces: list[str] | None = None, axis: str = "z"
+) -> dict[str, Any]:
+    poly = _one_polygon(shape)
+    p: dict[str, Any] = {
+        "axis": axis,
+        "range": [r3(z0), r3(z1)],
+        "profile": {"polygon": ring(poly)},
+    }
     if poly.interiors:
         p["profile"]["holes"] = holes(poly)
     if faces:
@@ -125,21 +143,21 @@ def prism(poly, z0, z1, faces=None, axis="z") -> dict:
     return {"prism": p}
 
 
-def simple(points) -> sg.Polygon:
+def simple(points: Sequence[tuple[float, float]]) -> sg.Polygon:
     poly = sg.Polygon(points)
     if not poly.is_valid:
         poly = poly.buffer(0)
     return poly
 
 
-def front_poly(points) -> sg.Polygon:
+def front_poly(points: Sequence[tuple[float, float]]) -> sg.Polygon:
     return simple([front_pt(x, y) for x, y in points])
 
 
 # ---------------------------------------------------------------- the plan
 
 
-def body_points() -> list:
+def body_points() -> list[Any]:
     """The body's outline (the drawing's, without the rails), front drawing frame."""
     return list(fronts.TDECK_PLUS_BODY)
 
@@ -148,9 +166,14 @@ def body() -> sg.Polygon:
     return front_poly(body_points())
 
 
-def inset(d_side, d_top, d_bottom, points=None) -> list:
+def inset(
+    d_side: float,
+    d_top: float,
+    d_bottom: float,
+    points: Sequence[tuple[float, float]] | None = None,
+) -> list[Any]:
     """The body outline moved in (front drawing frame), point for point."""
-    return fronts.tdeck_plus_inset(points or body_points(), d_side, d_top, d_bottom)
+    return fronts.tdeck_plus_inset(list(points or body_points()), d_side, d_top, d_bottom)
 
 
 def opening() -> sg.Polygon:
@@ -167,7 +190,7 @@ def opening() -> sg.Polygon:
     return unary_union([front_poly(glass), front_poly(plate)]).buffer(0)
 
 
-def rails() -> list:
+def rails() -> list[Any]:
     """The two side rails, 0.65 and 0.54 mm proud, where the drawing has them."""
     left, right = fronts.TDECK_PLUS_BODY_SIDES
     y0, y1, y2, y3 = fronts.TDECK_PLUS_RAIL_ENDS
@@ -212,11 +235,11 @@ def bottom_y_at(x: float) -> float:
     """The body's bottom edge at x (front drawing frame, y down)."""
     line = sg.LineString([front_pt(x, -1), front_pt(x, H + 1)])
     hit = body().exterior.intersection(line)
-    ys = [p.y for p in getattr(hit, "geoms", [hit])]
+    ys = [float(p.y) for p in getattr(hit, "geoms", [hit])]
     return H - min(ys)
 
 
-def hole_notches() -> list:
+def hole_notches() -> list[Any]:
     out = []
     r = BOTTOM_HOLE_D / 2
     # a 2 mm hole drawn in three bands: 1.2 mm wide, 2.0, 1.2
@@ -238,24 +261,24 @@ def hole_notches() -> list:
     return out
 
 
-def notch_poly(n) -> sg.Polygon:
+def notch_poly(n: Sequence[Any]) -> sg.Polygon:
     _, x0, x1, y0, y1, _, _ = n
     return front_poly([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
 
 
-def bands() -> list:
+def bands() -> list[Any]:
     """The body's walls from the back's edge to the frame, cut where an opening is."""
     notches = NOTCHES + hole_notches()
     cuts = {Z_BACK_EDGE, Z_FRAME_BOTTOM, *SEAM_Z}
     for n in notches:
         cuts |= {n[5], n[6]}
-    cuts = sorted(round(c, 4) for c in cuts if Z_BACK_EDGE <= c <= Z_FRAME_BOTTOM)
+    steps = sorted(round(c, 4) for c in cuts if Z_BACK_EDGE <= c <= Z_FRAME_BOTTOM)
     out = []
     base = body()
     seam = base.buffer(-SEAM_DEPTH, join_style="mitre")
-    for z0, z1 in pairwise(cuts):
+    for z0, z1 in pairwise(steps):
         mid = (z0 + z1) / 2
-        poly = seam if SEAM_Z[0] <= mid <= SEAM_Z[1] else base
+        poly: BaseGeometry = seam if SEAM_Z[0] <= mid <= SEAM_Z[1] else base
         for n in notches:
             if n[5] <= mid <= n[6]:
                 poly = poly.difference(notch_poly(n))
@@ -264,7 +287,7 @@ def bands() -> list:
     return out
 
 
-def floors() -> list:
+def floors() -> list[Any]:
     """The dark floor of each opening: one step out of the face it lies on."""
     out = []
     for n in NOTCHES + hole_notches():
@@ -285,21 +308,21 @@ def floors() -> list:
 # ---------------------------------------------------------------- the back
 
 
-def back_line(points, width=RIDGE_W) -> sg.Polygon:
+def back_line(points: Sequence[tuple[float, float]], width: float = RIDGE_W) -> sg.Polygon:
     """A relief line through *points* of the back drawing, *width* wide."""
     return sg.LineString([back_pt(x, y) for x, y in points]).buffer(
         width / 2, cap_style="flat", join_style="mitre"
     )
 
 
-def back_closed(points, width=RIDGE_W) -> sg.Polygon:
+def back_closed(points: Sequence[Sequence[float]], width: float = RIDGE_W) -> BaseGeometry:
     pts = [back_pt(x, y) for x, y in points]
     outer = sg.Polygon(pts).buffer(width / 2, join_style="mitre")
     inner = sg.Polygon(pts).buffer(-width / 2, join_style="mitre")
     return outer.difference(inner)
 
 
-def lerp(a, b, t):
+def lerp(a: Sequence[float], b: Sequence[float], t: float) -> tuple[float, ...]:
     return tuple(a[i] + (b[i] - a[i]) * t for i in range(2))
 
 
@@ -323,7 +346,7 @@ LOBE_HOLE_R = 1.15
 SCREWS = (((9.43, 10.6), 1.35), ((63.04, 10.6), 1.35))
 
 
-def badge_rings() -> list:
+def badge_rings() -> list[Any]:
     out = []
     for i in range(BADGE_RINGS):
         t = i / (BADGE_RINGS - 1)
@@ -332,7 +355,7 @@ def badge_rings() -> list:
     return out
 
 
-def disc(center, r, res=48) -> sg.Polygon:
+def disc(center: tuple[float, float], r: float, res: int = 48) -> sg.Polygon:
     x, y = back_pt(*center)
     return sg.Point(x, y).buffer(r, quad_segs=res // 4)
 
@@ -347,7 +370,7 @@ KNOCKOUT_RING = (3.55, 3.8)
 KNOCKOUT_SLOTS = (2.0, 2.8)
 
 
-def knockout_marks(cx: float) -> list:
+def knockout_marks(cx: float) -> list[Any]:
     """The knock-out's dark ring and slots, in the top face's (x, z) plane."""
     cz = KNOCKOUT_Z
     out = [
@@ -367,9 +390,10 @@ def knockout_marks(cx: float) -> list:
     return out
 
 
-def xz_prism(poly, y0, y1, faces) -> dict:
+def xz_prism(shape: BaseGeometry, y0: float, y1: float, faces: list[str] | None) -> dict[str, Any]:
     """A prism along y from a polygon in (x, z)."""
-    p = {"axis": "y", "range": [r3(y0), r3(y1)], "profile": {"polygon": ring(poly)}}
+    poly = _one_polygon(shape)
+    p: dict[str, Any] = {"axis": "y", "range": [r3(y0), r3(y1)], "profile": {"polygon": ring(poly)}}
     if poly.interiors:
         p["profile"]["holes"] = holes(poly)
     p["faces"] = faces
@@ -379,11 +403,11 @@ def xz_prism(poly, y0, y1, faces) -> dict:
 # ---------------------------------------------------------------- the meshes
 
 
-def loft_ring(points) -> list:
+def loft_ring(points: Sequence[tuple[float, float]]) -> list[Any]:
     return [[r3(x), r3(H - y)] for x, y in points]
 
 
-def case_meshes() -> list:
+def case_meshes() -> list[Any]:
     base_pts = body_points()
     top_pts = inset(0.35, 0.35, 0.35)
     back_pts = inset(*BACK_INSET)
@@ -444,8 +468,8 @@ def case_meshes() -> list:
     insert = disc(BOSS[0], INSERT_RING_R).difference(disc(BOSS[0], INSERT_R))
     for poly in [disc(c, r) for c, r in SCREWS]:
         marks.append(prism(poly, Z_BACK - STEP, Z_BACK, ["bottom"]))
-    for poly in (insert, disc(LOBE[0], LOBE_HOLE_R)):
-        marks.append(prism(poly, Z_BOSS - STEP, Z_BOSS, ["bottom"]))
+    for ring_shape in (insert, disc(LOBE[0], LOBE_HOLE_R)):
+        marks.append(prism(ring_shape, Z_BOSS - STEP, Z_BOSS, ["bottom"]))
     for cx in KNOCKOUTS_X:
         for poly in knockout_marks(cx):
             marks.append(xz_prism(poly, H, H + STEP, ["top"]))
@@ -566,7 +590,7 @@ CASE = (
 )
 
 
-def dump(obj, indent=0) -> str:
+def dump(obj: object, indent: int = 0) -> str:
     """JSON with objects one key a line and lists of numbers on one line."""
     pad = "  " * indent
     if isinstance(obj, dict):

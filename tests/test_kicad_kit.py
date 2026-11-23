@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The Kleidos KiCad kit under _shared/kicad/: brand's files, byte for byte, and what the generator
 takes from them."""
@@ -21,7 +22,7 @@ import kleidos_kicad as kit  # noqa: E402
 IGNORED = {"__pycache__"}
 
 
-def test_every_file_of_the_kit_is_the_one_its_manifest_records():
+def test_every_file_of_the_kit_is_the_one_its_manifest_records() -> None:
     manifest = json.loads((KIT / "KIT.json").read_text(encoding="utf-8"))
     assert manifest["kit"] == "kleidos-kicad/1"
     assert manifest["source"] == "https://github.com/kleidos-dev/brand"
@@ -34,7 +35,7 @@ def test_every_file_of_the_kit_is_the_one_its_manifest_records():
     assert not extra, f"not part of the kit: {sorted(extra)}"
 
 
-def test_the_generator_takes_its_numbers_from_the_kit():
+def test_the_generator_takes_its_numbers_from_the_kit() -> None:
     style = kit.style()
     assert (
         style["lines"]["grid"],
@@ -50,11 +51,11 @@ def test_the_generator_takes_its_numbers_from_the_kit():
     assert ks.LINE_MIL == style["lines"]["connection_mil"] == 6
     assert (ks.ZONE_ORIGIN, ks.ZONE_STEP) == (10.0, 50.0)
     assert (ks.KEEPOUT_X, ks.KEEPOUT_Y, ks.NAV_X, ks.NAV_Y) == (125.0, 48.0, 112.0, 47.0)
-    assert ks.MARK_COLOUR == (255, 184, 0) and ks.RULE_COLOUR == (136, 153, 170)
+    assert ks.MARK_COLOR == (255, 184, 0) and ks.RULE_COLOR == (136, 153, 170)
     assert style["sheet"]["comment_lines"] == ks.BLOCK_LINES
 
 
-def test_every_board_s_project_names_the_kit_s_sheet_and_its_variables():
+def test_every_board_s_project_names_the_kit_s_sheet_and_its_variables() -> None:
     for pro in sorted(ROOT.glob("*/schematic/*.kicad_pro")):
         data = json.loads(pro.read_text(encoding="utf-8"))
         sheet = (pro.parent / data["schematic"]["page_layout_descr_file"]).resolve()
@@ -65,7 +66,7 @@ def test_every_board_s_project_names_the_kit_s_sheet_and_its_variables():
         }, pro
 
 
-def test_every_title_block_line_fits_its_cell():
+def test_every_title_block_line_fits_its_cell() -> None:
     import yaml
 
     for layout in sorted(ROOT.glob("*/schematic/layout.yaml")):
@@ -74,7 +75,7 @@ def test_every_title_block_line_fits_its_cell():
         assert ks.title_block_errors(lay, bool(net.get("kleidos"))) == [], layout
 
 
-def test_a_title_too_wide_for_its_cell_is_refused():
+def test_a_title_too_wide_for_its_cell_is_refused() -> None:
     lay = {
         "title_block": {
             "title": "A board with a very long name indeed (K000-LONG)",
@@ -90,6 +91,6 @@ def test_a_title_too_wide_for_its_cell_is_refused():
     assert any("title cell" in e for e in errors)
 
 
-def test_the_license_comment_left_the_layouts():
+def test_the_license_comment_left_the_layouts() -> None:
     for layout in sorted(ROOT.glob("*/schematic/layout.yaml")):
         assert "License: MIT" not in layout.read_text(encoding="utf-8"), layout

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5Stack Core2 v1.3 — sources
 
 What `measurements.json` and `svg/front.svg` were measured on. The vendor files themselves are not kept here: product photos, drawings and CAD files stay the property of their owners and are cited by address only (`NOTICE.md`). The numbers taken from them are in `measurements.json` and in the Core2 block of `_shared/emit_front_svg.py`, whose comments say which figure came from which view.
@@ -11,7 +16,7 @@ What `measurements.json` and `svg/front.svg` were measured on. The vendor files 
 | M5Stack's Core2 v1.3 model, `Core2_v1.3.stl` (M5_Hardware at `dccc8047`, SHA-256 `223b148fc19892a77d84aaaa6940c9fce1667d393259bd75316d3b6f85052424`) | <https://raw.githubusercontent.com/m5stack/M5_Hardware/dccc804775037bb1c1457b7d31bf3ba583150d57/Products/K010-V13_Core2_v1.3/Structures/Core2_v1.3.stl> | The microSD slit in the bottom wall (12.56 x 1.73 mm, 14.12 to 26.68 mm from the left edge, 7.09 to 8.81 mm behind the front), checked against a photo of that face; the 3D model (`model/spec.json`) |
 | The owner's own Core2 v1.3 | — | The Power key on the left edge and Reset on the bottom edge, measured on 2026-07-15; neither shows from the front |
 
-The panel's active area, 40.80 x 30.60 mm, is the display datasheet's (`board.json`); its origin is the window's centre, photo-measured on 2026-10-18.
+The panel's active area, 40.80 x 30.60 mm, is the display datasheet's (`board.json`); its origin is the window's center, photo-measured on 2026-10-18.
 
 Not established: the addresses of the two front photos and of the photo of the bottom face were not recorded when they were measured. The images M5Stack's Core2 v1.3 page shows now (<https://m5stack-doc.oss-cn-shenzhen.aliyuncs.com/1231/K010-V13-Core2-v1.3-main-pictures_01.webp> and the following ones) are not byte-identical to the copies that were measured on, so which of M5Stack's images they were cannot be said.
 

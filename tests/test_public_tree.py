@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """``_shared/check_public_tree.py`` on the tree and on planted private lines.
 
@@ -47,7 +48,7 @@ HARMLESS = [
 ]
 
 
-def test_the_tree_holds_nothing_private_and_no_vendor_file():
+def test_the_tree_holds_nothing_private_and_no_vendor_file() -> None:
     assert check_public_tree.findings(ROOT) == []
 
 
@@ -55,7 +56,7 @@ def test_the_tree_holds_nothing_private_and_no_vendor_file():
 @pytest.mark.parametrize(
     "name", ["bench/2026-11-17-probe.md", "board.json", "netlist.yaml", "tool.py"]
 )
-def test_a_planted_private_line_is_caught(tmp_path, kind, name):
+def test_a_planted_private_line_is_caught(tmp_path: Path, kind: str, name: str) -> None:
     path = tmp_path / "board" / name
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(f"first line\nread on {PLANTED[kind]} today\n", encoding="utf-8")
@@ -66,12 +67,12 @@ def test_a_planted_private_line_is_caught(tmp_path, kind, name):
     assert PLANTED[kind] not in found[0], "a finding must not repeat the private value"
 
 
-def test_what_only_looks_private_passes(tmp_path):
+def test_what_only_looks_private_passes(tmp_path: Path) -> None:
     (tmp_path / "notes.md").write_text("\n".join(HARMLESS) + "\n", encoding="utf-8")
     assert check_public_tree.findings(tmp_path) == []
 
 
-def test_license_texts_and_drawings_are_not_read_for_private_lines(tmp_path):
+def test_license_texts_and_drawings_are_not_read_for_private_lines(tmp_path: Path) -> None:
     line = "contact " + glue("@", "someone", "example.org") + "\n"
     (tmp_path / "LICENSES").mkdir()
     (tmp_path / "LICENSES" / "Some-License.txt").write_text(line, encoding="utf-8")
@@ -79,13 +80,13 @@ def test_license_texts_and_drawings_are_not_read_for_private_lines(tmp_path):
     assert check_public_tree.findings(tmp_path) == []
 
 
-def test_root_license_is_the_mit_text():
+def test_root_license_is_the_mit_text() -> None:
     """``LICENSE``, the file GitHub reads a repository's license from, is the
     MIT text ``REUSE.toml`` points at, byte for byte."""
     assert (ROOT / "LICENSE").read_bytes() == (ROOT / "LICENSES" / "MIT.txt").read_bytes()
 
 
-def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
+def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path: Path) -> None:
     """``<board>/model/<board>.obj`` and ``.mtl`` beside its GLB and
     spec: ours; any other OBJ: not."""
     model = tmp_path / "board" / "model"
@@ -111,7 +112,7 @@ def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
     ]
 
 
-def test_a_banner_copy_with_embedded_screens_is_refused(tmp_path):
+def test_a_banner_copy_with_embedded_screens_is_refused(tmp_path: Path) -> None:
     """The README banner is read from social by its address: a copy in the tree that embeds pictures
     is refused, wherever it lands."""
     readme = tmp_path / ".github" / "readme"

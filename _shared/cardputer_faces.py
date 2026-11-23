@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What the Cardputer ADV prints on its back, its top and its left side
 
@@ -865,7 +866,7 @@ def _legend_and_logo(out: list[str]) -> None:
     pts = []
     x0, y0, x1, y1, r = 62.55, 42.9, 73.05, 47.0, 0.85
 
-    def corner(cx, cy, a0):
+    def corner(cx: float, cy: float, a0: int) -> list[tuple[float, float]]:
         return [
             (cx + r * math.cos(math.radians(a)), cy + r * math.sin(math.radians(a)))
             for a in range(a0, a0 + 91, 15)

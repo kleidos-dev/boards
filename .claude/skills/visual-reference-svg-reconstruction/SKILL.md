@@ -3,6 +3,10 @@ name: visual-reference-svg-reconstruction
 description: "Use when measuring a board face from real references (vendor photos, renders, dimension drawings, CAD) and drawing or correcting its true-scale SVG in this repository: a board's svg/front.svg, svg/back.svg or a side's drawing, always through the generator that writes it, with measurements.json kept in step. Covers finding and choosing references, calibrating pixels to millimeters, rendering PNG previews, overlaying and diffing the drawing against a reference kept outside the tree, and iterating on outline, screen, controls, keyboards, printed legends and case details. Do not use for schematics, board.json, icons or 3D models (see board-specs-and-schematics), or for a device's screen contents."
 argument-hint: "board id and what to measure or correct (outline, screen, a control, a legend), or a reference to compare against"
 ---
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
 
 # Visual reference SVG reconstruction
 

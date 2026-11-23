@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5Stack StickC-Plus SE (K016-P-SE): schematic
 
 Kleidos boards: the StickC-Plus SE's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net the vendor's schematic shows, with the values it prints, laid out with this project's own layout and symbols, plus 28 details the print leaves out or gets wrong, each settled by a datasheet, the vendor's docs page or a bench probe and marked where it is drawn (below, "Kleidos additions and corrections"). It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the filter and decoupling parts on each interface, every rail and what feeds it, and the ESP32 GPIO of every signal.
@@ -24,7 +29,7 @@ Pages 5 to 7 are written by the generator from `netlist.yaml`, not drawn by hand
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/B2]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row B, column 2. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/B2]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row B, column 2. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label.
 
 Parts documented as not fitted (value `NC`: the IMU footprint U7 and C21, C28, C29) carry KiCad's DNP mark: a red cross over the symbol.
 
@@ -44,7 +49,7 @@ The PDF holds no script: KiCad's property pop-ups only run in Acrobat, so the ex
 
 - The print leaves the ESP32-PICO-D4's designator unassigned ("U?"); it is U1 here. The battery connector carries only the label "Li_Ion" and no designator; it is J3 here.
 - The print's ESP32-PICO-D4 symbol leaves out four of the package's 49 pins (44, 45, 47, 48); they are drawn here, unconnected, with their datasheet names (K9). The print numbers the unfitted IMU footprint U7's pins only; they carry the MPU-6886 datasheet's names here (K28). The print names U6 pin 10 "P3.2", as it names pin 1; it is named P3.0, the CH552 datasheet's name, here (K1).
-- The print numbers no pin of a resistor, capacitor, inductor, diode, LED, crystal, key, MOSFET or two-pin connector. Here two-pin parts take pins 1 and 2 (for the diodes and LEDs, 1 is the cathode and 2 the anode, as KiCad numbers them; for the polarised CX1 and CX2, 1 is the + terminal), and the MOSFETs take G, D and S. Pins the print names but does not number keep their name as their key in `netlist.yaml` (J2's VCC, GND and SHELL; U5's PAD).
+- The print numbers no pin of a resistor, capacitor, inductor, diode, LED, crystal, key, MOSFET or two-pin connector. Here two-pin parts take pins 1 and 2 (for the diodes and LEDs, 1 is the cathode and 2 the anode, as KiCad numbers them; for the polarized CX1 and CX2, 1 is the + terminal), and the MOSFETs take G, D and S. Pins the print names but does not number keep their name as their key in `netlist.yaml` (J2's VCC, GND and SHELL; U5's PAD).
 - J2 is drawn with its pin numbers hidden: the print numbers only its CC and data pins, and those numbers are in the pin names (`CC1(A5)`). U5's GND (pin 2) and PAD are drawn as one pin, `GND/PAD`, since both are on GND.
 - Nets the print leaves unnamed have names of ours (`AXP_LX1`, `MOS1_G`, `RTC_OSCI`...); `netlist.yaml` lists each under `unnamed_nets` with where it is.
 - The AXP192's GPIOs are listed as `AXP GPIO0` to `AXP GPIO4` in the nets page, to keep them apart from the ESP32's GPIO nets.
@@ -77,7 +82,7 @@ The drawing improves on the vendor's print where a primary source makes a detail
 | Id | Kind | What | Marked at | Source | Item |
 | --- | --- | --- | --- | --- | --- |
 | K1 | correction | U6 pin 10 is P3.0 (UART0 RXD); the print names it P3.2, like pin 1. Its net, CH552_RXD, is unchanged. | page 4, the `CH552_RXD` label | CH552 datasheet V1G, section 4 (pin definitions), p. 4, TSSOP20 pin 10 | T04 |
-| K2 | correction | U5, printed "LCD", is a 1.14-inch 135 x 240 colour TFT with an ST7789V2 driver. | page 4, U5's reference | the docs page (2026-11-17), specifications, LCD; the vendor's back label ("LCD 1.14 TFT,135x240 ST7789V2") | T11 |
+| K2 | correction | U5, printed "LCD", is a 1.14-inch 135 x 240 color TFT with an ST7789V2 driver. | page 4, U5's reference | the docs page (2026-11-17), specifications, LCD; the vendor's back label ("LCD 1.14 TFT,135x240 ST7789V2") | T11 |
 | K3 | correction | J1, printed "GROVE", is an HY2.0-4P port: 1 GND, 2 5V, 3 G32, 4 G33. | page 4, J1's reference | the docs page (2026-11-17), HY2.0-4P table; the back label ("HY2.0-4P G V OUT G32 G33") | T12 |
 | K4 | addition | The cell on J3 is the built-in 3.7 V 120 mAh lithium cell. | page 5, the `VBAT_Li_Ion` row | the docs page (2026-11-17), specifications, Battery; the back label ("BATTERY: 120mAh"); Kleidos `BATTERY_CAPACITY_MAH 120` (`variants/m5stickc_plus_se/variant.h`) | T13 |
 | K5 | addition | `VBUS_VIN` (pad PAD6, the AXP192's ACIN) takes 5 V; the docs page limits it, like `VBUS_USB`, to 4.8-5.5 V. | page 5, the `VBUS_VIN` row | the docs page (2026-11-17), Hat-Bus notes | T14 |
@@ -112,7 +117,7 @@ Four entries describe a part the print does draw (K2, K3, K9, K28). They are cor
 What is still uncertain stays out of the drawing; [`improvements.md`](improvements.md) gives the evidence of each item and the probes that would settle it.
 
 - **U1 pin 19, VDD3P3_RTC (T01).** The print draws its wire across the `VESP_3V3` bar with no junction dot, so it is drawn on its own net (`U1_VDD3P3_RTC`, with C40). The pin is certainly supplied: the board boots from the in-package flash, whose VDD_SDIO comes from VDD3P3_RTC (K19), and the LCD runs on GPIO13 and GPIO15, RTC IOs. That the supply is `VESP_3V3` is what the print's geometry suggests; probe P1 (a multimeter on the header's G26 and 3V3 cells while DCDC1 steps) did not run, since no one was at the bench.
-- **U1 pin 4, VDDA3P3 (T02).** The same crossing without a dot as pin 19; pin 3, the other VDDA3P3, is on `VESP_3V3`, so the chip works either way and no firmware behaviour tells them apart. It cannot be settled without opening the board.
+- **U1 pin 4, VDDA3P3 (T02).** The same crossing without a dot as pin 19; pin 3, the other VDDA3P3, is on `VESP_3V3`, so the chip works either way and no firmware behavior tells them apart. It cannot be settled without opening the board.
 - **The buzzer on GPIO2 (T06).** The docs page and the back label list a passive buzzer on G2; the print draws none (GPIO2 reaches only PAD2). Bench P4 found no DC load on GPIO2 and no change in draw with a 2.7 kHz tone on it, which fits a piezo element, a MOSFET gate or nothing ([`bench/2026-11-17-gpio2-buzzer.md`](bench/2026-11-17-gpio2-buzzer.md)); no one listened. Whether GPIO2 drives a sounder needs a listener (or the board's own microphone in a probe image); its circuit cannot be settled without opening the board. Neither is drawn.
 - **The Hat-Bus header (T07, T08, T09).** The docs page and the back label give an 8-pin 2.54 mm header (GND, 5V_OUT, G26, G36/G25, G0, BAT, 3V3, 5V_IN); the print draws only the pads PAD1-PAD10. Seven cells match a pad by name, G36 and G25 share one cell (which would join `GPIO36_EXT` and `GPIO25`), and the BAT cell has no pad. Probe P3 (a multimeter, a current-limited supply on 5V_IN, 1 kohm ties on the header) did not run. The header is not drawn.
 - **RTC_VDD's voltage (T16).** LDO1 is "30 mA, always on" in the AXP192 summary; the full datasheet's table does not give it unambiguously. It stays "not printed"; measuring at C11 needs the board open.

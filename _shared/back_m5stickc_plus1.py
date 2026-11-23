@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What the M5StickC Plus 1.1 prints on its back: the label, in the back frame
 

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P03: the touch panel's INT on GPIO39, idle half (2026-11-17)
 
 Probe P03 of `../improvements.md`. Run through the Kleidos debug serial console, without opening the case and without touching the glass.

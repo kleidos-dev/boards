@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5Stack StickC-Plus SE: schematic improvements (triage)
 
 Candidate additions and corrections to this board's schematic under the owner's rule of 2026-11-17 (`AGENTS.md`, "Schematics"): a detail goes in when a primary source makes it certain, a print error is corrected when the evidence settles it, and what stays uncertain is listed open. The settled additions and corrections are applied (2026-11-17) as `kleidos` entries K1-K28 in `netlist.yaml`, listed in "Applied" below and in `README.md`; the open items are listed in `README.md`, "Open questions". One row per item: its id, the claim, the evidence, and its status.
@@ -11,7 +16,7 @@ Sources cited by short name: *print*, M5Stack's K016-P-SE schematic as `netlist.
 | Id | Claim | Evidence | Status |
 | --- | --- | --- | --- |
 | T01 | U1 pin 19 (VDD3P3_RTC) is supplied from VESP_3V3, not only decoupled by C40 | Print: its wire crosses the VESP_3V3 bar with no junction dot. PICO datasheet Table 2: pin 19 is "Input power supply for RTC IO"; §3.2 and Table 8: with MTDI low (its default pull-down; GPIO12 is unconnected on the print) VDD_SDIO, the in-package flash's supply, is powered directly from VDD3P3_RTC, and the board boots from that flash. Kleidos drives the LCD on GPIO13 and GPIO15, RTC IOs (`variants/m5stickc_plus_se/variant.h` (`PIN_DISPLAY_SCK`, `PIN_DISPLAY_MOSI`)). So pin 19 is certainly supplied; that the supply is VESP_3V3 is what the print's geometry suggests, but the Plus 1.1's Altium netlist keeps the same pin on its capacitor alone (`../../m5stickc-plus1/schematic/README.md`, "What the schematic does not say") | needs bench (P1); then settled: correction, `pin: U1.19` |
-| T02 | U1 pin 4 (VDDA3P3) is on VESP_3V3 | Print: same crossing without a dot as T01. PICO datasheet Table 2: pins 3 and 4 are both VDDA3P3, the analog supply; pin 3 is already on VESP_3V3, so the chip works whether or not pin 4 is joined, and no firmware behaviour tells the two apart. The Plus 1.1's Altium netlist keeps pin 4 on C43 alone | cannot be settled without opening the board (continuity from C43's supply pad to VESP_3V3); stays out, open |
+| T02 | U1 pin 4 (VDDA3P3) is on VESP_3V3 | Print: same crossing without a dot as T01. PICO datasheet Table 2: pins 3 and 4 are both VDDA3P3, the analog supply; pin 3 is already on VESP_3V3, so the chip works whether or not pin 4 is joined, and no firmware behavior tells the two apart. The Plus 1.1's Altium netlist keeps pin 4 on C43 alone | cannot be settled without opening the board (continuity from C43's supply pad to VESP_3V3); stays out, open |
 | T03 | U6 pin 20 (V33) is its own net with C25 only | CH552 datasheet, pin table (TSSOP20 pin 20): V33 is the USB regulator's output, tied to VCC only when VCC is below 3.6 V and otherwise decoupled by 0.1 µF; here VCC (pin 19) is VBUS_USB, 5 V. The print and the datasheet agree | settled: no change (`board.json` is wrong, B2) |
 | T04 | U6 pin 10 is P3.0 (UART0 RXD), not "P3.2" as printed | CH552 datasheet, pin table: TSSOP20 pin 10 is P3.0/PWM1_/RXD and pin 1 is P3.2; the print names both "P3.2". Pin 10's net is CH552_RXD, fed from the ESP32's U0TXD through R25, as a receive pin should be | settled: correction, `pin: U6.10` (the name only; the connection stays) |
 | T05 | D3 is on USB_DP and D4 on USB_DM | Print, read at full resolution (README) | settled: no change (`board.json` leaves it open, B3) |

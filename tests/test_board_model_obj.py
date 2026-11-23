@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Every board's OBJ and MTL are what its master GLB gives, and read back as that model.
 
@@ -8,7 +9,7 @@ records the two under ``obj``. This holds, on the files as committed:
 - the OBJ, the MTL and their record are, byte for byte, what the committed GLB
   gives now, and the OBJ's header names that GLB's digest;
 - read back by another reader (trimesh), the OBJ has the GLB's vertices,
-  triangles and bounds (millimetres against the GLB's metres), one object per
+  triangles and bounds (millimeters against the GLB's meters), one object per
   mesh of the GLB in its order, and every material it uses is in its MTL,
   which holds the GLB's materials in their order;
 - the numbers are written in fixed decimals with no ``-0``.
@@ -24,6 +25,8 @@ import os
 import struct
 import sys
 from pathlib import Path
+from types import ModuleType
+from typing import Any
 
 import pytest
 
@@ -34,7 +37,7 @@ from paths import BOARDS  # noqa: E402
 pytestmark = pytest.mark.models
 
 
-def library(name: str):
+def library(name: str) -> ModuleType:
     """A library the check needs: skipped where it is missing, a
     failure in CI, which installs it."""
     try:
@@ -45,20 +48,24 @@ def library(name: str):
         pytest.skip(f"{name} is not installed: pip install -r requirements.txt")
 
 
-def exporter():
+def exporter() -> ModuleType:
     library("numpy")
     import export_obj
 
     return export_obj
 
 
-def record(board: str) -> dict:
-    return json.loads((ROOT / board / "model" / "source.json").read_text(encoding="utf-8"))
+def record(board: str) -> dict[str, Any]:
+    loaded: dict[str, Any] = json.loads(
+        (ROOT / board / "model" / "source.json").read_text(encoding="utf-8")
+    )
+    return loaded
 
 
-def glb_json(path: Path) -> dict:
+def glb_json(path: Path) -> dict[str, Any]:
     data = path.read_bytes()
-    return json.loads(data[20 : 20 + struct.unpack_from("<I", data, 12)[0]])
+    loaded: dict[str, Any] = json.loads(data[20 : 20 + struct.unpack_from("<I", data, 12)[0]])
+    return loaded
 
 
 def lines(path: Path, key: str) -> list[str]:
@@ -88,13 +95,13 @@ def test_the_obj_and_mtl_are_what_the_glb_gives(board: str) -> None:
     lines = (ROOT / obj["obj"]).read_text(encoding="utf-8").splitlines()
     header = lines[: next(i for i, line in enumerate(lines) if not line.startswith("#"))]
     assert f"# Source: {board}.glb, sha256 {rec['model_sha256']}" in header
-    assert any(line.startswith("# Units: millimetres") for line in header)
+    assert any(line.startswith("# Units: millimeters") for line in header)
     assert obj["triangles"] == rec["triangles"] and obj["materials"] == rec["materials"]
 
 
 @pytest.mark.parametrize("board", BOARDS)
 def test_the_obj_reads_back_as_the_glb(board: str) -> None:
-    """Another reader finds the GLB's vertices, triangles and bounds, in millimetres."""
+    """Another reader finds the GLB's vertices, triangles and bounds, in millimeters."""
     np = library("numpy")
     trimesh = library("trimesh")
     glb_path = ROOT / record(board)["model"]
@@ -104,7 +111,7 @@ def test_the_obj_reads_back_as_the_glb(board: str) -> None:
     glb_parts, obj_parts = glb.dump(), obj.dump()
     assert sum(len(m.faces) for m in obj_parts) == sum(len(m.faces) for m in glb_parts)
     assert sum(len(m.vertices) for m in obj_parts) == sum(len(m.vertices) for m in glb_parts)
-    assert np.abs(obj.bounds - glb.bounds * 1000.0).max() < 1e-3, "not in millimetres"
+    assert np.abs(obj.bounds - glb.bounds * 1000.0).max() < 1e-3, "not in millimeters"
     assert record(board)["obj"]["vertices"] == sum(len(m.vertices) for m in glb_parts)
 
 
@@ -120,9 +127,9 @@ def test_one_object_per_mesh_and_every_material_in_the_mtl(board: str) -> None:
     declared = lines(mtl_path, "newmtl")
     assert declared == [m["name"] for m in js["materials"]]
     assert set(lines(obj_path, "usemtl")) <= set(declared)
-    # each material's colour is the GLB's base colour in sRGB, with its roughness
+    # each material's color is the GLB's base color in sRGB, with its roughness
     # and metalness; a blended material keeps its alpha, the unlit screen its
-    # constant colour
+    # constant color
     to_srgb = exporter().model_raster.linear_to_srgb
     for index, mat in enumerate(js["materials"]):
         block = mtl_path.read_text(encoding="utf-8").split(f"newmtl {mat['name']}\n")[1]

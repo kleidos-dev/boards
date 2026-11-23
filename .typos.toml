@@ -1,4 +1,44 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
+# SPDX-License-Identifier: MIT
+#
+# typos: the quality kit's [default] block, then this repository's own
+# exceptions: words that are right where they stand (kleidos-dev/.github
+# docs/quality.md, "Overrides": facts are not weakenings).
+
 [default]
 # >>> kleidos-quality typos (synced from kleidos-dev/.github quality/typos/block.toml; do not edit)
 locale = "en-us"
 # <<< kleidos-quality typos
+# A git commit id or a SHA-256, which are hex, not words.
+extend-ignore-re = ['\b[0-9a-f]{7,64}\b']
+
+[default.extend-words]
+# Pin, signal and net names as the vendors' schematics and datasheets print
+# them: the I2S bit clock and data out, the AXP192's EXTEN, the GPS's EXTINT,
+# the T-Deck Plus's speaker enable, a light sensor's part number (LTR-553ALS),
+# the StickS3's connector AXE524124, the PMIC's G<n>_WAKEin pins, the
+# vendor's "04_MUC_Core" sheet title and a Core2 pin named CENTRE.
+BCK = "BCK"
+DOUT = "DOUT"
+EXTEN = "EXTEN"
+exten = "exten"
+EXTINT = "EXTINT"
+SPEEK = "SPEEK"
+ALS = "ALS"
+AXE = "AXE"
+Ein = "Ein"
+MUC = "MUC"
+CENTRE = "CENTRE"
+# "Gnn"/"GPIOnn": every numbered pin, as the board's table writes them.
+Onn = "Onn"
+# The PBR material model's own term (glTF's metallicRoughness), and
+# shapely's name for a mitred join (join_style="mitre").
+metalness = "metalness"
+mitre = "mitre"
+
+[files]
+# sonar-project.properties is held as it is in this change (owner, 2026-11-22:
+# the Sonar files keep their content but for the licensing header lines).
+# The Kleidos KiCad kit: byte copies of brand's kicad/ (_shared/kicad/KIT.json),
+# spell-checked where they are written.
+extend-exclude = ["_shared/kicad/", "sonar-project.properties"]

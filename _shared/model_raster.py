@@ -45,10 +45,13 @@ Used by ``check_board_model.py`` (its three views) and
 import json
 import math
 import struct
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 MM = 0.001
 _COMPONENTS = {
@@ -88,17 +91,17 @@ class Mesh:
     material: str = ""
 
 
-def linear_to_srgb(c):
-    c = np.clip(np.asarray(c, dtype=float), 0, 1)
-    return np.where(c <= 0.0031308, c * 12.92, 1.055 * c ** (1 / 2.4) - 0.055)
+def linear_to_srgb(c: npt.ArrayLike) -> npt.NDArray[np.float64]:
+    x: npt.NDArray[np.float64] = np.clip(np.asarray(c, dtype=float), 0, 1)
+    return np.where(x <= 0.0031308, x * 12.92, 1.055 * x ** (1 / 2.4) - 0.055)
 
 
-def srgb_to_linear(c):
-    c = np.clip(np.asarray(c, dtype=float), 0, 1)
-    return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4)
+def srgb_to_linear(c: npt.ArrayLike) -> npt.NDArray[np.float64]:
+    x: npt.NDArray[np.float64] = np.clip(np.asarray(c, dtype=float), 0, 1)
+    return np.where(x <= 0.04045, x / 12.92, ((x + 0.055) / 1.055) ** 2.4)
 
 
-def pbr_neutral(c):
+def pbr_neutral(c: npt.ArrayLike) -> npt.NDArray[np.float64]:
     """Khronos PBR Neutral on linear Rec. 709 colors (rows of r, g, b): the
     function of ``PBR_Neutral/pbrNeutral.glsl`` in KhronosGroup/ToneMapping
     (Apache License 2.0, Copyright 2024 The Khronos Group Inc.), operation for
@@ -115,7 +118,7 @@ def pbr_neutral(c):
     return np.where(peak < start, c, compressed)
 
 
-def _accessor(js, bin_, index):
+def _accessor(js: dict[str, Any], bin_: bytes, index: int) -> npt.NDArray[Any]:
     acc = js["accessors"][index]
     bv = js["bufferViews"][acc["bufferView"]]
     dt = np.dtype(_COMPONENTS[acc["componentType"]])
@@ -125,7 +128,7 @@ def _accessor(js, bin_, index):
     arr = np.frombuffer(bin_, dtype=dt, count=acc["count"] * stride, offset=off)
     arr = arr.reshape(acc["count"], stride)[:, :width].astype(float)
     if acc.get("normalized"):
-        arr = np.clip(arr / float(np.iinfo(dt).max), -1.0, 1.0)
+        arr = np.clip(arr / float(np.iinfo(dt.type).max), -1.0, 1.0)
     return arr
 
 
@@ -133,7 +136,7 @@ def _accessor(js, bin_, index):
 _PLACING = ("matrix", "translation", "rotation")
 
 
-def _local(node):
+def _local(node: dict[str, Any]) -> npt.NDArray[np.float64]:
     """A node's own transform as a 4 x 4 matrix: its ``matrix`` (stored by
     columns), or its translation, rotation and scale composed as glTF composes
     them (T R S)."""
@@ -152,7 +155,7 @@ def _local(node):
     return out
 
 
-def _placements(nodes):
+def _placements(nodes: list[dict[str, Any]]) -> dict[int, npt.NDArray[np.float64] | None]:
     """{node index: its 4 x 4 world matrix, or None when its own scale is all that places it}.
 
     A model the builder writes hangs every mesh from one root, a mesh node
@@ -164,7 +167,7 @@ def _placements(nodes):
     by its transform.
     """
     above = {child: index for index, node in enumerate(nodes) for child in node.get("children", [])}
-    out = {}
+    out: dict[int, npt.NDArray[np.float64] | None] = {}
     for index, node in enumerate(nodes):
         chain = [index]
         while chain[-1] in above and above[chain[-1]] not in chain:
@@ -181,7 +184,7 @@ def _placements(nodes):
     return out
 
 
-def read_glb(path):
+def read_glb(path: str | Path) -> list[Mesh]:
     """[Mesh] of a GLB, each mesh where its node and the nodes above it place it."""
     raw = Path(path).read_bytes()
     if struct.unpack_from("<I", raw, 0)[0] != 0x46546C67:
@@ -231,11 +234,13 @@ def read_glb(path):
     return out
 
 
-def _clip_to_box(points, box):
+def _clip_to_box(
+    points: npt.NDArray[np.float64], box: tuple[float, float, float, float]
+) -> npt.NDArray[np.float64]:
     """The part of a polygon (rows of x, y, z) inside x0 <= x <= x1, y0 <= y <= y1
     (Sutherland-Hodgman, plane by plane, so an upright face clips too)."""
     x0, x1, y0, y1 = box
-    poly = [np.asarray(p, dtype=float) for p in points]
+    poly: list[npt.NDArray[np.float64]] = [np.asarray(p, dtype=float) for p in points]
     for axis, bound, keep_above in ((0, x0, True), (0, x1, False), (1, y0, True), (1, y1, False)):
         if not poly:
             break
@@ -250,10 +255,10 @@ def _clip_to_box(points, box):
             if cur_in:
                 out.append(cur)
         poly = out
-    return poly
+    return np.array(poly, dtype=float).reshape(-1, 3)
 
 
-def screen_clearance(meshes, quant_mm):
+def screen_clearance(meshes: list[Mesh], quant_mm: float) -> dict[str, Any] | None:
     """How far from the ``screen`` quad's plane the nearest faces lie, either side.
 
     A face of any other mesh counts when part of it lies inside the screen's
@@ -282,7 +287,10 @@ def screen_clearance(meshes, quant_mm):
     inset = quant_mm / 2
     box = (lo[0] + inset, hi[0] - inset, lo[1] + inset, hi[1] - inset)
     plane = float(screen.positions[:, 2].min())
-    nearest = {"behind": (None, None), "in_front": (None, None)}
+    nearest: dict[str, tuple[float | None, str | None]] = {
+        "behind": (None, None),
+        "in_front": (None, None),
+    }
     for m in meshes:
         if m is screen or not len(m.faces):
             continue
@@ -305,22 +313,30 @@ def screen_clearance(meshes, quant_mm):
                 side, gap = "in_front", float(z.min()) - plane
             else:
                 side, gap = ("behind" if plane - z.min() >= z.max() - plane else "in_front"), 0.0
-            if nearest[side][0] is None or gap < nearest[side][0]:
+            best = nearest[side][0]
+            if best is None or gap < best:
                 nearest[side] = (gap, m.name)
-    out = {"screen_z_mm": round(plane, 6)}
+    out: dict[str, Any] = {"screen_z_mm": round(plane, 6)}
     ok = True
     for side in ("behind", "in_front"):
-        gap, name = nearest[side]
-        out[f"{side}_mm"] = None if gap is None else round(gap, 6)
+        side_gap, name = nearest[side]
+        out[f"{side}_mm"] = None if side_gap is None else round(side_gap, 6)
         out[f"{side}_mesh"] = name
         # 1e-6 mm absorbs the float32 rounding of the screen's own depth
-        ok = ok and (gap is None or gap >= quant_mm - 1e-6)
+        ok = ok and (side_gap is None or side_gap >= quant_mm - 1e-6)
     out["quant_mm"] = quant_mm
     out["ok"] = ok
     return out
 
 
-def legend_clearance(meshes, prefix, quant_mm, steps=2, on=None, face="front"):
+def legend_clearance(
+    meshes: list[Mesh],
+    prefix: str,
+    quant_mm: float,
+    steps: int = 2,
+    on: str | None = None,
+    face: str = "front",
+) -> dict[str, Any] | None:
     """How far over the rest of the model the legends lie, and whether anything covers them.
 
     The legends are the meshes whose names start with *prefix*: flat sheets a
@@ -364,7 +380,10 @@ def legend_clearance(meshes, prefix, quant_mm, steps=2, on=None, face="front"):
         legends = [m for m in meshes if m.name.startswith(prefix) and len(m.faces)]
     cent = np.concatenate([m.positions[m.faces].mean(axis=1) for m in legends])
     lo, hi = cent[:, :2].min(axis=0), cent[:, :2].max(axis=0)
-    nearest = {"under": (None, None), "over": (None, None)}
+    nearest: dict[str, tuple[float | None, str | None]] = {
+        "under": (None, None),
+        "over": (None, None),
+    }
     printed_on = np.zeros(len(cent), dtype=bool)
     for m in meshes:
         if m.name.startswith(prefix) or m.name == "glass" or m.alpha < 1.0 or not len(m.faces):
@@ -400,7 +419,8 @@ def legend_clearance(meshes, prefix, quant_mm, steps=2, on=None, face="front"):
             if m.name == on:
                 printed_on[at[inside][gap >= 0]] = True
             for side, found in (("under", gap[gap >= 0]), ("over", -gap[gap < 0])):
-                if len(found) and (nearest[side][0] is None or found.min() < nearest[side][0]):
+                best = nearest[side][0]
+                if len(found) and (best is None or found.min() < best):
                     nearest[side] = (float(found.min()), m.name)
     least = steps * quant_mm
     under, over = nearest["under"], nearest["over"]
@@ -428,7 +448,9 @@ _BUCKET_STEPS = 4
 _BUCKET_TURN = 32
 
 
-def _plane_axes(normal):
+def _plane_axes(
+    normal: npt.NDArray[np.float64],
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
     """Two unit vectors across a plane facing *normal*, (u, v) with u x v = normal."""
     seed = np.array([1.0, 0.0, 0.0]) if abs(normal[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
     u = np.cross(normal, seed)
@@ -436,7 +458,9 @@ def _plane_axes(normal):
     return u, np.cross(normal, u)
 
 
-def _clip_convex(subject, clip):
+def _clip_convex(
+    subject: list[tuple[float, float]], clip: list[tuple[float, float]]
+) -> list[tuple[float, float]]:
     """The part of polygon *subject* inside the convex polygon *clip*, both counterclockwise."""
     out = list(subject)
     for k, a in enumerate(clip):
@@ -457,7 +481,7 @@ def _clip_convex(subject, clip):
     return out
 
 
-def _polygon_area(points):
+def _polygon_area(points: list[tuple[float, float]]) -> float:
     return (
         abs(
             sum(
@@ -469,7 +493,9 @@ def _polygon_area(points):
     )
 
 
-def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
+def coplanar_overlaps(
+    meshes: list[Mesh], quant_mm: float, min_area_mm2: float | None = None
+) -> dict[str, Any]:
     """Where two meshes of different materials cover one place at one depth.
 
     Two faces that face the same way, lie on one plane and overlap draw the
@@ -508,7 +534,13 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
     """
     least = quant_mm - 1e-6  # 1e-6 mm absorbs the rounding of a position read back
     min_area = quant_mm * quant_mm if min_area_mm2 is None else min_area_mm2
-    tri, normal, offset, owner, mirror, lo, hi = [], [], [], [], [], [], []
+    tris: list[npt.NDArray[np.float64]] = []
+    normals: list[npt.NDArray[np.float64]] = []
+    offsets: list[npt.NDArray[np.float64]] = []
+    owners: list[npt.NDArray[np.int64]] = []
+    mirrors: list[npt.NDArray[np.bool_]] = []
+    los: list[npt.NDArray[np.float64]] = []
+    his: list[npt.NDArray[np.float64]] = []
     for index, m in enumerate(meshes):
         if not len(m.faces):
             continue
@@ -521,20 +553,20 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
         if m.double:
             sides.append((t[:, ::-1], -n))
         for back, (faces, facing) in enumerate(sides):
-            mirror.append(np.full(len(faces), bool(back)))
-            tri.append(faces)
-            normal.append(facing)
-            offset.append(np.einsum("ij,ij->i", facing, faces[:, 0]))
-            owner.append(np.full(len(faces), index))
-            lo.append(faces.min(axis=1) - quant_mm)
-            hi.append(faces.max(axis=1) + quant_mm)
-    if not tri:
+            mirrors.append(np.full(len(faces), bool(back)))
+            tris.append(faces)
+            normals.append(facing)
+            offsets.append(np.einsum("ij,ij->i", facing, faces[:, 0]))
+            owners.append(np.full(len(faces), index))
+            los.append(faces.min(axis=1) - quant_mm)
+            his.append(faces.max(axis=1) + quant_mm)
+    if not tris:
         return {"pairs": [], "least_mm": quant_mm, "min_area_mm2": min_area, "ok": True}
-    tri, normal, offset = np.concatenate(tri), np.concatenate(normal), np.concatenate(offset)
-    owner, lo, hi = np.concatenate(owner), np.concatenate(lo), np.concatenate(hi)
-    mirror = np.concatenate(mirror)
+    tri, normal, offset = np.concatenate(tris), np.concatenate(normals), np.concatenate(offsets)
+    owner, lo, hi = np.concatenate(owners), np.concatenate(los), np.concatenate(his)
+    mirror = np.concatenate(mirrors)
     material = np.array([meshes[i].material for i in owner])
-    buckets = {}
+    grouped: dict[tuple[int, ...], list[int]] = {}
     keys = np.column_stack(
         [
             np.rint(normal * _BUCKET_TURN).astype(int),
@@ -542,12 +574,12 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
         ]
     )
     for i, key in enumerate(map(tuple, keys)):
-        buckets.setdefault(key, []).append(i)
-    buckets = {key: np.array(found) for key, found in buckets.items()}
+        grouped.setdefault(key, []).append(i)
+    buckets = {key: np.array(found) for key, found in grouped.items()}
     steps = [
         (a, b, c, d) for a in (-1, 0, 1) for b in (-1, 0, 1) for c in (-1, 0, 1) for d in (-1, 0, 1)
     ]
-    found = {}
+    found: dict[Any, Any] = {}
     for key, here in buckets.items():
         for step in steps:
             other = tuple(k + s for k, s in zip(key, step, strict=True))
@@ -616,7 +648,9 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
     return {"pairs": pairs, "least_mm": quant_mm, "min_area_mm2": min_area, "ok": not pairs}
 
 
-def coplanar_selftest(cad_dir=None):
+def coplanar_selftest(
+    cad_dir: str | Path | None = None,
+) -> tuple[dict[str, dict[str, Any]], list[tuple[str, bool, str]], list[tuple[str, Any, str]]]:
     """Plant depth ties in two committed models: (the clean reports, the plants, the controls).
 
     ``coplanar_overlaps`` must find nothing in the T-Deck Plus's and the
@@ -637,11 +671,11 @@ def coplanar_selftest(cad_dir=None):
     cad = Path(cad_dir) if cad_dir else Path(__file__).resolve().parent.parent
     repo = cad
 
-    def model(board):
+    def model(board: str) -> tuple[Path, float]:
         record = json.loads((cad / board / "model" / "source.json").read_text())
         return repo / record["model"], record["parameters"]["quant_mm"]
 
-    def moved(meshes, name, dz):
+    def moved(meshes: list[Mesh], name: str, dz: float) -> list[Mesh]:
         if not any(m.name == name for m in meshes):
             raise AssertionError(name)
         return [
@@ -651,17 +685,19 @@ def coplanar_selftest(cad_dir=None):
             for m in meshes
         ]
 
-    def rewritten(glb, change, out):
+    def rewritten(
+        glb: str | Path, change: Callable[[dict[str, Any]], None], out: str | Path
+    ) -> list[Mesh]:
         js, bin_ = glb_legends.read(Path(glb).read_bytes())
         change(js)
         Path(out).write_bytes(glb_legends.write(js, bin_))
         return read_glb(out)
 
-    def gap_lowered(js):
+    def gap_lowered(js: dict[str, Any]) -> None:
         node = next(n for n in js["nodes"] if n.get("name") == "trackball_gap")
         node["translation"] = [0.0, 0.0, -0.01 * MM]
 
-    def keys_double_sided(js):
+    def keys_double_sided(js: dict[str, Any]) -> None:
         material = next(m for m in js["materials"] if m.get("name") == "key")
         material["doubleSided"] = True
 
@@ -746,7 +782,7 @@ def coplanar_selftest(cad_dir=None):
     return clean, results, controls
 
 
-def test_card(uv):
+def test_card(uv: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """The test card's sRGB color at each UV (glTF convention: v grows down)."""
     u, v = np.clip(uv[..., 0], 0, 1), np.clip(uv[..., 1], 0, 1)
     right, bottom = u >= 0.5, v >= 0.5
@@ -754,37 +790,40 @@ def test_card(uv):
     col = np.asarray(CARD_COLORS)[quad]
     mark = (u < 0.12) & (v < 0.12) & ((u < 0.04) | (v < 0.04))
     col[mark] = 1.0
-    return col
+    out: npt.NDArray[np.float64] = col.astype(float)
+    return out
 
 
-def orthographic(towards, up=(0.0, 1.0, 0.0)):
+def orthographic(
+    towards: Sequence[float], up: Sequence[float] = (0.0, 1.0, 0.0)
+) -> tuple[Callable[[npt.NDArray[np.float64]], npt.NDArray[np.float64]], npt.NDArray[np.float64]]:
     """(project, towards): glTF-frame mm -> (h, v, depth) for a viewer along
     *towards* (from the model to the eye), *up* on the picture's up; h grows
     right, v grows up, depth grows towards the viewer."""
     d = np.asarray(towards, dtype=float)
     d /= np.linalg.norm(d)
-    up = np.asarray(up, dtype=float)
-    right = np.cross(up, d)
+    upv = np.asarray(up, dtype=float)
+    right = np.cross(upv, d)
     right /= np.linalg.norm(right)
     upv = np.cross(d, right)
 
-    def project(p):
+    def project(p: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         return np.stack([p @ right, p @ upv, p @ d], axis=-1)
 
     return project, d
 
 
 def rasterize(
-    meshes,
-    project,
-    towards,
-    ppm,
-    bounds=None,
-    light=None,
-    screen_card=False,
-    supersample=2,
-    skip=(),
-):
+    meshes: list[Mesh],
+    project: Callable[[npt.NDArray[np.float64]], npt.NDArray[np.float64]],
+    towards: npt.NDArray[np.float64],
+    ppm: float,
+    bounds: tuple[float, float, float, float] | None = None,
+    light: npt.ArrayLike | None = None,
+    screen_card: bool = False,
+    supersample: int = 2,
+    skip: Iterable[str] = (),
+) -> tuple[npt.NDArray[np.uint8], tuple[float, float, float, float]]:
     """Draw *meshes* through *project* at *ppm* pixels per mm.
 
     *project* maps (N, 3) glTF-frame mm to (h, v, depth); *towards* is the
@@ -797,12 +836,12 @@ def rasterize(
     towards = towards / np.linalg.norm(towards)
     if light is None:
         light = towards + np.array([-0.35, 0.55, 0.25])
-    light = np.asarray(light, dtype=float)
-    light = light / np.linalg.norm(light)
-    half = light + towards
+    lit = np.asarray(light, dtype=float)
+    lit = lit / np.linalg.norm(lit)
+    half = lit + towards
     half /= np.linalg.norm(half)
     # the light a face toward the viewer takes, which the shading divides by
-    facing = AMBIENT + KEY * max(float(towards @ light), 0.0)
+    facing = AMBIENT + KEY * max(float(towards @ lit), 0.0)
     shown = [m for m in meshes if len(m.faces) and m.name not in skip and m.name != "glass"]
     drawn = [m for m in shown if m.alpha >= 1.0]
     blended = [m for m in shown if m.alpha < 1.0]
@@ -864,7 +903,7 @@ def rasterize(
                 continue
             if not blend:
                 zsub[win] = z[win]
-            if card:
+            if card and m.uv is not None:
                 uv = wa[win, None] * m.uv[a] + wb[win, None] * m.uv[b] + wc[win, None] * m.uv[c]
                 col = test_card(uv)
             elif m.unlit:
@@ -878,7 +917,7 @@ def rasterize(
                 n /= np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-12)
                 if m.double and (fn[fi] @ towards) < 0:
                     n = -n
-                shade = (AMBIENT + KEY * np.clip(n @ light, 0, 1))[:, None] / facing
+                shade = (AMBIENT + KEY * np.clip(n @ lit, 0, 1))[:, None] / facing
                 shine = (1.0 - m.rough) ** 2
                 lobe = 8 + 120 * shine
                 # the highlight where a face turns toward the light further than

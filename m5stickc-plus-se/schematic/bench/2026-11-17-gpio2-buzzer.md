@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P4: a tone on GPIO2, and what GPIO2 is loaded with (2026-11-17)
 
 Probe P4 of `../improvements.md` (item T06). The case was not opened. No one was at the bench, so no one listened for the tone: the half of P4 that needs a listener was not done.

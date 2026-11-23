@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5Stack Cardputer-Adv (K132-Adv): schematic
 
 Kleidos boards: the Cardputer-Adv's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net of the carrier board and of the Stamp-S3A core module that sits on it, with the values the vendor documents, laid out with this project's own layout and symbols. It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the filter and protection parts on each interface, every rail and what feeds it, and the ESP32-S3 GPIO of every signal.
@@ -26,7 +31,7 @@ Pages 7 to 9 are written by the generator from `netlist.yaml`, not drawn by hand
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[6/B2]` names another page that carries the net and the zone of its label there (the border prints numbered columns and rows A-H, 50 mm apart): page 6, row B, column 2. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[6/B2]` names another page that carries the net and the zone of its label there (the border prints numbered columns and rows A-H, 50 mm apart): page 6, row B, column 2. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label.
 
 Parts documented as not fitted (value `NC`) carry KiCad's DNP mark: a red cross over the symbol. On this board that is C120, a shunt position in the module's RF path.
 
@@ -120,7 +125,7 @@ Firmware citations are the Kleidos firmware repository (2026-11-17), code that r
 .venv/bin/python -m pytest tests/test_schematic.py
 ```
 
-The export fails unless the ERC reports nothing (0 errors, 0 warnings), `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names (no pin missing, no net split or joined, nothing drawn that the netlist lacks), every SVG has the theme's background and one width for every line in the wire colour (6 mil), and `check_schematic_links.py` finds every link of the PDF leading where it should and no script in it. The generator needs the `gpio_title` and `pin_length` options of `_shared/kicad_schematic.py` (the nets page's GPIO table is U101's, and the USB-C's pin numbers `VBUS` and `SHELL` need pins longer than 2.54 mm).
+The export fails unless the ERC reports nothing (0 errors, 0 warnings), `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names (no pin missing, no net split or joined, nothing drawn that the netlist lacks), every SVG has the theme's background and one width for every line in the wire color (6 mil), and `check_schematic_links.py` finds every link of the PDF leading where it should and no script in it. The generator needs the `gpio_title` and `pin_length` options of `_shared/kicad_schematic.py` (the nets page's GPIO table is U101's, and the USB-C's pin numbers `VBUS` and `SHELL` need pins longer than 2.54 mm).
 
 ## What the schematic does not say
 

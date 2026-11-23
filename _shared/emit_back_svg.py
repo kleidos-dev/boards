@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Generate the committed ``svg/back.svg`` of every board that has a model
 
@@ -200,7 +201,10 @@ def back_outline(outline: str, width: float, fill: str) -> str:
     Its stroke is the front's; its fill is flat (the front's gradient and
     shadow belong to the front's light).
     """
-    tag = re.match(r"<(\w+)", outline).group(1)
+    opening = re.match(r"<(\w+)", outline)
+    if opening is None:
+        raise ValueError(f"not an element: {outline[:40]!r}")
+    tag = opening.group(1)
     attrs = dict(re.findall(r'([\w:-]+)="([^"]*)"', outline))
     stroke = (
         f' stroke="{attrs["stroke"]}" stroke-width="{attrs["stroke-width"]}"'

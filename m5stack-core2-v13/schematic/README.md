@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5Stack Core2 v1.3 (K010-V13): schematic
 
 Kleidos boards: the Core2 v1.3's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net of the two schematic sheets M5Stack publishes for this board, with the values printed there, laid out with this project's own layout and symbols, and 27 details the print leaves out or gets wrong, each settled by a datasheet, the vendor's own documents, the Kleidos firmware on this board or a bench probe, marked where it is drawn and listed below with its source. It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the decoupling and filter parts on each interface, every rail and what feeds it, and the ESP32 GPIO of every signal.
@@ -26,7 +31,7 @@ The vendor prints the core board on one dense A4 sheet; here it takes pages 2 to
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label.
 
 Parts documented as not fitted (`DNP`: R2, C1, C2) carry KiCad's DNP mark: a red cross over the symbol.
 
@@ -49,7 +54,7 @@ Numbering, where it differs from the vendor's documents:
 - The expansion sheet reuses designators the core sheet has, so its parts are +100 here: its BUS1 is BUS101, U1 (BMI270) is U101, U2 (SPM1423) is U102, R1 is R101, C1 to C3 are C101 to C103.
 - The expansion sheet's own net names are drawn with the core's name of the M5-Bus net they reach: `SYS_P033` (bus pin 12) is `MCU_VDD`, `IMU_SDA`/`IMU_SCL` (17/18) are `EXT_G21`/`EXT_G22`, `MIC_CLK`/`MIC_DAT` (24/26) are `EXT_G0`/`EXT_G34`; `netlist.yaml` lists them under `aliases`. Page 6 says so too.
 - Nets the vendor left unnamed have names of ours (`AXP_LX1`, `RF_MATCH`, `CP_DTR`, `BOOST_FB`...); `netlist.yaml` lists each under `renamed` with where it is.
-- The sheets print no pin numbers for two-pin parts, diodes, transistors or the RTC cell: `netlist.yaml` numbers resistors, capacitors, inductors, keys, the 32.768 kHz crystal and the fuse 1 and 2 in an order of ours, names the diode and LED pins A and K and the transistor pins B, C and E, and gives the RTC cell 1 (+) and 2 (-). A pin the print names but does not number keeps its name in `netlist.yaml` (`EPAD`, `PAD`, `GND_PAD`, the USB-C `VCC`, `GND` and `SHELL`); its symbol numbers it with a short token of ours (`EP`, `P`, `GP`, `V`, `G`, `S`), mapped in `layout.yaml`. The antenna ANT1 and the IPEX socket ANT2 are numbered 1 (feed or centre) and 2 (ground or shield), ours too.
+- The sheets print no pin numbers for two-pin parts, diodes, transistors or the RTC cell: `netlist.yaml` numbers resistors, capacitors, inductors, keys, the 32.768 kHz crystal and the fuse 1 and 2 in an order of ours, names the diode and LED pins A and K and the transistor pins B, C and E, and gives the RTC cell 1 (+) and 2 (-). A pin the print names but does not number keeps its name in `netlist.yaml` (`EPAD`, `PAD`, `GND_PAD`, the USB-C `VCC`, `GND` and `SHELL`); its symbol numbers it with a short token of ours (`EP`, `P`, `GP`, `V`, `G`, `S`), mapped in `layout.yaml`. The antenna ANT1 and the IPEX socket ANT2 are numbered 1 (feed or center) and 2 (ground or shield), ours too.
 - The AXP192's GPIO0 to GPIO4 are listed on page 8 as `AXP_IO0` to `AXP_IO4`, the names the docs page's pin map uses, so they do not read as the ESP32's GPIOs.
 
 ## Sources
@@ -127,7 +132,7 @@ Each is an entry of `kleidos` in `netlist.yaml`, marked where it is drawn and li
 .venv/bin/python -m pytest tests/test_schematic.py
 ```
 
-The export fails unless the ERC reports nothing (0 errors, 0 warnings), `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names, every SVG has the theme's background and every wire-coloured line the one width (6 mil), and `check_schematic_links.py` finds every link of the PDF leading where it should, with no script in the document.
+The export fails unless the ERC reports nothing (0 errors, 0 warnings), `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names, every SVG has the theme's background and every wire-colored line the one width (6 mil), and `check_schematic_links.py` finds every link of the PDF leading where it should, with no script in the document.
 
 ## Open questions
 

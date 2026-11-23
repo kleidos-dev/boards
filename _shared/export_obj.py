@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Write a board model's Wavefront OBJ and MTL from its master GLB
 
@@ -11,8 +12,8 @@ the same parts and materials.
 
 What the two files hold:
 
-- millimetres, one unit a millimetre, the unit of ``measurements.json``
-  (the GLB stores metres, as glTF requires);
+- millimeters, one unit a millimeter, the unit of ``measurements.json``
+  (the GLB stores meters, as glTF requires);
 - the glTF frame, Y up: +Y up the screen, +Z out of the screen, +X to the
   device's right, the origin where the GLB has it;
 - one object (``o``) and one group (``g``) per mesh of the GLB, named as its
@@ -20,7 +21,7 @@ What the two files hold:
 - each vertex of the GLB once, with its normal (``vn``, each distinct one
   written once) and, on the meshes that have them (the screen and the
   glass), its texture coordinate (``vt``, turned to OBJ's convention, v up);
-- in the MTL, each material of the GLB, in its order: ``Kd`` its base colour
+- in the MTL, each material of the GLB, in its order: ``Kd`` its base color
   in sRGB (the GLB stores it linear), ``d`` its alpha (1 opaque), ``Pr`` and
   ``Pm`` its roughness and metalness (the PBR extension of MTL most importers
   read), ``Ns`` and ``Ks`` a classic reader's approximation of the two, and
@@ -28,7 +29,7 @@ What the two files hold:
   models carry no texture, so neither file names one.
 
 The bytes follow from the GLB alone: numbers in fixed decimals with trailing
-zeros dropped (positions 4, normals 4, texture coordinates 5, colours 4), LF
+zeros dropped (positions 4, normals 4, texture coordinates 5, colors 4), LF
 line endings, the GLB's order throughout. The header names the GLB and its
 SHA-256, so an OBJ says which master it was written from.
 
@@ -62,7 +63,9 @@ import hashlib
 import json
 import struct
 import sys
+from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 
@@ -71,8 +74,9 @@ import media_meta
 import model_raster
 from paths import BOARDS, ROOT
 
-#: Bumped when the same GLB would give other bytes.
-EXPORTER_VERSION = "1.1.0"
+#: Bumped when the same GLB would give other bytes (1.2.0: the header and the
+#: MTL comment in US spelling, "millimeters", "meters", "color").
+EXPORTER_VERSION = "1.2.0"
 #: Decimal places of each kind of number written.
 POSITION_PLACES, NORMAL_PLACES, UV_PLACES, COLOR_PLACES = 4, 4, 5, 4
 
@@ -85,7 +89,7 @@ def num(value: float, places: int) -> str:
     return "0" if text in ("-0", "") else text
 
 
-def row(values, places: int) -> str:
+def row(values: Iterable[float], places: int) -> str:
     return " ".join(num(float(v), places) for v in values)
 
 
@@ -94,7 +98,7 @@ def name_of(text: str) -> str:
     return "_".join(text.split()) or "unnamed"
 
 
-def material_names(js: dict) -> list[str]:
+def material_names(js: dict[str, Any]) -> list[str]:
     """The name each material of the GLB takes in the MTL, in its
     order (``material_<i>`` unnamed)."""
     return [
@@ -103,7 +107,7 @@ def material_names(js: dict) -> list[str]:
     ]
 
 
-def material_of(mesh, js: dict) -> str:
+def material_of(mesh: model_raster.Mesh, js: dict[str, Any]) -> str:
     """The MTL name of *mesh*'s material (``model_raster`` names an unnamed one ``#<index>``)."""
     names = material_names(js)
     if mesh.material.startswith("#") and mesh.material[1:].isdigit():
@@ -113,21 +117,22 @@ def material_of(mesh, js: dict) -> str:
     return name_of(mesh.material)
 
 
-def glb_json(data: bytes) -> dict:
+def glb_json(data: bytes) -> dict[str, Any]:
     if struct.unpack_from("<I", data, 0)[0] != 0x46546C67:
         raise ValueError("not a GLB")
     length = struct.unpack_from("<I", data, 12)[0]
-    return json.loads(data[20 : 20 + length])
+    js: dict[str, Any] = json.loads(data[20 : 20 + length])
+    return js
 
 
-def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict, head: list[str]) -> str:
+def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict[str, Any], head: list[str]) -> str:
     """The material library: its metadata *head*, then every material of the GLB, in its order."""
     out = [
         *head,
         f"# {board}: materials of {Path(glb_name).stem}.obj, written from {glb_name} "
         f"by _shared/export_obj.py {EXPORTER_VERSION}",
         f"# Source: {glb_name}, sha256 {glb_sha}",
-        "# Kd: base colour in sRGB; d: alpha (1 opaque); Pr, Pm: roughness and metalness "
+        "# Kd: base color in sRGB; d: alpha (1 opaque); Pr, Pm: roughness and metalness "
         "(PBR); Ns, Ks: their classic approximation; illum 0 unlit, 2 lit. No textures.",
     ]
     for name, mat in zip(material_names(js), js.get("materials", []), strict=True):
@@ -153,7 +158,7 @@ def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict, head: list[str])
     return "\n".join(out) + "\n"
 
 
-def export(glb_path: Path, board: str) -> tuple[bytes, bytes, dict]:
+def export(glb_path: Path, board: str) -> tuple[bytes, bytes, dict[str, Any]]:
     """(OBJ bytes, MTL bytes, counts) of the GLB at *glb_path*."""
     glb_path = Path(glb_path)
     data = glb_path.read_bytes()
@@ -170,7 +175,7 @@ def export(glb_path: Path, board: str) -> tuple[bytes, bytes, dict]:
         f"# {board}: Wavefront OBJ written from {glb_path.name} by _shared/export_obj.py "
         f"{EXPORTER_VERSION}",
         f"# Source: {glb_path.name}, sha256 {sha}",
-        "# Units: millimetres (1 unit = 1 mm), as measurements.json; the GLB stores metres.",
+        "# Units: millimeters (1 unit = 1 mm), as measurements.json; the GLB stores meters.",
         "# Axes as glTF, Y up: +Y up the screen, +Z out of the screen, +X to the device's right.",
         f"# {objects} objects, {vertices} vertices, {triangles} triangles; "
         f"materials in {stem}.mtl.",
@@ -247,7 +252,7 @@ def rel(path: Path) -> str:
     return Path(path).resolve().relative_to(ROOT).as_posix()
 
 
-def record(glb_path: Path, obj: bytes, mtl: bytes, counts: dict) -> dict:
+def record(glb_path: Path, obj: bytes, mtl: bytes, counts: dict[str, Any]) -> dict[str, Any]:
     """What ``source.json`` records of the two files under ``obj``."""
     obj_path, mtl_path = paths(glb_path)
     return {
@@ -265,8 +270,9 @@ def record(glb_path: Path, obj: bytes, mtl: bytes, counts: dict) -> dict:
     }
 
 
-def write(glb_path: Path, board: str) -> dict:
+def write(glb_path: str | Path, board: str) -> dict[str, Any]:
     """Write the OBJ and MTL beside the master at *glb_path*; return their record."""
+    glb_path = Path(glb_path)
     obj, mtl, counts = export(glb_path, board)
     obj_path, mtl_path = paths(glb_path)
     obj_path.write_bytes(obj)
@@ -277,7 +283,7 @@ def write(glb_path: Path, board: str) -> dict:
 def master(board: str) -> Path:
     """A board's master GLB, as its ``source.json`` names it."""
     rec = json.loads((ROOT / board / "model" / "source.json").read_text(encoding="utf-8"))
-    return ROOT / rec["model"]
+    return ROOT / str(rec["model"])
 
 
 def problems(board: str) -> list[str]:
@@ -297,7 +303,7 @@ def problems(board: str) -> list[str]:
     return found
 
 
-def main(argv=None) -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("boards", nargs="*", help="board ids (default: all nine)")
     parser.add_argument(

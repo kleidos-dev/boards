@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The M5StickC Plus2's back label, drawn for ``emit_back_svg.py``
 

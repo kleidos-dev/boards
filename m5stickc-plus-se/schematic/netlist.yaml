@@ -1,5 +1,5 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
 #
 # M5Stack StickC-Plus SE (K016-P-SE): every component, every pin and the net it
 # is on, as the vendor's published schematic shows them, with the Kleidos
@@ -19,7 +19,7 @@
 # - pins are the vendor's pin numbers where the print gives them; where it
 #   gives none, they are ours: "1" and "2" for resistors, capacitors,
 #   inductors, the crystal, the keys and the two-pin connectors (the order does
-#   not matter; on the polarised capacitors CX1 and CX2, "1" is the +
+#   not matter; on the polarized capacitors CX1 and CX2, "1" is the +
 #   terminal), "1" (cathode) and "2" (anode) for the diodes and LEDs, as
 #   KiCad numbers them, "G", "D", "S" for the MOSFETs,
 #   and the pin's printed name (VCC, GND, SHELL, PAD) where only a name is
@@ -499,7 +499,7 @@ components:
     value: "100uF/4V"
     page: 1
     block: PMU
-    note: "Polarised: pin 1 is the + terminal."
+    note: "Polarized: pin 1 is the + terminal."
     pins:
       "1": VESP_3V3
       "2": GND
@@ -507,7 +507,7 @@ components:
     value: "10uF/6.3V"
     page: 1
     block: PMU
-    note: "Polarised: pin 1 is the + terminal."
+    note: "Polarized: pin 1 is the + terminal."
     pins:
       "1": IPSOUT
       "2": GND
@@ -917,7 +917,7 @@ components:
     value: TS_015
     page: 1
     block: "(unnamed: keys)"
-    note: "Labelled POWER."
+    note: "Labeled POWER."
     pins:
       "1": PWR_KEY
       "2": GND
@@ -925,7 +925,7 @@ components:
     value: TS_015
     page: 1
     block: "(unnamed: keys)"
-    note: "Labelled BUTTONB."
+    note: "Labeled BUTTONB."
     pins:
       "1": GPIO39
       "2": GND
@@ -933,7 +933,7 @@ components:
     value: PTS_820
     page: 1
     block: "(unnamed: keys)"
-    note: "Labelled BUTTONA."
+    note: "Labeled BUTTONA."
     pins:
       "1": GPIO37
       "2": GND
@@ -1074,7 +1074,7 @@ components:
     value: LCD
     page: 1
     block: IPS_LCD
-    note: "The LCD module; the print gives no panel part number. The docs page: a 1.14-inch 135 x 240 colour TFT with an ST7789v2 driver (K2)."
+    note: "The LCD module; the print gives no panel part number. The docs page: a 1.14-inch 135 x 240 color TFT with an ST7789v2 driver (K2)."
     pins:
       "1": LCD_BL_VCC   # LEDA
       "2": GND   # GND

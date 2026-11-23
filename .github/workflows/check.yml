@@ -274,7 +274,7 @@ jobs:
       - name: Schematic tests, the generator and the KiCad kit included
         run: python3 -m pytest -rs tests/test_schematic.py tests/test_kicad_kit.py
 
-  # Every push to main and every pull request against it analysed on
+  # Every push to main and every pull request against it analyzed on
   # SonarQube Cloud (sonar-project.properties), with the tests' coverage.
   # Secretless: the kit's job trades its GitHub OIDC token for a short-lived
   # token scoped to this project; a pull request with no OIDC token (a fork,

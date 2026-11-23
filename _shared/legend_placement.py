@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Hold a board model's legends to where its drawings print them
 
@@ -64,7 +65,12 @@ import json
 import re
 import sys
 import tempfile
+from collections.abc import Callable, Mapping
 from pathlib import Path
+from typing import Any
+
+import numpy.typing as npt
+from shapely.geometry.base import BaseGeometry
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -89,15 +95,15 @@ DRAWING_GRID_MM = 0.0001
 REACH_MM = 1.0
 
 
-def _polygons(geom):
+def _polygons(geom: BaseGeometry) -> list[sg.Polygon]:
     if geom.is_empty:
         return []
-    if geom.geom_type == "Polygon":
+    if isinstance(geom, sg.Polygon):
         return [geom]
     return [p for g in getattr(geom, "geoms", []) for p in _polygons(g)]
 
 
-def frame_of(record, face="front"):
+def frame_of(record: dict[str, Any], face: str = "front") -> dict[str, Any]:
     """How glTF-frame mm map to the frame of one face's drawing (``board_faces.py``).
 
     For the front: x + dx across, dy - y down. For another face, the frame
@@ -126,23 +132,25 @@ def frame_of(record, face="front"):
     }
 
 
-def drawing_of(entry):
+def drawing_of(entry: dict[str, Any]) -> str:
     """The drawing a legends record was read from, relative to the repository."""
-    return entry.get("drawing", entry.get("front"))
+    return str(entry.get("drawing", entry.get("front")))
 
 
-def height_of(entry):
+def height_of(entry: dict[str, Any]) -> tuple[int, float]:
     """(the build-frame axis a legends record's sheets lie at a height on, that height)."""
     key = board_faces.height_key(entry.get("face", "front"))
     return board_faces.AXES.index(key), entry[f"{key}_mm"]
 
 
-def ink_of(mesh):
+def ink_of(mesh: model_raster.Mesh) -> str:
     """The color a mesh is drawn in, as ``rrggbb`` (sRGB)."""
     return "".join(f"{round(float(c) * 255):02x}" for c in mesh.color)
 
 
-def model_areas(meshes, place, prefix=None):
+def model_areas(
+    meshes: list[model_raster.Mesh], place: dict[str, Any], prefix: str | None = None
+) -> dict[str, tuple[BaseGeometry, float, float]]:
     """{legend mesh name: (its area in the face's drawing frame, its lowest, its highest)}.
 
     The lowest and highest are of the meshes' positions on the face's normal
@@ -181,7 +189,7 @@ def model_areas(meshes, place, prefix=None):
     return out
 
 
-def facing_problems(mesh, face):
+def facing_problems(mesh: model_raster.Mesh, face: str) -> list[str]:
     """What is wrong with the way a legend mesh faces, in words: [] when it faces out of *face*.
 
     Every vertex normal must be the face's outward normal, and every triangle
@@ -203,7 +211,9 @@ def facing_problems(mesh, face):
     return out
 
 
-def drawn_areas(legends, plane):
+def drawn_areas(
+    legends: list[legend_mesh.Legend], plane: str
+) -> tuple[dict[str, BaseGeometry], dict[str, dict[str, BaseGeometry]]]:
     """({fill: area}, {group name: {fill: area}}) of one plane of the drawing.
 
     The shapes are painted in the drawing's order, a later ink cutting an
@@ -212,9 +222,9 @@ def drawn_areas(legends, plane):
     """
     chosen = [legend for legend in legends if legend.plane == plane]
     whole = legend_mesh.partition(chosen, lambda geom: geom, DRAWING_GRID_MM)
-    groups = {}
+    groups: dict[str, dict[str, BaseGeometry]] = {}
     for legend in chosen:
-        own = {}
+        own: dict[str, list[BaseGeometry]] = {}
         for fill, geom in legend.shapes:
             own.setdefault(fill, []).append(geom)
         groups[legend.name] = {}
@@ -229,7 +239,9 @@ def drawn_areas(legends, plane):
     return whole, groups
 
 
-def assign(model_area, drawn):
+def assign(
+    model_area: BaseGeometry, drawn: dict[str, BaseGeometry]
+) -> tuple[dict[str, BaseGeometry], list[sg.Polygon]]:
     """({group: the model's ink that lies on its drawn ink}, pieces that lie on none).
 
     *drawn* is {group: area} for one ink. Each piece of the model's ink goes
@@ -237,7 +249,7 @@ def assign(model_area, drawn):
     nearest within reach.
     """
     names = list(drawn)
-    taken = {name: [] for name in names}
+    taken: dict[str, list[BaseGeometry]] = {name: [] for name in names}
     stray = []
     tree = shapely.STRtree([drawn[name] for name in names])
     for piece in _polygons(model_area):
@@ -256,12 +268,18 @@ def assign(model_area, drawn):
     return {name: shapely.union_all(parts) for name, parts in taken.items() if parts}, stray
 
 
-def outline_distance(a, b):
+def outline_distance(a: BaseGeometry, b: BaseGeometry) -> float:
     """The Hausdorff distance between two areas' outlines, in mm."""
     return float(shapely.hausdorff_distance(a.boundary, b.boundary, densify=0.25))
 
 
-def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
+def placement(
+    meshes: list[model_raster.Mesh],
+    extras: list[dict[str, Any]],
+    front_svg: str | Path | Mapping[str, Path] | None,
+    record: dict[str, Any],
+    tolerance_mm: float = TOLERANCE_MM,
+) -> dict[str, Any]:
     """Measure a model's legends against its front drawing.
 
     *meshes* is ``model_raster.read_glb`` of the model, *extras* what
@@ -290,7 +308,12 @@ def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
                 continue
         if face != "front":
             areas.update(model_areas(meshes, places[face], entry["mesh"] + "_"))
-    report = {"tolerance_mm": tolerance_mm, "front": None, "meshes": {}, "per_group": {}}
+    report: dict[str, Any] = {
+        "tolerance_mm": tolerance_mm,
+        "front": None,
+        "meshes": {},
+        "per_group": {},
+    }
     if not listed:
         if areas:
             problems.append("the model holds legend meshes its source.json does not record")
@@ -304,14 +327,16 @@ def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
         for name in sorted(set(areas) - known)
     )
     drawings = {}
-    planes_read = {}  # (drawing, flatness) -> the planes of it a legends mesh draws
+    planes_read: dict[
+        tuple[Path, float], set[str]
+    ] = {}  # (drawing, flatness) -> the planes of it a legends mesh draws
     for entry in listed:
         face = entry.get("face", "front")
         if face not in places:
             continue
         if front_svg is None:
             front = REPO / drawing_of(entry)
-        elif isinstance(front_svg, dict):
+        elif isinstance(front_svg, Mapping):
             front = Path(front_svg.get(face, REPO / drawing_of(entry)))
         else:
             front = Path(front_svg) if face == "front" else REPO / drawing_of(entry)
@@ -393,10 +418,10 @@ def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
             drawn = {group: inks_[fill] for group, inks_ in groups.items() if fill in inks_}
             taken, stray = assign(area, drawn)
             if stray:
-                at = stray[0].representative_point()
+                spot = stray[0].representative_point()
                 problems.append(
                     f"{name}: {len(stray)} piece(s) of ink on no legend of the "
-                    f"drawing, one at {face} ({at.x:.2f}, {at.y:.2f}) mm"
+                    f"drawing, one at {face} ({spot.x:.2f}, {spot.y:.2f}) mm"
                 )
             for group, want in drawn.items():
                 row = report["per_group"].setdefault(
@@ -455,10 +480,12 @@ def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
     return report
 
 
-def check(board_dir, glb=None, tolerance_mm=TOLERANCE_MM):
+def check(
+    board_dir: str | Path, glb: str | Path | None = None, tolerance_mm: float = TOLERANCE_MM
+) -> dict[str, Any] | None:
     """The placement report of a board directory's model (None when it prints nothing)."""
     board_dir = Path(board_dir)
-    record = json.loads((board_dir / "model" / "source.json").read_text())
+    record = json.loads((Path(board_dir) / "model" / "source.json").read_text())
     glb = Path(glb) if glb else REPO / record["model"]
     data = glb.read_bytes()
     extras = glb_legends.legends(glb_legends.read(data)[0])
@@ -467,7 +494,9 @@ def check(board_dir, glb=None, tolerance_mm=TOLERANCE_MM):
     return placement(model_raster.read_glb(glb), extras, None, record, tolerance_mm)
 
 
-def outlines(board_dir, face="front"):
+def outlines(
+    board_dir: str | Path, face: str = "front"
+) -> list[tuple[str, str, list[npt.NDArray[np.float64]]]]:
     """[(plane, fill, rings)] of what a board's drawing of one face prints, for a picture.
 
     Each ring is an (N, 2) array in that drawing's frame, mm.
@@ -494,14 +523,16 @@ def outlines(board_dir, face="front"):
 # ---------------------------------------------------------------- self-test
 
 
-def _moved(mesh, dx=0.0, dy=0.0, dz=0.0, scale=1.0):
+def _moved(
+    mesh: model_raster.Mesh, dx: float = 0.0, dy: float = 0.0, dz: float = 0.0, scale: float = 1.0
+) -> model_raster.Mesh:
     positions = mesh.positions.copy()
     positions[:, :2] *= scale
     positions += np.array([dx, dy, dz])
     return dataclasses.replace(mesh, positions=positions)
 
 
-def _drawing_plants(drawing):
+def _drawing_plants(drawing: str) -> tuple[str, str]:
     """(a front with the Q key's legend moved 0.05 mm, a front changed where no model reads).
 
     The second is what regenerating a front gives when its legends did not
@@ -538,7 +569,9 @@ def _drawing_plants(drawing):
     return moved, elsewhere
 
 
-def _rewritten(glb, change, out):
+def _rewritten(
+    glb: str | Path, change: Callable[[dict[str, Any]], None], out: str | Path
+) -> tuple[list[model_raster.Mesh], list[dict[str, Any]]]:
     """A copy of a model with *change* made to its JSON chunk: (its meshes, its legends' extras)."""
     js, bin_ = glb_legends.read(Path(glb).read_bytes())
     change(js)
@@ -546,7 +579,9 @@ def _rewritten(glb, change, out):
     return model_raster.read_glb(out), glb_legends.legends(js)
 
 
-def selftest(board="cardputer"):
+def selftest(
+    board: str = "cardputer",
+) -> tuple[dict[str, Any], list[tuple[str, bool, str]], list[tuple[str, bool, str]]]:
     """Plant defects in a board's committed model: (the clean report, the plants, the controls).
 
     The plants are ``[(what, caught, how)]``, each of which the check must
@@ -554,7 +589,7 @@ def selftest(board="cardputer"):
     and that it must pass, as it passes the model as committed.
     """
     board_dir = HERE.parent / board
-    record = json.loads((board_dir / "model" / "source.json").read_text())
+    record = json.loads((Path(board_dir) / "model" / "source.json").read_text())
     glb = REPO / record["model"]
     extras = glb_legends.legends(glb_legends.read(glb.read_bytes())[0])
     meshes = model_raster.read_glb(glb)
@@ -567,17 +602,19 @@ def selftest(board="cardputer"):
     key = next(legend for legend in legends if legend.key and legend.name == "Q")
     box = shapely.union_all([geom for _, geom in key.shapes]).buffer(0.2)
 
-    def without_key(mesh):
+    def without_key(mesh: model_raster.Mesh) -> model_raster.Mesh:
         tri = mesh.positions[mesh.faces].mean(axis=1)
         inside = shapely.contains_xy(box, tri[:, 0] + place["dx"], place["dy"] - tri[:, 1])
         return dataclasses.replace(mesh, faces=mesh.faces[~inside])
 
-    def swap(mesh):
+    def swap(mesh: model_raster.Mesh) -> model_raster.Mesh:
         return dataclasses.replace(
             mesh, name={first: second, second: first}.get(mesh.name, mesh.name)
         )
 
-    def each(change, only=None):
+    def each(
+        change: Callable[[model_raster.Mesh], model_raster.Mesh], only: str | None = None
+    ) -> list[model_raster.Mesh]:
         return [
             change(m) if glb_legends.is_legend(m.name) and only in (None, m.name) else m
             for m in meshes
@@ -596,18 +633,18 @@ def selftest(board="cardputer"):
             path.write_text(text, encoding="utf-8")
 
         # planted in the file itself, where a reader of the model meets them
-        def node_moved(js, name=first):
+        def node_moved(js: dict[str, Any], name: str = first) -> None:
             node = next(n for n in js["nodes"] if n.get("name") == name)
             node["translation"] = [0.06 * model_raster.MM, 0.0, 0.0]
 
-        def root_moved(js):
+        def root_moved(js: dict[str, Any]) -> None:
             js["nodes"][js["scenes"][0]["nodes"][0]]["translation"] = [
                 0.06 * model_raster.MM,
                 0.0,
                 0.0,
             ]
 
-        def ink_turned_red(js, name=first):
+        def ink_turned_red(js: dict[str, Any], name: str = first) -> None:
             node = next(n for n in js["nodes"] if n.get("name") == name)
             material = js["meshes"][node["mesh"]]["primitives"][0]["material"]
             js["materials"][material]["pbrMetallicRoughness"]["baseColorFactor"] = [
@@ -706,7 +743,19 @@ def selftest(board="cardputer"):
 FACE_FIXTURE = HERE / "fixtures" / "faces"
 
 
-def faces_selftest(board_dir=FACE_FIXTURE):
+def _clearance(
+    meshes: list[model_raster.Mesh], prefix: str, step: float, on: str, face: str = "front"
+) -> dict[str, Any]:
+    """``model_raster.legend_clearance`` of a model whose legends are there to measure."""
+    found = model_raster.legend_clearance(meshes, prefix, step, on=on, face=face)
+    if found is None:
+        raise AssertionError(f"no {prefix}* legend mesh to measure")
+    return found
+
+
+def faces_selftest(
+    board_dir: str | Path = FACE_FIXTURE,
+) -> tuple[dict[str, Any], list[tuple[str, bool, str]], list[tuple[str, bool, str]]]:
     """Plant defects in the back print of the two-face fixture: (the clean report, plants,
     controls).
 
@@ -719,7 +768,7 @@ def faces_selftest(board_dir=FACE_FIXTURE):
     the clearance check must find the back print laid on the base's face it
     is printed on, and must not take the front's way of looking for the back's.
     """
-    record = json.loads((board_dir / "model" / "source.json").read_text())
+    record = json.loads((Path(board_dir) / "model" / "source.json").read_text())
     glb = REPO / record["model"]
     extras = glb_legends.legends(glb_legends.read(glb.read_bytes())[0])
     meshes = model_raster.read_glb(glb)
@@ -727,18 +776,18 @@ def faces_selftest(board_dir=FACE_FIXTURE):
     prefix = back["mesh"] + "_"
     step = record["parameters"]["quant_mm"]
 
-    def each(change):
+    def each(change: Callable[[model_raster.Mesh], model_raster.Mesh]) -> list[model_raster.Mesh]:
         return [change(m) if m.name.startswith(prefix) else m for m in meshes]
 
-    def mirrored(mesh):
+    def mirrored(mesh: model_raster.Mesh) -> model_raster.Mesh:
         positions = mesh.positions.copy()
         positions[:, 0] *= -1  # about the case's middle, which the fixture's center is on
         return dataclasses.replace(mesh, positions=positions, faces=mesh.faces[:, ::-1].copy())
 
-    def rewound(mesh):
+    def rewound(mesh: model_raster.Mesh) -> model_raster.Mesh:
         return dataclasses.replace(mesh, faces=mesh.faces[:, ::-1].copy())
 
-    def turned(mesh):
+    def turned(mesh: model_raster.Mesh) -> model_raster.Mesh:
         return dataclasses.replace(mesh, normals=-mesh.normals)
 
     drawing = (REPO / back["drawing"]).read_text(encoding="utf-8")
@@ -798,8 +847,8 @@ def faces_selftest(board_dir=FACE_FIXTURE):
                     raised[0] if raised else f"no problem saying {words!r}",
                 )
             )
-    gap = model_raster.legend_clearance(meshes, prefix, step, on=back["on"], face="back")
-    sunk = model_raster.legend_clearance(
+    gap = _clearance(meshes, prefix, step, on=back["on"], face="back")
+    sunk = _clearance(
         each(lambda m: _moved(m, dz=3 * step)), prefix, step, on=back["on"], face="back"
     )
     results.append(
@@ -809,7 +858,7 @@ def faces_selftest(board_dir=FACE_FIXTURE):
             f"{sunk['under_mm']} mm over {sunk['under_mesh']}",
         )
     )
-    as_front = model_raster.legend_clearance(meshes, prefix, step, on=back["on"])
+    as_front = _clearance(meshes, prefix, step, on=back["on"])
     results.append(
         (
             "the back print looked for from the front",
@@ -827,7 +876,7 @@ def faces_selftest(board_dir=FACE_FIXTURE):
     return clean, results, controls
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Check a board's legends from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("board_dir", type=Path, nargs="?", help="<board>")

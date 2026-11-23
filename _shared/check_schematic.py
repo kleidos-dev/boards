@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Hold a board's KiCad schematic to its ``netlist.yaml``, pin by pin.
 
@@ -79,14 +80,14 @@ def export(board: str, cli: str) -> Path:
 def drawn_nets(xml: Path) -> dict[tuple[str, str], str]:
     """(reference, our pin) -> net name, from KiCad's XML netlist."""
     root = ET.parse(xml).getroot()  # noqa: S314  (this repository's own file)
-    out = {}
+    out: dict[tuple[str, str], str] = {}
     for net in root.iter("net"):
-        name = net.get("name")
+        name = net.get("name", "")
         # a local label carries its sheet path; an unconnected pin's net is named
         # after the pin ("unconnected-(U1-IO11/CMD-Pad30)"), whose name may hold a "/"
         if not name.startswith(("unconnected-", "Net-(")):
             name = name.rsplit("/", 1)[-1]
-        nodes = [(n.get("ref"), n.get("pin")) for n in net.iter("node")]
+        nodes = [(n.get("ref", ""), n.get("pin", "")) for n in net.iter("node")]
         nodes = [x for x in nodes if not x[0].startswith("#")]
         if name.startswith("unconnected-") or (len(nodes) == 1 and name.startswith("Net-(")):
             name = "NC"
@@ -95,7 +96,7 @@ def drawn_nets(xml: Path) -> dict[tuple[str, str], str]:
     return out
 
 
-def pin_maps(layout: dict) -> dict[str, dict[str, list[str]]]:
+def pin_maps(layout: dict[str, Any]) -> dict[str, dict[str, list[str]]]:
     """reference -> our pin -> the vendor pins it stands for (identity when unlisted)."""
     out = {}
     parts = layout["parts"]
@@ -115,7 +116,7 @@ def compare(board: str, xml: Path) -> list[str]:
     layout = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
     maps = pin_maps(layout)
     drawn = drawn_nets(xml)
-    errors = []
+    errors: list[str] = []
     seen: dict[tuple[str, str], str] = {}
     refs_drawn = {r for r, _ in drawn}
     errors.extend(
@@ -141,7 +142,7 @@ def compare(board: str, xml: Path) -> list[str]:
     return errors
 
 
-def contents_pages(layout: dict) -> set[int]:
+def contents_pages(layout: dict[str, Any]) -> set[int]:
     """The pages that list the Kleidos additions and corrections: the contents
     page, and the continuation a layout adds when page 1 runs out of room
     (a sheet with ``index: additions``)."""
@@ -200,7 +201,8 @@ def additions(board: str) -> list[str]:
     } - contents_pages(layout)
     markers, rows = drawn_marks(board)
     for e in entries:
-        eid, el = str(e.get("id")), e.get("element") if isinstance(e.get("element"), dict) else {}
+        given = e.get("element")
+        eid, el = str(e.get("id")), given if isinstance(given, dict) else {}
         drawn = any(k in el for k in ("pin", "part", "net"))  # its element is on a drawing page
         if not any((page in index) != drawn for page in markers.get(eid, [])):
             errors.append(
@@ -221,17 +223,25 @@ def additions(board: str) -> list[str]:
     return errors
 
 
-def _child(node, key):
+def _child(node: list[Any], key: str) -> list[Any] | None:
     return next((x for x in node if isinstance(x, list) and x and x[0] == key), None)
 
 
-def page_items(path: Path) -> dict:
+def _need(node: list[Any], key: str) -> list[Any]:
+    """The child ``(key ...)`` of a node, which a KiCad file always writes there."""
+    found = _child(node, key)
+    if found is None:
+        raise ValueError(f"a ({node[0] if node else '?'} ...) node with no ({key} ...)")
+    return found
+
+
+def page_items(path: Path) -> dict[str, Any]:
     """What a KiCad sheet file draws that ``index_pages()`` reads: its texts
     (body, place, size, bold, linked), its horizontal rules, its rectangles and
     the lines of its title block (the company and the comments)."""
     from kicad_schematic import parse
 
-    out: dict = {"texts": [], "rules": [], "rects": [], "block": []}
+    out: dict[str, Any] = {"texts": [], "rules": [], "rects": [], "block": []}
     for node in parse(path.read_text(encoding="utf-8")):
         if not (isinstance(node, list) and node):
             continue
@@ -242,31 +252,31 @@ def page_items(path: Path) -> dict:
                 if isinstance(n, list) and n[0] in ("company", "comment")
             ]
         elif node[0] == "text":
-            pos, eff = _child(node, "at"), _child(node, "effects")
-            fnt = _child(eff, "font")
+            pos, eff = _need(node, "at"), _need(node, "effects")
+            fnt = _need(eff, "font")
             out["texts"].append(
                 {
                     "body": str(node[1]),
                     "x": float(pos[1]),
                     "y": float(pos[2]),
-                    "size": float(_child(fnt, "size")[1]),
+                    "size": float(_need(fnt, "size")[1]),
                     "bold": _child(fnt, "bold") is not None,
                     "href": _child(eff, "href") is not None,
                 }
             )
         elif node[0] == "polyline":
-            pts = _child(node, "pts")[1:]
+            pts = _need(node, "pts")[1:]
             if len(pts) == 2 and abs(float(pts[0][2]) - float(pts[1][2])) < 1e-6:
                 xs = sorted((float(pts[0][1]), float(pts[1][1])))
                 out["rules"].append((xs[0], xs[1], float(pts[0][2])))
         elif node[0] == "rectangle":
-            a, b = _child(node, "start"), _child(node, "end")
+            a, b = _need(node, "start"), _need(node, "end")
             xs, ys = sorted((float(a[1]), float(b[1]))), sorted((float(a[2]), float(b[2])))
             out["rects"].append((xs[0], ys[0], xs[1], ys[1]))
     return out
 
 
-def index_tables(page: dict) -> list[dict]:
+def index_tables(page: dict[str, Any]) -> list[dict[str, Any]]:
     """The tables of an index page as drawn: under each rule with a header on
     it (bold texts 1.6 mm above), ``head`` (the column names), ``title`` (the
     heading above, if any) and ``rows``, each {y, cells (per column, its texts
@@ -275,12 +285,15 @@ def index_tables(page: dict) -> list[dict]:
     from kicad_schematic import ADD_ID
 
     texts = page["texts"]
-    marker = lambda t: bool(t["href"] and t["bold"] and ADD_ID.fullmatch(t["body"]))  # noqa: E731
+
+    def marker(t: dict[str, Any]) -> bool:
+        return bool(t["href"] and t["bold"] and ADD_ID.fullmatch(t["body"]))
+
     tables = []
     for x0, x1, ry in page["rules"]:
 
         def within(t: dict[str, Any], lo: float = x0 - 0.1, hi: float = x1 + 0.1) -> bool:
-            return lo <= t["x"] <= hi
+            return bool(lo <= t["x"] <= hi)
 
         head = sorted(
             (t for t in texts if t["bold"] and within(t) and abs(t["y"] - (ry - 1.6)) < 0.05),
@@ -303,7 +316,7 @@ def index_tables(page: dict) -> list[dict]:
             default=float("inf"),
         )  # the next table's heading, or the page row
         cols = [h["x"] for h in head]
-        rows: list[dict] = []
+        rows: list[dict[str, Any]] = []
         cells = sorted(
             (t for t in texts if within(t) and ry < t["y"] < end and not t["bold"]),
             key=lambda t: (round(t["y"], 2), t["x"]),
@@ -344,7 +357,9 @@ def index_pages(board: str) -> list[str]:
     adds = facts.get("kleidos") or []
     by_element = additions_by_element(facts, layout)
     errors: list[str] = []
-    says = lambda text: ADD_SUBTITLE.lower() in str(text).lower()  # noqa: E731
+
+    def says(text: object) -> bool:
+        return ADD_SUBTITLE.lower() in str(text).lower()
 
     # the line under the contents page's heading, and every page's title block
     root = page_items(folder / f"{board}.kicad_sch")
@@ -367,7 +382,7 @@ def index_pages(board: str) -> list[str]:
                 f'page {page}: the title block says "{ADD_SUBTITLE}", but netlist.yaml has none'
             )
 
-    def held(page, where, marks, keys):
+    def held(page: int, where: str, marks: list[dict[str, Any]], keys: list[Any]) -> None:
         """The markers a row or box carries are those of the entries its elements have."""
         got = sorted(t["body"] for t in marks)
         want = sorted({by_element[k]["id"] for k in keys if k in by_element})
@@ -382,7 +397,9 @@ def index_pages(board: str) -> list[str]:
         if len(got) != len(set(got)):
             errors.append(f"page {page}: a marker is drawn twice on {where}")
 
-    nets_sheet = next((sh for sh in layout["sheets"] if sh.get("index") == "nets"), {})
+    nets_sheet: dict[str, Any] = next(
+        (sh for sh in layout["sheets"] if sh.get("index") == "nets"), {}
+    )
     maps = {t["title"]: t["map"] for t in gpio_maps(facts, nets_sheet)}
     for page, sh in enumerate(layout["sheets"], start=2):
         if (
@@ -435,17 +452,17 @@ def index_pages(board: str) -> list[str]:
                     own = " ".join(
                         str(maps.get(table["title"], {}).get(name, {}).get("what") or "").split()
                     )
-                    told = [by_element[k] for k in keys if k in by_element]
-                    told = " ".join(
+                    entries = [by_element[k] for k in keys if k in by_element]
+                    entries_said = " ".join(
                         " ".join(str(e["what"]).split())
-                        for e in sorted(told, key=lambda e: int(str(e["id"])[1:]))
+                        for e in sorted(entries, key=lambda e: int(str(e["id"])[1:]))
                     )
                     if said != (
-                        own or told
+                        own or entries_said
                     ):  # blank when nothing more than the Net cell can be said
                         errors.append(
                             f"page {page}: {where} is on no net and says {said!r} under "
-                            f'"What it does", not {(own or told)!r}'
+                            f'"What it does", not {(own or entries_said)!r}'
                         )
         if sh["index"] == "power":  # the power tree: a box is a rectangle with a linked first line
             for x0, y0, x1, y1 in items["rects"]:

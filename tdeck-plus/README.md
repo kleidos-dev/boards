@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 <img src="icon.svg" width="96" height="96" alt="T-Deck Plus icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="230" height="320" alt="T-Deck Plus front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # T-Deck Plus
@@ -204,10 +209,10 @@ LILYGO publishes one mainboard schematic for the T-Deck family (dated 2023-06-01
 - [`icon.svg`](icon.svg): a 64 px pictogram of the board.
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
-- [`model/tdeck-plus.glb`](model/tdeck-plus.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
+- [`model/tdeck-plus.glb`](model/tdeck-plus.glb): the 3D model, glTF 2.0 binary in meters (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/tdeck-plus-web.glb`](model/tdeck-plus-web.glb): its web level of detail.
-- [`model/tdeck-plus.obj`](model/tdeck-plus.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
-- [`model/tdeck-plus.mtl`](model/tdeck-plus.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/tdeck-plus.obj`](model/tdeck-plus.obj): the same model as Wavefront OBJ, in millimeters, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/tdeck-plus.mtl`](model/tdeck-plus.mtl): the OBJ's materials: each part's color, transparency, roughness and metalness.
 - [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.

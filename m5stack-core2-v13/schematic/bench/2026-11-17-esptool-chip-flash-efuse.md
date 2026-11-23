@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P01: ESP32, crystal, flash ID and VDD_SDIO eFuses (2026-11-17)
 
 Probe P01 of `../improvements.md`. Read only, over the board's own USB-C, through the ROM download mode that esptool enters by the bridge's DTR/RTS lines; nothing was written to flash or eFuse, and the case was not opened. The bench unit is the Core2 v1.3 of the Kleidos bench (private identifiers, such as its MAC, are left out of this record).

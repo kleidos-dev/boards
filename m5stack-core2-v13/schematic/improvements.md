@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # Core2 v1.3 schematic: triage of candidate improvements
 
 Working triage under the owner's rule of 2026-11-17 (AGENTS.md, "Schematics"): a detail the vendor's print does not show goes in when a primary source makes it certain, a drawing error of the print is corrected when the evidence settles it, and each is a `kleidos` entry in `netlist.yaml`, marked on the drawing and listed on page 1. Applied on 2026-11-17 as the `kleidos` entries of `netlist.yaml`: T01 K1, T04 K2, T05 K3, T06 K4, T07 K5, T08 K6, T09 K7, T11 K8, T13 K9, T14 K10, T15 K11, T16 K12, T17 K13, T18 K14, T19 K15, T23 K16, T24 K17, T25 K18, T26 K19, T27 K20, T28 K21, T29 K22, T30 K23, T31 K24-K26, T32 K27. T05, T06, T07 and T09 went in as corrections (marker only): a `part` addition draws the part's wires dotted, as a part added whole, and these parts' connections are the print's. T23 went in as `{net: PWR_KEY}`. What stays open is listed in README.md, "Open questions". Firmware citations are the Kleidos firmware repository (2026-11-17). Datasheet citations: ESP32 Series Datasheet v5.3 (Espressif) and the AXP192 datasheet revision 1.1 (X-Powers, the copy in M5Stack's `M5-Schematic` repository that `board.json` cites as `axp192-ds`), both read 2026-11-17; the other datasheets are the ones `board.json` lists under `sources`. The vendor's core sheet was re-read on 2026-11-17 from the Internet Archive copy the README cites (SHA-256 matches), at 300 dpi, for the spot checks in (d). "The back label" is the sticker M5Stack prints on the board's back, as this repository transcribes it in `_shared/core2_prints.py` (measured on M5Stack's product photo).

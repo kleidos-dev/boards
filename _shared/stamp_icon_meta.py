@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Write each board's ``icon.svg`` metadata from its record, or check it
 
@@ -33,7 +34,7 @@ def stamped(board: str) -> tuple[Path, str, str]:
     return path, text, media_meta.stamp_svg(text, media_meta.record(f"{board}/icon.svg"))
 
 
-def main(argv=None) -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("boards", nargs="*", help="board ids (default: all nine)")
     parser.add_argument(

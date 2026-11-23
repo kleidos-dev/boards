@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Generate the committed `svg/front.svg` of every board.
 
@@ -92,6 +93,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from itertools import pairwise
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import media_meta
@@ -3011,10 +3013,10 @@ def append_cardputer_stamp_pins(out: list[str]) -> None:
         rounded_rect(x - 0.27, 16.88, 0.54, 1.82, r=0.27, fill=STAMP_PALE_GRAY) for x in even
     )
     for k in range(5):
-        for number, x, y in ((2 * k + 1, odd[k], 18.1), (2 * k + 2, even[k], 16.88)):
+        for pin, x, y in ((2 * k + 1, odd[k], 18.1), (2 * k + 2, even[k], 16.88)):
             out.append(circle(x, y, disc, fill=STAMP_CYAN))
             out.append(
-                stamp_number(x, y, str(number), 1.18, CARDPUTER_INK, 0.84 if number == 10 else 0.95)
+                stamp_number(x, y, str(pin), 1.18, CARDPUTER_INK, 0.84 if pin == 10 else 0.95)
             )
     out.append(
         stamp_line(
@@ -4434,7 +4436,7 @@ class DeviceSpec:
     body_w: float
     body_h: float
     builder: Callable[..., str]
-    builder_kwargs: dict = field(default_factory=dict)
+    builder_kwargs: dict[str, Any] = field(default_factory=dict)
 
 
 DEVICES: list[DeviceSpec] = [

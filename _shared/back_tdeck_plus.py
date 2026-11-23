@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What the LILYGO T-Deck Plus prints on its back, for ``emit_back_svg.py``
 

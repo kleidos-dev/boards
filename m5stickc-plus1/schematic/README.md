@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5StickC Plus 1.1 (K016-P): schematic
 
 Kleidos boards: the M5StickC Plus 1.1's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net, with the values the vendor documents, laid out with this project's own layout and symbols. Where a datasheet, the vendor's docs page or a bench probe makes a detail certain that the print leaves out or gets wrong, the drawing carries it, marked and sourced ([below](#kleidos-additions-and-corrections)); what is still uncertain is listed under [Open questions](#open-questions). It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the decoupling and ESD parts on each interface, every rail and what feeds it, and the ESP32 GPIO of every signal.
@@ -25,7 +30,7 @@ Pages 6 to 8 are written by the generator from `netlist.yaml`, not drawn by hand
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/A2]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row A, column 2. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label. An amber `K5` beside a label, a crossed pin or a row of the nets page marks a Kleidos addition or correction; it leads to its row on page 1, and the row's id leads back. Every entry here marks a fact about a connection the print already draws (or a pin it leaves unconnected), so no wire is dotted as an added connection.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/A2]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row A, column 2. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label. An amber `K5` beside a label, a crossed pin or a row of the nets page marks a Kleidos addition or correction; it leads to its row on page 1, and the row's id leads back. Every entry here marks a fact about a connection the print already draws (or a pin it leaves unconnected), so no wire is dotted as an added connection.
 
 The schematic documents no part as not fitted, so no part carries KiCad's DNP mark.
 

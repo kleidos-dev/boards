@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # LILYGO T-Deck Plus: schematic
 
 Kleidos boards: the T-Deck Plus's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net of the mainboard and of the two GPS daughterboards LILYGO publishes, with the values the vendor documents, laid out with this project's own layout and symbols. It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the filter and decoupling parts on each interface, every rail and what feeds it, and the ESP32-S3 and ESP32-C3 GPIO of every signal. Where the vendor's print leaves a detail out or gets one wrong and a primary source settles it, the drawing adds or corrects it, marked in amber by its id (K1 to K20) and listed on page 1 and below; what is still uncertain stays out and is listed under "Open questions".
@@ -26,7 +31,7 @@ Pages 7 to 9 are written by the generator from `netlist.yaml`, not drawn by hand
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label.
 
 Parts documented as not fitted (value `NC`, `NC(100K)`) carry KiCad's DNP mark: a red cross over the symbol.
 
@@ -160,7 +165,7 @@ The export fails unless the ERC reports nothing, `check_schematic.py` finds ever
 - Three networks on the mainboard sheet sit inside compile-mask frames, which Altium leaves out of the design (the PDF carries no part marker for them): two TP_EN networks at the right of the sheet (D48, D49, C79, R67; D4, D9, R68 and a 22uF/6.3V capacitor), a third below them (Q25 PMBT3906, D30, R49, R70, R74, C73), and a framed D4 1N4148 from TP_EN beside D3. They are not drawn; on the owner's unit the TP_EN edge detector does nothing (bench, above), and which parts are absent is open.
 - Which GPS daughterboard a given unit carries (the owner's carries the MIA-M10Q board: the firmware finds a u-blox M10 answering UBX at 38400 baud), and the cable between its J2 (5 pins: PPS, GPS_TX, GPS_RX, VDD3V3, GND) and the mainboard's P8 (4 pins: GND, VDD3V3, UAR0_TX, UAR0_RX): none is published. The daughterboards are drawn as LILYGO prints them, on their own nets; what P8 carries to them is K3, K7 and K8.
 - `ES7210_INT`, `DMIC_CLK` and `Lora_P1.01_GPIO2` end at a single pin: the print gives each a net label and nothing else on it. The first two are outputs of the ES7210 (K13, K14). U0 pin 6, named NC on the vendor symbol, is the pin `Lora_P1.01_GPIO2` sits on (open).
-- Part numbers the print leaves out: the battery (its capacity is K1), the speaker, the LCD and touch panels behind P2 and P4 (their controllers are K11 and K12), the keyboard board behind JP1, the antenna XX2 (printed TIAN), the LED colour beyond "Blue", and the crystal U4's part.
+- Part numbers the print leaves out: the battery (its capacity is K1), the speaker, the LCD and touch panels behind P2 and P4 (their controllers are K11 and K12), the keyboard board behind JP1, the antenna XX2 (printed TIAN), the LED color beyond "Blue", and the crystal U4's part.
 - The ESP32-S3 module's internals (flash, PSRAM, crystal) are inside U1 and not on the schematic; its part number is K4. IO35, IO36 and IO37 are left unconnected, as the sheet's note says they serve the in-package PSRAM.
 - On the MIA-M10Q board the print draws A5 (RTC_O) to GND and joins D2 to E2 (both RESERVED); the drawing keeps both as printed (open).
 - KEY1 pin 4 (B1) is drawn wired to GND in the print, and is on GND here. The PDF's net markers, which the other connections agree with pin for pin, list it on a net of its own: the wire drawn to it ends about 0.05 pt short of the pin's end. `netlist.yaml` notes it on KEY1.

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # GPIO2 held high: is there a DC load on it? (probe P5, partial)
 
 Bench probe of 2026-11-17 on the M5StickC Plus 1.1 (K016-P), USB connected, the case closed. It addresses triage item A1 (`../improvements.md`): the vendor's docs page puts the passive buzzer on G2, while the print draws GPIO2 (U1 pin 22) to PAD2 only.

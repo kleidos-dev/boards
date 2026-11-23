@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Vendor names spelled as the boards print them.
 
@@ -44,7 +45,7 @@ def misspellings(text: str) -> list[str]:
     return found
 
 
-def test_the_tree_spells_the_vendor_as_the_board_prints_it():
+def test_the_tree_spells_the_vendor_as_the_board_prints_it() -> None:
     found = []
     for path in check_public_tree.tracked(ROOT):
         if not path.is_file():
@@ -56,7 +57,7 @@ def test_the_tree_spells_the_vendor_as_the_board_prints_it():
 
 
 @pytest.mark.parametrize("spelling", ["Lily" + "GO", "Lily" + "go", "Lily" + "Go", "lily" + "GO"])
-def test_a_mixed_case_spelling_is_caught(spelling):
+def test_a_mixed_case_spelling_is_caught(spelling: str) -> None:
     assert len(misspellings(f"Measured on {spelling}'s photo.\n")) == 1
 
 
@@ -74,5 +75,5 @@ def test_a_mixed_case_spelling_is_caught(spelling):
         '<g class="legend" data-mark="lilygo-glass" data-plane="glass">',
     ],
 )
-def test_an_address_an_identifier_and_the_printed_name_pass(line):
+def test_an_address_an_identifier_and_the_printed_name_pass(line: str) -> None:
     assert misspellings(line) == []

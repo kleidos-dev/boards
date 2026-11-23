@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5StickC Plus 1.1 (K016-P): schematic improvements, triage
 
 Triage of 2026-11-17 under the owner's rule of the same day (a detail the vendor's print does not show goes in when a primary source makes it certain; a drawing error of the print is corrected when the evidence settles it; what stays uncertain is listed as open). The settled items are applied as the `kleidos` entries K1-K23 of `netlist.yaml` (`docs/models-and-drawings.md`, "Kleidos additions and corrections"); "Applied" at the end maps each triage id to its entry, and lists the settled items left undrawn and why. The "Entry" column below is the triage's proposal.

@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The embedded metadata of every media file this repository publishes
 
@@ -34,8 +35,10 @@ import re
 import struct
 import tomllib
 import zlib
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -131,7 +134,7 @@ def license_ids(expression: str) -> list[str]:
     return out
 
 
-def _glob(pattern: str) -> re.Pattern:
+def _glob(pattern: str) -> re.Pattern[str]:
     """A REUSE.toml path pattern: ``*`` stays inside a folder, ``**`` crosses them."""
     out, i = [], 0
     while i < len(pattern):
@@ -270,7 +273,7 @@ class MediaMeta:
     content_date: str | None = None
     media_type: str = ""
     slug: str = ""
-    extra: dict = field(default_factory=dict, compare=False, hash=False)
+    extra: dict[str, Any] = field(default_factory=dict, compare=False, hash=False)
 
     @property
     def identifier_url(self) -> str:
@@ -321,7 +324,7 @@ def _check(meta: MediaMeta) -> MediaMeta:
     return meta
 
 
-def identity(board: str) -> dict:
+def identity(board: str) -> dict[str, Any]:
     """A board's naming facts from its ``board.json``: name, vendor, SKU, revision, display name."""
     data = json.loads((ROOT / board / "board.json").read_text(encoding="utf-8"))["identity"]
     name = data["name"]
@@ -336,7 +339,7 @@ def identity(board: str) -> dict:
     }
 
 
-def _board_keywords(ident: dict, *kind: str) -> tuple[str, ...]:
+def _board_keywords(ident: dict[str, Any], *kind: str) -> tuple[str, ...]:
     words = [*BASE_KEYWORDS, ident["vendor"], ident["name"], ident["sku"], *kind]
     out = []
     for w in words:
@@ -352,7 +355,7 @@ def spec_credits(spec_path: Path) -> tuple[str, ...]:
     return (text,) if text else ()
 
 
-def _from_reuse(path: str, own: str = "MIT") -> dict:
+def _from_reuse(path: str, own: str = "MIT") -> dict[str, Any]:
     spdx, holders = reuse_truth(path)
     return {"spdx": spdx, "own_license": own, "holders": holders}
 
@@ -653,7 +656,7 @@ def _alt(tag: str, value: str, indent: str) -> str:
     )
 
 
-def xmp_packet(meta: MediaMeta, profile: str = "full", pdf: dict | None = None) -> str:
+def xmp_packet(meta: MediaMeta, profile: str = "full", pdf: dict[str, Any] | None = None) -> str:
     """The XMP packet of a record (the standard, 5.1): ``full``, ``short`` or, with *pdf*, a PDF's.
 
     *pdf* holds ``keywords``, ``producer``, ``creator_tool``, ``date``,
@@ -804,7 +807,10 @@ def unstamp_svg(svg: str) -> str:
         raise MetaError("no <svg> root")
     root = _ROOT_A11Y.sub("", m.group(0).rstrip("\n"))
     rest = svg[m.end() :]
-    rest = rest[_SVG_META.match(rest).end() :]
+    leading = _SVG_META.match(rest)
+    if leading is None:
+        raise MetaError("the <svg> root's leading title, desc and metadata do not parse")
+    rest = rest[leading.end() :]
     return svg[: m.start()] + root + "\n" + rest
 
 
@@ -817,6 +823,8 @@ def stamp_svg(svg: str, meta: MediaMeta) -> str:
     """
     bare = unstamp_svg(svg)
     m = _SVG_ROOT.search(bare)
+    if m is None:
+        raise MetaError("no <svg> root")
     root = m.group(0).rstrip("\n")
     root = root[:-1].rstrip() + (
         f' role="img" aria-labelledby="{meta.slug}-t {meta.slug}-d" lang="{meta.language}">'
@@ -834,7 +842,7 @@ def stamp_svg(svg: str, meta: MediaMeta) -> str:
 # ---------------------------------------------------------------- glTF
 
 
-def gltf_metadata(meta: MediaMeta) -> tuple[dict, dict, str]:
+def gltf_metadata(meta: MediaMeta) -> tuple[dict[str, Any], dict[str, Any], str]:
     """(``asset``, the root ``extensions``, the scene's name) of a model (5.11)."""
     asset = {
         "version": "2.0",
@@ -854,7 +862,7 @@ def gltf_metadata(meta: MediaMeta) -> tuple[dict, dict, str]:
         },
     }
 
-    def alt(value):
+    def alt(value: str) -> dict[str, Any]:
         return {"@type": "rdf:Alt", "rdf:_1": {"@language": "x-default", "@value": value}}
 
     packet = {
@@ -881,7 +889,7 @@ def gltf_metadata(meta: MediaMeta) -> tuple[dict, dict, str]:
 GLTF_META_EXTENSION = "KHR_xmp_json_ld"
 
 
-def gltf_without_metadata(js: dict) -> dict:
+def gltf_without_metadata(js: dict[str, Any]) -> dict[str, Any]:
     """A model's JSON less what :func:`gltf_metadata` writes, for comparing two models' content."""
     out = dict(js)
     out["asset"] = {"version": js.get("asset", {}).get("version", "2.0")}
@@ -1035,9 +1043,16 @@ def pdf_date(date: str) -> tuple[str, str]:
     return f"D:{date.replace('-', '')}000000Z", f"{date}T00:00:00Z"
 
 
+def _content_date(meta: MediaMeta) -> str:
+    """The date a schematic's PDF states: its record's content date."""
+    if meta.content_date is None:
+        raise MetaError(f"{meta.path}: a schematic's record names its content date")
+    return meta.content_date
+
+
 def pdf_info(meta: MediaMeta) -> dict[str, str]:
     """The Info dictionary of a schematic PDF, in its order (5.8)."""
-    pdf_d, _ = pdf_date(meta.content_date)
+    pdf_d, _ = pdf_date(_content_date(meta))
     return {
         "/Title": meta.title,
         "/Author": CREATOR,
@@ -1051,7 +1066,7 @@ def pdf_info(meta: MediaMeta) -> dict[str, str]:
 
 
 def pdf_xmp(meta: MediaMeta, document_id: str, instance_id: str) -> str:
-    _, iso = pdf_date(meta.content_date)
+    _, iso = pdf_date(_content_date(meta))
     return xmp_packet(
         meta,
         pdf={
@@ -1099,7 +1114,7 @@ IDENTITY_FILE = Path(__file__).resolve().parent / "deny-local.txt"
 IDENTITY_ENV = "KLEIDOS_DENY_EXTRA"
 
 
-def identity_patterns() -> list[re.Pattern] | None:
+def identity_patterns() -> list[re.Pattern[str]] | None:
     """The identity patterns (one regex a line) from the untracked
     file or the CI secret, or None."""
     text = os.environ.get(IDENTITY_ENV, "")
@@ -1114,7 +1129,7 @@ def identity_patterns() -> list[re.Pattern] | None:
 
 
 def deny_hits(
-    value: str, identity: list[re.Pattern] | None = None, allow_dates: bool = False
+    value: str, identity: Sequence[re.Pattern[str]] | None = None, allow_dates: bool = False
 ) -> list[str]:
     """The classes of private data *value* holds (never the matched text of an identity hit)."""
     out = []

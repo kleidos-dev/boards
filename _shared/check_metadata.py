@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Hold every published media file to its embedded-metadata record
 
@@ -45,7 +46,9 @@ import re
 import struct
 import subprocess
 import sys
+from collections.abc import Iterable, Iterator, Sequence
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import media_meta as mm
@@ -123,7 +126,7 @@ def tracked() -> list[str]:
             ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True
         ).stdout
         return [n for n in out.decode("utf-8").split("\0") if n]
-    except OSError, subprocess.CalledProcessError:
+    except (OSError, subprocess.CalledProcessError):
         return [
             p.relative_to(ROOT).as_posix()
             for p in ROOT.rglob("*")
@@ -138,12 +141,18 @@ def exemption(rel: str) -> str | None:
     return None
 
 
-class Findings(list):
+class Findings(list[Any]):
     def add(self, rule: str, message: str) -> None:
         self.append((rule, message))
 
 
-def deny(found: Findings, where: str, values, identity, allow_dates=False) -> None:
+def deny(
+    found: Findings,
+    where: str,
+    values: Iterable[object],
+    identity: Sequence[re.Pattern[str]] | None,
+    allow_dates: bool = False,
+) -> None:
     for value in values:
         for name in mm.deny_hits(str(value), identity, allow_dates):
             found.add("M004", f"{where} holds {name}")
@@ -154,7 +163,9 @@ def deny(found: Findings, where: str, values, identity, allow_dates=False) -> No
 _BLOCK = re.compile(rf"<!-- {mm.REUSE_START} -->\n(.*?)<!-- {mm.REUSE_END} -->", re.S)
 
 
-def check_svg(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
+def check_svg(
+    rel: str, data: bytes, meta: mm.MediaMeta, identity: Sequence[re.Pattern[str]] | None
+) -> Findings:
     found = Findings()
     text = data.decode("utf-8")
     blocks = _BLOCK.findall(text)
@@ -192,7 +203,7 @@ def check_svg(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
 # ---------------------------------------------------------------- glTF
 
 
-def _strings(obj):
+def _strings(obj: object) -> Iterator[str]:
     if isinstance(obj, str):
         yield obj
     elif isinstance(obj, dict):
@@ -204,7 +215,9 @@ def _strings(obj):
             yield from _strings(v)
 
 
-def check_glb(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
+def check_glb(
+    rel: str, data: bytes, meta: mm.MediaMeta, identity: Sequence[re.Pattern[str]] | None
+) -> Findings:
     found = Findings()
     if data[:4] != b"glTF":
         found.add("M006", "not a GLB")
@@ -245,7 +258,9 @@ def check_glb(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
 # ---------------------------------------------------------------- OBJ and MTL
 
 
-def check_obj(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
+def check_obj(
+    rel: str, data: bytes, meta: mm.MediaMeta, identity: Sequence[re.Pattern[str]] | None
+) -> Findings:
     found = Findings()
     lines = data.decode("utf-8").split("\n")
     want = mm.obj_header(meta) if rel.endswith(".obj") else mm.mtl_header(meta)
@@ -272,7 +287,9 @@ def check_obj(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
 # ---------------------------------------------------------------- PNG
 
 
-def check_png(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
+def check_png(
+    rel: str, data: bytes, meta: mm.MediaMeta, identity: Sequence[re.Pattern[str]] | None
+) -> Findings:
     found = Findings()
     try:
         chunks = mm.png_chunks_of(data)
@@ -326,7 +343,7 @@ def check_png(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
     return found
 
 
-def xmp_of(texts) -> str:
+def xmp_of(texts: Sequence[tuple[bytes, bytes]]) -> str:
     for k, b in texts:
         if k == b"iTXt" and b.startswith(b"XML:com.adobe.xmp\0"):
             return b.split(b"\0", 5)[-1].decode("utf-8", "replace")
@@ -336,11 +353,14 @@ def xmp_of(texts) -> str:
 # ---------------------------------------------------------------- PDF
 
 
-def check_pdf(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
+def check_pdf(
+    rel: str, data: bytes, meta: mm.MediaMeta, identity: Sequence[re.Pattern[str]] | None
+) -> Findings:
     import io
 
     import schematic_pdf
     from pypdf import PdfReader
+    from pypdf.generic import DictionaryObject
 
     found = Findings()
     reader = PdfReader(io.BytesIO(data))
@@ -354,7 +374,9 @@ def check_pdf(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
     extra = sorted(set(info) - set(want))
     if extra:
         found.add("M005", f"Info keys outside the profile: {extra}")
-    root = reader.trailer["/Root"]
+    root = reader.trailer["/Root"].get_object()
+    if not isinstance(root, DictionaryObject):
+        raise mm.MetaError(f"{rel}: the catalog is not a dictionary")
     board = rel.split("/", 1)[0]
     file_id, document, instance = schematic_pdf.identifiers(board, meta)
     stream = root.get("/Metadata")
@@ -399,7 +421,7 @@ CHECKS = {
 }
 
 
-def check(rel: str, identity) -> Findings:
+def check(rel: str, identity: Sequence[re.Pattern[str]] | None) -> Findings:
     """The findings for one tracked file (relative to the repository root)."""
     found = Findings()
     suffix = Path(rel).suffix.lower()
@@ -420,7 +442,7 @@ def check(rel: str, identity) -> Findings:
     return found
 
 
-def main(argv=None) -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("paths", nargs="*", help="files to check (default: every tracked one)")
     parser.add_argument("--json", action="store_true", help="print [{path, rule, message}]")

@@ -2,6 +2,10 @@
 name: board-specs-and-schematics
 description: "Conventions of this repository (kleidos-dev/boards): one folder per board named by its hyphenated board id, a board.json whose every value cites its source, a hand-kept measurements.json, drawings written only by their generators, a KiCad schematic generated from netlist.yaml that documents the board's connectivity from the vendor's public documentation and improves on the vendor's print with sourced Kleidos entries (K1, K2...) and bench records, 64 px icons, 3D models at two levels built from pinned vendor CAD (the master also as Wavefront OBJ and MTL), REUSE licensing, and no vendor file in the tree. Use when adding a board or changing its specification, measurements, schematic, Kleidos entries, bench records, icon, model or provenance, or when answering a hardware question from the repository's sourced facts. Do not use for measuring a board face from photos, renders or CAD (see visual-reference-svg-reconstruction) or for the firmware's board support code, which lives in the Kleidos firmware repository."
 ---
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
 
 # Board specifications and schematics
 

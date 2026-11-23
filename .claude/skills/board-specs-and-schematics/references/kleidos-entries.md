@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # Improving the vendor's print: Kleidos entries and bench records
 
 The rule (owner, 2026-11-17; `AGENTS.md`, "Schematics"): the drawing improves on the vendor's print rather than following it to the letter, and every place where it does is an entry of `kleidos` in the board's `schematic/netlist.yaml`, marked on the drawing and listed with its source on page 1. Nothing silently differs from the print. The format and what the checks hold are in `docs/models-and-drawings.md`, "Kleidos additions and corrections"; this page is how to get from a doubt to an entry.
@@ -10,7 +15,7 @@ An entry needs a primary source that makes the fact certain. Four kinds, the `so
 | --- | --- | --- |
 | `datasheet` | The chip's own datasheet: a pin's function, an I2C address, an internal pull, a connection the chip requires | Document, version, page or table |
 | `vendor-doc` | The vendor's other documents: a pin map, a manual, the product page | Document and section; the address goes in the README's sources |
-| `firmware` | The Kleidos firmware's verified behaviour on that board: code that works on the real board | "Kleidos firmware", the file's repository path and the symbol (function, constant or macro); never a commit or a line number, which will not survive the firmware's squash at publication |
+| `firmware` | The Kleidos firmware's verified behavior on that board: code that works on the real board | "Kleidos firmware", the file's repository path and the symbol (function, constant or macro); never a commit or a line number, which will not survive the firmware's squash at publication |
 | `bench` | A probe run for it on the board | The bench record's path under the board's `schematic/` folder and the date of the probe |
 
 Anything else is not a primary source: a forum post, a community schematic, the datasheet of a similar part standing in for one whose own was not found, what such chips usually do. A fact that rests on one of those stays out and is listed as open.
@@ -18,7 +23,7 @@ Anything else is not a primary source: a forum post, a community schematic, the 
 ## From a doubt to an entry
 
 1. **Triage it** in `<board>/schematic/improvements.md`: one row per candidate with the claim, the evidence read (document, page) and a status: K addition or K correction (settled, with the element named), no entry (settled, the drawing already agrees or the print gives the fact), no element fits (settled, but every element kind would misdraw it), needs bench, stays out (cannot be settled without opening the board, or no primary source exists), or a disagreement to fix in `board.json` or in the firmware repository. The file also lists the sources read and the probes that would settle what is open.
-2. **Probe what a probe can settle**, on the bench, and write the record (below) before the entry that cites it. A probe that cannot be run from the board's console (a meter on a header, a look at an LED's colour, an opened case) stays "needs bench" with what it needs, and the record says what the console could read instead.
+2. **Probe what a probe can settle**, on the bench, and write the record (below) before the entry that cites it. A probe that cannot be run from the board's console (a meter on a header, a look at an LED's color, an opened case) stays "needs bench" with what it needs, and the record says what the console could read instead.
 3. **Write the entry** in `netlist.yaml`:
 
    ```yaml

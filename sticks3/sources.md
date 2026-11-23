@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5StickS3 — sources
 
 What `measurements.json` and `svg/front.svg` were measured on. The vendor files themselves are not kept here: product photos, drawings and CAD files stay the property of M5Stack and are cited by address only (`NOTICE.md`). The numbers taken from them are in `measurements.json` and in the StickS3 block of `_shared/emit_front_svg.py`, whose comments say which figure came from which view.
@@ -5,7 +10,7 @@ What `measurements.json` and `svg/front.svg` were measured on. The vendor files 
 | Source | Address | Used for |
 | --- | --- | --- |
 | M5Stack's StickS3 documentation page | <https://docs.m5stack.com/en/core/StickS3> | Product size 48.0 x 24.0 x 15.0 mm, the case depth and material (`board.json` `m5-docs`) |
-| Shop photo, straight-on front with the lit "STICK S3" boot screen | <https://cdn.shopify.com/s/files/1/0056/7689/2250/files/8_6cc19914-4f8e-4b79-8bff-9d5d62110aa9.webp?v=1770176878> | Window opening, visible glass, BtnA pill, the flat face below it, the face and wall colours; the screen's origin (its lit boot screen) |
+| Shop photo, straight-on front with the lit "STICK S3" boot screen | <https://cdn.shopify.com/s/files/1/0056/7689/2250/files/8_6cc19914-4f8e-4b79-8bff-9d5d62110aa9.webp?v=1770176878> | Window opening, visible glass, BtnA pill, the flat face below it, the face and wall colors; the screen's origin (its lit boot screen) |
 | Shop photo, straight-on front with the screen off (the lower-left view of the composite) | <https://cdn.shopify.com/s/files/1/0056/7689/2250/files/1920x2260_1c598967-82f0-449a-98d1-399e85dc56ed.webp?v=1770111242> | The same face features, checked against the lit photo (both agree within 0.05 mm) |
 | Shop photo, straight view of the right side | <https://cdn.shopify.com/s/files/1/0056/7689/2250/files/11_3ca2bce7-c796-4712-8cda-6e150b79c0fd.webp?v=1770176878> | KEY2 (BtnB) cap, 19.64 to 28.22 mm along the case |
 | Shop photos, two angled front views | <https://cdn.shopify.com/s/files/1/0056/7689/2250/files/1_f50b328d-f753-4bef-92ec-6f0e8a69e5c0.webp?v=1769049123>, <https://cdn.shopify.com/s/files/1/0056/7689/2250/files/4_e5191b04-4dbf-4212-af94-1de732541a92.webp?v=1770176878> | The power key on the left side near the USB end, 39.5 to 44.5 mm, about 0.5 mm uncertain |

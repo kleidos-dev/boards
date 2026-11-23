@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Check a board's KiCad schematic and write its PDF and SVGs.
 
@@ -29,7 +30,7 @@ asks for English and holds the themes, so the output is the same on every
 machine; ``--theme``, ``--drawing-sheet`` and the kit's face on every export.
 Two checks guard the theme: kicad-cli falls back to its default theme without
 a word when ``--theme`` names one it cannot find, so every SVG's background
-must be the theme's; and every line drawn in the wire colour (wires, pin lines,
+must be the theme's; and every line drawn in the wire color (wires, pin lines,
 junctions) must have the one width the project sets.
 
 Usage::
@@ -47,9 +48,11 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -65,12 +68,14 @@ THEME_FILE = kit.theme_file(GROUND)
 SHEET_FILE = kit.sheet(GROUND)
 
 
-def theme_colours() -> dict[str, str]:
-    """The theme's schematic colours as SVG writes them (#RRGGBB)."""
+def theme_colors() -> dict[str, str]:
+    """The theme's schematic colors as SVG writes them (#RRGGBB)."""
     return kit.theme_colors(GROUND)
 
 
-def run(cli: str, args: list[str], cwd: Path, env: dict):
+def run(
+    cli: str, args: list[str], cwd: Path, env: dict[str, Any]
+) -> subprocess.CompletedProcess[str]:
     return kit.run(args, cwd, env, cli)
 
 
@@ -82,11 +87,11 @@ def line_mil(folder: Path, board: str) -> float:
         raise SystemExit(
             f"{board}.kicad_pro: the wire and default line widths differ ({sorted(widths)} mil)"
         )
-    return widths.pop()
+    return float(widths.pop())
 
 
-def check_svg(svg: Path, colours: dict[str, str], width_mm: float, wires: bool = True) -> list[str]:
-    """The page background is the theme's, and every wire-coloured line has one width (the kit's
+def check_svg(svg: Path, colors: dict[str, str], width_mm: float, wires: bool = True) -> list[str]:
+    """The page background is the theme's, and every wire-colored line has one width (the kit's
     check)."""
     if round(width_mm, 4) != round(kit.connection_mm(), 4):
         return [
@@ -183,7 +188,7 @@ def main(argv: list[str]) -> int:
         (f"{args.board}-{sh['name']}.svg", sh["file"].removesuffix(".kicad_sch"))
         for sh in layout["sheets"]
     ]
-    colours = theme_colours()
+    colors = theme_colors()
     width_mm = line_mil(folder, args.board) * 0.0254
     errors = []
     for page, (got, _) in enumerate(names, start=1):
@@ -192,13 +197,13 @@ def main(argv: list[str]) -> int:
             print(f"FAIL kicad-cli wrote no {got}")
             return 1
         drawing = page > 1 and "index" not in layout["sheets"][page - 2]
-        errors += check_svg(src, colours, width_mm, wires=drawing)
+        errors += check_svg(src, colors, width_mm, wires=drawing)
     for e in errors:
         print(f"FAIL {e}")
     if errors:
         return 1
     print(
-        f"theme: {THEME}, background {colours['background']} on every page; "
+        f"theme: {THEME}, background {colors['background']} on every page; "
         f"wires and pin lines {width_mm:.4f} mm; the drawing sheet {SHEET_FILE.name}, the mark on "
         "every page"
     )

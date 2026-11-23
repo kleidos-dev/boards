@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Every ``board.json`` passes its check, and the check fails what is planted in one.
 
@@ -17,7 +18,9 @@ import copy
 import datetime as dt
 import json
 import sys
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -28,7 +31,7 @@ import check_board_specs as specs  # noqa: E402
 TODAY = dt.date(2026, 11, 16)
 
 #: A document every rule passes, with one of each kind of thing a rule reads.
-VALID: dict = {
+VALID: dict[str, Any] = {
     "$schema": "../_shared/board.schema.json",
     "id": "sticks3",
     "identity": {
@@ -112,11 +115,11 @@ MEASURED = {
 }
 
 
-def problems(doc: dict, measured: dict | None = MEASURED) -> list[str]:
+def problems(doc: dict[str, Any], measured: dict[str, Any] | None = MEASURED) -> list[str]:
     return specs.check_document(doc, "sticks3", measured, today=TODAY)[0]
 
 
-def test_every_board_json_in_the_tree_passes():
+def test_every_board_json_in_the_tree_passes() -> None:
     """The committed files pass, and at least the StickS3 has one."""
     checked = 0
     for board in specs.BOARDS:
@@ -128,19 +131,19 @@ def test_every_board_json_in_the_tree_passes():
     assert checked >= 1
 
 
-def test_the_board_list_is_the_tree():
+def test_the_board_list_is_the_tree() -> None:
     """The check walks every board folder, and only those."""
     folders = sorted(p.name for p in ROOT.iterdir() if (p / "measurements.json").is_file())
     assert sorted(specs.BOARDS) == folders
 
 
-def test_the_valid_document_passes():
+def test_the_valid_document_passes() -> None:
     assert problems(VALID) == []
     notices = specs.check_document(VALID, "sticks3", MEASURED, today=TODAY)[1]
     assert notices == ["$.sources.caliper: not cited yet"]
 
 
-def _plant(change):
+def _plant(change: Callable[[dict[str, Any]], object]) -> dict[str, Any]:
     doc = copy.deepcopy(VALID)
     change(doc)
     return doc
@@ -162,7 +165,7 @@ PLANTED = {
     "a date in another format": lambda d: d["sources"]["docs"].update(checked="16/11/2026"),
     "found_via to nothing": lambda d: d["sources"]["schematic"].update(found_via="nowhere"),
     "an unknown role": lambda d: d["components"][0].update(role="cpu"),
-    "an unknown property": lambda d: d["components"][0].update(colour="blue"),
+    "an unknown property": lambda d: d["components"][0].update(color="blue"),
     "a quantity of zero": lambda d: d["components"][0].update(quantity=0),
     "a bus address that is no address": lambda d: d["components"][1]["connects_to"][0].update(
         address="68"
@@ -187,18 +190,18 @@ PLANTED = {
 
 
 @pytest.mark.parametrize("name", sorted(PLANTED))
-def test_the_check_fails_what_is_planted(name):
+def test_the_check_fails_what_is_planted(name: str) -> None:
     found = problems(_plant(PLANTED[name]))
     assert found, f"the check passed {name}"
 
 
-def test_a_resolution_may_be_given_in_either_orientation():
+def test_a_resolution_may_be_given_in_either_orientation() -> None:
     """A panel quoted landscape is the same panel as measured portrait."""
     doc = _plant(lambda d: d["components"][2]["specs"].update(resolution_px=[240, 135]))
     assert problems(doc) == []
 
 
-def test_the_schema_file_is_the_one_the_check_reads():
+def test_the_schema_file_is_the_one_the_check_reads() -> None:
     """The check enforces the committed schema, and the board files point at it."""
     schema = json.loads(specs.SCHEMA_PATH.read_text(encoding="utf-8"))
     assert schema["$schema"].startswith("https://json-schema.org/draft/2020-12")
@@ -211,12 +214,14 @@ def test_the_schema_file_is_the_one_the_check_reads():
             assert doc["$schema"] == "../_shared/board.schema.json", board
 
 
-def test_the_command_line_fails_a_bad_file(tmp_path):
+def test_the_command_line_fails_a_bad_file(tmp_path: Path) -> None:
     """``main`` exits 1 on a planted file and 0 on the tree."""
     assert specs.main([]) == 0
     bad = tmp_path / "sticks3"
     bad.mkdir()
     (bad / "board.json").write_text(json.dumps(_plant(PLANTED["an http address"])))
     (bad / "measurements.json").write_text(json.dumps(MEASURED))
-    problems_found, _ = specs.check_board("sticks3", root=tmp_path)
+    result = specs.check_board("sticks3", root=tmp_path)
+    assert result is not None
+    problems_found, _ = result
     assert problems_found

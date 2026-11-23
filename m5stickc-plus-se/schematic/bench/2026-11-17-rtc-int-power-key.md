@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P2: the BM8563's INT reaches the AXP192's power key, not GPIO35 (2026-11-17)
 
 Probe P2 of `../improvements.md` (item T24, `board.json` B7). The case was not opened, nothing was touched by hand, and no button was pressed during any run.

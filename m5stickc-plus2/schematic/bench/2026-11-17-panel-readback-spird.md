@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # B2: the LCD panel answers on its data line, pin 4 of the LCD connector (2026-11-17)
 
 Probe B2 of `../improvements.md` (item I19 and `board.json` B-4). Read only: no panel command is written. The case was not opened; the board was on USB with its battery fitted.
