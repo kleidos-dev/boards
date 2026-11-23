@@ -37,13 +37,13 @@ concurrency:
 jobs:
   lint:
     name: "🧹 Lint (quality kit)"
-    uses: kleidos-dev/.github/.github/workflows/reusable-lint.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
+    uses: kleidos-dev/.github/.github/workflows/reusable-lint.yml@dd76a0850b26c2db6b5e56c884acaf40abb9e12c # quality-v2.1.0
     permissions:
       contents: read
 
   reuse:
     name: "⚖️ Licensing (REUSE)"
-    uses: kleidos-dev/.github/.github/workflows/reusable-reuse.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
+    uses: kleidos-dev/.github/.github/workflows/reusable-reuse.yml@dd76a0850b26c2db6b5e56c884acaf40abb9e12c # quality-v2.1.0
     permissions:
       contents: read
 
@@ -135,7 +135,7 @@ jobs:
   tests:
     name: "🧪 Tests"
     needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-python-tests.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
+    uses: kleidos-dev/.github/.github/workflows/reusable-python-tests.yml@dd76a0850b26c2db6b5e56c884acaf40abb9e12c # quality-v2.1.0
     with:
       run: python -m pytest -rs -m "not models" --cov --cov-report=xml:coverage.xml tests
       timeout-minutes: 20
@@ -145,7 +145,7 @@ jobs:
   types:
     name: "🔎 Types (mypy)"
     needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-mypy.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
+    uses: kleidos-dev/.github/.github/workflows/reusable-mypy.yml@dd76a0850b26c2db6b5e56c884acaf40abb9e12c # quality-v2.1.0
     with:
       install: python -m pip install -r requirements.txt
     permissions:
@@ -154,14 +154,14 @@ jobs:
   osv:
     name: "🛡️ Dependency vulnerabilities (OSV)"
     needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-osv.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
+    uses: kleidos-dev/.github/.github/workflows/reusable-osv.yml@dd76a0850b26c2db6b5e56c884acaf40abb9e12c # quality-v2.1.0
     permissions:
       contents: read
 
   secrets:
     name: "🔐 Secrets and MAC scan (gitleaks)"
     needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-secrets.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
+    uses: kleidos-dev/.github/.github/workflows/reusable-secrets.yml@dd76a0850b26c2db6b5e56c884acaf40abb9e12c # quality-v2.1.0
     permissions:
       contents: read
 
@@ -299,7 +299,7 @@ jobs:
     name: "📊 SonarCloud"
     needs: [tests, tree]
     if: github.event_name != 'schedule'
-    uses: kleidos-dev/.github/.github/workflows/reusable-sonarcloud.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
+    uses: kleidos-dev/.github/.github/workflows/reusable-sonarcloud.yml@dd76a0850b26c2db6b5e56c884acaf40abb9e12c # quality-v2.1.0
     permissions:
       contents: read
       id-token: write
