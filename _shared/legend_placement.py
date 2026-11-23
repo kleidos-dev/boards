@@ -75,6 +75,8 @@ from shapely.geometry.base import BaseGeometry
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# Every E402 below: the import follows the sys.path set-up above, which
+# finds the sibling modules.
 import board_faces  # noqa: E402
 import glb_legends  # noqa: E402
 import legend_mesh  # noqa: E402

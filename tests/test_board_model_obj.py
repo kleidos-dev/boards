@@ -32,7 +32,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
-from paths import BOARDS  # noqa: E402
+from paths import BOARDS  # noqa: E402  after the sys.path set-up above
 
 pytestmark = pytest.mark.models
 

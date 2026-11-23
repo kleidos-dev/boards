@@ -19,7 +19,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
 
-import emit_board_readme  # noqa: E402
+import emit_board_readme  # noqa: E402  after the sys.path set-up above
 
 BOARDS = emit_board_readme.boards()
 

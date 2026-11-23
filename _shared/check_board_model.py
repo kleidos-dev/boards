@@ -87,6 +87,9 @@ from shapely.geometry.base import BaseGeometry
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
+# Every E402 below: the import follows the sys.path set-up above, which
+# finds the sibling modules, and the ones after matplotlib.use() must
+# also follow it, so pyplot loads the Agg backend.
 import matplotlib  # noqa: E402
 
 matplotlib.use("Agg")

@@ -40,9 +40,9 @@ from pytest import MonkeyPatch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
-import check_metadata  # noqa: E402
-import media_meta as mm  # noqa: E402
-from paths import BOARDS  # noqa: E402
+import check_metadata  # noqa: E402  after the sys.path set-up above
+import media_meta as mm  # noqa: E402  after the sys.path set-up above
+from paths import BOARDS  # noqa: E402  after the sys.path set-up above
 
 GOLDEN = ROOT / "tests" / "fixtures" / "meta"
 

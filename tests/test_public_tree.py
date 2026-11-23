@@ -18,7 +18,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
 
-import check_public_tree  # noqa: E402
+import check_public_tree  # noqa: E402  after the sys.path set-up above
 
 
 def glue(separator: str, *pieces: str) -> str:
