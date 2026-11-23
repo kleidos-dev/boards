@@ -51,8 +51,9 @@ def library(name: str):
 
 
 def media_files() -> list[str]:
-    return [rel for rel in check_metadata.tracked()
-            if Path(rel).suffix.lower() in check_metadata.MEDIA]
+    return [
+        rel for rel in check_metadata.tracked() if Path(rel).suffix.lower() in check_metadata.MEDIA
+    ]
 
 
 # --- the committed files ------------------------------------------------------------
@@ -61,8 +62,7 @@ def media_files() -> list[str]:
 def test_every_media_file_carries_its_record() -> None:
     """The checker finds nothing in the tree as committed."""
     library("pypdf")
-    found = {rel: check_metadata.check(rel, mm.identity_patterns())
-             for rel in media_files()}
+    found = {rel: check_metadata.check(rel, mm.identity_patterns()) for rel in media_files()}
     assert {rel: f for rel, f in found.items() if f} == {}
 
 
@@ -96,7 +96,7 @@ def _reuse_spdx() -> dict[str, tuple[set[str], set[str]]]:
         licenses = set(re.findall(r"^LicenseInfoInFile: (.+)$", block, re.M))
         text = re.search(r"^FileCopyrightText: <text>(.*?)</text>", block, re.M | re.S)
         holders = set()
-        for line in (text.group(1).splitlines() if text else []):
+        for line in text.group(1).splitlines() if text else []:
             line = re.sub(rf"^{mm.TAG_COPYRIGHT}:\s*", "", line.strip())
             holders.add(re.sub(r"\s*<[^>]*>", "", line).strip())
         files[name.group(1)] = (licenses, holders)
@@ -121,15 +121,21 @@ def test_the_records_state_what_reuse_states() -> None:
 def golden_record() -> mm.MediaMeta:
     """One fixed record, the shape the standard's shared fixtures are written from."""
     return mm.MediaMeta(
-        path="sample/model/sample.glb", title="Sample board (S-1) 3D model",
+        path="sample/model/sample.glb",
+        title="Sample board (S-1) 3D model",
         description="A fixed record for the writers' golden files.",
-        alt="A sample board.", keywords=("Kleidos", "hardware password manager", "open source",
-                                         "sample"),
-        digital_source_type="digitalCreation", spdx="MIT", own_license="MIT",
+        alt="A sample board.",
+        keywords=("Kleidos", "hardware password manager", "open source", "sample"),
+        digital_source_type="digitalCreation",
+        spdx="MIT",
+        own_license="MIT",
         holders=("2026 José M. Requena Plens", "2021 M5Stack"),
         credits=("Case geometry: a sample & a <test>, MIT, \u00a9 2021 M5Stack.",),
-        trademarks=(mm.TRADEMARK_NOTE_M5,), media_type="model/gltf-binary", slug="kl-sample",
-        extra={"scene": "Sample board (S-1)"})
+        trademarks=(mm.TRADEMARK_NOTE_M5,),
+        media_type="model/gltf-binary",
+        slug="kl-sample",
+        extra={"scene": "Sample board (S-1)"},
+    )
 
 
 def golden_outputs() -> dict[str, bytes]:
@@ -141,8 +147,14 @@ def golden_outputs() -> dict[str, bytes]:
         "sample-short.xmp": mm.xmp_packet(meta, "short").encode("utf-8"),
         "sample.png-chunks": chunks,
         "sample.svg-block": mm.svg_block(meta).encode("utf-8"),
-        "sample.gltf.json": (json.dumps({"asset": asset, "extensions": packets, "scene": scene},
-                                        indent=2, ensure_ascii=False) + "\n").encode("utf-8"),
+        "sample.gltf.json": (
+            json.dumps(
+                {"asset": asset, "extensions": packets, "scene": scene},
+                indent=2,
+                ensure_ascii=False,
+            )
+            + "\n"
+        ).encode("utf-8"),
         "sample.obj.txt": ("\n".join(mm.obj_header(meta)) + "\n").encode("utf-8"),
     }
 
@@ -150,7 +162,8 @@ def golden_outputs() -> dict[str, bytes]:
 @pytest.mark.parametrize("name", sorted(golden_outputs()))
 def test_the_writers_give_the_golden_bytes(name: str) -> None:
     assert (GOLDEN / name).read_bytes() == golden_outputs()[name], (
-        f"{name}: the writer changed; bump META_PROFILE and rewrite tests/fixtures/meta/")
+        f"{name}: the writer changed; bump META_PROFILE and rewrite tests/fixtures/meta/"
+    )
 
 
 def test_the_golden_bytes_hold_nothing_private_and_no_machine_trace() -> None:
@@ -182,7 +195,9 @@ def test_reuse_truth_strips_the_email_and_follows_precedence() -> None:
     spdx, holders = mm.reuse_truth("sticks3/model/sticks3.glb")
     assert spdx == "MIT" and holders == ("2026 José M. Requena Plens", "2021 M5Stack")
     assert mm.reuse_truth("fonts/inter/Inter-Bold.ttf") == (
-        "OFL-1.1", ("2016 The Inter Project Authors",))
+        "OFL-1.1",
+        ("2016 The Inter Project Authors",),
+    )
     assert mm.reuse_truth("_shared/model_raster.py")[0] == "MIT AND Apache-2.0"
     assert not any("@" in h for b in BOARDS for h in mm.reuse_truth(f"{b}/svg/front.svg")[1])
 
@@ -239,14 +254,18 @@ def test_an_identity_pattern_is_found_and_never_printed(front) -> None:
 def _glb(rel: str, change) -> bytes:
     data = (ROOT / rel).read_bytes()
     n = struct.unpack_from("<I", data, 12)[0]
-    js = json.loads(data[20:20 + n])
+    js = json.loads(data[20 : 20 + n])
     change(js)
     text = json.dumps(js, separators=(",", ":"), ensure_ascii=False).encode()
     while len(text) % 4:
         text += b" "
-    rest = data[20 + n:]
-    return (struct.pack("<III", 0x46546C67, 2, 20 + len(text) + len(rest))
-            + struct.pack("<II", len(text), 0x4E4F534A) + text + rest)
+    rest = data[20 + n :]
+    return (
+        struct.pack("<III", 0x46546C67, 2, 20 + len(text) + len(rest))
+        + struct.pack("<II", len(text), 0x4E4F534A)
+        + text
+        + rest
+    )
 
 
 def test_glb_plants() -> None:
@@ -254,15 +273,18 @@ def test_glb_plants() -> None:
     meta = mm.record(rel)
     assert check_metadata.check_glb(rel, (ROOT / rel).read_bytes(), meta, None) == []
     found = check_metadata.check_glb(
-        rel, _glb(rel, lambda js: js["asset"].__setitem__("copyright", "Someone else")), meta, None)
+        rel, _glb(rel, lambda js: js["asset"].__setitem__("copyright", "Someone else")), meta, None
+    )
     assert "M002" in rules(found)
     found = check_metadata.check_glb(rel, _glb(rel, lambda js: js.pop("extensions")), meta, None)
     assert "M001" in rules(found)
     found = check_metadata.check_glb(
-        rel, _glb(rel, lambda js: js["asset"].__setitem__("minVersion", "2.0")), meta, None)
+        rel, _glb(rel, lambda js: js["asset"].__setitem__("minVersion", "2.0")), meta, None
+    )
     assert "M005" in rules(found)
     found = check_metadata.check_glb(
-        rel, _glb(rel, lambda js: js["asset"]["extras"].__setitem__("title", "x")), meta, None)
+        rel, _glb(rel, lambda js: js["asset"]["extras"].__setitem__("title", "x")), meta, None
+    )
     assert {"M002", "M007"} <= rules(found)
 
 
@@ -275,8 +297,9 @@ def test_obj_plants() -> None:
     assert "M002" in rules(check_metadata.check_obj(rel, changed, meta, None))
     moved = data.replace(f"# {mm.REUSE_START}\n".encode(), b"", 1)
     assert "M011" in rules(check_metadata.check_obj(rel, moved, meta, None))
-    other = data.replace(b"Requena Plens\n",
-                         f"Requena Plens\n# {mm.TAG_COPYRIGHT}: 2025 X\n".encode(), 1)
+    other = data.replace(
+        b"Requena Plens\n", f"Requena Plens\n# {mm.TAG_COPYRIGHT}: 2025 X\n".encode(), 1
+    )
     assert "M003" in rules(check_metadata.check_obj(rel, other, meta, None))
 
 
@@ -340,5 +363,6 @@ def test_the_contact_sheet_was_drawn_from_the_models_as_they_are() -> None:
         digest = hashlib.sha256((ROOT / model["model"]).read_bytes()).hexdigest()
         assert digest == model["model_sha256"], (
             f"{model['model']} changed since the sheet was drawn: "
-            "run python -I _shared/models_contact_sheet.py")
+            "run python -I _shared/models_contact_sheet.py"
+        )
     assert set(rec["models"]) == set(BOARDS)

@@ -42,24 +42,88 @@ SVG = "{http://www.w3.org/2000/svg}"
 #: The back drawings that print anything, as {board: {plane: {mark, ...}}};
 #: every other back is the outline its prints will be drawn in.
 BACK_PRINTS: dict[str, dict[str, set[str]]] = {
-    "cardputer": {"label": {"adv-flag", "audio-lines", "audio-rails", "bat-in", "bat-out",
-                            "battery", "battery-lines", "bmi270", "chg-ic", "cn809",
-                            "codec-data", "dcdc-sy7088", "dcdc-sy8089", "divider", "es8311",
-                            "ext-names", "ext-table", "headphones", "hp-det", "i2c-lines",
-                            "i2s-pins", "jack", "jack-pins", "key-matrix", "key-matrix-names",
-                            "lcd", "lcd-pins", "line-key", "m5-stack", "mic", "mosfets",
-                            "ns4150", "port-a", "port-a-switch", "rails-3v3", "rails-out",
-                            "speaker", "stamp-s3a", "switch", "tca8418", "usb", "usb-5vin",
-                            "vbat-sense"}},
+    "cardputer": {
+        "label": {
+            "adv-flag",
+            "audio-lines",
+            "audio-rails",
+            "bat-in",
+            "bat-out",
+            "battery",
+            "battery-lines",
+            "bmi270",
+            "chg-ic",
+            "cn809",
+            "codec-data",
+            "dcdc-sy7088",
+            "dcdc-sy8089",
+            "divider",
+            "es8311",
+            "ext-names",
+            "ext-table",
+            "headphones",
+            "hp-det",
+            "i2c-lines",
+            "i2s-pins",
+            "jack",
+            "jack-pins",
+            "key-matrix",
+            "key-matrix-names",
+            "lcd",
+            "lcd-pins",
+            "line-key",
+            "m5-stack",
+            "mic",
+            "mosfets",
+            "ns4150",
+            "port-a",
+            "port-a-switch",
+            "rails-3v3",
+            "rails-out",
+            "speaker",
+            "stamp-s3a",
+            "switch",
+            "tca8418",
+            "usb",
+            "usb-5vin",
+            "vbat-sense",
+        }
+    },
     "coreink": {"label": {"back-label"}},
     "m5stack-core2-v13": {"sticker": {"back-label"}},
-    "m5stickc-plus-se": {"label": {
-        "banner", "banner-bars", "battery", "bps", "btn-b-mark", "ce", "cube", "esp32",
-        "fcc", "fields", "giteki", "i2c", "lcd-mic", "lcd-mic-lines", "maker",
-        "model-name", "pin-cells", "pin-names", "pmic-rtc", "port", "power", "weee"}},
+    "m5stickc-plus-se": {
+        "label": {
+            "banner",
+            "banner-bars",
+            "battery",
+            "bps",
+            "btn-b-mark",
+            "ce",
+            "cube",
+            "esp32",
+            "fcc",
+            "fields",
+            "giteki",
+            "i2c",
+            "lcd-mic",
+            "lcd-mic-lines",
+            "maker",
+            "model-name",
+            "pin-cells",
+            "pin-names",
+            "pmic-rtc",
+            "port",
+            "power",
+            "weee",
+        }
+    },
     "sticks3": {"label": {"back-label"}},
-    "tdeck-plus": {"frame": {"tdeck-frame"}, "frame-line": {"tdeck-frame-line"},
-                   "badge": {"tdeck-badge"}, "base": {"lilygo-base"}},
+    "tdeck-plus": {
+        "frame": {"tdeck-frame"},
+        "frame-line": {"tdeck-frame-line"},
+        "badge": {"tdeck-badge"},
+        "base": {"lilygo-base"},
+    },
     "m5stickc-plus1": {"label": {"back-label"}},
     "m5stickc-plus2": {"label": {"back-label"}},
 }
@@ -91,8 +155,11 @@ def boards_with_models() -> list[str]:
     A modeled part that is no board (the microSD card a flow inserts) has a
     spec and no front, and so no back.
     """
-    return sorted(p.name for p in CAD.iterdir()
-                  if (p / "model" / "spec.json").is_file() and (p / "svg" / "front.svg").is_file())
+    return sorted(
+        p.name
+        for p in CAD.iterdir()
+        if (p / "model" / "spec.json").is_file() and (p / "svg" / "front.svg").is_file()
+    )
 
 
 def test_each_board_with_a_model_has_a_back_and_no_other_board_has_one() -> None:
@@ -110,7 +177,8 @@ def test_a_back_draws_the_front_outline_mirrored_first(device_id: str) -> None:
     front = (CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8")
     fill = re.search(r'fill="([^"]+)"', first).group(1)
     assert first + "\n" == emit_back_svg.back_outline(
-        emit_back_svg.front_outline(front), spec.body_w, fill)
+        emit_back_svg.front_outline(front), spec.body_w, fill
+    )
 
 
 @pytest.mark.parametrize("device_id", sorted(emit_back_svg.BOARDS))
@@ -133,11 +201,11 @@ def test_a_back_holds_its_contract_and_nothing_of_a_fronts(device_id: str) -> No
             x, y, r = (float(spot.get(a)) for a in ("cx", "cy", "r"))
             assert 0.0 <= x <= case.body_w and 0.0 <= y <= case.body_h, spot.attrib
             assert r == pytest.approx(
-                min(float(spot.get("data-w")), float(spot.get("data-h"))) / 2, abs=5e-4)
+                min(float(spot.get("data-w")), float(spot.get("data-h"))) / 2, abs=5e-4
+            )
         names = {el.text for el in root[-1]}
         assert controls <= names, "a back names its controls in the margin"
-    assert [el.get("id") for el in root.iter() if el.get("id") == "annotations"] == [
-        "annotations"]
+    assert [el.get("id") for el in root.iter() if el.get("id") == "annotations"] == ["annotations"]
     found: dict[str, set[str]] = {}
     for group in root.iter(f"{SVG}g"):
         if "legend" not in (group.get("class") or "").split():
@@ -158,8 +226,11 @@ def test_a_back_holds_its_contract_and_nothing_of_a_fronts(device_id: str) -> No
 
 def test_the_side_drawings_are_the_writers_and_no_other() -> None:
     """A ``svg/<face>.svg`` of a side face exists exactly where the writer draws one."""
-    found = sorted((p.parent.parent.name, p.stem) for p in CAD.glob("*/svg/*.svg")
-                   if p.stem in ("top", "bottom", "left", "right"))
+    found = sorted(
+        (p.parent.parent.name, p.stem)
+        for p in CAD.glob("*/svg/*.svg")
+        if p.stem in ("top", "bottom", "left", "right")
+    )
     assert found == sorted(emit_back_svg.FACE_PRINTS) == sorted(FACE_DRAWINGS)
 
 
@@ -186,8 +257,10 @@ def test_a_side_drawing_holds_the_backs_contract(board_face: tuple[str, str]) ->
 
 def test_a_path_mirrored_twice_is_the_path() -> None:
     """Absolute and relative moves, lines, arcs (their sweep and turn) and curves."""
-    d = ("M 3 0 H 37 A 3 3 15 0 1 40 3 V 53 L 30 56 C 20 56 10 50 3 53 Q 1 40 0 30 Z "
-         "M 1.7 4 a 2.3 2.3 0 1 0 4.6 0 l -1 2 h -2 z")
+    d = (
+        "M 3 0 H 37 A 3 3 15 0 1 40 3 V 53 L 30 56 C 20 56 10 50 3 53 Q 1 40 0 30 Z "
+        "M 1.7 4 a 2.3 2.3 0 1 0 4.6 0 l -1 2 h -2 z"
+    )
     once = emit_back_svg.mirror_path(d, 40.0)
     assert once.startswith("M 37 0 H 3 A 3 3 -15 0 0 0 3 V 53 L 10 56 C 20 56 30 50 37 53")
     twice = emit_back_svg.mirror_path(once, 40.0)
@@ -197,12 +270,23 @@ def test_a_path_mirrored_twice_is_the_path() -> None:
 
 def test_the_writer_writes_what_is_committed() -> None:
     """Running it again changes nothing: the backs in git are its output."""
-    before = {(name, "back"): (CAD / name / "svg" / "back.svg").read_bytes()
-              for name in emit_back_svg.BOARDS}
-    before.update({(name, face): (CAD / name / "svg" / f"{face}.svg").read_bytes()
-                   for name, face in emit_back_svg.FACE_PRINTS})
-    result = subprocess.run([sys.executable, str(WRITER)], cwd=WRITER.parent,
-                            capture_output=True, text=True, check=False)
+    before = {
+        (name, "back"): (CAD / name / "svg" / "back.svg").read_bytes()
+        for name in emit_back_svg.BOARDS
+    }
+    before.update(
+        {
+            (name, face): (CAD / name / "svg" / f"{face}.svg").read_bytes()
+            for name, face in emit_back_svg.FACE_PRINTS
+        }
+    )
+    result = subprocess.run(
+        [sys.executable, str(WRITER)],
+        cwd=WRITER.parent,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
     assert result.returncode == 0, result.stderr
     for (name, face), data in before.items():
         assert (CAD / name / "svg" / f"{face}.svg").read_bytes() == data, (name, face)

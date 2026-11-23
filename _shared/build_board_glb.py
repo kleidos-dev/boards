@@ -301,7 +301,7 @@ import model_raster  # noqa: E402
 #: changes no byte of what the builder writes, as the one of two meshes of
 #: different materials at one depth (``model_raster.coplanar_overlaps``), keeps
 #: the version, and so does a limit that moves with its readers' table.
-BUILDER_VERSION = '1.7.0'
+BUILDER_VERSION = "1.7.0"
 #: How many materials the strictest reader of a model keeps a table of, and how
 #: many of its own it puts there after the model's: the Kleidos site's renderer,
 #: whose lit shader holds ``MATERIAL_SLOTS`` (the Kleidos repository's ``site/src/scripts/film/gl/shaders.ts``).
@@ -326,19 +326,29 @@ WEB_MIN_STROKE_PX = 1.5
 WEB_FLATNESS_PX = 0.25
 
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
+
 MM = 0.001
-DEFAULT_CACHE = Path(os.environ.get('KLEIDOS_CAD_CACHE', Path.home() / '.cache' / 'kleidos-cad'))
+DEFAULT_CACHE = Path(os.environ.get("KLEIDOS_CAD_CACHE", Path.home() / ".cache" / "kleidos-cad"))
 PINNED = {
-    'numpy': '2.5.5', 'shapely': '2.2.0', 'trimesh': '5.2.1', 'mapbox_earcut': '2.1.0',
-    'scipy': '1.18.1', 'networkx': '3.7', 'rtree': '1.4.1', 'cascadio': '0.1.1',
-    'fast-simplification': '0.2.0', 'fonttools': '4.68.0',
+    "numpy": "2.5.5",
+    "shapely": "2.2.0",
+    "trimesh": "5.2.1",
+    "mapbox_earcut": "2.1.0",
+    "scipy": "1.18.1",
+    "networkx": "3.7",
+    "rtree": "1.4.1",
+    "cascadio": "0.1.1",
+    "fast-simplification": "0.2.0",
+    "fonttools": "4.68.0",
 }
 #: The ``screen`` mesh's ``extras.uv``. Its words name three.js's switch for an
 #: upload with no vertical flip (``UNPACK_FLIP_Y_WEBGL`` off); they stay as they
 #: are because the StickS3 master carries them in its bytes, and the web model's
 #: manifest row records that master's digest.
-SCREEN_UV_NOTE = ('glTF convention: (0,0) is the image top-left; load the capture '
-                  'with texture.flipY = false so it reads upright')
+SCREEN_UV_NOTE = (
+    "glTF convention: (0,0) is the image top-left; load the capture "
+    "with texture.flipY = false so it reads upright"
+)
 
 
 class SpecError(ValueError):
@@ -349,62 +359,123 @@ class SpecError(ValueError):
 
 #: Every key each kind of spec object may hold (``note`` is admitted anywhere).
 KEYS = {
-    'spec': {'schema', 'board', 'node_name', 'output', 'copyright', 'source',
-             'tessellation', 'transform', 'split', 'clean', 'select', 'parts', 'volumes',
-             'cull', 'center_mm', 'center_from', 'front_frame', 'face_frames', 'measurements',
-             'quant_mm', 'planar_min_area', 'materials', 'meshes', 'notes', 'modules'},
-    'module': {'name', 'source', 'tessellation', 'transform', 'split', 'clean', 'select',
-               'parts'},
-    'source': {'vendor', 'format', 'url', 'sha256', 'file', 'repository', 'path', 'commit',
-               'bytes', 'license', 'copyright', 'license_note'},
-    'tessellation': {'tol_linear', 'tol_angular'},
-    'match': {'name', 'min_ge', 'min_le', 'max_ge', 'max_le', 'extent_gt', 'extent_lt',
-              'faces_gt', 'faces_lt'},
-    'part': {'name', 'match', 'ops', 'required', 'merge'},
-    'op': {'slice', 'decimate', 'cull'},
-    'slice': {'normal', 'origin', 'cap'},
-    'decimate': {'face_count'},
-    'cull': {'parts', 'volumes', 'margin', 'same_box'},
-    'cull_op': {'volumes', 'margin', 'same_box'},
-    'volume': {'frame', 'boxes'},
-    'front_frame': {'left_x', 'top_y'},
-    'material': {'name', 'rgb', 'hex', 'rough', 'metal', 'alpha', 'unlit', 'double'},
-    'mesh': {'name', 'material', 'part', 'shapes', 'screen', 'glass', 'legends', 'smooth_deg',
-             'quantize', 'inside', 'outside'},
-    'legends': {'front', 'drawing', 'face', 'plane', 'on', 'x', 'y', 'z', 'flatness', 'rough'},
-    'screen': {'z'},
-    'glass': {'rect', 'z', 'frame'},
-    'shape': {'box', 'volume', 'prism', 'cylinder', 'sphere', 'quad_grid', 'loft', 'frame'},
-    'loft': {'axis', 'sections', 'caps'},
-    'section': {'at', 'polygon'},
-    'prism': {'axis', 'range', 'profile', 'volume', 'faces'},
-    'profile': {'rect', 'rounded_rect', 'stadium', 'polygon', 'rounded', 'r', 'res', 'inner',
-                'holes'},
-    'cylinder': {'axis', 'c', 'r', 'range', 'sections'},
-    'sphere': {'c', 'r', 'subdivisions', 'z_min'},
-    'quad_grid': {'axis', 'at', 'facing', 'u_center', 'v_center', 'cols', 'rows', 'pitch',
-                  'size'},
+    "spec": {
+        "schema",
+        "board",
+        "node_name",
+        "output",
+        "copyright",
+        "source",
+        "tessellation",
+        "transform",
+        "split",
+        "clean",
+        "select",
+        "parts",
+        "volumes",
+        "cull",
+        "center_mm",
+        "center_from",
+        "front_frame",
+        "face_frames",
+        "measurements",
+        "quant_mm",
+        "planar_min_area",
+        "materials",
+        "meshes",
+        "notes",
+        "modules",
+    },
+    "module": {"name", "source", "tessellation", "transform", "split", "clean", "select", "parts"},
+    "source": {
+        "vendor",
+        "format",
+        "url",
+        "sha256",
+        "file",
+        "repository",
+        "path",
+        "commit",
+        "bytes",
+        "license",
+        "copyright",
+        "license_note",
+    },
+    "tessellation": {"tol_linear", "tol_angular"},
+    "match": {
+        "name",
+        "min_ge",
+        "min_le",
+        "max_ge",
+        "max_le",
+        "extent_gt",
+        "extent_lt",
+        "faces_gt",
+        "faces_lt",
+    },
+    "part": {"name", "match", "ops", "required", "merge"},
+    "op": {"slice", "decimate", "cull"},
+    "slice": {"normal", "origin", "cap"},
+    "decimate": {"face_count"},
+    "cull": {"parts", "volumes", "margin", "same_box"},
+    "cull_op": {"volumes", "margin", "same_box"},
+    "volume": {"frame", "boxes"},
+    "front_frame": {"left_x", "top_y"},
+    "material": {"name", "rgb", "hex", "rough", "metal", "alpha", "unlit", "double"},
+    "mesh": {
+        "name",
+        "material",
+        "part",
+        "shapes",
+        "screen",
+        "glass",
+        "legends",
+        "smooth_deg",
+        "quantize",
+        "inside",
+        "outside",
+    },
+    "legends": {"front", "drawing", "face", "plane", "on", "x", "y", "z", "flatness", "rough"},
+    "screen": {"z"},
+    "glass": {"rect", "z", "frame"},
+    "shape": {"box", "volume", "prism", "cylinder", "sphere", "quad_grid", "loft", "frame"},
+    "loft": {"axis", "sections", "caps"},
+    "section": {"at", "polygon"},
+    "prism": {"axis", "range", "profile", "volume", "faces"},
+    "profile": {
+        "rect",
+        "rounded_rect",
+        "stadium",
+        "polygon",
+        "rounded",
+        "r",
+        "res",
+        "inner",
+        "holes",
+    },
+    "cylinder": {"axis", "c", "r", "range", "sections"},
+    "sphere": {"c", "r", "subdivisions", "z_min"},
+    "quad_grid": {"axis", "at", "facing", "u_center", "v_center", "cols", "rows", "pitch", "size"},
 }
-GEOMETRY = ('box', 'volume', 'prism', 'cylinder', 'sphere', 'quad_grid', 'loft')
+GEOMETRY = ("box", "volume", "prism", "cylinder", "sphere", "quad_grid", "loft")
 #: The ends of a loft, as its ``caps`` names them.
-LOFT_CAPS = ('first', 'last')
-PROFILES = ('rect', 'rounded_rect', 'stadium', 'polygon', 'rounded')
+LOFT_CAPS = ("first", "last")
+PROFILES = ("rect", "rounded_rect", "stadium", "polygon", "rounded")
 
 
 def keys(obj, kind, where):
     """Refuse a key the builder would not read (``note`` is always admitted)."""
     if not isinstance(obj, dict):
-        raise SpecError(f'{where}: expected an object, got {obj!r}')
-    extra = sorted(set(obj) - KEYS[kind] - {'note'})
+        raise SpecError(f"{where}: expected an object, got {obj!r}")
+    extra = sorted(set(obj) - KEYS[kind] - {"note"})
     if extra:
-        raise SpecError(f'{where}: unknown key(s) {extra}; a {kind} takes '
-                        f'{sorted(KEYS[kind])}')
+        raise SpecError(f"{where}: unknown key(s) {extra}; a {kind} takes {sorted(KEYS[kind])}")
 
 
 def one_of(obj, names, where):
     got = [k for k in names if k in obj]
     if len(got) != 1:
-        raise SpecError(f'{where}: needs exactly one of {list(names)}, has {got}')
+        raise SpecError(f"{where}: needs exactly one of {list(names)}, has {got}")
     return got[0]
 
 
@@ -416,203 +487,235 @@ def units(spec):
     ``split``, ``clean``, ``select`` and ``parts``.
     """
     own = [] if own_model(spec) else [(None, spec)]
-    return own + [(m.get('name'), m) for m in spec.get('modules', [])]
+    return own + [(m.get("name"), m) for m in spec.get("modules", [])]
 
 
 #: The only keys of the ``source`` of a model built from no vendor file.
-OWN_SOURCE_KEYS = {'format', 'license', 'copyright', 'license_note'}
+OWN_SOURCE_KEYS = {"format", "license", "copyright", "license_note"}
 
 
 def own_model(spec):
     """True for a spec built from no vendor file: ``source`` ``format`` ``none``."""
-    return isinstance(spec.get('source'), dict) and spec['source'].get('format') == 'none'
+    return isinstance(spec.get("source"), dict) and spec["source"].get("format") == "none"
 
 
 def _validate_own(spec):
     """A model of no vendor file names nothing a vendor file would give."""
-    extra = sorted(set(spec['source']) - OWN_SOURCE_KEYS - {'note'})
+    extra = sorted(set(spec["source"]) - OWN_SOURCE_KEYS - {"note"})
     if extra:
-        raise SpecError(f'source: a model of no vendor file (format none) takes only '
-                        f'{sorted(OWN_SOURCE_KEYS)}, not {extra}')
-    for need in ('license', 'copyright'):
-        if not spec['source'].get(need):
-            raise SpecError(f'source: a model of no vendor file still states its {need}')
-    vendor = [k for k in ('tessellation', 'transform', 'split', 'clean', 'select', 'parts')
-              if spec.get(k)]
+        raise SpecError(
+            f"source: a model of no vendor file (format none) takes only "
+            f"{sorted(OWN_SOURCE_KEYS)}, not {extra}"
+        )
+    for need in ("license", "copyright"):
+        if not spec["source"].get(need):
+            raise SpecError(f"source: a model of no vendor file still states its {need}")
+    vendor = [
+        k for k in ("tessellation", "transform", "split", "clean", "select", "parts") if spec.get(k)
+    ]
     if vendor:
-        raise SpecError(f'a model of no vendor file has no {vendor}: there is nothing to '
-                        f'cut into parts')
-    if spec.get('center_mm') == 'auto' or 'auto' in (spec.get('front_frame') or {}).values():
-        raise SpecError('a model of no vendor file writes center_mm and front_frame in numbers')
+        raise SpecError(
+            f"a model of no vendor file has no {vendor}: there is nothing to cut into parts"
+        )
+    if spec.get("center_mm") == "auto" or "auto" in (spec.get("front_frame") or {}).values():
+        raise SpecError("a model of no vendor file writes center_mm and front_frame in numbers")
 
 
 def _validate_unit(unit, where):
-    keys(unit['source'], 'source', f'{where}source')
-    if 'tessellation' in unit:
-        keys(unit['tessellation'], 'tessellation', f'{where}tessellation')
-    if 'select' in unit:
-        keys(unit['select'], 'match', f'{where}select')
-    for rule in unit['parts']:
-        at = f'{where}part {rule.get("name")!r}'
-        keys(rule, 'part', at)
-        keys(rule.get('match', {}), 'match', f'{at} match')
-        for op in rule.get('ops', []):
-            keys(op, 'op', f'{at} op')
-            kind = one_of(op, KEYS['op'], f'{at} op')
-            keys(op[kind], 'cull_op' if kind == 'cull' else kind, f'{at} {kind}')
+    keys(unit["source"], "source", f"{where}source")
+    if "tessellation" in unit:
+        keys(unit["tessellation"], "tessellation", f"{where}tessellation")
+    if "select" in unit:
+        keys(unit["select"], "match", f"{where}select")
+    for rule in unit["parts"]:
+        at = f"{where}part {rule.get('name')!r}"
+        keys(rule, "part", at)
+        keys(rule.get("match", {}), "match", f"{at} match")
+        for op in rule.get("ops", []):
+            keys(op, "op", f"{at} op")
+            kind = one_of(op, KEYS["op"], f"{at} op")
+            keys(op[kind], "cull_op" if kind == "cull" else kind, f"{at} {kind}")
 
 
 def legends_drawing(leg):
     """(the drawing a legends mesh reads, relative to the spec; the face it draws)."""
-    return leg.get('drawing', leg.get('front')), leg.get('face', 'front')
+    return leg.get("drawing", leg.get("front")), leg.get("face", "front")
 
 
 def validate(spec):
     """Check every object of *spec* for keys the builder would not read."""
-    keys(spec, 'spec', 'spec')
-    modules = spec.get('modules', [])
+    keys(spec, "spec", "spec")
+    modules = spec.get("modules", [])
     if not isinstance(modules, list):
-        raise SpecError('modules: expected a list of objects')
+        raise SpecError("modules: expected a list of objects")
     for i, module in enumerate(modules):
-        keys(module, 'module', f'module {i}')
-        if not isinstance(module.get('name'), str) or not module['name']:
-            raise SpecError(f'module {i}: names itself (name)')
-        for need in ('source', 'parts'):
+        keys(module, "module", f"module {i}")
+        if not isinstance(module.get("name"), str) or not module["name"]:
+            raise SpecError(f"module {i}: names itself (name)")
+        for need in ("source", "parts"):
             if need not in module:
-                raise SpecError(f'module {module["name"]!r}: gives {need}')
-    names = [m['name'] for m in modules]
+                raise SpecError(f"module {module['name']!r}: gives {need}")
+    names = [m["name"] for m in modules]
     if len(set(names)) != len(names):
-        raise SpecError(f'module names repeat: {sorted({n for n in names if names.count(n) > 1})}')
+        raise SpecError(f"module names repeat: {sorted({n for n in names if names.count(n) > 1})}")
     if own_model(spec):
         _validate_own(spec)
-    elif 'source' not in spec:
-        raise SpecError('source: a spec names its vendor file, or format none for a model '
-                        'built from none')
+    elif "source" not in spec:
+        raise SpecError(
+            "source: a spec names its vendor file, or format none for a model built from none"
+        )
     part_names = []
     for name, unit in units(spec):
-        _validate_unit(unit, '' if name is None else f'module {name!r} ')
-        part_names += [rule.get('name') for rule in unit['parts']]
+        _validate_unit(unit, "" if name is None else f"module {name!r} ")
+        part_names += [rule.get("name") for rule in unit["parts"]]
     twice = sorted({str(n) for n in part_names if part_names.count(n) > 1})
     if twice:
-        raise SpecError(f'part names repeat across the spec and its modules: {twice}; a mesh '
-                        f'names a part by its name alone')
-    for face, numbers in (spec.get('face_frames') or {}).items():
-        if face == 'note':
+        raise SpecError(
+            f"part names repeat across the spec and its modules: {twice}; a mesh "
+            f"names a part by its name alone"
+        )
+    for face, numbers in (spec.get("face_frames") or {}).items():
+        if face == "note":
             continue
-        if face == 'front':
-            raise SpecError('face_frames: the front is front_frame')
+        if face == "front":
+            raise SpecError("face_frames: the front is front_frame")
         try:
-            board_faces.face_frame(face, {k: 0 for k in numbers if k != 'note'})
+            board_faces.face_frame(face, {k: 0 for k in numbers if k != "note"})
         except ValueError as exc:
-            raise SpecError(f'face_frames: {exc}') from None
-    for name, vol in spec.get('volumes', {}).items():
-        if name != 'note' and isinstance(vol, dict):
-            keys(vol, 'volume', f'volume {name!r}')
-    if 'cull' in spec:
-        keys(spec['cull'], 'cull', 'cull')
-    if isinstance(spec.get('front_frame'), dict):
-        keys(spec['front_frame'], 'front_frame', 'front_frame')
-    for m in spec['materials']:
-        keys(m, 'material', f'material {m.get("name")!r}')
-        if m.get('alpha') is not None and not 0.0 < num(m['alpha']) < 1.0:
-            raise SpecError(f'material {m.get("name")!r}: alpha {m["alpha"]!r} is not above 0 '
-                            f'and below 1 (an opaque material has no alpha)')
-        if str(m.get('name', '')).startswith(INK_PREFIX):
-            raise SpecError(f'material {m.get("name")!r}: a name starting {INK_PREFIX!r} is a '
-                            f'legend ink\'s, which the builder makes from the drawing')
-    volume_names = set(spec.get('volumes', {})) - {'note'}
-    names = [entry.get('name') for entry in spec['meshes']]
+            raise SpecError(f"face_frames: {exc}") from None
+    for name, vol in spec.get("volumes", {}).items():
+        if name != "note" and isinstance(vol, dict):
+            keys(vol, "volume", f"volume {name!r}")
+    if "cull" in spec:
+        keys(spec["cull"], "cull", "cull")
+    if isinstance(spec.get("front_frame"), dict):
+        keys(spec["front_frame"], "front_frame", "front_frame")
+    for m in spec["materials"]:
+        keys(m, "material", f"material {m.get('name')!r}")
+        if m.get("alpha") is not None and not 0.0 < num(m["alpha"]) < 1.0:
+            raise SpecError(
+                f"material {m.get('name')!r}: alpha {m['alpha']!r} is not above 0 "
+                f"and below 1 (an opaque material has no alpha)"
+            )
+        if str(m.get("name", "")).startswith(INK_PREFIX):
+            raise SpecError(
+                f"material {m.get('name')!r}: a name starting {INK_PREFIX!r} is a "
+                f"legend ink's, which the builder makes from the drawing"
+            )
+    volume_names = set(spec.get("volumes", {})) - {"note"}
+    names = [entry.get("name") for entry in spec["meshes"]]
     twice = sorted({n for n in names if names.count(n) > 1}, key=str)
     if twice:
-        raise SpecError(f'mesh names repeat: {twice}')
-    solid = {entry['name'] for entry in spec['meshes'] if 'legends' not in entry}
+        raise SpecError(f"mesh names repeat: {twice}")
+    solid = {entry["name"] for entry in spec["meshes"] if "legends" not in entry}
     planes = {}
     faces_of = {}  # drawing -> the faces legends meshes read it as
-    for entry in spec['meshes']:
-        where = f'mesh {entry.get("name")!r}'
-        keys(entry, 'mesh', where)
-        if 'legends' in entry:
-            leg = entry['legends']
-            if not isinstance(leg, dict) or 'on' not in leg:
-                raise SpecError(f'{where}: a legends mesh gives its drawing, on and its height')
-            if ('front' in leg) == ('drawing' in leg):
-                raise SpecError(f'{where}: a legends mesh names its drawing once: drawing (any '
-                                f'face), or front (the front.svg of the front face)')
-            face = leg.get('face', 'front')
+    for entry in spec["meshes"]:
+        where = f"mesh {entry.get('name')!r}"
+        keys(entry, "mesh", where)
+        if "legends" in entry:
+            leg = entry["legends"]
+            if not isinstance(leg, dict) or "on" not in leg:
+                raise SpecError(f"{where}: a legends mesh gives its drawing, on and its height")
+            if ("front" in leg) == ("drawing" in leg):
+                raise SpecError(
+                    f"{where}: a legends mesh names its drawing once: drawing (any "
+                    f"face), or front (the front.svg of the front face)"
+                )
+            face = leg.get("face", "front")
             if face not in board_faces.FACES:
-                raise SpecError(f'{where}: face {face!r} is not one of '
-                                f'{list(board_faces.FACES)}')
-            if 'front' in leg and face != 'front':
-                raise SpecError(f'{where}: front names the front face\'s drawing; a drawing of '
-                                f'the {face} face is given as drawing')
+                raise SpecError(f"{where}: face {face!r} is not one of {list(board_faces.FACES)}")
+            if "front" in leg and face != "front":
+                raise SpecError(
+                    f"{where}: front names the front face's drawing; a drawing of "
+                    f"the {face} face is given as drawing"
+                )
             height = board_faces.height_key(face)
-            given = [k for k in ('x', 'y', 'z') if k in leg]
+            given = [k for k in ("x", "y", "z") if k in leg]
             if given != [height]:
-                raise SpecError(f'{where}: legends on the {face} face lie at a height along '
-                                f'{height} (give {height!r} alone), not {given}')
-            if not entry['name'].endswith('legends'):
-                raise SpecError(f'{where}: a legends mesh\'s name ends in "legends", so '
-                                f'"_legends_<rrggbb>" finds its meshes in any model')
-            if leg['on'] not in solid:
-                raise SpecError(f'{where}: on names no mesh {leg["on"]!r} of this model')
-            plane = (legends_drawing(leg)[0], leg.get('plane', 'keys'))
+                raise SpecError(
+                    f"{where}: legends on the {face} face lie at a height along "
+                    f"{height} (give {height!r} alone), not {given}"
+                )
+            if not entry["name"].endswith("legends"):
+                raise SpecError(
+                    f'{where}: a legends mesh\'s name ends in "legends", so '
+                    f'"_legends_<rrggbb>" finds its meshes in any model'
+                )
+            if leg["on"] not in solid:
+                raise SpecError(f"{where}: on names no mesh {leg['on']!r} of this model")
+            plane = (legends_drawing(leg)[0], leg.get("plane", "keys"))
             if plane in planes:
-                raise SpecError(f'{where}: {planes[plane]!r} already draws the plane '
-                                f'{plane[1]!r} of {plane[0]}')
-            planes[plane] = entry['name']
+                raise SpecError(
+                    f"{where}: {planes[plane]!r} already draws the plane {plane[1]!r} of {plane[0]}"
+                )
+            planes[plane] = entry["name"]
             faces_of.setdefault(plane[0], set()).add(face)
             if len(faces_of[plane[0]]) > 1:
-                raise SpecError(f'{where}: {plane[0]} is read as the drawing of '
-                                f'{sorted(faces_of[plane[0]])}; a drawing draws one face')
-        elif glb_legends.is_legend(str(entry.get('name'))) or str(
-                entry.get('name')).endswith('legends'):
-            raise SpecError(f'{where}: only a legends mesh is named like one')
-        clips = [k for k in ('inside', 'outside') if k in entry]
+                raise SpecError(
+                    f"{where}: {plane[0]} is read as the drawing of "
+                    f"{sorted(faces_of[plane[0]])}; a drawing draws one face"
+                )
+        elif glb_legends.is_legend(str(entry.get("name"))) or str(entry.get("name")).endswith(
+            "legends"
+        ):
+            raise SpecError(f"{where}: only a legends mesh is named like one")
+        clips = [k for k in ("inside", "outside") if k in entry]
         if clips:
-            if len(clips) > 1 or 'part' not in entry:
-                raise SpecError(f'{where}: inside or outside takes one volume, on a part mesh')
+            if len(clips) > 1 or "part" not in entry:
+                raise SpecError(f"{where}: inside or outside takes one volume, on a part mesh")
             if entry[clips[0]] not in volume_names:
-                raise SpecError(f'{where}: {clips[0]} names no volume {entry[clips[0]]!r}')
-        for kind in ('screen', 'glass', 'legends'):
+                raise SpecError(f"{where}: {clips[0]} names no volume {entry[clips[0]]!r}")
+        for kind in ("screen", "glass", "legends"):
             if kind in entry:
-                keys(entry[kind], kind, f'{where} {kind}')
-        if ('legends' in entry) == ('material' in entry):
-            raise SpecError(f'{where}: a mesh names its material, and a legends mesh none '
-                            f'(its inks are the drawing\'s)')
-        for i, shape in enumerate(entry.get('shapes', [])):
-            swhere = f'{where} shape {i}'
-            keys(shape, 'shape', swhere)
+                keys(entry[kind], kind, f"{where} {kind}")
+        if ("legends" in entry) == ("material" in entry):
+            raise SpecError(
+                f"{where}: a mesh names its material, and a legends mesh none "
+                f"(its inks are the drawing's)"
+            )
+        for i, shape in enumerate(entry.get("shapes", [])):
+            swhere = f"{where} shape {i}"
+            keys(shape, "shape", swhere)
             kind = one_of(shape, GEOMETRY, swhere)
             inner = shape[kind]
-            if kind in ('prism', 'cylinder', 'sphere', 'quad_grid', 'loft'):
-                keys(inner, kind, f'{swhere} {kind}')
-            if kind == 'loft':
-                sections = inner.get('sections')
+            if kind in ("prism", "cylinder", "sphere", "quad_grid", "loft"):
+                keys(inner, kind, f"{swhere} {kind}")
+            if kind == "loft":
+                sections = inner.get("sections")
                 if not isinstance(sections, list) or len(sections) < 2:
-                    raise SpecError(f'{swhere} loft: two or more sections')
+                    raise SpecError(f"{swhere} loft: two or more sections")
                 for j, sec in enumerate(sections):
-                    keys(sec, 'section', f'{swhere} loft section {j}')
-                if len({len(sec.get('polygon', [])) for sec in sections}) != 1:
-                    raise SpecError(f'{swhere} loft: every section has one count of points')
-                caps = inner.get('caps', [])
+                    keys(sec, "section", f"{swhere} loft section {j}")
+                if len({len(sec.get("polygon", [])) for sec in sections}) != 1:
+                    raise SpecError(f"{swhere} loft: every section has one count of points")
+                caps = inner.get("caps", [])
                 if not isinstance(caps, list) or not set(caps) <= set(LOFT_CAPS):
-                    raise SpecError(f'{swhere} loft: caps {caps!r} is a list of '
-                                    f'{list(LOFT_CAPS)}')
-            if kind == 'prism':
-                keys(inner['profile'], 'profile', f'{swhere} profile')
-                one_of(inner['profile'], PROFILES, f'{swhere} profile')
-                faces = inner.get('faces')
-                if faces is not None and (not isinstance(faces, list) or not faces
-                                          or not set(faces) <= set(PRISM_FACES)
-                                          or len(set(faces)) != len(faces)):
-                    raise SpecError(f'{swhere} prism: faces {faces!r} is not a list of '
-                                    f'{list(PRISM_FACES)}, each at most once')
+                    raise SpecError(f"{swhere} loft: caps {caps!r} is a list of {list(LOFT_CAPS)}")
+            if kind == "prism":
+                keys(inner["profile"], "profile", f"{swhere} profile")
+                one_of(inner["profile"], PROFILES, f"{swhere} profile")
+                faces = inner.get("faces")
+                if faces is not None and (
+                    not isinstance(faces, list)
+                    or not faces
+                    or not set(faces) <= set(PRISM_FACES)
+                    or len(set(faces)) != len(faces)
+                ):
+                    raise SpecError(
+                        f"{swhere} prism: faces {faces!r} is not a list of "
+                        f"{list(PRISM_FACES)}, each at most once"
+                    )
 
 
 # ---------------------------------------------------------------- numbers
 
-_BINOPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
-           ast.Div: operator.truediv}
+_BINOPS = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+}
 
 
 def _arith(node):
@@ -623,22 +726,22 @@ def _arith(node):
         return -v if isinstance(node.op, ast.USub) else +v
     if isinstance(node, ast.BinOp) and type(node.op) in _BINOPS:
         return _BINOPS[type(node.op)](_arith(node.left), _arith(node.right))
-    raise SpecError(f'not arithmetic: {ast.dump(node)}')
+    raise SpecError(f"not arithmetic: {ast.dump(node)}")
 
 
 def num(v):
     """A spec number: a JSON number, or a string of arithmetic."""
     if isinstance(v, str):
-        return float(_arith(ast.parse(v, mode='eval').body))
+        return float(_arith(ast.parse(v, mode="eval").body))
     if type(v) not in (int, float):
-        raise SpecError(f'not a number: {v!r}')
+        raise SpecError(f"not a number: {v!r}")
     return float(v)
 
 
 def nums(seq, n=None):
     out = [num(v) for v in seq]
     if n is not None and len(out) != n:
-        raise SpecError(f'expected {n} numbers, got {seq!r}')
+        raise SpecError(f"expected {n} numbers, got {seq!r}")
     return out
 
 
@@ -741,14 +844,14 @@ def box(x0, x1, y0, y1, z0, z1):
 
 def rounded_rect(x0, x1, y0, y1, r, res=6):
     core = sg.box(x0 + r, y0 + r, x1 - r, y1 - r)
-    return core.buffer(r, quad_segs=res, join_style='round')
+    return core.buffer(r, quad_segs=res, join_style="round")
 
 
 def stadium(cu, cv, w, h, res=10):
     """A stadium (rounded slot) w wide and h tall centered on (cu, cv); w == h
     is a disc. A slot taller than wide is drawn in the other axis order."""
     if w < h:
-        raise SpecError(f'stadium {w} wide and {h} tall: a stadium runs along u, so w >= h')
+        raise SpecError(f"stadium {w} wide and {h} tall: a stadium runs along u, so w >= h")
     r = h / 2
     core = sg.LineString([(cu - w / 2 + r, cv), (cu + w / 2 - r, cv)])
     return core.buffer(r, quad_segs=res)
@@ -758,7 +861,7 @@ def polygon(points, holes=()):
     """A simple polygon from (u, v) points, holes optional, counter-clockwise."""
     poly = sg.Polygon(points, list(holes))
     if not poly.is_valid or poly.area <= 0:
-        raise SpecError(f'polygon profile is not a simple polygon: {points!r}')
+        raise SpecError(f"polygon profile is not a simple polygon: {points!r}")
     return sg.polygon.orient(poly, 1.0)
 
 
@@ -776,25 +879,25 @@ def extrude(poly, axis, a0, a1):
     if not covers.all():
         m.update_faces(covers)
         m.remove_unreferenced_vertices()
-    if axis == 'z':
+    if axis == "z":
         m.apply_translation([0, 0, a0])
         return m
     v = m.vertices.copy()
-    if axis == 'y':
+    if axis == "y":
         # (u, v, h) -> (u, h, v): an axis swap mirrors the solid, so restore
         # outward winding
         m.vertices = np.column_stack([v[:, 0], v[:, 2] + a0, v[:, 1]])
         m.invert()
         return m
-    if axis == 'x':
+    if axis == "x":
         # (u, v, h) -> (h, u, v): a cyclic permutation, a rotation
         m.vertices = np.column_stack([v[:, 2] + a0, v[:, 0], v[:, 1]])
         return m
-    raise SpecError(f'unknown axis {axis!r}')
+    raise SpecError(f"unknown axis {axis!r}")
 
 
 #: A prism's faces, as its ``faces`` key names them.
-PRISM_FACES = ('top', 'bottom', 'outer', 'inner')
+PRISM_FACES = ("top", "bottom", "outer", "inner")
 
 
 def prism_faces(mesh, poly, axis, which):
@@ -809,8 +912,8 @@ def prism_faces(mesh, poly, axis, which):
     if which is None:
         return mesh
     if not isinstance(poly, sg.Polygon):
-        raise SpecError(f'faces {which!r}: the profile is not one polygon')
-    k = 'xyz'.index(axis)
+        raise SpecError(f"faces {which!r}: the profile is not one polygon")
+    k = "xyz".index(axis)
     u, v = [i for i in range(3) if i != k]
     tri = np.asarray(mesh.vertices)[np.asarray(mesh.faces)]
     n = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
@@ -821,8 +924,9 @@ def prism_faces(mesh, poly, axis, which):
     to_hole = np.full(len(pts), np.inf)
     if poly.interiors:
         to_hole = shapely.distance(pts, sg.MultiLineString([h.coords for h in poly.interiors]))
-    kind = np.where(along > 0.5, 0,
-                    np.where(along < -0.5, 1, np.where(to_outline <= to_hole, 2, 3)))
+    kind = np.where(
+        along > 0.5, 0, np.where(along < -0.5, 1, np.where(to_outline <= to_hole, 2, 3))
+    )
     keep = np.isin(kind, [PRISM_FACES.index(w) for w in which])
     m = mesh.copy()
     m.update_faces(keep)
@@ -833,16 +937,16 @@ def prism_faces(mesh, poly, axis, which):
 def cylinder(axis, cu, cv, r, a0, a1, sections=20):
     c = trimesh.creation.cylinder(radius=r, height=a1 - a0, sections=sections)
     mid = (a0 + a1) / 2
-    if axis == 'z':
+    if axis == "z":
         c.apply_translation([cu, cv, mid])
-    elif axis == 'y':
+    elif axis == "y":
         c.apply_transform(trimesh.transformations.rotation_matrix(-np.pi / 2, [1, 0, 0]))
         c.apply_translation([cu, mid, cv])
-    elif axis == 'x':
+    elif axis == "x":
         c.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [0, 1, 0]))
         c.apply_translation([mid, cu, cv])
     else:
-        raise SpecError(f'unknown axis {axis!r}')
+        raise SpecError(f"unknown axis {axis!r}")
     return c
 
 
@@ -854,7 +958,7 @@ def loft(axis, sections, caps=()):
     face out. ``first`` and ``last`` in *caps* close the first and the last
     section with a flat cap facing away from the others.
     """
-    k = 'xyz'.index(axis)
+    k = "xyz".index(axis)
     u, v = [i for i in range(3) if i != k]
     rings = []
     for at, pts in sections:
@@ -876,19 +980,19 @@ def loft(axis, sections, caps=()):
             quad = [(a + i, a + j, b + j), (a + i, b + j, b + i)]
             faces += quad if rising else [t[::-1] for t in quad]
     vertices = np.vstack(verts)
-    for which, s in (('first', 0), ('last', len(rings) - 1)):
+    for which, s in (("first", 0), ("last", len(rings) - 1)):
         if which not in caps:
             continue
         tri = trimesh.creation.triangulate_polygon(sg.Polygon(rings[s][1]))[1]
         base = s * n
-        up = (which == 'last') == rising  # this cap faces +axis
+        up = (which == "last") == rising  # this cap faces +axis
         for t in np.asarray(tri):
             t = [base + int(x) for x in t]
             faces.append(tuple(t) if up else tuple(t[::-1]))
     # in (u, v, axis) order counterclockwise is +axis; the axis order (u, v, k)
     # of y is a mirror of (x, y, z)
     m = trimesh.Trimesh(vertices, np.asarray(faces), process=False)
-    if axis == 'y':
+    if axis == "y":
         m.invert()
     m.merge_vertices()
     return m
@@ -924,14 +1028,16 @@ def quad_grid(axis, at, facing, uc, vc, cols, rows, pitch, size):
         for col in range(cols):
             cu = uc + (col - (cols - 1) / 2) * pitch
             cv = vc + (row - (rows - 1) / 2) * pitch
-            if axis == 'y':
-                p, n, f = quad_xz(cu - size / 2, cu + size / 2, cv - size / 2, cv + size / 2, at,
-                                  facing=facing)
-            elif axis == 'z':
-                p, n, f = quad_xy(cu - size / 2, cu + size / 2, cv - size / 2, cv + size / 2, at,
-                                  facing=facing)
+            if axis == "y":
+                p, n, f = quad_xz(
+                    cu - size / 2, cu + size / 2, cv - size / 2, cv + size / 2, at, facing=facing
+                )
+            elif axis == "z":
+                p, n, f = quad_xy(
+                    cu - size / 2, cu + size / 2, cv - size / 2, cv + size / 2, at, facing=facing
+                )
             else:
-                raise SpecError(f'quad_grid: unsupported axis {axis!r}')
+                raise SpecError(f"quad_grid: unsupported axis {axis!r}")
             qf.append(f + 4 * len(qp))
             qp.append(p)
             qn.append(n)
@@ -963,20 +1069,20 @@ class Frame:
 
     def u(self, axis, f0, f1):
         """A (u0, u1) profile range of a prism along *axis*."""
-        return self.xr(f0, f1) if axis in ('z', 'y') else self.yr(f0, f1)
+        return self.xr(f0, f1) if axis in ("z", "y") else self.yr(f0, f1)
 
     def v(self, axis, f0, f1):
-        return self.yr(f0, f1) if axis == 'z' else (f0, f1)
+        return self.yr(f0, f1) if axis == "z" else (f0, f1)
 
     def a(self, axis, f0, f1):
         """The extrusion range along *axis*."""
-        return {'x': self.xr, 'y': self.yr, 'z': lambda a, b: (a, b)}[axis](f0, f1)
+        return {"x": self.xr, "y": self.yr, "z": lambda a, b: (a, b)}[axis](f0, f1)
 
     def cu(self, axis, f):
-        return self.x(f) if axis in ('z', 'y') else self.y(f)
+        return self.x(f) if axis in ("z", "y") else self.y(f)
 
     def cv(self, axis, f):
-        return self.y(f) if axis == 'z' else f
+        return self.y(f) if axis == "z" else f
 
 
 # ---------------------------------------------------------------- GLB
@@ -988,16 +1094,16 @@ class Glb:
         self.quant_mm = quant_mm
         self.bin = bytearray()
         self.gltf = {
-            'asset': {'version': '2.0'},
-            'scene': 0,
-            'scenes': [{'nodes': [0]}],
-            'nodes': [{'name': root_name, 'children': []}],
-            'meshes': [],
-            'materials': [],
-            'accessors': [],
-            'bufferViews': [],
-            'buffers': [{'byteLength': 0}],
-            'extensionsUsed': [],
+            "asset": {"version": "2.0"},
+            "scene": 0,
+            "scenes": [{"nodes": [0]}],
+            "nodes": [{"name": root_name, "children": []}],
+            "meshes": [],
+            "materials": [],
+            "accessors": [],
+            "bufferViews": [],
+            "buffers": [{"byteLength": 0}],
+            "extensionsUsed": [],
         }
         self.mat_index = {}
         self.triangles = 0
@@ -1007,13 +1113,13 @@ class Glb:
             self.bin.append(0)
         off = len(self.bin)
         self.bin += data
-        bv = {'buffer': 0, 'byteOffset': off, 'byteLength': len(data)}
+        bv = {"buffer": 0, "byteOffset": off, "byteLength": len(data)}
         if stride:
-            bv['byteStride'] = stride
+            bv["byteStride"] = stride
         if target:
-            bv['target'] = target
-        self.gltf['bufferViews'].append(bv)
-        return len(self.gltf['bufferViews']) - 1
+            bv["target"] = target
+        self.gltf["bufferViews"].append(bv)
+        return len(self.gltf["bufferViews"]) - 1
 
     def _acc(self, arr, ctype, typ, target, minmax=False, normalized=False, pad_to=None):
         data = arr
@@ -1021,21 +1127,21 @@ class Glb:
         if pad_to:
             # vertex elements must start on 4-byte boundaries: pad each one
             padded = np.zeros((arr.shape[0], pad_to), dtype=arr.dtype)
-            padded[:, :arr.shape[1]] = arr
+            padded[:, : arr.shape[1]] = arr
             data = padded
             stride = pad_to * arr.dtype.itemsize
         bv = self._view(data.tobytes(), target, stride)
-        acc = {'bufferView': bv, 'componentType': ctype, 'count': int(arr.shape[0]), 'type': typ}
+        acc = {"bufferView": bv, "componentType": ctype, "count": int(arr.shape[0]), "type": typ}
         if normalized:
-            acc['normalized'] = True
+            acc["normalized"] = True
         if minmax:
-            acc['min'] = arr.min(axis=0).tolist()
-            acc['max'] = arr.max(axis=0).tolist()
-        self.gltf['accessors'].append(acc)
-        return len(self.gltf['accessors']) - 1
+            acc["min"] = arr.min(axis=0).tolist()
+            acc["max"] = arr.max(axis=0).tolist()
+        self.gltf["accessors"].append(acc)
+        return len(self.gltf["accessors"]) - 1
 
     def _require(self, ext):
-        for key in ('extensionsUsed', 'extensionsRequired'):
+        for key in ("extensionsUsed", "extensionsRequired"):
             lst = self.gltf.setdefault(key, [])
             if ext not in lst:
                 lst.append(ext)
@@ -1044,19 +1150,24 @@ class Glb:
         if name in self.mat_index:
             return self.mat_index[name]
         lin = srgb_to_linear(rgb).tolist()
-        m = {'name': name, 'pbrMetallicRoughness': {
-            'baseColorFactor': lin + [1.0 if alpha is None else alpha],
-            'metallicFactor': metal, 'roughnessFactor': rough}}
+        m = {
+            "name": name,
+            "pbrMetallicRoughness": {
+                "baseColorFactor": lin + [1.0 if alpha is None else alpha],
+                "metallicFactor": metal,
+                "roughnessFactor": rough,
+            },
+        }
         if alpha is not None:
-            m['alphaMode'] = 'BLEND'
+            m["alphaMode"] = "BLEND"
         if double:
-            m['doubleSided'] = True
+            m["doubleSided"] = True
         if unlit:
-            m['extensions'] = {'KHR_materials_unlit': {}}
-            if 'KHR_materials_unlit' not in self.gltf['extensionsUsed']:
-                self.gltf['extensionsUsed'].append('KHR_materials_unlit')
-        self.gltf['materials'].append(m)
-        self.mat_index[name] = len(self.gltf['materials']) - 1
+            m["extensions"] = {"KHR_materials_unlit": {}}
+            if "KHR_materials_unlit" not in self.gltf["extensionsUsed"]:
+                self.gltf["extensionsUsed"].append("KHR_materials_unlit")
+        self.gltf["materials"].append(m)
+        self.mat_index[name] = len(self.gltf["materials"]) - 1
         return self.mat_index[name]
 
     def mesh(self, name, prims, extras=None, quantize=True):
@@ -1071,61 +1182,62 @@ class Glb:
             n = np.asarray(nrm, dtype=np.float64)
             length = np.linalg.norm(n, axis=1, keepdims=True)
             if not (length > 0).all():
-                raise SpecError(f'{name}: {int((length == 0).sum())} vertex normals of zero length')
+                raise SpecError(f"{name}: {int((length == 0).sum())} vertex normals of zero length")
             n /= length
             rel = np.asarray(pos, dtype=float) - self.center
             if quantize:
-                self._require('KHR_mesh_quantization')
+                self._require("KHR_mesh_quantization")
                 q = np.round(rel / self.quant_mm)
                 if np.abs(q).max() > 32767:
-                    raise SpecError(f'{name}: a position overflows int16 at {self.quant_mm} mm')
+                    raise SpecError(f"{name}: a position overflows int16 at {self.quant_mm} mm")
                 qp = q.astype(np.int16)
                 qn = np.clip(np.round(n * 127), -127, 127).astype(np.int8)
                 attrs = {
-                    'POSITION': self._acc(qp, 5122, 'VEC3', 34962, minmax=True, pad_to=4),
-                    'NORMAL': self._acc(qn, 5120, 'VEC3', 34962, normalized=True, pad_to=4),
+                    "POSITION": self._acc(qp, 5122, "VEC3", 34962, minmax=True, pad_to=4),
+                    "NORMAL": self._acc(qn, 5120, "VEC3", 34962, normalized=True, pad_to=4),
                 }
             else:
                 p = (rel * MM).astype(np.float32)
                 attrs = {
-                    'POSITION': self._acc(p, 5126, 'VEC3', 34962, minmax=True),
-                    'NORMAL': self._acc(n.astype(np.float32), 5126, 'VEC3', 34962),
+                    "POSITION": self._acc(p, 5126, "VEC3", 34962, minmax=True),
+                    "NORMAL": self._acc(n.astype(np.float32), 5126, "VEC3", 34962),
                 }
             if uv is not None:
-                attrs['TEXCOORD_0'] = self._acc(np.asarray(uv, dtype=np.float32), 5126, 'VEC2',
-                                                34962)
+                attrs["TEXCOORD_0"] = self._acc(
+                    np.asarray(uv, dtype=np.float32), 5126, "VEC2", 34962
+                )
             f = np.asarray(faces).reshape(-1)
             self.triangles += len(f) // 3
             if len(rel) < 65536:
-                idx = self._acc(f.astype(np.uint16), 5123, 'SCALAR', 34963)
+                idx = self._acc(f.astype(np.uint16), 5123, "SCALAR", 34963)
             else:
-                idx = self._acc(f.astype(np.uint32), 5125, 'SCALAR', 34963)
-            gl_prims.append({'attributes': attrs, 'indices': idx, 'material': mat})
-        self.gltf['meshes'].append({'name': name, 'primitives': gl_prims})
-        node = {'name': name, 'mesh': len(self.gltf['meshes']) - 1}
+                idx = self._acc(f.astype(np.uint32), 5125, "SCALAR", 34963)
+            gl_prims.append({"attributes": attrs, "indices": idx, "material": mat})
+        self.gltf["meshes"].append({"name": name, "primitives": gl_prims})
+        node = {"name": name, "mesh": len(self.gltf["meshes"]) - 1}
         if quantize:
-            node['scale'] = [self.quant_mm * MM] * 3
+            node["scale"] = [self.quant_mm * MM] * 3
         if extras:
-            node['extras'] = extras
-        self.gltf['nodes'].append(node)
-        self.gltf['nodes'][0]['children'].append(len(self.gltf['nodes']) - 1)
+            node["extras"] = extras
+        self.gltf["nodes"].append(node)
+        self.gltf["nodes"][0]["children"].append(len(self.gltf["nodes"]) - 1)
 
     def write(self, path):
         while len(self.bin) % 4:
             self.bin.append(0)
-        self.gltf['buffers'][0]['byteLength'] = len(self.bin)
-        for key in ('extensionsUsed', 'extensionsRequired'):
+        self.gltf["buffers"][0]["byteLength"] = len(self.bin)
+        for key in ("extensionsUsed", "extensionsRequired"):
             if not self.gltf.get(key):
                 self.gltf.pop(key, None)
-        js = json.dumps(self.gltf, separators=(',', ':'), ensure_ascii=False).encode()
+        js = json.dumps(self.gltf, separators=(",", ":"), ensure_ascii=False).encode()
         while len(js) % 4:
-            js += b' '
+            js += b" "
         total = 12 + 8 + len(js) + 8 + len(self.bin)
-        with open(path, 'wb') as fh:
-            fh.write(struct.pack('<III', 0x46546C67, 2, total))
-            fh.write(struct.pack('<II', len(js), 0x4E4F534A))
+        with open(path, "wb") as fh:
+            fh.write(struct.pack("<III", 0x46546C67, 2, total))
+            fh.write(struct.pack("<II", len(js), 0x4E4F534A))
             fh.write(js)
-            fh.write(struct.pack('<II', len(self.bin), 0x004E4942))
+            fh.write(struct.pack("<II", len(self.bin), 0x004E4942))
             fh.write(self.bin)
         return total
 
@@ -1135,8 +1247,8 @@ class Glb:
 
 def sha256_file(path):
     h = hashlib.sha256()
-    with open(path, 'rb') as fh:
-        for chunk in iter(lambda: fh.read(1 << 20), b''):
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
 
@@ -1145,36 +1257,37 @@ def cached_source(unit, cache, fetch):
     """A vendor file from the cache, downloaded first when *fetch* is set.
 
     *unit* is the spec, for its own file, or one of its ``modules``."""
-    src = unit['source']
-    path = Path(cache) / src['sha256'][:12] / src['file']
+    src = unit["source"]
+    path = Path(cache) / src["sha256"][:12] / src["file"]
     if not path.is_file() and fetch:
         path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_suffix(path.suffix + '.part')
-        print(f'fetching {src["url"]}')
-        with urllib.request.urlopen(src['url'], timeout=120) as resp, open(tmp, 'wb') as fh:
+        tmp = path.with_suffix(path.suffix + ".part")
+        print(f"fetching {src['url']}")
+        with urllib.request.urlopen(src["url"], timeout=120) as resp, open(tmp, "wb") as fh:
             while chunk := resp.read(1 << 20):
                 fh.write(chunk)
         digest = sha256_file(tmp)
-        if digest != src['sha256']:
+        if digest != src["sha256"]:
             tmp.unlink()
-            raise SpecError(f'{src["url"]} served sha256 {digest}, not {src["sha256"]}')
+            raise SpecError(f"{src['url']} served sha256 {digest}, not {src['sha256']}")
         tmp.replace(path)
     return path
 
 
 def apply_transform(mesh, ops):
     for op in ops:
-        if 'rotate' in op:
-            r = op['rotate']
-            axis = {'x': [1, 0, 0], 'y': [0, 1, 0], 'z': [0, 0, 1]}[r['axis']]
-            mesh.apply_transform(trimesh.transformations.rotation_matrix(
-                np.radians(num(r['deg'])), axis))
-        elif 'translate' in op:
-            mesh.apply_translation(nums(op['translate'], 3))
-        elif 'scale' in op:
-            mesh.apply_scale(num(op['scale']))
+        if "rotate" in op:
+            r = op["rotate"]
+            axis = {"x": [1, 0, 0], "y": [0, 1, 0], "z": [0, 0, 1]}[r["axis"]]
+            mesh.apply_transform(
+                trimesh.transformations.rotation_matrix(np.radians(num(r["deg"])), axis)
+            )
+        elif "translate" in op:
+            mesh.apply_translation(nums(op["translate"], 3))
+        elif "scale" in op:
+            mesh.apply_scale(num(op["scale"]))
         else:
-            raise SpecError(f'unknown transform {op!r}')
+            raise SpecError(f"unknown transform {op!r}")
     return mesh
 
 
@@ -1182,15 +1295,16 @@ def step_mesh_dir(spec, src_path, cache):
     """Tessellate a STEP once into a GLB in the cache; return its path."""
     import cascadio  # only a STEP needs it
 
-    tes = spec.get('tessellation', {})
-    tl, ta = num(tes.get('tol_linear', 0.01)), num(tes.get('tol_angular', 0.5))
-    out = Path(cache) / spec['source']['sha256'][:12] / f'step-{tl:g}-{ta:g}.glb'
+    tes = spec.get("tessellation", {})
+    tl, ta = num(tes.get("tol_linear", 0.01)), num(tes.get("tol_angular", 0.5))
+    out = Path(cache) / spec["source"]["sha256"][:12] / f"step-{tl:g}-{ta:g}.glb"
     if not out.is_file():
         out.parent.mkdir(parents=True, exist_ok=True)
-        rc = cascadio.step_to_glb(str(src_path), str(out), tol_linear=tl, tol_angular=ta,
-                                  use_parallel=False)
+        rc = cascadio.step_to_glb(
+            str(src_path), str(out), tol_linear=tl, tol_angular=ta, use_parallel=False
+        )
         if rc != 0 or not out.is_file():
-            raise SpecError(f'cascadio could not tessellate {src_path} (rc {rc})')
+            raise SpecError(f"cascadio could not tessellate {src_path} (rc {rc})")
     return out
 
 
@@ -1204,18 +1318,18 @@ def clean(mesh):
 
 def load_components(spec, src_path, cache):
     """[(name, mesh)] in the build frame: STL pieces or STEP parts."""
-    src = spec['source']
-    ops = spec.get('transform', [])
-    if src['format'] == 'stl':
-        mesh = trimesh.load(str(src_path), force='mesh')
+    src = spec["source"]
+    ops = spec.get("transform", [])
+    if src["format"] == "stl":
+        mesh = trimesh.load(str(src_path), force="mesh")
         if ops:
             apply_transform(mesh, ops)
         mesh.merge_vertices()
-        if spec.get('clean', False):
+        if spec.get("clean", False):
             clean(mesh)
-        pieces = mesh.split(only_watertight=False) if spec.get('split', True) else [mesh]
-        return [(f'piece{i}', p) for i, p in enumerate(pieces)]
-    if src['format'] == 'step':
+        pieces = mesh.split(only_watertight=False) if spec.get("split", True) else [mesh]
+        return [(f"piece{i}", p) for i, p in enumerate(pieces)]
+    if src["format"] == "step":
         scene = trimesh.load(str(step_mesh_dir(spec, src_path, cache)))
         out = []
         for node in scene.graph.nodes_geometry:
@@ -1226,16 +1340,15 @@ def load_components(spec, src_path, cache):
             if ops:
                 apply_transform(m, ops)
             m.merge_vertices()
-            if spec.get('clean', True):
+            if spec.get("clean", True):
                 clean(m)
-            label = f'{node} {gname}'
-            if spec.get('split', False):
-                out += [(f'{label} #{i}', p) for i, p in
-                        enumerate(m.split(only_watertight=False))]
+            label = f"{node} {gname}"
+            if spec.get("split", False):
+                out += [(f"{label} #{i}", p) for i, p in enumerate(m.split(only_watertight=False))]
             else:
                 out.append((label, m))
         return out
-    raise SpecError(f'unknown source format {src["format"]!r}')
+    raise SpecError(f"unknown source format {src['format']!r}")
 
 
 def matches(name, mesh, rule):
@@ -1248,59 +1361,72 @@ def matches(name, mesh, rule):
             return True
         return all(lim[i] is None or test(values[i], num(lim[i])) for i in range(3))
 
-    if 'name' in rule and not re.search(rule['name'], name):
+    if "name" in rule and not re.search(rule["name"], name):
         return False
-    if 'faces_gt' in rule and not len(mesh.faces) > rule['faces_gt']:
+    if "faces_gt" in rule and not len(mesh.faces) > rule["faces_gt"]:
         return False
-    if 'faces_lt' in rule and not len(mesh.faces) < rule['faces_lt']:
+    if "faces_lt" in rule and not len(mesh.faces) < rule["faces_lt"]:
         return False
-    return (axes('min_ge', lo, operator.ge) and axes('min_le', lo, operator.le)
-            and axes('max_ge', hi, operator.ge) and axes('max_le', hi, operator.le)
-            and axes('extent_gt', ext, operator.gt) and axes('extent_lt', ext, operator.lt))
+    return (
+        axes("min_ge", lo, operator.ge)
+        and axes("min_le", lo, operator.le)
+        and axes("max_ge", hi, operator.ge)
+        and axes("max_le", hi, operator.le)
+        and axes("extent_gt", ext, operator.gt)
+        and axes("extent_lt", ext, operator.lt)
+    )
 
 
-def part_ops(mesh, ops, volumes, name='?'):
+def part_ops(mesh, ops, volumes, name="?"):
     for op in ops:
-        if 'slice' in op:
-            s = op['slice']
+        if "slice" in op:
+            s = op["slice"]
             mesh = trimesh.intersections.slice_mesh_plane(
-                mesh, plane_normal=nums(s['normal'], 3), plane_origin=nums(s['origin'], 3),
-                cap=bool(s.get('cap', False)))
-        elif 'decimate' in op:
-            mesh = clean(mesh.simplify_quadric_decimation(
-                face_count=int(op['decimate']['face_count'])))
-        elif 'cull' in op:
-            c = op['cull']
-            mesh, n = drop_hidden(mesh, cull_boxes(volumes, c['volumes']),
-                                  num(c.get('margin', 0.06)), bool(c.get('same_box', False)))
-            print(f'culled hidden faces: {name} {n} (part op)')
+                mesh,
+                plane_normal=nums(s["normal"], 3),
+                plane_origin=nums(s["origin"], 3),
+                cap=bool(s.get("cap", False)),
+            )
+        elif "decimate" in op:
+            mesh = clean(
+                mesh.simplify_quadric_decimation(face_count=int(op["decimate"]["face_count"]))
+            )
+        elif "cull" in op:
+            c = op["cull"]
+            mesh, n = drop_hidden(
+                mesh,
+                cull_boxes(volumes, c["volumes"]),
+                num(c.get("margin", 0.06)),
+                bool(c.get("same_box", False)),
+            )
+            print(f"culled hidden faces: {name} {n} (part op)")
         else:
-            raise SpecError(f'unknown part op {op!r}')
+            raise SpecError(f"unknown part op {op!r}")
     return mesh
 
 
 def gather_parts(spec, components, volumes):
-    select = spec.get('select', {})
-    rules = spec['parts']
-    found = {r['name']: [] for r in rules}
+    select = spec.get("select", {})
+    rules = spec["parts"]
+    found = {r["name"]: [] for r in rules}
     for name, mesh in components:
         if not matches(name, mesh, select):
             continue
         for rule in rules:
-            if matches(name, mesh, rule.get('match', {})):
-                found[rule['name']].append(mesh)
+            if matches(name, mesh, rule.get("match", {})):
+                found[rule["name"]].append(mesh)
                 break
     parts = {}
     for rule in rules:
-        got = found[rule['name']]
+        got = found[rule["name"]]
         if not got:
-            if rule.get('required', True):
-                raise SpecError(f'part {rule["name"]!r}: no component matches')
+            if rule.get("required", True):
+                raise SpecError(f"part {rule['name']!r}: no component matches")
             continue
-        if len(got) > 1 and not rule.get('merge', True):
-            raise SpecError(f'part {rule["name"]!r}: {len(got)} components match')
+        if len(got) > 1 and not rule.get("merge", True):
+            raise SpecError(f"part {rule['name']!r}: {len(got)} components match")
         mesh = got[0] if len(got) == 1 else trimesh.util.concatenate(got)
-        parts[rule['name']] = part_ops(mesh, rule.get('ops', []), volumes, rule['name'])
+        parts[rule["name"]] = part_ops(mesh, rule.get("ops", []), volumes, rule["name"])
     return parts
 
 
@@ -1309,9 +1435,14 @@ def gather_parts(spec, components, volumes):
 
 def inside_box(points, box_, margin=0.06):
     x0, x1, y0, y1, z0, z1 = box_
-    return ((points[:, 0] > x0 + margin) & (points[:, 0] < x1 - margin)
-            & (points[:, 1] > y0 + margin) & (points[:, 1] < y1 - margin)
-            & (points[:, 2] > z0 + margin) & (points[:, 2] < z1 - margin))
+    return (
+        (points[:, 0] > x0 + margin)
+        & (points[:, 0] < x1 - margin)
+        & (points[:, 1] > y0 + margin)
+        & (points[:, 1] < y1 - margin)
+        & (points[:, 2] > z0 + margin)
+        & (points[:, 2] < z1 - margin)
+    )
 
 
 def inside_any(points, boxes, margin=0.06):
@@ -1343,7 +1474,7 @@ def drop_hidden(mesh, solid_boxes, margin=0.06, same_box=False):
     return m, int((~keep).sum())
 
 
-def split_by_boxes(arrays, boxes, name='?'):
+def split_by_boxes(arrays, boxes, name="?"):
     """(inside, outside): the faces of shaded *arrays* one box holds whole, and the rest.
 
     *arrays* is (positions, normals, faces) as ``crease_normals`` gives them
@@ -1364,8 +1495,10 @@ def split_by_boxes(arrays, boxes, name='?'):
         held = inside_box(corners, box_, 0.0).reshape(-1, 3)
         inside |= held.all(axis=1)
         touched |= held.any(axis=1)
-    print(f'split {name}: {int(inside.sum())} faces inside, {int((~inside).sum())} outside, '
-          f'{int((touched & ~inside).sum())} of them across a box side')
+    print(
+        f"split {name}: {int(inside.sum())} faces inside, {int((~inside).sum())} outside, "
+        f"{int((touched & ~inside).sum())} of them across a box side"
+    )
     out = []
     for keep in (inside, ~inside):
         kept = faces[keep]
@@ -1380,157 +1513,169 @@ def cull_boxes(volumes, names):
     try:
         return [b for name in names for b in volumes[name]]
     except KeyError as exc:
-        raise SpecError(f'cull: no volume {exc.args[0]!r}') from None
+        raise SpecError(f"cull: no volume {exc.args[0]!r}") from None
 
 
 def shape_meshes(shape, volumes, frame):
     """A spec shape as a list of trimesh solids, or one (pos, nrm, faces)."""
-    front = shape.get('frame') == 'front'
+    front = shape.get("frame") == "front"
     if front and frame is None:
-        raise SpecError('a front-frame shape needs front_frame and measurements')
-    if 'box' in shape:
-        x0, x1, y0, y1, z0, z1 = nums(shape['box'], 6)
+        raise SpecError("a front-frame shape needs front_frame and measurements")
+    if "box" in shape:
+        x0, x1, y0, y1, z0, z1 = nums(shape["box"], 6)
         if front:
             (x0, x1), (y0, y1) = frame.xr(x0, x1), frame.yr(y0, y1)
         return [box(x0, x1, y0, y1, z0, z1)]
-    if 'volume' in shape:
-        return [box(*b) for b in volumes[shape['volume']]]
-    if 'prism' in shape:
-        p = shape['prism']
-        axis = p['axis']
-        prof = p['profile']
-        if 'volume' in p:
-            (b,) = volumes[p['volume']]
-            span = {'x': (0, 1), 'y': (2, 3), 'z': (4, 5)}
-            uv = {'z': ('x', 'y'), 'y': ('x', 'z'), 'x': ('y', 'z')}[axis]
+    if "volume" in shape:
+        return [box(*b) for b in volumes[shape["volume"]]]
+    if "prism" in shape:
+        p = shape["prism"]
+        axis = p["axis"]
+        prof = p["profile"]
+        if "volume" in p:
+            (b,) = volumes[p["volume"]]
+            span = {"x": (0, 1), "y": (2, 3), "z": (4, 5)}
+            uv = {"z": ("x", "y"), "y": ("x", "z"), "x": ("y", "z")}[axis]
             u0, u1 = (b[i] for i in span[uv[0]])
             v0, v1 = (b[i] for i in span[uv[1]])
             a0, a1 = (b[i] for i in span[axis])
-            if 'rounded' in prof:
-                poly = rounded_rect(u0, u1, v0, v1, num(prof['rounded']),
-                                    int(prof.get('res', 6)))
+            if "rounded" in prof:
+                poly = rounded_rect(u0, u1, v0, v1, num(prof["rounded"]), int(prof.get("res", 6)))
             else:
                 poly = sg.box(u0, v0, u1, v1)
-            return [prism_faces(extrude(poly, axis, a0, a1), poly, axis, p.get('faces'))]
-        a0, a1 = nums(p['range'], 2)
+            return [prism_faces(extrude(poly, axis, a0, a1), poly, axis, p.get("faces"))]
+        a0, a1 = nums(p["range"], 2)
         if front:
             a0, a1 = frame.a(axis, a0, a1)
-        if 'rect' in prof:
-            u0, u1, v0, v1 = nums(prof['rect'], 4)
+        if "rect" in prof:
+            u0, u1, v0, v1 = nums(prof["rect"], 4)
             if front:
                 (u0, u1), (v0, v1) = frame.u(axis, u0, u1), frame.v(axis, v0, v1)
             poly = sg.box(u0, v0, u1, v1)
-        elif 'rounded_rect' in prof:
-            u0, u1, v0, v1 = nums(prof['rounded_rect'], 4)
+        elif "rounded_rect" in prof:
+            u0, u1, v0, v1 = nums(prof["rounded_rect"], 4)
             if front:
                 (u0, u1), (v0, v1) = frame.u(axis, u0, u1), frame.v(axis, v0, v1)
-            poly = rounded_rect(u0, u1, v0, v1, num(prof['r']), int(prof.get('res', 6)))
-        elif 'stadium' in prof:
-            cu, cv, w, h = nums(prof['stadium'], 4)
+            poly = rounded_rect(u0, u1, v0, v1, num(prof["r"]), int(prof.get("res", 6)))
+        elif "stadium" in prof:
+            cu, cv, w, h = nums(prof["stadium"], 4)
             if front:
                 cu, cv = frame.cu(axis, cu), frame.cv(axis, cv)
-            res = int(prof.get('res', 10))
+            res = int(prof.get("res", 10))
             poly = stadium(cu, cv, w, h, res)
-            if 'inner' in prof:
-                iw, ih = nums(prof['inner'], 2)
+            if "inner" in prof:
+                iw, ih = nums(prof["inner"], 2)
                 poly = poly.difference(stadium(cu, cv, iw, ih, res))
-        elif 'polygon' in prof:
+        elif "polygon" in prof:
+
             def ring(points):
                 pts = [nums(p, 2) for p in points]
                 if front:
                     pts = [(frame.cu(axis, u), frame.cv(axis, v)) for u, v in pts]
                 return pts
 
-            poly = polygon(ring(prof['polygon']), [ring(h) for h in prof.get('holes', [])])
+            poly = polygon(ring(prof["polygon"]), [ring(h) for h in prof.get("holes", [])])
         else:
-            raise SpecError(f'unknown profile {prof!r}')
-        return [prism_faces(extrude(poly, axis, a0, a1), poly, axis, p.get('faces'))]
-    if 'sphere' in shape:
-        s = shape['sphere']
-        cx, cy, cz = nums(s['c'], 3)
+            raise SpecError(f"unknown profile {prof!r}")
+        return [prism_faces(extrude(poly, axis, a0, a1), poly, axis, p.get("faces"))]
+    if "sphere" in shape:
+        s = shape["sphere"]
+        cx, cy, cz = nums(s["c"], 3)
         if front:
             cx, cy = frame.x(cx), frame.y(cy)
-        sph = trimesh.creation.icosphere(subdivisions=int(s.get('subdivisions', 2)),
-                                         radius=num(s['r']))
+        sph = trimesh.creation.icosphere(
+            subdivisions=int(s.get("subdivisions", 2)), radius=num(s["r"])
+        )
         sph.apply_translation([cx, cy, cz])
-        if 'z_min' in s:
+        if "z_min" in s:
             sph = trimesh.intersections.slice_mesh_plane(
-                sph, plane_normal=[0, 0, 1], plane_origin=[0, 0, num(s['z_min'])])
+                sph, plane_normal=[0, 0, 1], plane_origin=[0, 0, num(s["z_min"])]
+            )
         return [sph]
-    if 'cylinder' in shape:
-        c = shape['cylinder']
-        axis = c['axis']
-        cu, cv = nums(c['c'], 2)
-        a0, a1 = nums(c['range'], 2)
+    if "cylinder" in shape:
+        c = shape["cylinder"]
+        axis = c["axis"]
+        cu, cv = nums(c["c"], 2)
+        a0, a1 = nums(c["range"], 2)
         if front:
             cu, cv = frame.cu(axis, cu), frame.cv(axis, cv)
             a0, a1 = frame.a(axis, a0, a1)
-        return [cylinder(axis, cu, cv, num(c['r']), a0, a1, int(c.get('sections', 20)))]
-    if 'loft' in shape:
-        lf = shape['loft']
-        axis = lf['axis']
+        return [cylinder(axis, cu, cv, num(c["r"]), a0, a1, int(c.get("sections", 20)))]
+    if "loft" in shape:
+        lf = shape["loft"]
+        axis = lf["axis"]
         sections = []
-        for sec in lf['sections']:
-            at = num(sec['at'])
-            pts = [nums(p, 2) for p in sec['polygon']]
+        for sec in lf["sections"]:
+            at = num(sec["at"])
+            pts = [nums(p, 2) for p in sec["polygon"]]
             if front:
                 (at, _) = frame.a(axis, at, at)
                 pts = [(frame.cu(axis, a), frame.cv(axis, b)) for a, b in pts]
             sections.append((at, pts))
-        return [loft(axis, sections, lf.get('caps', []))]
-    if 'quad_grid' in shape:
-        q = shape['quad_grid']
-        axis = q['axis']
-        at, uc, vc = num(q['at']), num(q['u_center']), num(q['v_center'])
+        return [loft(axis, sections, lf.get("caps", []))]
+    if "quad_grid" in shape:
+        q = shape["quad_grid"]
+        axis = q["axis"]
+        at, uc, vc = num(q["at"]), num(q["u_center"]), num(q["v_center"])
         if front:
             uc = frame.cu(axis, uc)
             vc = frame.cv(axis, vc)
-            if axis == 'y':
+            if axis == "y":
                 at = frame.y(at)
-        return quad_grid(axis, at, int(q.get('facing', 1)), uc, vc, int(q['cols']),
-                         int(q['rows']), num(q['pitch']), num(q['size']))
-    raise SpecError(f'unknown shape {shape!r}')
+        return quad_grid(
+            axis,
+            at,
+            int(q.get("facing", 1)),
+            uc,
+            vc,
+            int(q["cols"]),
+            int(q["rows"]),
+            num(q["pitch"]),
+            num(q["size"]),
+        )
+    raise SpecError(f"unknown shape {shape!r}")
 
 
 def load_spec(spec_path):
     spec_path = Path(spec_path)
     spec = json.loads(spec_path.read_text())
-    if spec.get('schema') != 1:
-        raise SpecError(f'{spec_path}: schema {spec.get("schema")!r}, this builder reads 1')
+    if spec.get("schema") != 1:
+        raise SpecError(f"{spec_path}: schema {spec.get('schema')!r}, this builder reads 1")
     validate(spec)
-    spec['_dir'] = spec_path.parent
-    spec['_path'] = spec_path
+    spec["_dir"] = spec_path.parent
+    spec["_path"] = spec_path
     return spec
 
 
 def measurements(spec):
-    rel = spec.get('measurements')
+    rel = spec.get("measurements")
     if not rel:
         return None
-    return json.loads((spec['_dir'] / rel).read_text())
+    return json.loads((spec["_dir"] / rel).read_text())
 
 
 def numeric_frame(spec, why):
     """The front Frame of a spec whose front_frame is written in numbers."""
-    ff = spec.get('front_frame')
-    if ff is None or 'auto' in (ff.get('left_x'), ff.get('top_y')):
-        raise SpecError(f'{why} needs a front_frame written in numbers')
-    return Frame(float(num(ff['left_x'])), float(num(ff['top_y'])))
+    ff = spec.get("front_frame")
+    if ff is None or "auto" in (ff.get("left_x"), ff.get("top_y")):
+        raise SpecError(f"{why} needs a front_frame written in numbers")
+    return Frame(float(num(ff["left_x"])), float(num(ff["top_y"])))
 
 
 def resolve_volumes(spec):
     """{name: [box, ...]} in the build frame (a front-frame volume moved there)."""
     out = {}
-    for name, vol in spec.get('volumes', {}).items():
-        if name == 'note':
+    for name, vol in spec.get("volumes", {}).items():
+        if name == "note":
             continue
         if isinstance(vol, dict):
-            if vol.get('frame') != 'front':
-                raise SpecError(f'volume {name!r}: an object volume is {{"frame": "front", '
-                                f'"boxes": [...]}}')
-            frame = numeric_frame(spec, f'front-frame volume {name!r}')
+            if vol.get("frame") != "front":
+                raise SpecError(
+                    f'volume {name!r}: an object volume is {{"frame": "front", "boxes": [...]}}'
+                )
+            frame = numeric_frame(spec, f"front-frame volume {name!r}")
             boxes = []
-            for b in vol['boxes']:
+            for b in vol["boxes"]:
                 x0, x1, y0, y1, z0, z1 = nums(b, 6)
                 (x0, x1), (y0, y1) = frame.xr(x0, x1), frame.yr(y0, y1)
                 boxes.append([x0, x1, y0, y1, z0, z1])
@@ -1542,51 +1687,58 @@ def resolve_volumes(spec):
 
 def resolve_frame(spec, parts):
     """center (build-frame mm) and the front Frame, auto values filled in."""
+
     def union_bounds(names):
         b = np.array([parts[n].bounds for n in names])
         return b[:, 0].min(axis=0), b[:, 1].max(axis=0)
 
-    c = spec['center_mm']
-    if c == 'auto':
-        lo, hi = union_bounds(spec['center_from'])
+    c = spec["center_mm"]
+    if c == "auto":
+        lo, hi = union_bounds(spec["center_from"])
         center = (lo + hi) / 2
     else:
         center = np.array(nums(c, 3))
-    ff = spec.get('front_frame')
+    ff = spec.get("front_frame")
     frame = None
     if ff is not None:
-        left, top = ff['left_x'], ff['top_y']
-        if left == 'auto' or top == 'auto':
-            lo, hi = union_bounds(spec['center_from'])
-        left = lo[0] if left == 'auto' else num(left)
-        top = hi[1] if top == 'auto' else num(top)
+        left, top = ff["left_x"], ff["top_y"]
+        if left == "auto" or top == "auto":
+            lo, hi = union_bounds(spec["center_from"])
+        left = lo[0] if left == "auto" else num(left)
+        top = hi[1] if top == "auto" else num(top)
         frame = Frame(float(left), float(top))
     return center, frame
 
 
 def pinned_file(unit, path):
     """*path*, refused unless it holds the bytes *unit*'s source pins."""
-    src = unit['source']
+    src = unit["source"]
     if not Path(path).is_file():
-        raise SpecError(f'{path}: no such file (pass it, or --fetch to download {src["url"]})')
+        raise SpecError(f"{path}: no such file (pass it, or --fetch to download {src['url']})")
     digest = sha256_file(path)
-    if digest != src['sha256']:
-        raise SpecError(f'{path} is not the pinned vendor file (sha256 {digest}, not '
-                        f'{src["sha256"]}); the model\'s copyright names that file')
+    if digest != src["sha256"]:
+        raise SpecError(
+            f"{path} is not the pinned vendor file (sha256 {digest}, not "
+            f"{src['sha256']}); the model's copyright names that file"
+        )
     return Path(path)
 
 
 def module_paths(spec, cache=DEFAULT_CACHE, fetch=False, given=None):
     """{module name: its vendor file}: the one *given* names, or the cache's, each checked."""
     given = dict(given or {})
-    names = [m['name'] for m in spec.get('modules', [])]
+    names = [m["name"] for m in spec.get("modules", [])]
     unknown = sorted(set(given) - set(names))
     if unknown:
-        raise SpecError(f'--module-source names no module of this spec: {unknown}; it has '
-                        f'{names or "none"}')
-    return {module['name']: pinned_file(module, given.get(module['name'])
-                                        or cached_source(module, cache, fetch))
-            for module in spec.get('modules', [])}
+        raise SpecError(
+            f"--module-source names no module of this spec: {unknown}; it has {names or 'none'}"
+        )
+    return {
+        module["name"]: pinned_file(
+            module, given.get(module["name"]) or cached_source(module, cache, fetch)
+        )
+        for module in spec.get("modules", [])
+    }
 
 
 def face_frames(spec, frame, meas):
@@ -1600,20 +1752,23 @@ def face_frames(spec, frame, meas):
     """
     out = {}
     if frame is not None:
-        out['front'] = board_faces.FaceFrame('front', frame.x(0.0), frame.y(0.0))
+        out["front"] = board_faces.FaceFrame("front", frame.x(0.0), frame.y(0.0))
         if meas is not None:
-            out['back'] = board_faces.FaceFrame('back', frame.left_x + float(meas['case']['width']),
-                                                frame.top_y)
-    for face, numbers in (spec.get('face_frames') or {}).items():
-        if face == 'note':
+            out["back"] = board_faces.FaceFrame(
+                "back", frame.left_x + float(meas["case"]["width"]), frame.top_y
+            )
+    for face, numbers in (spec.get("face_frames") or {}).items():
+        if face == "note":
             continue
-        out[face] = board_faces.face_frame(face, {k: num(v) for k, v in numbers.items()
-                                                  if k != 'note'})
+        out[face] = board_faces.face_frame(
+            face, {k: num(v) for k, v in numbers.items() if k != "note"}
+        )
     return out
 
 
-def build(spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modules=None,
-          web_ppm=None):
+def build(
+    spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modules=None, web_ppm=None
+):
     """Build the model of *spec* from the vendor file at *src_path* into
     *out_path*; return a summary dict for source.json.
 
@@ -1626,66 +1781,85 @@ def build(spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modu
     elements whose strokes cover ``WEB_MIN_STROKE_PX`` there, flattened to
     ``WEB_FLATNESS_PX`` where the spec's flatness is finer; a legends mesh
     left with nothing is left out, its plane on record."""
-    planar_min_area = num(spec.get('planar_min_area', 1.5))
-    quant_mm = num(spec.get('quant_mm', 0.01))
+    planar_min_area = num(spec.get("planar_min_area", 1.5))
+    quant_mm = num(spec.get("quant_mm", 0.01))
 
     volumes = resolve_volumes(spec)
-    parts = ({} if own_model(spec)
-             else gather_parts(spec, load_components(spec, src_path, cache), volumes))
-    if spec.get('modules'):
+    parts = (
+        {}
+        if own_model(spec)
+        else gather_parts(spec, load_components(spec, src_path, cache), volumes)
+    )
+    if spec.get("modules"):
         found = module_paths(spec, cache) if modules is None else modules
-        for module in spec['modules']:
-            path = found.get(module['name'])
+        for module in spec["modules"]:
+            path = found.get(module["name"])
             if path is None:
-                raise SpecError(f'module {module["name"]!r}: no vendor file given')
-            parts.update(gather_parts(module, load_components(module, pinned_file(module, path),
-                                                              cache), volumes))
+                raise SpecError(f"module {module['name']!r}: no vendor file given")
+            parts.update(
+                gather_parts(
+                    module, load_components(module, pinned_file(module, path), cache), volumes
+                )
+            )
 
-    cull = spec.get('cull')
+    cull = spec.get("cull")
     if cull:
-        boxes = cull_boxes(volumes, cull['volumes'])
+        boxes = cull_boxes(volumes, cull["volumes"])
         report = []
-        for name in cull['parts']:
-            parts[name], n = drop_hidden(parts[name], boxes, num(cull.get('margin', 0.06)),
-                                         bool(cull.get('same_box', False)))
-            report.append(f'{name} {n}')
-        print('culled hidden faces: ' + ', '.join(report))
+        for name in cull["parts"]:
+            parts[name], n = drop_hidden(
+                parts[name], boxes, num(cull.get("margin", 0.06)), bool(cull.get("same_box", False))
+            )
+            report.append(f"{name} {n}")
+        print("culled hidden faces: " + ", ".join(report))
 
     center, frame = resolve_frame(spec, parts)
     meas = measurements(spec)
 
-    g = Glb(spec['node_name'], center, quant_mm)
+    g = Glb(spec["node_name"], center, quant_mm)
     # what the model says it is, who made it, its license: the record of the
     # file this build is written as (the master, or its web level of detail)
-    meta = media_meta.record(rel(web_path(spec)) if web_ppm is not None else spec['output'])
+    meta = media_meta.record(rel(web_path(spec)) if web_ppm is not None else spec["output"])
     asset, packets, scene_name = media_meta.gltf_metadata(meta)
-    g.gltf['asset'] = asset
-    g.gltf['scenes'][0]['name'] = scene_name
+    g.gltf["asset"] = asset
+    g.gltf["scenes"][0]["name"] = scene_name
 
-    for m in spec['materials']:
-        rgb = m.get('rgb')
+    for m in spec["materials"]:
+        rgb = m.get("rgb")
         if rgb is None:
-            hx = m['hex'].lstrip('#')
-            rgb = [int(hx[i:i + 2], 16) for i in (0, 2, 4)]
-        g.material(m['name'], tuple(int(v) for v in rgb), num(m['rough']),
-                   metal=num(m.get('metal', 0.0)),
-                   alpha=None if m.get('alpha') is None else num(m['alpha']),
-                   unlit=bool(m.get('unlit', False)), double=bool(m.get('double', False)))
+            hx = m["hex"].lstrip("#")
+            rgb = [int(hx[i : i + 2], 16) for i in (0, 2, 4)]
+        g.material(
+            m["name"],
+            tuple(int(v) for v in rgb),
+            num(m["rough"]),
+            metal=num(m.get("metal", 0.0)),
+            alpha=None if m.get("alpha") is None else num(m["alpha"]),
+            unlit=bool(m.get("unlit", False)),
+            double=bool(m.get("double", False)),
+        )
 
     screen = None
     if meas is not None and frame is not None:
-        d = meas['display']
-        aw, ah = float(d['active_w_mm']), float(d['active_h_mm'])
-        sx0 = frame.x(float(d['origin_x_mm']))
+        d = meas["display"]
+        aw, ah = float(d["active_w_mm"]), float(d["active_h_mm"])
+        sx0 = frame.x(float(d["origin_x_mm"]))
         sx1 = sx0 + aw
-        sy_top = frame.y(float(d['origin_y_mm']))
+        sy_top = frame.y(float(d["origin_y_mm"]))
         sy_bot = sy_top - ah
-        screen = {'x0': sx0, 'x1': sx1, 'y_top': sy_top, 'y_bot': sy_bot, 'w': aw, 'h': ah,
-                  'resolution': [int(d['resolution_w_px']), int(d['resolution_h_px'])]}
+        screen = {
+            "x0": sx0,
+            "x1": sx1,
+            "y_top": sy_top,
+            "y_bot": sy_bot,
+            "w": aw,
+            "h": ah,
+            "resolution": [int(d["resolution_w_px"]), int(d["resolution_h_px"])],
+        }
 
     def shade(name, mesh, smooth_deg):
         if len(mesh.faces) == 0:
-            raise SpecError(f'{name}: no faces left (culled or sliced away)')
+            raise SpecError(f"{name}: no faces left (culled or sliced away)")
         if smooth_deg:
             return crease_normals(mesh, smooth_deg, planar_min_area)
         return flat(mesh, planar_min_area)
@@ -1697,136 +1871,194 @@ def build(spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modu
         else:
             pos, nrm, faces = mesh_or_arrays[:3]
             if len(faces) == 0:
-                raise SpecError(f'{name}: no faces left (its split gave it none)')
+                raise SpecError(f"{name}: no faces left (its split gave it none)")
             g.mesh(name, [(pos, nrm, faces, uv, mat)], extras, quantize)
 
     legends = []
     drawings = {}  # (drawing, flatness) -> (its legends, the faces they were read with)
     drawn = {}  # drawing -> the planes of it some legends mesh draws
     frames = face_frames(spec, frame, meas)
-    for entry in spec['meshes']:
-        name = entry['name']
-        if 'legends' in entry and not with_legends:
+    for entry in spec["meshes"]:
+        name = entry["name"]
+        if "legends" in entry and not with_legends:
             continue
-        mat = None if 'legends' in entry else g.mat_index[entry['material']]
-        smooth_deg = num(entry['smooth_deg']) if entry.get('smooth_deg') else None
-        quantize = bool(entry.get('quantize', True))
-        if 'part' in entry:
-            if entry['part'] not in parts:
+        mat = None if "legends" in entry else g.mat_index[entry["material"]]
+        smooth_deg = num(entry["smooth_deg"]) if entry.get("smooth_deg") else None
+        quantize = bool(entry.get("quantize", True))
+        if "part" in entry:
+            if entry["part"] not in parts:
                 continue  # an optional part that matched nothing
-            mesh = parts[entry['part']]
-            clips = [(k, i) for i, k in enumerate(('inside', 'outside')) if k in entry]
+            mesh = parts[entry["part"]]
+            clips = [(k, i) for i, k in enumerate(("inside", "outside")) if k in entry]
             if clips:
                 # shaded whole, then split: each half keeps the part's normals at the seam
-                (clip, keep), = clips
-                mesh = split_by_boxes(shade(name, mesh, smooth_deg), volumes[entry[clip]],
-                                      name)[keep]
+                ((clip, keep),) = clips
+                mesh = split_by_boxes(shade(name, mesh, smooth_deg), volumes[entry[clip]], name)[
+                    keep
+                ]
             add(name, mesh, mat, smooth_deg=smooth_deg, quantize=quantize)
-        elif 'screen' in entry:
+        elif "screen" in entry:
             if screen is None:
-                raise SpecError('a screen needs measurements and front_frame')
-            pos, nrm, faces = quad_xy(screen['x0'], screen['x1'], screen['y_bot'],
-                                      screen['y_top'], num(entry['screen']['z']))
+                raise SpecError("a screen needs measurements and front_frame")
+            pos, nrm, faces = quad_xy(
+                screen["x0"],
+                screen["x1"],
+                screen["y_bot"],
+                screen["y_top"],
+                num(entry["screen"]["z"]),
+            )
             # glTF UVs: (0,0) = image top-left = the screen's top-left as the
             # user holds the board.
             uv = np.array([[0, 0], [1, 0], [1, 1], [0, 1]], dtype=float)
-            add(name, (pos, nrm, faces), mat, uv=uv, extras={
-                'resolution': screen['resolution'],
-                'activeAreaMm': [screen['w'], screen['h']],
-                'uv': SCREEN_UV_NOTE}, quantize=False)
-        elif 'glass' in entry:
+            add(
+                name,
+                (pos, nrm, faces),
+                mat,
+                uv=uv,
+                extras={
+                    "resolution": screen["resolution"],
+                    "activeAreaMm": [screen["w"], screen["h"]],
+                    "uv": SCREEN_UV_NOTE,
+                },
+                quantize=False,
+            )
+        elif "glass" in entry:
             if screen is None:
-                raise SpecError('a glass needs a screen')
-            x0, x1, y0, y1 = nums(entry['glass']['rect'], 4)
-            if entry['glass'].get('frame') == 'front':
+                raise SpecError("a glass needs a screen")
+            x0, x1, y0, y1 = nums(entry["glass"]["rect"], 4)
+            if entry["glass"].get("frame") == "front":
                 (x0, x1), (y0, y1) = frame.xr(x0, x1), frame.yr(y0, y1)
-            gpos, gnrm, gfaces = quad_xy(x0, x1, y0, y1, num(entry['glass']['z']))
-            guv = np.column_stack([(gpos[:, 0] - screen['x0']) / screen['w'],
-                                   (screen['y_top'] - gpos[:, 1]) / screen['h']])
+            gpos, gnrm, gfaces = quad_xy(x0, x1, y0, y1, num(entry["glass"]["z"]))
+            guv = np.column_stack(
+                [
+                    (gpos[:, 0] - screen["x0"]) / screen["w"],
+                    (screen["y_top"] - gpos[:, 1]) / screen["h"],
+                ]
+            )
             add(name, (gpos, gnrm, gfaces), mat, uv=guv, quantize=False)
-        elif 'legends' in entry:
+        elif "legends" in entry:
             if frame is None:
-                raise SpecError(f'{name}: legends need front_frame')
+                raise SpecError(f"{name}: legends need front_frame")
             import legend_mesh  # only a model with legends needs fontTools
 
-            leg = entry['legends']
+            leg = entry["legends"]
             drawing, face = legends_drawing(leg)
             if face not in frames:
-                raise SpecError(f'{name}: the {face} face has no frame; give face_frames.{face} '
-                                f'({", ".join(board_faces.FACES[face][2])})')
+                raise SpecError(
+                    f"{name}: the {face} face has no frame; give face_frames.{face} "
+                    f"({', '.join(board_faces.FACES[face][2])})"
+                )
             face_frame = frames[face]
             height = board_faces.height_key(face)
             axis = board_faces.AXES.index(height)
             z = num(leg[height])
             if abs(round((z - center[axis]) / quant_mm) * quant_mm - (z - center[axis])) > 1e-9:
-                raise SpecError(f'{name}: {height} {z} is not on the model\'s {quant_mm} mm grid')
-            front = (spec['_dir'] / drawing).resolve()
-            flatness = num(leg.get('flatness', 0.004))
+                raise SpecError(f"{name}: {height} {z} is not on the model's {quant_mm} mm grid")
+            front = (spec["_dir"] / drawing).resolve()
+            flatness = num(leg.get("flatness", 0.004))
             keep = None
             if web_ppm is not None:
                 flatness = max(flatness, WEB_FLATNESS_PX / web_ppm)
 
                 def keep(geom):
                     return legend_mesh.width_mm(geom) * web_ppm >= WEB_MIN_STROKE_PX
-            plane = leg.get('plane', legend_mesh.KEYS_PLANE)
-            rough = num(leg.get('rough', 0.55))
+
+            plane = leg.get("plane", legend_mesh.KEYS_PLANE)
+            rough = num(leg.get("rough", 0.55))
             try:
                 if (front, flatness) not in drawings:
                     faces_read = legend_mesh.Faces()
                     drawings[front, flatness] = (
-                        legend_mesh.read_legends(front, flatness, faces_read, keep), faces_read)
+                        legend_mesh.read_legends(front, flatness, faces_read, keep),
+                        faces_read,
+                    )
                 read, faces_read = drawings[front, flatness]
-                found, record = legend_mesh.sheets(read, plane, face_frame, center, z, quant_mm,
-                                                   faces_read)
+                found, record = legend_mesh.sheets(
+                    read, plane, face_frame, center, z, quant_mm, faces_read
+                )
             except legend_mesh.LegendError as exc:
-                raise SpecError(f'{name}: {exc}') from None
+                raise SpecError(f"{name}: {exc}") from None
             if not found and web_ppm is not None and plane in legend_mesh.planes(read):
                 # the web level of detail left nothing of this plane to draw
                 drawn.setdefault(front, set()).add(plane)
-                legends.append({'mesh': name, 'plane': plane, 'on': leg['on'],
-                                'flatness_mm': flatness, 'groups': len(record['groups']),
-                                'shapes': 0, 'sheets': [], 'dropped': record.get('dropped')})
-                print(f'legends {name}: plane {plane!r}, nothing left at {web_ppm} px/mm')
+                legends.append(
+                    {
+                        "mesh": name,
+                        "plane": plane,
+                        "on": leg["on"],
+                        "flatness_mm": flatness,
+                        "groups": len(record["groups"]),
+                        "shapes": 0,
+                        "sheets": [],
+                        "dropped": record.get("dropped"),
+                    }
+                )
+                print(f"legends {name}: plane {plane!r}, nothing left at {web_ppm} px/mm")
                 continue
             if not found:
-                raise SpecError(f'{name}: {drawing} holds no legend group on the plane '
-                                f'{plane!r}; it has {legend_mesh.planes(read) or "none"}')
+                raise SpecError(
+                    f"{name}: {drawing} holds no legend group on the plane "
+                    f"{plane!r}; it has {legend_mesh.planes(read) or 'none'}"
+                )
             drawn.setdefault(front, set()).add(plane)
-            for sheet, (fill, pos, nrm, faces, stroke) in zip(record['sheets'], found,
-                                                              strict=True):
-                ink_name = f'{INK_PREFIX}{fill}'
+            for sheet, (fill, pos, nrm, faces, stroke) in zip(record["sheets"], found, strict=True):
+                ink_name = f"{INK_PREFIX}{fill}"
                 known = g.mat_index.get(ink_name)
-                if known is not None and g.gltf['materials'][known]['pbrMetallicRoughness'][
-                        'roughnessFactor'] != rough:
-                    raise SpecError(f'{name}: the ink #{fill} is already in the model with '
-                                    f'another rough; one ink is one material')
-                ink = g.material(ink_name, tuple(int(fill[i:i + 2], 16) for i in (0, 2, 4)),
-                                 rough)
-                sheet['mesh'] = f'{name}_{fill}'
-                add(sheet['mesh'], (pos, nrm, faces), ink,
-                    extras={'legends': {'fill': f'#{fill}', 'stroke_mm': stroke,
-                                        'on': leg['on']}})
+                if (
+                    known is not None
+                    and g.gltf["materials"][known]["pbrMetallicRoughness"]["roughnessFactor"]
+                    != rough
+                ):
+                    raise SpecError(
+                        f"{name}: the ink #{fill} is already in the model with "
+                        f"another rough; one ink is one material"
+                    )
+                ink = g.material(
+                    ink_name, tuple(int(fill[i : i + 2], 16) for i in (0, 2, 4)), rough
+                )
+                sheet["mesh"] = f"{name}_{fill}"
+                add(
+                    sheet["mesh"],
+                    (pos, nrm, faces),
+                    ink,
+                    extras={"legends": {"fill": f"#{fill}", "stroke_mm": stroke, "on": leg["on"]}},
+                )
             # a front's record keeps the keys it always had; another face's names its face
-            placed = ({'front': rel(front)} if face == 'front' else
-                      {'face': face, 'drawing': rel(front)})
-            legends.append({'mesh': name, 'plane': plane, 'on': leg['on'], **placed,
-                            'legends_sha256': legend_source.digest(front, plane),
-                            f'{height}_mm': z, 'flatness_mm': flatness,
-                            'groups': len(record['groups']), 'keys': record['keys'],
-                            'shapes': record['shapes'], 'fonts': record['fonts'],
-                            'sheets': record['sheets'],
-                            **({'dropped': record['dropped']} if 'dropped' in record else {})})
-            print(f'legends {name}: plane {plane!r}, {len(record["groups"])} groups '
-                  f'({record["keys"]} keys), ' + ', '.join(
-                      f'#{c["fill"][1:]} {c["triangles"]} triangles, stroke '
-                      f'{c["stroke_mm"]:.3f} mm' for c in record['sheets']))
-        elif 'shapes' in entry:
+            placed = (
+                {"front": rel(front)} if face == "front" else {"face": face, "drawing": rel(front)}
+            )
+            legends.append(
+                {
+                    "mesh": name,
+                    "plane": plane,
+                    "on": leg["on"],
+                    **placed,
+                    "legends_sha256": legend_source.digest(front, plane),
+                    f"{height}_mm": z,
+                    "flatness_mm": flatness,
+                    "groups": len(record["groups"]),
+                    "keys": record["keys"],
+                    "shapes": record["shapes"],
+                    "fonts": record["fonts"],
+                    "sheets": record["sheets"],
+                    **({"dropped": record["dropped"]} if "dropped" in record else {}),
+                }
+            )
+            print(
+                f"legends {name}: plane {plane!r}, {len(record['groups'])} groups "
+                f"({record['keys']} keys), "
+                + ", ".join(
+                    f"#{c['fill'][1:]} {c['triangles']} triangles, stroke {c['stroke_mm']:.3f} mm"
+                    for c in record["sheets"]
+                )
+            )
+        elif "shapes" in entry:
             solids, arrays = [], []
-            for shape in entry['shapes']:
+            for shape in entry["shapes"]:
                 got = shape_meshes(shape, volumes, frame)
                 (arrays if isinstance(got, tuple) else solids).append(got)
             if solids and arrays:
-                raise SpecError(f'{name}: solids and quad grids in one mesh')
+                raise SpecError(f"{name}: solids and quad grids in one mesh")
             if arrays:
                 pos = np.vstack([a[0] for a in arrays])
                 nrm = np.vstack([a[1] for a in arrays])
@@ -1838,97 +2070,125 @@ def build(spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modu
                 mesh = flat_list[0] if len(flat_list) == 1 else trimesh.util.concatenate(flat_list)
                 add(name, mesh, mat, smooth_deg=smooth_deg, quantize=quantize)
         else:
-            raise SpecError(f'{name}: no part, screen, glass, legends or shapes')
+            raise SpecError(f"{name}: no part, screen, glass, legends or shapes")
 
     # every plane a drawing prints on is drawn by some legends mesh
     for (front, _flatness), (read, _faces) in drawings.items():
         missing = [p for p in legend_mesh.planes(read) if p not in drawn[front]]
         if missing:
-            raise SpecError(f'{rel(front)} prints on the plane(s) {missing}, which no legends '
-                            f'mesh of this model draws; a print never goes missing quietly')
-    if len(g.gltf['materials']) > MAX_MATERIALS:
-        raise SpecError(f'{len(g.gltf["materials"])} materials, over the {MAX_MATERIALS} the '
-                        f'strictest reader has room for (the landing film\'s shader table '
-                        f'holds {READER_SLOTS}, and its scene puts {READER_OWN} of its own '
-                        f'after the model\'s: the finger, the nail and the cover glass)')
+            raise SpecError(
+                f"{rel(front)} prints on the plane(s) {missing}, which no legends "
+                f"mesh of this model draws; a print never goes missing quietly"
+            )
+    if len(g.gltf["materials"]) > MAX_MATERIALS:
+        raise SpecError(
+            f"{len(g.gltf['materials'])} materials, over the {MAX_MATERIALS} the "
+            f"strictest reader has room for (the landing film's shader table "
+            f"holds {READER_SLOTS}, and its scene puts {READER_OWN} of its own "
+            f"after the model's: the finger, the nail and the cover glass)"
+        )
 
-    if any(entry.get('fonts') for entry in legends) and 'Inter' not in spec['copyright']:
-        raise SpecError('copyright: the legends are glyphs of Inter, and the credits name no '
-                        'Inter (its copyright and the SIL Open Font License 1.1)')
-    g.gltf['extensionsUsed'].append(media_meta.GLTF_META_EXTENSION)
-    g.gltf['extensions'] = packets
+    if any(entry.get("fonts") for entry in legends) and "Inter" not in spec["copyright"]:
+        raise SpecError(
+            "copyright: the legends are glyphs of Inter, and the credits name no "
+            "Inter (its copyright and the SIL Open Font License 1.1)"
+        )
+    g.gltf["extensionsUsed"].append(media_meta.GLTF_META_EXTENSION)
+    g.gltf["extensions"] = packets
 
     out_path = Path(out_path)
-    staged = out_path.with_name(out_path.name + '.part')
+    staged = out_path.with_name(out_path.name + ".part")
     size = g.write(staged)
     clearance = model_raster.screen_clearance(model_raster.read_glb(staged), quant_mm)
-    if clearance is not None and not clearance['ok']:
+    if clearance is not None and not clearance["ok"]:
         staged.unlink()
-        side = min(('behind', 'in_front'), key=lambda s: (clearance[f'{s}_mm'] is None,
-                                                          clearance[f'{s}_mm']))
+        side = min(
+            ("behind", "in_front"),
+            key=lambda s: (clearance[f"{s}_mm"] is None, clearance[f"{s}_mm"]),
+        )
         raise SpecError(
-            f'screen: the {clearance[f"{side}_mesh"]} face nearest the screen '
-            f'{"under" if side == "behind" else "over"} it is {clearance[f"{side}_mm"]:.4f} mm '
-            f'off its plane, under one quantization step ({quant_mm} mm), so a depth-tested '
-            f'renderer can draw the two at one depth; move the screen or that face')
+            f"screen: the {clearance[f'{side}_mesh']} face nearest the screen "
+            f"{'under' if side == 'behind' else 'over'} it is {clearance[f'{side}_mm']:.4f} mm "
+            f"off its plane, under one quantization step ({quant_mm} mm), so a depth-tested "
+            f"renderer can draw the two at one depth; move the screen or that face"
+        )
     written = model_raster.read_glb(staged)
     shared = model_raster.coplanar_overlaps(written, quant_mm)
-    if not shared['ok']:
+    if not shared["ok"]:
         staged.unlink()
-        listed = '; '.join(f'{p["meshes"][0]} and {p["meshes"][1]} ({p["area_mm2"]:.3f} mm2 '
-                           f'facing {p["facing"]}, {p["gap_mm"]:.4f} mm apart, near '
-                           f'{p["at_mm"]})' for p in shared['pairs'][:6])
-        more = len(shared['pairs']) - 6
+        listed = "; ".join(
+            f"{p['meshes'][0]} and {p['meshes'][1]} ({p['area_mm2']:.3f} mm2 "
+            f"facing {p['facing']}, {p['gap_mm']:.4f} mm apart, near "
+            f"{p['at_mm']})"
+            for p in shared["pairs"][:6]
+        )
+        more = len(shared["pairs"]) - 6
         raise SpecError(
-            f'{len(shared["pairs"])} pair(s) of meshes of different materials cover one place '
-            f'at one depth, facing the same way less than one position step ({quant_mm} mm) '
-            f'apart, where a depth test keeps either by rounding: {listed}'
-            f'{f"; and {more} more" if more > 0 else ""}. Cut one out of the other, start a '
-            f'solid where the one under it ends, or lay a layer a whole step over the other')
+            f"{len(shared['pairs'])} pair(s) of meshes of different materials cover one place "
+            f"at one depth, facing the same way less than one position step ({quant_mm} mm) "
+            f"apart, where a depth test keeps either by rounding: {listed}"
+            f"{f'; and {more} more' if more > 0 else ''}. Cut one out of the other, start a "
+            f"solid where the one under it ends, or lay a layer a whole step over the other"
+        )
     for entry in legends:
-        if not entry['sheets']:
+        if not entry["sheets"]:
             continue  # a plane the web level of detail left empty
-        gap = model_raster.legend_clearance(written, entry['mesh'] + '_', quant_mm,
-                                            on=entry['on'], face=entry.get('face', 'front'))
-        if not gap['ok']:
+        gap = model_raster.legend_clearance(
+            written, entry["mesh"] + "_", quant_mm, on=entry["on"], face=entry.get("face", "front")
+        )
+        if not gap["ok"]:
             staged.unlink()
-            if gap['over_mm'] is not None:
-                raise SpecError(f'{entry["mesh"]}: a face of {gap["over_mesh"]} lies '
-                                f'{gap["over_mm"]:.4f} mm over a legend and hides it')
-            if gap['under_mm'] is None:
-                raise SpecError(f'{entry["mesh"]}: no face lies under the legends; they are '
-                                f'printed on nothing')
-            if gap['off'] != 0:
-                raise SpecError(f'{entry["mesh"]}: {gap["off"]} of its {gap["triangles"]} '
-                                f'triangles have no face of {entry["on"]!r} under them; the '
-                                f'legends are printed on that mesh, all of them')
+            if gap["over_mm"] is not None:
+                raise SpecError(
+                    f"{entry['mesh']}: a face of {gap['over_mesh']} lies "
+                    f"{gap['over_mm']:.4f} mm over a legend and hides it"
+                )
+            if gap["under_mm"] is None:
+                raise SpecError(
+                    f"{entry['mesh']}: no face lies under the legends; they are printed on nothing"
+                )
+            if gap["off"] != 0:
+                raise SpecError(
+                    f"{entry['mesh']}: {gap['off']} of its {gap['triangles']} "
+                    f"triangles have no face of {entry['on']!r} under them; the "
+                    f"legends are printed on that mesh, all of them"
+                )
             raise SpecError(
-                f'{entry["mesh"]}: the {gap["under_mesh"]} face nearest under a legend is '
-                f'{gap["under_mm"]:.4f} mm from it, under {gap["least_mm"]:g} mm (two '
-                f'quantization steps), so a depth-tested renderer can draw the two at one '
-                f'depth; raise the legends\' z')
-        entry['clearance'] = {k: gap[k] for k in ('under_mm', 'under_mesh', 'least_mm')}
+                f"{entry['mesh']}: the {gap['under_mesh']} face nearest under a legend is "
+                f"{gap['under_mm']:.4f} mm from it, under {gap['least_mm']:g} mm (two "
+                f"quantization steps), so a depth-tested renderer can draw the two at one "
+                f"depth; raise the legends' z"
+            )
+        entry["clearance"] = {k: gap[k] for k in ("under_mm", "under_mesh", "least_mm")}
     os.replace(staged, out_path)
-    print(f'wrote {out_path}: {size} bytes, meshes {len(g.gltf["meshes"])}, '
-          f'materials {len(g.gltf["materials"])}, triangles {g.triangles}')
-    for entry in (e for e in legends if e['sheets']):
-        print(f'{entry["mesh"]} clearance: {entry["clearance"]["under_mm"]:.3f} mm over '
-              f'{entry["clearance"]["under_mesh"]}, nothing over them, every triangle over '
-              f'{entry["on"]}; at least {entry["clearance"]["least_mm"]:g} mm')
+    print(
+        f"wrote {out_path}: {size} bytes, meshes {len(g.gltf['meshes'])}, "
+        f"materials {len(g.gltf['materials'])}, triangles {g.triangles}"
+    )
+    for entry in (e for e in legends if e["sheets"]):
+        print(
+            f"{entry['mesh']} clearance: {entry['clearance']['under_mm']:.3f} mm over "
+            f"{entry['clearance']['under_mesh']}, nothing over them, every triangle over "
+            f"{entry['on']}; at least {entry['clearance']['least_mm']:g} mm"
+        )
     if clearance is not None:
-        gaps = ', '.join(f'{clearance[f"{s}_mm"]:.3f} mm {s.replace("_", " ")} '
-                         f'({clearance[f"{s}_mesh"]})' for s in ('behind', 'in_front')
-                         if clearance[f'{s}_mm'] is not None)
-        print(f'screen clearance: {gaps}; at least {quant_mm} mm each')
-    return {'triangles': g.triangles, 'meshes': len(g.gltf['meshes']),
-            'materials': len(g.gltf['materials']),
-            'center_mm': [float(v) for v in center],
-            'front_frame': None if frame is None else {'left_x': frame.left_x,
-                                                       'top_y': frame.top_y},
-            # the frames of the other faces a drawing was read on, for the checks
-            'face_frames': {e['face']: frames[e['face']].record() for e in legends
-                            if 'face' in e},
-            'screen': screen, 'legends': legends}
+        gaps = ", ".join(
+            f"{clearance[f'{s}_mm']:.3f} mm {s.replace('_', ' ')} ({clearance[f'{s}_mesh']})"
+            for s in ("behind", "in_front")
+            if clearance[f"{s}_mm"] is not None
+        )
+        print(f"screen clearance: {gaps}; at least {quant_mm} mm each")
+    return {
+        "triangles": g.triangles,
+        "meshes": len(g.gltf["meshes"]),
+        "materials": len(g.gltf["materials"]),
+        "center_mm": [float(v) for v in center],
+        "front_frame": None if frame is None else {"left_x": frame.left_x, "top_y": frame.top_y},
+        # the frames of the other faces a drawing was read on, for the checks
+        "face_frames": {e["face"]: frames[e["face"]].record() for e in legends if "face" in e},
+        "screen": screen,
+        "legends": legends,
+    }
 
 
 # ---------------------------------------------------------------- outputs
@@ -1956,14 +2216,28 @@ def without_legends_record(data):
     """What a model weighs with its legend meshes taken out (``glb_legends.strip``)."""
     bare = glb_legends.strip(data)
     js, _ = glb_legends.read(bare)
-    return {'bytes': len(bare),
-            'gzip_bytes': len(gzip.compress(bare, compresslevel=9, mtime=0)),
-            'sha256': hashlib.sha256(bare).hexdigest(),
-            'meshes': len(js['meshes']), 'materials': len(js['materials'])}
+    return {
+        "bytes": len(bare),
+        "gzip_bytes": len(gzip.compress(bare, compresslevel=9, mtime=0)),
+        "sha256": hashlib.sha256(bare).hexdigest(),
+        "meshes": len(js["meshes"]),
+        "materials": len(js["materials"]),
+    }
 
 
-SOURCE_KEYS = ('vendor', 'format', 'url', 'repository', 'path', 'commit', 'sha256', 'bytes',
-               'license', 'copyright', 'license_note')
+SOURCE_KEYS = (
+    "vendor",
+    "format",
+    "url",
+    "repository",
+    "path",
+    "commit",
+    "sha256",
+    "bytes",
+    "license",
+    "copyright",
+    "license_note",
+)
 
 
 def source_json(spec, out_path, summary, obj=None):
@@ -1976,59 +2250,74 @@ def source_json(spec, out_path, summary, obj=None):
     and MTL written from a board's master (``export_obj.record``), goes last,
     under ``obj``."""
     data = Path(out_path).read_bytes()
-    src = spec['source']
-    printed = ({'legends': summary['legends'],
-                'without_legends': without_legends_record(data)}
-               if summary.get('legends') else {})
-    stacked = ({'modules': [{'name': m['name'],
-                             'source': {k: m['source'][k] for k in SOURCE_KEYS
-                                        if k in m['source']},
-                             'tessellation': m.get('tessellation'),
-                             'transform': m.get('transform', [])}
-                            for m in spec['modules']]}
-               if spec.get('modules') else {})
-    faces = ({'face_frames': summary['face_frames']} if summary.get('face_frames') else {})
+    src = spec["source"]
+    printed = (
+        {"legends": summary["legends"], "without_legends": without_legends_record(data)}
+        if summary.get("legends")
+        else {}
+    )
+    stacked = (
+        {
+            "modules": [
+                {
+                    "name": m["name"],
+                    "source": {k: m["source"][k] for k in SOURCE_KEYS if k in m["source"]},
+                    "tessellation": m.get("tessellation"),
+                    "transform": m.get("transform", []),
+                }
+                for m in spec["modules"]
+            ]
+        }
+        if spec.get("modules")
+        else {}
+    )
+    faces = {"face_frames": summary["face_frames"]} if summary.get("face_frames") else {}
     return {
-        'board': spec['board'],
-        'model': rel(out_path),
-        'model_sha256': hashlib.sha256(data).hexdigest(),
-        'model_bytes': len(data),
-        'model_gzip_bytes': len(gzip.compress(data, compresslevel=9, mtime=0)),
-        'triangles': summary['triangles'],
-        'meshes': summary['meshes'],
-        'materials': summary['materials'],
-        'source': ({k: src[k] for k in ('format', 'license', 'copyright', 'license_note')
-                    if k in src} if own_model(spec)
-                   else {k: src[k] for k in SOURCE_KEYS if k in src}),
+        "board": spec["board"],
+        "model": rel(out_path),
+        "model_sha256": hashlib.sha256(data).hexdigest(),
+        "model_bytes": len(data),
+        "model_gzip_bytes": len(gzip.compress(data, compresslevel=9, mtime=0)),
+        "triangles": summary["triangles"],
+        "meshes": summary["meshes"],
+        "materials": summary["materials"],
+        "source": (
+            {k: src[k] for k in ("format", "license", "copyright", "license_note") if k in src}
+            if own_model(spec)
+            else {k: src[k] for k in SOURCE_KEYS if k in src}
+        ),
         **stacked,
-        'builder': {
-            'script': rel(Path(__file__)),
-            'version': BUILDER_VERSION,
-            'spec': rel(spec['_path']),
-            'spec_sha256': sha256_file(spec['_path']),
-            'python': platform.python_version(),
-            'packages': package_versions(),
+        "builder": {
+            "script": rel(Path(__file__)),
+            "version": BUILDER_VERSION,
+            "spec": rel(spec["_path"]),
+            "spec_sha256": sha256_file(spec["_path"]),
+            "python": platform.python_version(),
+            "packages": package_versions(),
         },
-        'parameters': {
-            'quant_mm': num(spec.get('quant_mm', 0.01)),
-            'planar_min_area_mm2': num(spec.get('planar_min_area', 1.5)),
-            'tessellation': spec.get('tessellation'),
-            'transform': spec.get('transform', []),
-            'center_mm': summary['center_mm'],
-            'front_frame': summary['front_frame'],
+        "parameters": {
+            "quant_mm": num(spec.get("quant_mm", 0.01)),
+            "planar_min_area_mm2": num(spec.get("planar_min_area", 1.5)),
+            "tessellation": spec.get("tessellation"),
+            "transform": spec.get("transform", []),
+            "center_mm": summary["center_mm"],
+            "front_frame": summary["front_frame"],
             **faces,
-            'screen': None if summary['screen'] is None else {
+            "screen": None
+            if summary["screen"] is None
+            else {
                 k: (round(v, 4) if isinstance(v, float) else v)
-                for k, v in summary['screen'].items()},
+                for k, v in summary["screen"].items()
+            },
         },
         **printed,
-        **({'obj': obj} if obj else {}),
+        **({"obj": obj} if obj else {}),
     }
 
 
 def web_path(spec):
     """Where a board's web level of detail is written: beside its spec, named after its model."""
-    return spec['_dir'] / f'{Path(spec["output"]).stem}-web.glb'
+    return spec["_dir"] / f"{Path(spec['output']).stem}-web.glb"
 
 
 def web_json(spec, out_path, summary, ppm):
@@ -2039,52 +2328,64 @@ def web_json(spec, out_path, summary, ppm):
     two rules, and, for each legends mesh, what was kept and what left out.
     """
     data = Path(out_path).read_bytes()
-    master = REPO / spec['output']
+    master = REPO / spec["output"]
     return {
-        'board': spec['board'],
-        'level': 'web',
-        'model': rel(out_path),
-        'model_sha256': hashlib.sha256(data).hexdigest(),
-        'model_bytes': len(data),
-        'model_gzip_bytes': len(gzip.compress(data, compresslevel=9, mtime=0)),
-        'triangles': summary['triangles'],
-        'meshes': summary['meshes'],
-        'materials': summary['materials'],
-        'master': {'model': spec['output'], 'model_sha256': sha256_file(master)},
-        'px_per_mm': ppm,
-        'min_stroke_px': WEB_MIN_STROKE_PX,
-        'flatness_px': WEB_FLATNESS_PX,
-        'builder': {
-            'script': rel(Path(__file__)),
-            'version': BUILDER_VERSION,
-            'spec': rel(spec['_path']),
-            'spec_sha256': sha256_file(spec['_path']),
+        "board": spec["board"],
+        "level": "web",
+        "model": rel(out_path),
+        "model_sha256": hashlib.sha256(data).hexdigest(),
+        "model_bytes": len(data),
+        "model_gzip_bytes": len(gzip.compress(data, compresslevel=9, mtime=0)),
+        "triangles": summary["triangles"],
+        "meshes": summary["meshes"],
+        "materials": summary["materials"],
+        "master": {"model": spec["output"], "model_sha256": sha256_file(master)},
+        "px_per_mm": ppm,
+        "min_stroke_px": WEB_MIN_STROKE_PX,
+        "flatness_px": WEB_FLATNESS_PX,
+        "builder": {
+            "script": rel(Path(__file__)),
+            "version": BUILDER_VERSION,
+            "spec": rel(spec["_path"]),
+            "spec_sha256": sha256_file(spec["_path"]),
         },
-        'legends': [{k: entry[k] for k in ('mesh', 'plane', 'flatness_mm', 'groups', 'shapes',
-                                           'sheets', 'dropped') if entry.get(k) is not None}
-                    for entry in summary['legends']],
+        "legends": [
+            {
+                k: entry[k]
+                for k in ("mesh", "plane", "flatness_mm", "groups", "shapes", "sheets", "dropped")
+                if entry.get(k) is not None
+            }
+            for entry in summary["legends"]
+        ],
     }
 
 
 def describe_glb(path):
     """(json, {mesh name: positions in mm}) of a GLB this builder wrote."""
     raw = Path(path).read_bytes()
-    jlen = struct.unpack_from('<I', raw, 12)[0]
-    js = json.loads(raw[20:20 + jlen])
-    bin_ = raw[20 + jlen + 8:]
-    comp = {5120: np.int8, 5121: np.uint8, 5122: np.int16, 5123: np.uint16, 5125: np.uint32,
-            5126: np.float32}
+    jlen = struct.unpack_from("<I", raw, 12)[0]
+    js = json.loads(raw[20 : 20 + jlen])
+    bin_ = raw[20 + jlen + 8 :]
+    comp = {
+        5120: np.int8,
+        5121: np.uint8,
+        5122: np.int16,
+        5123: np.uint16,
+        5125: np.uint32,
+        5126: np.float32,
+    }
     out = {}
-    for node in js['nodes'][1:]:
-        mesh = js['meshes'][node['mesh']]
-        acc = js['accessors'][mesh['primitives'][0]['attributes']['POSITION']]
-        bv = js['bufferViews'][acc['bufferView']]
-        dt = np.dtype(comp[acc['componentType']])
-        stride = bv.get('byteStride', 3 * dt.itemsize) // dt.itemsize
-        arr = np.frombuffer(bin_, dtype=dt, count=acc['count'] * stride,
-                            offset=bv['byteOffset']).reshape(-1, stride)[:, :3]
-        scale = node.get('scale', [1.0, 1.0, 1.0])
-        out[node['name']] = arr.astype(float) * np.array(scale) / MM
+    for node in js["nodes"][1:]:
+        mesh = js["meshes"][node["mesh"]]
+        acc = js["accessors"][mesh["primitives"][0]["attributes"]["POSITION"]]
+        bv = js["bufferViews"][acc["bufferView"]]
+        dt = np.dtype(comp[acc["componentType"]])
+        stride = bv.get("byteStride", 3 * dt.itemsize) // dt.itemsize
+        arr = np.frombuffer(
+            bin_, dtype=dt, count=acc["count"] * stride, offset=bv["byteOffset"]
+        ).reshape(-1, stride)[:, :3]
+        scale = node.get("scale", [1.0, 1.0, 1.0])
+        out[node["name"]] = arr.astype(float) * np.array(scale) / MM
     return js, out
 
 
@@ -2093,119 +2394,164 @@ def compare_glb(built, reference, tolerance_mm):
     tolerance) the same meshes with every position within it."""
     a, b = Path(built).read_bytes(), Path(reference).read_bytes()
     if a == b:
-        print(f'PASS: {built} is byte-identical to {reference} '
-              f'(sha256 {hashlib.sha256(a).hexdigest()})')
+        print(
+            f"PASS: {built} is byte-identical to {reference} "
+            f"(sha256 {hashlib.sha256(a).hexdigest()})"
+        )
         return True
-    print(f'DIFFER: {len(a)} bytes against {len(b)}')
+    print(f"DIFFER: {len(a)} bytes against {len(b)}")
     ja, pa = describe_glb(built)
     jb, pb = describe_glb(reference)
     ok = list(pa) == list(pb)
     if not ok:
-        print(f'  meshes differ: {list(pa)} against {list(pb)}')
+        print(f"  meshes differ: {list(pa)} against {list(pb)}")
     for name in pa:
         if name not in pb:
             continue
         if pa[name].shape != pb[name].shape:
-            print(f'  {name}: {len(pa[name])} vertices against {len(pb[name])}')
+            print(f"  {name}: {len(pa[name])} vertices against {len(pb[name])}")
             ok = False
             continue
         dev = float(np.abs(pa[name] - pb[name]).max()) if len(pa[name]) else 0.0
         if dev > 0:
-            print(f'  {name}: max position deviation {dev:.4f} mm')
+            print(f"  {name}: max position deviation {dev:.4f} mm")
         ok = ok and dev <= tolerance_mm
-    if ja.get('materials') != jb.get('materials'):
-        print('  materials differ')
+    if ja.get("materials") != jb.get("materials"):
+        print("  materials differ")
         ok = False
-    print(('PASS' if ok and tolerance_mm > 0 else 'FAIL') +
-          f' (tolerance {tolerance_mm} mm)')
+    print(("PASS" if ok and tolerance_mm > 0 else "FAIL") + f" (tolerance {tolerance_mm} mm)")
     return ok and tolerance_mm > 0
 
 
 def main(argv=None):
     """Build a board model from the command line; return the exit code."""
-    parser = argparse.ArgumentParser(description=__doc__.split('\n', 1)[0])
-    parser.add_argument('spec', type=Path, help='<board>/model/spec.json')
-    parser.add_argument('--source', type=Path, help='the vendor file (default: from the cache)')
-    parser.add_argument('--module-source', action='append', default=[], metavar='NAME=FILE',
-                        help="a module's vendor file (default: from the cache); once a module")
-    parser.add_argument('--cache', type=Path, default=DEFAULT_CACHE,
-                        help=f'vendor-file cache (default {DEFAULT_CACHE}, or $KLEIDOS_CAD_CACHE)')
-    parser.add_argument('--fetch', action='store_true',
-                        help="download the vendor file into the cache when it is missing")
-    parser.add_argument('--out', type=Path, help="the .glb to write (default: the spec's output)")
-    parser.add_argument('--check', action='store_true',
-                        help="build into a temporary file and compare it with the spec's output")
-    parser.add_argument('--tolerance-mm', type=float, default=0.0,
-                        help='with --check: accept a rebuild whose positions differ by at most '
-                             'this much (default 0: the same bytes)')
-    parser.add_argument('--no-source-json', action='store_true',
-                        help="do not write source.json beside the spec (it is written only "
-                             "for the spec's own output)")
-    parser.add_argument('--record', action='store_true',
-                        help="with --check: when the rebuild is byte-identical to the spec's "
-                             "output, write its source.json")
-    parser.add_argument('--without-legends', action='store_true',
-                        help="build the model with no legends mesh: with --out, write that "
-                             "lighter model; with --check, compare it with the spec's output "
-                             "less its legend meshes (never writes source.json)")
-    parser.add_argument('--web-px-per-mm', type=float, metavar='PPM',
-                        help="build the web level of detail for a board the site draws at "
-                             "most PPM pixels a millimeter (the Kleidos repository's node "
-                             "site/tools/build-web-model.mjs "
-                             "--scales prints each board's): write <model>-web.glb and web.json "
-                             "beside the spec, or with --check compare it with them")
+    parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    parser.add_argument("spec", type=Path, help="<board>/model/spec.json")
+    parser.add_argument("--source", type=Path, help="the vendor file (default: from the cache)")
+    parser.add_argument(
+        "--module-source",
+        action="append",
+        default=[],
+        metavar="NAME=FILE",
+        help="a module's vendor file (default: from the cache); once a module",
+    )
+    parser.add_argument(
+        "--cache",
+        type=Path,
+        default=DEFAULT_CACHE,
+        help=f"vendor-file cache (default {DEFAULT_CACHE}, or $KLEIDOS_CAD_CACHE)",
+    )
+    parser.add_argument(
+        "--fetch",
+        action="store_true",
+        help="download the vendor file into the cache when it is missing",
+    )
+    parser.add_argument("--out", type=Path, help="the .glb to write (default: the spec's output)")
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="build into a temporary file and compare it with the spec's output",
+    )
+    parser.add_argument(
+        "--tolerance-mm",
+        type=float,
+        default=0.0,
+        help="with --check: accept a rebuild whose positions differ by at most "
+        "this much (default 0: the same bytes)",
+    )
+    parser.add_argument(
+        "--no-source-json",
+        action="store_true",
+        help="do not write source.json beside the spec (it is written only "
+        "for the spec's own output)",
+    )
+    parser.add_argument(
+        "--record",
+        action="store_true",
+        help="with --check: when the rebuild is byte-identical to the spec's "
+        "output, write its source.json",
+    )
+    parser.add_argument(
+        "--without-legends",
+        action="store_true",
+        help="build the model with no legends mesh: with --out, write that "
+        "lighter model; with --check, compare it with the spec's output "
+        "less its legend meshes (never writes source.json)",
+    )
+    parser.add_argument(
+        "--web-px-per-mm",
+        type=float,
+        metavar="PPM",
+        help="build the web level of detail for a board the site draws at "
+        "most PPM pixels a millimeter (the Kleidos repository's node "
+        "site/tools/build-web-model.mjs "
+        "--scales prints each board's): write <model>-web.glb and web.json "
+        "beside the spec, or with --check compare it with them",
+    )
     args = parser.parse_args(argv)
-    if args.web_px_per_mm is not None and (args.without_legends or args.record or args.out
-                                           or args.no_source_json):
-        parser.error('--web-px-per-mm writes the web level of detail and its record, and takes '
-                     'only --check besides the vendor files')
+    if args.web_px_per_mm is not None and (
+        args.without_legends or args.record or args.out or args.no_source_json
+    ):
+        parser.error(
+            "--web-px-per-mm writes the web level of detail and its record, and takes "
+            "only --check besides the vendor files"
+        )
     if args.web_px_per_mm is not None and not args.web_px_per_mm > 0:
-        parser.error('--web-px-per-mm takes a scale over 0')
+        parser.error("--web-px-per-mm takes a scale over 0")
     if args.without_legends and not (args.check or args.out):
-        parser.error("--without-legends needs --out (the spec's output is the whole model) "
-                     "or --check")
+        parser.error(
+            "--without-legends needs --out (the spec's output is the whole model) or --check"
+        )
     if args.without_legends and args.record:
-        parser.error('--record is for the whole model')
+        parser.error("--record is for the whole model")
 
     try:
         spec = load_spec(args.spec)
         if own_model(spec):
             if args.source:
-                parser.error('--source: this spec builds from no vendor file (format none)')
+                parser.error("--source: this spec builds from no vendor file (format none)")
             src_path = None
         else:
             src_path = args.source or cached_source(spec, args.cache, args.fetch)
         if src_path is None:
             pass
         elif not Path(src_path).is_file():
-            print(f'FAILED: {src_path}: no such file (pass --source, or --fetch to download '
-                  f'{spec["source"]["url"]})', file=sys.stderr)
+            print(
+                f"FAILED: {src_path}: no such file (pass --source, or --fetch to download "
+                f"{spec['source']['url']})",
+                file=sys.stderr,
+            )
             return 1
-        elif sha256_file(src_path) != spec['source']['sha256']:
+        elif sha256_file(src_path) != spec["source"]["sha256"]:
             digest = sha256_file(src_path)
-            print(f'FAILED: {src_path} is not the pinned vendor file (sha256 {digest}, not '
-                  f'{spec["source"]["sha256"]}); the model\'s copyright names that file',
-                  file=sys.stderr)
+            print(
+                f"FAILED: {src_path} is not the pinned vendor file (sha256 {digest}, not "
+                f"{spec['source']['sha256']}); the model's copyright names that file",
+                file=sys.stderr,
+            )
             return 1
         given = {}
         for item in args.module_source:
-            name, sep, path = item.partition('=')
+            name, sep, path = item.partition("=")
             if not sep or not name or not path:
-                parser.error(f'--module-source {item!r}: give NAME=FILE')
+                parser.error(f"--module-source {item!r}: give NAME=FILE")
             given[name] = Path(path)
         modules = module_paths(spec, args.cache, args.fetch, given)
-        target = REPO / spec['output']
+        target = REPO / spec["output"]
 
         def record(model, summary):
             # a board's master is also written as OBJ and MTL, from the GLB itself
-            obj = (export_obj.write(model, spec['board'])
-                   if export_obj.applies(spec['output']) else None)
+            obj = (
+                export_obj.write(model, spec["board"])
+                if export_obj.applies(spec["output"])
+                else None
+            )
             data = source_json(spec, model, summary, obj)
-            dest = spec['_dir'] / 'source.json'
-            dest.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n')
-            print(f'wrote {rel(dest)}: gzip {data["model_gzip_bytes"]} bytes')
+            dest = spec["_dir"] / "source.json"
+            dest.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+            print(f"wrote {rel(dest)}: gzip {data['model_gzip_bytes']} bytes")
             if obj:
-                print(f'wrote {obj["obj"]} ({obj["obj_bytes"]} bytes) and {obj["mtl"]}')
+                print(f"wrote {obj['obj']} ({obj['obj_bytes']} bytes) and {obj['mtl']}")
 
         if args.web_px_per_mm is not None:
             ppm = args.web_px_per_mm
@@ -2217,10 +2563,13 @@ def main(argv=None):
                     return 0 if compare_glb(out, web, 0.0) else 1
                 shutil.copyfile(out, web)
             data = web_json(spec, web, summary, ppm)
-            (spec['_dir'] / 'web.json').write_text(
-                json.dumps(data, indent=2, ensure_ascii=False) + '\n')
-            print(f'wrote {rel(web)} and its web.json: {data["model_bytes"]} bytes, '
-                  f'{data["triangles"]} triangles')
+            (spec["_dir"] / "web.json").write_text(
+                json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+            )
+            print(
+                f"wrote {rel(web)} and its web.json: {data['model_bytes']} bytes, "
+                f"{data['triangles']} triangles"
+            )
             return 0
         if args.check:
             reference = args.out or target
@@ -2229,10 +2578,9 @@ def main(argv=None):
                 if args.without_legends:
                     # the model built with nothing printed on it, against the
                     # whole model less its legend meshes
-                    stripped = Path(tmp) / f'{target.stem}-stripped.glb'
+                    stripped = Path(tmp) / f"{target.stem}-stripped.glb"
                     stripped.write_bytes(glb_legends.strip(Path(reference).read_bytes()))
-                    build(spec, src_path, out, args.cache, with_legends=False,
-                          modules=modules)
+                    build(spec, src_path, out, args.cache, with_legends=False, modules=modules)
                     return 0 if compare_glb(out, stripped, 0.0) else 1
                 summary = build(spec, src_path, out, args.cache, modules=modules)
                 same = compare_glb(out, reference, args.tolerance_mm)
@@ -2242,12 +2590,16 @@ def main(argv=None):
             return 0 if same else 1
         out = args.out or target
         if args.without_legends and Path(out).resolve() == target.resolve():
-            print(f"FAILED: {out} is the spec's output, the whole model; give the lighter "
-                  f'one another name', file=sys.stderr)
+            print(
+                f"FAILED: {out} is the spec's output, the whole model; give the lighter "
+                f"one another name",
+                file=sys.stderr,
+            )
             return 1
         out.parent.mkdir(parents=True, exist_ok=True)
-        summary = build(spec, src_path, out, args.cache, with_legends=not args.without_legends,
-                        modules=modules)
+        summary = build(
+            spec, src_path, out, args.cache, with_legends=not args.without_legends, modules=modules
+        )
         if args.no_source_json or args.without_legends:
             pass
         elif Path(out).resolve() == target.resolve():
@@ -2255,10 +2607,10 @@ def main(argv=None):
         else:
             print(f"source.json not written: {out} is not the spec's output {spec['output']}")
     except SpecError as exc:
-        print(f'FAILED: {exc}', file=sys.stderr)
+        print(f"FAILED: {exc}", file=sys.stderr)
         return 1
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

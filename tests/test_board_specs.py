@@ -10,6 +10,7 @@ of those is planted here in a copy of a valid document and has to fail it.
 
 Host-only: no build, no hardware, no network.
 """
+
 from __future__ import annotations
 
 import copy
@@ -30,39 +31,85 @@ TODAY = dt.date(2026, 11, 16)
 VALID: dict = {
     "$schema": "../_shared/board.schema.json",
     "id": "sticks3",
-    "identity": {"name": "StickS3", "vendor": "M5Stack", "sku": "K150",
-                 "links": {"docs": "https://example.com/docs"}, "src": ["docs"]},
+    "identity": {
+        "name": "StickS3",
+        "vendor": "M5Stack",
+        "sku": "K150",
+        "links": {"docs": "https://example.com/docs"},
+        "src": ["docs"],
+    },
     "physical": {"width_mm": 24.0, "height_mm": 48.0, "depth_mm": 15.0, "src": ["docs"]},
     "components": [
-        {"id": "soc", "role": "soc", "part": "ESP32-S3-PICO-1-N8R8",
-         "manufacturer": "Espressif", "quantity": 1, "specs": {"flash_mb": 8},
-         "src": ["docs"]},
-        {"id": "imu", "role": "imu", "part": "BMI270", "manufacturer": "Bosch Sensortec",
-         "quantity": 1,
-         "connects_to": [{"to": "soc", "bus": "I2C", "address": "0x68",
-                          "pins": {"SDA": "GPIO47", "SCL": "GPIO48"},
-                          "pulls": [{"signal": "SDA", "direction": "up", "ohms": 4700,
-                                     "to": "3V3"}],
-                          "src": ["schematic"]}],
-         "src": ["docs"]},
-        {"id": "lcd", "role": "display_panel", "quantity": 1,
-         "specs": {"resolution_px": [135, 240]}, "src": ["docs"]},
-        {"id": "lcd-ic", "role": "display_controller", "part": "ST7789P3", "quantity": 1,
-         "src": ["docs"]},
+        {
+            "id": "soc",
+            "role": "soc",
+            "part": "ESP32-S3-PICO-1-N8R8",
+            "manufacturer": "Espressif",
+            "quantity": 1,
+            "specs": {"flash_mb": 8},
+            "src": ["docs"],
+        },
+        {
+            "id": "imu",
+            "role": "imu",
+            "part": "BMI270",
+            "manufacturer": "Bosch Sensortec",
+            "quantity": 1,
+            "connects_to": [
+                {
+                    "to": "soc",
+                    "bus": "I2C",
+                    "address": "0x68",
+                    "pins": {"SDA": "GPIO47", "SCL": "GPIO48"},
+                    "pulls": [{"signal": "SDA", "direction": "up", "ohms": 4700, "to": "3V3"}],
+                    "src": ["schematic"],
+                }
+            ],
+            "src": ["docs"],
+        },
+        {
+            "id": "lcd",
+            "role": "display_panel",
+            "quantity": 1,
+            "specs": {"resolution_px": [135, 240]},
+            "src": ["docs"],
+        },
+        {
+            "id": "lcd-ic",
+            "role": "display_controller",
+            "part": "ST7789P3",
+            "quantity": 1,
+            "src": ["docs"],
+        },
     ],
     "absent": [{"role": "rtc", "src": ["docs"]}],
     "sources": {
-        "docs": {"url": "https://example.com/docs", "title": "Docs", "kind": "vendor_docs",
-                 "checked": "2026-11-16"},
-        "schematic": {"url": "https://example.com/sch.pdf", "title": "Schematic",
-                      "kind": "schematic", "checked": "2026-11-01", "found_via": "docs"},
-        "caliper": {"title": "Caliper", "kind": "measured", "checked": "2026-10-01",
-                    "method": "Digital caliper, 0.01 mm"},
+        "docs": {
+            "url": "https://example.com/docs",
+            "title": "Docs",
+            "kind": "vendor_docs",
+            "checked": "2026-11-16",
+        },
+        "schematic": {
+            "url": "https://example.com/sch.pdf",
+            "title": "Schematic",
+            "kind": "schematic",
+            "checked": "2026-11-01",
+            "found_via": "docs",
+        },
+        "caliper": {
+            "title": "Caliper",
+            "kind": "measured",
+            "checked": "2026-10-01",
+            "method": "Digital caliper, 0.01 mm",
+        },
     },
 }
-MEASURED = {"vendor": "M5Stack", "sku": "K150",
-            "display": {"controller": "ST7789P3", "resolution_w_px": 135,
-                        "resolution_h_px": 240}}
+MEASURED = {
+    "vendor": "M5Stack",
+    "sku": "K150",
+    "display": {"controller": "ST7789P3", "resolution_w_px": 135, "resolution_h_px": 240},
+}
 
 
 def problems(doc: dict, measured: dict | None = MEASURED) -> list[str]:
@@ -83,8 +130,7 @@ def test_every_board_json_in_the_tree_passes():
 
 def test_the_board_list_is_the_tree():
     """The check walks every board folder, and only those."""
-    folders = sorted(p.name for p in ROOT.iterdir()
-                     if (p / "measurements.json").is_file())
+    folders = sorted(p.name for p in ROOT.iterdir() if (p / "measurements.json").is_file())
     assert sorted(specs.BOARDS) == folders
 
 
@@ -104,8 +150,9 @@ PLANTED = {
     "a value with no src": lambda d: d["components"][0].pop("src"),
     "an empty src": lambda d: d["components"][0].update(src=[]),
     "a src that resolves to nothing": lambda d: d["identity"].update(src=["nowhere"]),
-    "a connection's own src that resolves to nothing":
-        lambda d: d["components"][1]["connects_to"][0].update(src=["nowhere"]),
+    "a connection's own src that resolves to nothing": lambda d: d["components"][1]["connects_to"][
+        0
+    ].update(src=["nowhere"]),
     "an absent role with no src": lambda d: d["absent"][0].pop("src"),
     "an http address": lambda d: d["sources"]["docs"].update(url="http://example.com/docs"),
     "a source with no address": lambda d: d["sources"]["docs"].pop("url"),
@@ -117,21 +164,23 @@ PLANTED = {
     "an unknown role": lambda d: d["components"][0].update(role="cpu"),
     "an unknown property": lambda d: d["components"][0].update(colour="blue"),
     "a quantity of zero": lambda d: d["components"][0].update(quantity=0),
-    "a bus address that is no address": lambda d: d["components"][1]["connects_to"][0]
-        .update(address="68"),
-    "a pull with no direction": lambda d: d["components"][1]["connects_to"][0]["pulls"][0]
-        .pop("direction"),
-    "a connection to nothing": lambda d: d["components"][1]["connects_to"][0]
-        .update(to="nothing"),
+    "a bus address that is no address": lambda d: d["components"][1]["connects_to"][0].update(
+        address="68"
+    ),
+    "a pull with no direction": lambda d: d["components"][1]["connects_to"][0]["pulls"][0].pop(
+        "direction"
+    ),
+    "a connection to nothing": lambda d: d["components"][1]["connects_to"][0].update(to="nothing"),
     "two components with one id": lambda d: d["components"][1].update(id="soc"),
     "another folder's id": lambda d: d.update(id="cardputer"),
-    "a vendor measurements.json disagrees with": lambda d: d["identity"]
-        .update(vendor="LILYGO"),
+    "a vendor measurements.json disagrees with": lambda d: d["identity"].update(vendor="LILYGO"),
     "a SKU measurements.json disagrees with": lambda d: d["identity"].update(sku="K016"),
-    "a display controller measurements.json disagrees with": lambda d: d["components"][3]
-        .update(part="ILI9342C"),
-    "a resolution measurements.json disagrees with": lambda d: d["components"][2]["specs"]
-        .update(resolution_px=[240, 320]),
+    "a display controller measurements.json disagrees with": lambda d: d["components"][3].update(
+        part="ILI9342C"
+    ),
+    "a resolution measurements.json disagrees with": lambda d: d["components"][2]["specs"].update(
+        resolution_px=[240, 320]
+    ),
     "no identity": lambda d: d.pop("identity"),
     "no sources": lambda d: d.pop("sources"),
 }

@@ -34,6 +34,7 @@ Path patterns and markers only: nothing here measures a size.
 
 Usage: ``python3 _shared/check_public_tree.py [ROOT]``; exit 1 on a finding.
 """
+
 from __future__ import annotations
 
 import re
@@ -46,23 +47,46 @@ ALLOWED_RASTERS = {"models-contact-sheet.png"}
 RASTER = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".avif", ".bmp", ".tif", ".tiff", ".heic"}
 VENDOR = {".pdf", ".stl", ".step", ".stp", ".obj", ".mtl", ".3mf", ".f3d", ".zip", ".dxf", ".dwg"}
 FOLDERS = {"reference", "reference_candidates", "raw", "photos"}
-SVG_MARKERS = (re.compile(r"<image\b"), re.compile(r"data:image"),
-               re.compile(r"""id=["']screen-demo["']"""))
-TEXT = {".md", ".json", ".yaml", ".yml", ".py", ".toml", ".txt", ".cfg", ".ini", ".sh",
-        ".kicad_sch", ".kicad_pro", ".kicad_sym", ""}
+SVG_MARKERS = (
+    re.compile(r"<image\b"),
+    re.compile(r"data:image"),
+    re.compile(r"""id=["']screen-demo["']"""),
+)
+TEXT = {
+    ".md",
+    ".json",
+    ".yaml",
+    ".yml",
+    ".py",
+    ".toml",
+    ".txt",
+    ".cfg",
+    ".ini",
+    ".sh",
+    ".kicad_sch",
+    ".kicad_pro",
+    ".kicad_sym",
+    "",
+}
 PROJECT_EMAIL = "jmrplens@kleidos.dev"
 PRIVATE = (
-    ("a serial-port device path",
-     re.compile(r"/dev/(?:cu|tty)\.[\w-]+|/dev/tty(?:USB|ACM|S)\d+")),
-    ("a MAC address",
-     re.compile(r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f:])")),
-    ("a private IPv4 address",
-     re.compile(r"(?<![\w.])(?:10\.\d{1,3}|192\.168|172\.(?:1[6-9]|2\d|3[01]))"
-                r"\.\d{1,3}\.\d{1,3}(?![\w.])")),
-    ("a home-directory path",
-     re.compile(r"/(?:Users|home)/[\w.-]+|[A-Za-z]:\\Users\\")),
-    ("an e-mail address other than the project's",
-     re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b")),
+    ("a serial-port device path", re.compile(r"/dev/(?:cu|tty)\.[\w-]+|/dev/tty(?:USB|ACM|S)\d+")),
+    (
+        "a MAC address",
+        re.compile(r"(?<![0-9A-Fa-f:])(?:[0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}(?![0-9A-Fa-f:])"),
+    ),
+    (
+        "a private IPv4 address",
+        re.compile(
+            r"(?<![\w.])(?:10\.\d{1,3}|192\.168|172\.(?:1[6-9]|2\d|3[01]))"
+            r"\.\d{1,3}\.\d{1,3}(?![\w.])"
+        ),
+    ),
+    ("a home-directory path", re.compile(r"/(?:Users|home)/[\w.-]+|[A-Za-z]:\\Users\\")),
+    (
+        "an e-mail address other than the project's",
+        re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b"),
+    ),
 )
 
 
@@ -71,17 +95,24 @@ def tracked(root: Path) -> list[Path]:
     try:
         out = subprocess.run(
             ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
-            cwd=root, capture_output=True, check=True).stdout
+            cwd=root,
+            capture_output=True,
+            check=True,
+        ).stdout
         return [root / name for name in out.decode("utf-8").split("\0") if name]
-    except (OSError, subprocess.CalledProcessError):
+    except OSError, subprocess.CalledProcessError:
         return [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts]
 
 
 def own_schematic_pdf(root: Path, rel: Path) -> bool:
     """True for ``<board>/schematic/<board>.pdf`` next to the KiCad schematic it was exported from."""
     parts = rel.parts
-    return (len(parts) == 3 and parts[1] == "schematic" and rel.name == f"{parts[0]}.pdf"
-            and (root / parts[0] / "schematic" / f"{parts[0]}.kicad_sch").is_file())
+    return (
+        len(parts) == 3
+        and parts[1] == "schematic"
+        and rel.name == f"{parts[0]}.pdf"
+        and (root / parts[0] / "schematic" / f"{parts[0]}.kicad_sch").is_file()
+    )
 
 
 def own_model_export(root: Path, rel: Path) -> bool:
@@ -92,10 +123,14 @@ def own_model_export(root: Path, rel: Path) -> bool:
     from somewhere else, and is refused.
     """
     parts = rel.parts
-    return (len(parts) == 3 and parts[1] == "model" and rel.suffix.lower() in {".obj", ".mtl"}
-            and rel.stem == parts[0]
-            and (root / parts[0] / "model" / f"{parts[0]}.glb").is_file()
-            and (root / parts[0] / "model" / "spec.json").is_file())
+    return (
+        len(parts) == 3
+        and parts[1] == "model"
+        and rel.suffix.lower() in {".obj", ".mtl"}
+        and rel.stem == parts[0]
+        and (root / parts[0] / "model" / f"{parts[0]}.glb").is_file()
+        and (root / parts[0] / "model" / "spec.json").is_file()
+    )
 
 
 def own_fixture_stl(root: Path, rel: Path) -> bool:
@@ -106,15 +141,20 @@ def own_fixture_stl(root: Path, rel: Path) -> bool:
     other bytes is not admitted.
     """
     parts = rel.parts
-    if not (len(parts) == 5 and parts[:3] == ("_shared", "fixtures", "faces")
-            and parts[3] == "vendor" and rel.suffix.lower() == ".stl"):
+    if not (
+        len(parts) == 5
+        and parts[:3] == ("_shared", "fixtures", "faces")
+        and parts[3] == "vendor"
+        and rel.suffix.lower() == ".stl"
+    ):
         return False
     shared = str(root / "_shared")
     sys.path.insert(0, shared)
     try:
         import face_fixture
+
         written = face_fixture.files()
-    except (ImportError, OSError):
+    except ImportError, OSError:
         return False
     finally:
         sys.path.remove(shared)
@@ -147,8 +187,12 @@ def findings(root: Path) -> list[str]:
             found.append(f"{rel}: under a vendor reference folder")
         elif suffix in RASTER and name not in ALLOWED_RASTERS:
             found.append(f"{rel}: a raster image")
-        elif (suffix in VENDOR and not own_schematic_pdf(root, rel)
-              and not own_fixture_stl(root, rel) and not own_model_export(root, rel)):
+        elif (
+            suffix in VENDOR
+            and not own_schematic_pdf(root, rel)
+            and not own_fixture_stl(root, rel)
+            and not own_model_export(root, rel)
+        ):
             found.append(f"{rel}: a vendor file type ({suffix})")
         elif name.endswith("_reference.svg") or name.endswith("-silhouette.svg"):
             found.append(f"{rel}: a reference overlay or a traced silhouette")

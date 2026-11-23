@@ -27,6 +27,7 @@ Usage::
 
 Exit status 0 when every file checked passes, 1 otherwise.
 """
+
 from __future__ import annotations
 
 import datetime as _dt
@@ -38,12 +39,23 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "_shared" / "board.schema.json"
 BOARDS = (
-    "sticks3", "m5stickc-plus2", "m5stickc-plus1", "m5stickc-plus-se",
-    "coreink", "cores3-se", "m5stack-core2-v13", "cardputer", "tdeck-plus",
+    "sticks3",
+    "m5stickc-plus2",
+    "m5stickc-plus1",
+    "m5stickc-plus-se",
+    "coreink",
+    "cores3-se",
+    "m5stack-core2-v13",
+    "cardputer",
+    "tdeck-plus",
 )
 
 _TYPES = {
-    "object": dict, "array": list, "string": str, "boolean": bool, "null": type(None),
+    "object": dict,
+    "array": list,
+    "string": str,
+    "boolean": bool,
+    "null": type(None),
 }
 
 
@@ -144,7 +156,7 @@ def _walk_src(node, where: str):
 def _real_date(text: str) -> _dt.date | None:
     try:
         return _dt.date.fromisoformat(text)
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         return None
 
 
@@ -182,8 +194,9 @@ def source_problems(doc: dict, today: _dt.date) -> tuple[list[str], list[str]]:
                 problems.append(f"{where}: found_via names itself")
             else:
                 cited.add(via)
-    notices = [f"$.sources.{source_id}: not cited yet" for source_id in sources
-               if source_id not in cited]
+    notices = [
+        f"$.sources.{source_id}: not cited yet" for source_id in sources if source_id not in cited
+    ]
     return problems, notices
 
 
@@ -198,11 +211,15 @@ def component_problems(doc: dict) -> list[str]:
     for index, component in enumerate(components):
         for link_index, link in enumerate(component.get("connects_to", [])):
             if isinstance(link, dict) and link.get("to") not in known:
-                problems.append(f"$.components[{index}].connects_to[{link_index}]: "
-                                f"'{link.get('to')}' is no component of this file")
+                problems.append(
+                    f"$.components[{index}].connects_to[{link_index}]: "
+                    f"'{link.get('to')}' is no component of this file"
+                )
             if isinstance(link, dict) and link.get("to") == component.get("id"):
-                problems.append(f"$.components[{index}].connects_to[{link_index}]: "
-                                "a component connected to itself")
+                problems.append(
+                    f"$.components[{index}].connects_to[{link_index}]: "
+                    "a component connected to itself"
+                )
     return problems
 
 
@@ -215,8 +232,10 @@ def measurement_problems(doc: dict, measured: dict) -> list[str]:
     identity = doc.get("identity", {})
     for field in ("vendor", "sku"):
         if field in identity and field in measured and identity[field] != measured[field]:
-            problems.append(f"$.identity.{field}: {identity[field]!r} but measurements.json "
-                            f"says {measured[field]!r}")
+            problems.append(
+                f"$.identity.{field}: {identity[field]!r} but measurements.json "
+                f"says {measured[field]!r}"
+            )
     display = measured.get("display", {})
     for component in doc.get("components", []):
         if not isinstance(component, dict):
@@ -224,24 +243,31 @@ def measurement_problems(doc: dict, measured: dict) -> list[str]:
         role = component.get("role")
         if role == "display_controller" and "part" in component and display.get("controller"):
             if component["part"].lower() != str(display["controller"]).lower():
-                problems.append(f"display controller {component['part']!r} but "
-                                f"measurements.json says {display['controller']!r}")
+                problems.append(
+                    f"display controller {component['part']!r} but "
+                    f"measurements.json says {display['controller']!r}"
+                )
         if role == "display_panel":
             resolution = (component.get("specs") or {}).get("resolution_px")
             wanted = (display.get("resolution_w_px"), display.get("resolution_h_px"))
             if resolution is not None and None not in wanted:
                 if sorted(resolution) != sorted(wanted):
-                    problems.append(f"panel resolution {resolution} but measurements.json "
-                                    f"says {list(wanted)}")
+                    problems.append(
+                        f"panel resolution {resolution} but measurements.json says {list(wanted)}"
+                    )
     return problems
 
 
 # --------------------------------------------------------------- the check
 
 
-def check_document(doc: dict, board: str, measured: dict | None,
-                   schema: dict | None = None,
-                   today: _dt.date | None = None) -> tuple[list[str], list[str]]:
+def check_document(
+    doc: dict,
+    board: str,
+    measured: dict | None,
+    schema: dict | None = None,
+    today: _dt.date | None = None,
+) -> tuple[list[str], list[str]]:
     """(problems, notices) of one board.json already parsed."""
     schema = schema or load_schema()
     today = today or _dt.date.today()
@@ -265,8 +291,9 @@ def check_board(board: str, root: Path = ROOT) -> tuple[list[str], list[str]] | 
     except json.JSONDecodeError as error:
         return [f"not JSON: {error}"], []
     measured_path = root / board / "measurements.json"
-    measured = (json.loads(measured_path.read_text(encoding="utf-8"))
-                if measured_path.is_file() else None)
+    measured = (
+        json.loads(measured_path.read_text(encoding="utf-8")) if measured_path.is_file() else None
+    )
     return check_document(doc, board, measured)
 
 

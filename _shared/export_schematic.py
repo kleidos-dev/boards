@@ -39,6 +39,7 @@ Usage::
 ``KICAD_CLI`` also names kicad-cli. ``--out`` writes the PDF and the SVGs to
 another folder instead of the board's. Exit status 0 when every check passes.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -58,8 +59,8 @@ import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from b
 from check_schematic import additions, compare, index_pages  # noqa: E402
 from paths import ROOT  # noqa: E402
 
-GROUND = "dark"                  # what is published and committed
-THEME = kit.theme_name(GROUND)   # the name kicad-cli is given: the theme file's name in colors/
+GROUND = "dark"  # what is published and committed
+THEME = kit.theme_name(GROUND)  # the name kicad-cli is given: the theme file's name in colors/
 THEME_FILE = kit.theme_file(GROUND)
 SHEET_FILE = kit.sheet(GROUND)
 
@@ -78,14 +79,18 @@ def line_mil(folder: Path, board: str) -> float:
     widths = {c["wire_width"] for c in pro["net_settings"]["classes"]}
     widths.add(pro["schematic"]["drawing"]["default_line_thickness"])
     if len(widths) != 1:
-        raise SystemExit(f"{board}.kicad_pro: the wire and default line widths differ ({sorted(widths)} mil)")
+        raise SystemExit(
+            f"{board}.kicad_pro: the wire and default line widths differ ({sorted(widths)} mil)"
+        )
     return widths.pop()
 
 
 def check_svg(svg: Path, colours: dict[str, str], width_mm: float, wires: bool = True) -> list[str]:
     """The page background is the theme's, and every wire-coloured line has one width (the kit's check)."""
     if round(width_mm, 4) != round(kit.connection_mm(), 4):
-        return [f"{svg.name}: the project's line width {width_mm:.4f} mm is not the kit's {kit.connection_mm():.4f}"]
+        return [
+            f"{svg.name}: the project's line width {width_mm:.4f} mm is not the kit's {kit.connection_mm():.4f}"
+        ]
     return kit.svg_findings(svg, GROUND, wires)
 
 
@@ -94,7 +99,9 @@ def main(argv: list[str]) -> int:
     ap.add_argument("board")
     ap.add_argument("--kicad-cli", default=os.environ.get("KICAD_CLI", "kicad-cli"))
     ap.add_argument("--no-export", action="store_true", help="check only, write no PDF or SVG")
-    ap.add_argument("--out", type=Path, help="write the PDF and svg/ here instead of the board's folder")
+    ap.add_argument(
+        "--out", type=Path, help="write the PDF and svg/ here instead of the board's folder"
+    )
     args = ap.parse_args(argv)
     folder = ROOT / args.board / "schematic"
     out_dir = (args.out or folder).resolve()
@@ -115,16 +122,29 @@ def main(argv: list[str]) -> int:
         return 1
 
     xml = tmp / "netlist.xml"
-    run(args.kicad_cli, ["sch", "export", "netlist", "--format", "kicadxml", "-o", str(xml), sch], folder, env)
+    run(
+        args.kicad_cli,
+        ["sch", "export", "netlist", "--format", "kicadxml", "-o", str(xml), sch],
+        folder,
+        env,
+    )
     errors = compare(args.board, xml) + additions(args.board) + index_pages(args.board)
     for e in errors:
         print(f"FAIL {e}")
     if errors:
         return 1
-    n = len(yaml.safe_load((folder / "netlist.yaml").read_text(encoding="utf-8")).get("kleidos") or [])
-    print("netlist: the drawing matches netlist.yaml, pin for pin"
-          + (f"; {n} Kleidos additions and corrections, each marked and listed, and again wherever an "
-             "index page shows its element" if n else ""))
+    n = len(
+        yaml.safe_load((folder / "netlist.yaml").read_text(encoding="utf-8")).get("kleidos") or []
+    )
+    print(
+        "netlist: the drawing matches netlist.yaml, pin for pin"
+        + (
+            f"; {n} Kleidos additions and corrections, each marked and listed, and again wherever an "
+            "index page shows its element"
+            if n
+            else ""
+        )
+    )
     if args.no_export:
         return 0
 
@@ -135,12 +155,14 @@ def main(argv: list[str]) -> int:
         print(out.stdout, out.stderr)
         return 1
     from pypdf import PdfReader
+
     errors = kit.pdf_findings(PdfReader(pdf), GROUND)
     for e in errors:
         print(f"FAIL the mark: {e}")
     if errors:
         return 1
     import schematic_pdf
+
     errors = schematic_pdf.finish(args.board, pdf)
     for e in errors:
         print(f"FAIL {e}")
@@ -155,7 +177,9 @@ def main(argv: list[str]) -> int:
     # page order: the root first, then the sheets as layout.yaml lists them
     layout = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
     names = [(f"{args.board}.svg", "contents")] + [
-        (f"{args.board}-{sh['name']}.svg", sh["file"].removesuffix(".kicad_sch")) for sh in layout["sheets"]]
+        (f"{args.board}-{sh['name']}.svg", sh["file"].removesuffix(".kicad_sch"))
+        for sh in layout["sheets"]
+    ]
     colours = theme_colours()
     width_mm = line_mil(folder, args.board) * 0.0254
     errors = []
@@ -170,8 +194,10 @@ def main(argv: list[str]) -> int:
         print(f"FAIL {e}")
     if errors:
         return 1
-    print(f"theme: {THEME}, background {colours['background']} on every page; "
-          f"wires and pin lines {width_mm:.4f} mm; the drawing sheet {SHEET_FILE.name}, the mark on every page")
+    print(
+        f"theme: {THEME}, background {colours['background']} on every page; "
+        f"wires and pin lines {width_mm:.4f} mm; the drawing sheet {SHEET_FILE.name}, the mark on every page"
+    )
     dest = out_dir / "svg"
     if dest.exists():
         shutil.rmtree(dest)
@@ -181,6 +207,7 @@ def main(argv: list[str]) -> int:
     print(f"wrote {pdf.name} and {len(names)} SVGs in {dest}")
 
     import check_schematic_links
+
     return check_schematic_links.main([args.board, "--pdf", str(pdf)])
 
 

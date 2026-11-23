@@ -48,14 +48,14 @@ import numpy as np
 #: that place its drawing's origin: the build-frame coordinate of ``u`` = 0 on
 #: the ``u`` axis, then of ``v`` = 0 on the up axis.
 FACES = {
-    'front': ((0, 1), (1, 1), ('left_x', 'top_y')),
-    'back': ((0, -1), (1, 1), ('right_x', 'top_y')),
-    'top': ((0, 1), (2, -1), ('left_x', 'back_z')),
-    'bottom': ((0, 1), (2, 1), ('left_x', 'front_z')),
-    'left': ((2, 1), (1, 1), ('back_z', 'top_y')),
-    'right': ((2, -1), (1, 1), ('front_z', 'top_y')),
+    "front": ((0, 1), (1, 1), ("left_x", "top_y")),
+    "back": ((0, -1), (1, 1), ("right_x", "top_y")),
+    "top": ((0, 1), (2, -1), ("left_x", "back_z")),
+    "bottom": ((0, 1), (2, 1), ("left_x", "front_z")),
+    "left": ((2, 1), (1, 1), ("back_z", "top_y")),
+    "right": ((2, -1), (1, 1), ("front_z", "top_y")),
 }
-AXES = 'xyz'
+AXES = "xyz"
 
 
 def unit(axis, sign):
@@ -67,7 +67,7 @@ def unit(axis, sign):
 def basis(face):
     """The rotation whose rows are the face's ``u``, its up and its outward normal."""
     if face not in FACES:
-        raise ValueError(f'no face {face!r}; the faces are {list(FACES)}')
+        raise ValueError(f"no face {face!r}; the faces are {list(FACES)}")
     (u_axis, u_sign), (up_axis, up_sign), _ = FACES[face]
     a, b = unit(u_axis, u_sign), unit(up_axis, up_sign)
     return np.vstack([a, b, np.cross(a, b)])
@@ -92,7 +92,7 @@ def to_face(points, face):
     what is measured on a front is measured with the arithmetic it always had.
     """
     pts = np.asarray(points, dtype=float)
-    if face == 'front':
+    if face == "front":
         return pts
     return pts @ basis(face).T
 
@@ -100,6 +100,7 @@ def to_face(points, face):
 @dataclass
 class FaceFrame:
     """Where a face's drawing lies in the build frame: its face and its origin."""
+
     #: Which face: a key of ``FACES``.
     face: str
     #: The build-frame coordinate of the drawing's ``u`` = 0 on the ``u`` axis.
@@ -115,7 +116,7 @@ class FaceFrame:
         """
         (u_axis, u_sign), (up_axis, up_sign), _ = FACES[self.face]
         c = np.asarray(center, dtype=float)
-        if self.face == 'front':
+        if self.face == "front":
             # the front keeps the arithmetic the builder always wrote it with
             return self.u0 - float(c[0]), self.v0 - float(c[1])
         return u_sign * (self.u0 - float(c[u_axis])), up_sign * (self.v0 - float(c[up_axis]))
@@ -127,8 +128,12 @@ class FaceFrame:
         c = np.asarray(center, dtype=float)
         pts = np.asarray(ab, dtype=float)
         out = np.empty((len(pts), 3))
-        out[:, u_axis] = pts[:, 0] + float(c[u_axis]) if u_sign > 0 else float(c[u_axis]) - pts[:, 0]
-        out[:, up_axis] = pts[:, 1] + float(c[up_axis]) if up_sign > 0 else float(c[up_axis]) - pts[:, 1]
+        out[:, u_axis] = (
+            pts[:, 0] + float(c[u_axis]) if u_sign > 0 else float(c[u_axis]) - pts[:, 0]
+        )
+        out[:, up_axis] = (
+            pts[:, 1] + float(c[up_axis]) if up_sign > 0 else float(c[up_axis]) - pts[:, 1]
+        )
         out[:, n_axis] = float(height)
         return out
 
@@ -145,12 +150,12 @@ class FaceFrame:
 def face_frame(face, numbers):
     """A FaceFrame from ``{key: value}`` written under the face's own keys."""
     if face not in FACES:
-        raise ValueError(f'no face {face!r}; the faces are {list(FACES)}')
+        raise ValueError(f"no face {face!r}; the faces are {list(FACES)}")
     keys = FACES[face][2]
     missing = [k for k in keys if k not in numbers]
-    extra = sorted(set(numbers) - set(keys) - {'note'})
+    extra = sorted(set(numbers) - set(keys) - {"note"})
     if missing or extra:
-        raise ValueError(f'the {face} frame takes {list(keys)}; got {sorted(numbers)}')
+        raise ValueError(f"the {face} frame takes {list(keys)}; got {sorted(numbers)}")
     return FaceFrame(face, float(numbers[keys[0]]), float(numbers[keys[1]]))
 
 

@@ -10,12 +10,18 @@
 ``.github/workflows/check.yml`` selects them with ``-m``; ``docs/models-and-drawings.md``,
 "Tests and CI", says which job runs which.
 """
+
 from __future__ import annotations
 
 import pytest
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    config.addinivalue_line("markers", "models: reads a board model; run when a model's inputs change")
-    config.addinivalue_line("markers", "selftest: a checker's planted-defect selftest or a fixture "
-                                       "rebuild; slow, run when a checker or its fixtures change")
+    config.addinivalue_line(
+        "markers", "models: reads a board model; run when a model's inputs change"
+    )
+    config.addinivalue_line(
+        "markers",
+        "selftest: a checker's planted-defect selftest or a fixture "
+        "rebuild; slow, run when a checker or its fixtures change",
+    )

@@ -83,7 +83,7 @@ sys.path.insert(0, str(HERE))
 
 import matplotlib  # noqa: E402
 
-matplotlib.use('Agg')
+matplotlib.use("Agg")
 import glb_legends  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import model_raster  # noqa: E402
@@ -95,15 +95,16 @@ import trimesh  # noqa: E402
 from shapely.ops import unary_union  # noqa: E402
 
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
+
 #: How far a legend may lie from where the drawing prints it, in mm.
 LEGEND_TOLERANCE_MM = 0.02
-VIEWS = ('front', 'left', 'top')
+VIEWS = ("front", "left", "top")
 #: The view a board with a back drawing (``svg/back.svg``) is also drawn in.
-BACK_VIEW = 'back'
+BACK_VIEW = "back"
 #: Pixels per mm of the shaded views.
 VIEW_PPM = 8
 #: Direction from the model towards the viewer, per view (glTF frame).
-TOWARDS_VIEWER = {'front': (0, 0, 1), 'left': (-1, 0, 0), 'top': (0, 1, 0), 'back': (0, 0, -1)}
+TOWARDS_VIEWER = {"front": (0, 0, 1), "left": (-1, 0, 0), "top": (0, 1, 0), "back": (0, 0, -1)}
 
 
 # ---------------------------------------------------------------- model
@@ -111,16 +112,16 @@ TOWARDS_VIEWER = {'front': (0, 0, 1), 'left': (-1, 0, 0), 'top': (0, 1, 0), 'bac
 
 def glb_json(path):
     raw = Path(path).read_bytes()
-    if struct.unpack_from('<I', raw, 0)[0] != 0x46546C67:
-        raise ValueError(f'{path}: not a GLB')
-    jlen = struct.unpack_from('<I', raw, 12)[0]
-    return json.loads(raw[20:20 + jlen])
+    if struct.unpack_from("<I", raw, 0)[0] != 0x46546C67:
+        raise ValueError(f"{path}: not a GLB")
+    jlen = struct.unpack_from("<I", raw, 12)[0]
+    return json.loads(raw[20 : 20 + jlen])
 
 
 def quant_step_mm(path):
     """The quantization step of a model's quantized meshes, in mm (its nodes'
     scale), or 0.01 when it has none."""
-    scales = [n['scale'][0] for n in glb_json(path)['nodes'] if 'scale' in n]
+    scales = [n["scale"][0] for n in glb_json(path)["nodes"] if "scale" in n]
     return round(min(scales) * 1000.0, 9) if scales else 0.01
 
 
@@ -133,14 +134,14 @@ def load_model(path):
     """[(node name, mesh in mm, sRGB color, alpha)] in the glTF frame."""
     js = glb_json(path)
     looks = {}
-    for node in js['nodes'][1:]:
-        if 'mesh' not in node:
+    for node in js["nodes"][1:]:
+        if "mesh" not in node:
             continue
-        prim = js['meshes'][node['mesh']]['primitives'][0]
-        mat = js['materials'][prim['material']] if 'material' in prim else {}
-        f = mat.get('pbrMetallicRoughness', {}).get('baseColorFactor', [0.6, 0.6, 0.6, 1.0])
-        alpha = f[3] if mat.get('alphaMode') == 'BLEND' else 1.0
-        looks[node['name']] = (linear_to_srgb(f[:3]), alpha)
+        prim = js["meshes"][node["mesh"]]["primitives"][0]
+        mat = js["materials"][prim["material"]] if "material" in prim else {}
+        f = mat.get("pbrMetallicRoughness", {}).get("baseColorFactor", [0.6, 0.6, 0.6, 1.0])
+        alpha = f[3] if mat.get("alphaMode") == "BLEND" else 1.0
+        looks[node["name"]] = (linear_to_srgb(f[:3]), alpha)
     scene = trimesh.load(str(path))
     out = []
     for node in scene.graph.nodes_geometry:
@@ -160,7 +161,7 @@ def concat(meshes):
 # ---------------------------------------------------------------- front.svg
 
 
-_TOKEN = re.compile(r'[MmLlHhVvAaCcQqZz]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?')
+_TOKEN = re.compile(r"[MmLlHhVvAaCcQqZz]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?")
 
 
 def _arc(x1, y1, rx, ry, phi_deg, fa, fs, x2, y2, step=0.15):
@@ -172,11 +173,11 @@ def _arc(x1, y1, rx, ry, phi_deg, fa, fs, x2, y2, step=0.15):
     dx2, dy2 = (x1 - x2) / 2, (y1 - y2) / 2
     x1p, y1p = cp * dx2 + sp * dy2, -sp * dx2 + cp * dy2
     rx, ry = abs(rx), abs(ry)
-    lam = x1p ** 2 / rx ** 2 + y1p ** 2 / ry ** 2
+    lam = x1p**2 / rx**2 + y1p**2 / ry**2
     if lam > 1:
         rx, ry = rx * math.sqrt(lam), ry * math.sqrt(lam)
-    num = rx ** 2 * ry ** 2 - rx ** 2 * y1p ** 2 - ry ** 2 * x1p ** 2
-    den = rx ** 2 * y1p ** 2 + ry ** 2 * x1p ** 2
+    num = rx**2 * ry**2 - rx**2 * y1p**2 - ry**2 * x1p**2
+    den = rx**2 * y1p**2 + ry**2 * x1p**2
     coef = math.sqrt(max(0.0, num / den)) if den else 0.0
     if fa == fs:
         coef = -coef
@@ -197,8 +198,12 @@ def _arc(x1, y1, rx, ry, phi_deg, fa, fs, x2, y2, step=0.15):
     pts = []
     for i in range(1, n + 1):
         t = th1 + dth * i / n
-        pts.append((cp * rx * math.cos(t) - sp * ry * math.sin(t) + cx,
-                    sp * rx * math.cos(t) + cp * ry * math.sin(t) + cy))
+        pts.append(
+            (
+                cp * rx * math.cos(t) - sp * ry * math.sin(t) + cx,
+                sp * rx * math.cos(t) + cp * ry * math.sin(t) + cy,
+            )
+        )
     return pts
 
 
@@ -206,10 +211,14 @@ def _bezier(p, steps=16):
     p = np.asarray(p, dtype=float)
     t = np.linspace(0, 1, steps + 1)[1:, None]
     if len(p) == 3:
-        q = (1 - t) ** 2 * p[0] + 2 * (1 - t) * t * p[1] + t ** 2 * p[2]
+        q = (1 - t) ** 2 * p[0] + 2 * (1 - t) * t * p[1] + t**2 * p[2]
     else:
-        q = ((1 - t) ** 3 * p[0] + 3 * (1 - t) ** 2 * t * p[1] + 3 * (1 - t) * t ** 2 * p[2]
-             + t ** 3 * p[3])
+        q = (
+            (1 - t) ** 3 * p[0]
+            + 3 * (1 - t) ** 2 * t * p[1]
+            + 3 * (1 - t) * t**2 * p[2]
+            + t**3 * p[3]
+        )
     return [tuple(v) for v in q]
 
 
@@ -222,7 +231,7 @@ def path_rings(d):
 
     def take(n):
         nonlocal i
-        vals = [float(v) for v in toks[i:i + n]]
+        vals = [float(v) for v in toks[i : i + n]]
         i += n
         return vals
 
@@ -230,7 +239,7 @@ def path_rings(d):
         if toks[i].isalpha():
             cmd = toks[i]
             i += 1
-            if cmd in 'Zz':
+            if cmd in "Zz":
                 if ring:
                     rings.append(ring)
                 ring = []
@@ -238,7 +247,7 @@ def path_rings(d):
                 continue
         rel = cmd.islower()
         c = cmd.upper()
-        if c == 'M':
+        if c == "M":
             nx, ny = take(2)
             if rel:
                 nx, ny = x + nx, y + ny
@@ -246,33 +255,33 @@ def path_rings(d):
                 rings.append(ring)
             ring = [(nx, ny)]
             x, y, sx, sy = nx, ny, nx, ny
-            cmd = 'l' if rel else 'L'  # later pairs are line-tos
-        elif c == 'L':
+            cmd = "l" if rel else "L"  # later pairs are line-tos
+        elif c == "L":
             nx, ny = take(2)
             x, y = (x + nx, y + ny) if rel else (nx, ny)
             ring.append((x, y))
-        elif c == 'H':
+        elif c == "H":
             (nx,) = take(1)
             x = x + nx if rel else nx
             ring.append((x, y))
-        elif c == 'V':
+        elif c == "V":
             (ny,) = take(1)
             y = y + ny if rel else ny
             ring.append((x, y))
-        elif c == 'A':
+        elif c == "A":
             rx, ry, phi, fa, fs, nx, ny = take(7)
             if rel:
                 nx, ny = x + nx, y + ny
             ring += _arc(x, y, rx, ry, phi, int(fa), int(fs), nx, ny)
             x, y = nx, ny
-        elif c in 'CQ':
-            k = 6 if c == 'C' else 4
+        elif c in "CQ":
+            k = 6 if c == "C" else 4
             v = take(k)
             pts = [(v[j] + (x if rel else 0), v[j + 1] + (y if rel else 0)) for j in range(0, k, 2)]
             ring += _bezier([(x, y)] + pts)
             x, y = pts[-1]
         else:
-            raise ValueError(f'unsupported path command {cmd!r}')
+            raise ValueError(f"unsupported path command {cmd!r}")
     if ring:
         rings.append(ring)
     return rings
@@ -285,29 +294,36 @@ def _attrs(tag):
 def svg_outline(svg_path):
     """(case outline polygon, screen-active box) of a front.svg, front-frame mm."""
     text = Path(svg_path).read_text()
-    body = re.sub(r'<defs>.*?</defs>', '', text, flags=re.S)
-    m = re.search(r'<(rect|path|polygon)\b[^>]*>', body)
+    body = re.sub(r"<defs>.*?</defs>", "", text, flags=re.S)
+    m = re.search(r"<(rect|path|polygon)\b[^>]*>", body)
     if not m:
-        raise ValueError(f'{svg_path}: no case outline')
+        raise ValueError(f"{svg_path}: no case outline")
     tag, a = m.group(1), _attrs(m.group(0))
-    if tag == 'rect':
-        x, y = float(a.get('x', 0)), float(a.get('y', 0))
-        w, h = float(a['width']), float(a['height'])
-        r = float(a.get('rx', a.get('ry', 0)))
-        outline = (sg.box(x + r, y + r, x + w - r, y + h - r).buffer(r, quad_segs=24)
-                   if r > 0 else sg.box(x, y, x + w, y + h))
-    elif tag == 'polygon':
-        v = [float(t) for t in re.split(r'[\s,]+', a['points'].strip())]
+    if tag == "rect":
+        x, y = float(a.get("x", 0)), float(a.get("y", 0))
+        w, h = float(a["width"]), float(a["height"])
+        r = float(a.get("rx", a.get("ry", 0)))
+        outline = (
+            sg.box(x + r, y + r, x + w - r, y + h - r).buffer(r, quad_segs=24)
+            if r > 0
+            else sg.box(x, y, x + w, y + h)
+        )
+    elif tag == "polygon":
+        v = [float(t) for t in re.split(r"[\s,]+", a["points"].strip())]
         outline = sg.Polygon(list(zip(v[0::2], v[1::2], strict=True)))
     else:
-        rings = path_rings(a['d'])
+        rings = path_rings(a["d"])
         outline = sg.Polygon(rings[0], [r for r in rings[1:] if len(r) >= 3])
     sa = re.search(r'<rect\b[^>]*id="screen-active"[^>]*>', text)
     screen = None
     if sa:
         s = _attrs(sa.group(0))
-        screen = (float(s['x']), float(s['y']), float(s['x']) + float(s['width']),
-                  float(s['y']) + float(s['height']))
+        screen = (
+            float(s["x"]),
+            float(s["y"]),
+            float(s["x"]) + float(s["width"]),
+            float(s["y"]) + float(s["height"]),
+        )
     return outline, screen
 
 
@@ -315,7 +331,7 @@ def svg_outline(svg_path):
 
 
 def largest(poly):
-    if poly.geom_type == 'Polygon':
+    if poly.geom_type == "Polygon":
         return poly
     return max(poly.geoms, key=lambda g: g.area)
 
@@ -330,19 +346,23 @@ def outline_deviation(svg_poly, model_poly):
     union = svg_poly.union(model_poly).area
     sb, mb = svg_poly.bounds, model_poly.bounds
     return {
-        'hausdorff_mm': round(a.hausdorff_distance(b), 3),
-        'svg_to_model_mean_mm': round(float(d_ab.mean()), 3),
-        'svg_to_model_max_mm': round(float(d_ab.max()), 3),
-        'iou': round(inter / union, 4) if union else 0.0,
-        'edges_mm': {'left': round(mb[0] - sb[0], 3), 'top': round(mb[1] - sb[1], 3),
-                     'right': round(mb[2] - sb[2], 3), 'bottom': round(mb[3] - sb[3], 3)},
+        "hausdorff_mm": round(a.hausdorff_distance(b), 3),
+        "svg_to_model_mean_mm": round(float(d_ab.mean()), 3),
+        "svg_to_model_max_mm": round(float(d_ab.max()), 3),
+        "iou": round(inter / union, 4) if union else 0.0,
+        "edges_mm": {
+            "left": round(mb[0] - sb[0], 3),
+            "top": round(mb[1] - sb[1], 3),
+            "right": round(mb[2] - sb[2], 3),
+            "bottom": round(mb[3] - sb[3], 3),
+        },
     }
 
 
 def to_front(points, place):
     """glTF-frame mm (x, y) -> front-frame mm (x across, y down)."""
     pts = np.asarray(points, dtype=float)
-    return np.column_stack([pts[:, 0] + place['dx'], place['dy'] - pts[:, 1]])
+    return np.column_stack([pts[:, 0] + place["dx"], place["dy"] - pts[:, 1]])
 
 
 def poly_to_front(poly, place):
@@ -352,7 +372,7 @@ def poly_to_front(poly, place):
     def one(p):
         return sg.Polygon(tf(p.exterior), [tf(r) for r in p.interiors])
 
-    if poly.geom_type == 'Polygon':
+    if poly.geom_type == "Polygon":
         return one(poly)
     return unary_union([one(p) for p in poly.geoms])
 
@@ -360,7 +380,7 @@ def poly_to_front(poly, place):
 def poly_to_back(poly, place):
     """A glTF-frame silhouette seen from the front, as the back's viewer sees it, back-frame mm."""
     front = poly_to_front(poly, place)
-    return shapely.affinity.affine_transform(front, [-1, 0, 0, 1, place['back_w'], 0])
+    return shapely.affinity.affine_transform(front, [-1, 0, 0, 1, place["back_w"], 0])
 
 
 def placement(board_dir, case_front_poly, width=None):
@@ -371,16 +391,20 @@ def placement(board_dir, case_front_poly, width=None):
     It is the back frame's ``right_x`` less the front's ``left_x`` where
     ``source.json`` records one, else *width*, the case's.
     """
-    rec = board_dir / 'model' / 'source.json'
+    rec = board_dir / "model" / "source.json"
     if rec.is_file():
-        p = json.loads(rec.read_text()).get('parameters', {})
-        c, ff = p.get('center_mm'), p.get('front_frame')
+        p = json.loads(rec.read_text()).get("parameters", {})
+        c, ff = p.get("center_mm"), p.get("front_frame")
         if c and ff:
-            back = (p.get('face_frames') or {}).get('back')
-            return {'dx': c[0] - ff['left_x'], 'dy': ff['top_y'] - c[1], 'how': 'source.json',
-                    'back_w': back['right_x'] - ff['left_x'] if back else width}
+            back = (p.get("face_frames") or {}).get("back")
+            return {
+                "dx": c[0] - ff["left_x"],
+                "dy": ff["top_y"] - c[1],
+                "how": "source.json",
+                "back_w": back["right_x"] - ff["left_x"] if back else width,
+            }
     minx, _, _, maxy = case_front_poly.bounds
-    return {'dx': -minx, 'dy': maxy, 'how': 'silhouette top-left', 'back_w': width}
+    return {"dx": -minx, "dy": maxy, "how": "silhouette top-left", "back_w": width}
 
 
 # ---------------------------------------------------------------- drawing
@@ -389,13 +413,13 @@ def placement(board_dir, case_front_poly, width=None):
 def view_coords(points, view, place):
     """(h, v) plot coordinates of glTF-frame mm points in one view."""
     p = np.asarray(points, dtype=float)
-    fx = p[..., 0] + place['dx']
-    fy = place['dy'] - p[..., 1]
-    if view == 'front':
+    fx = p[..., 0] + place["dx"]
+    fy = place["dy"] - p[..., 1]
+    if view == "front":
         return np.stack([fx, fy], axis=-1)
-    if view == 'back':
-        return np.stack([place['back_w'] - fx, fy], axis=-1)
-    if view == 'left':
+    if view == "back":
+        return np.stack([place["back_w"] - fx, fy], axis=-1)
+    if view == "left":
         return np.stack([p[..., 2], fy], axis=-1)
     return np.stack([fx, p[..., 2]], axis=-1)  # top: z down the page after the flip
 
@@ -410,28 +434,30 @@ def draw_shaded(ax, meshes, view, place):
         return np.column_stack([hv[:, 0], -hv[:, 1], p @ towards])
 
     img, (h0, h1, v0, v1) = model_raster.rasterize(meshes, project, towards, VIEW_PPM)
-    ax.imshow(img, extent=[h0, h1, -v0, -v1], origin='upper', interpolation='bilinear',
-              zorder=0)
+    ax.imshow(img, extent=[h0, h1, -v0, -v1], origin="upper", interpolation="bilinear", zorder=0)
 
 
 def outline_coords(poly, view, place):
     """A glTF-frame silhouette's rings in one view's plot coordinates."""
     out = []
-    for p in ([poly] if poly.geom_type == 'Polygon' else list(poly.geoms)):
+    for p in [poly] if poly.geom_type == "Polygon" else list(poly.geoms):
         for ring in [p.exterior] + list(p.interiors):
             c = np.asarray(ring.coords)
-            if view == 'front':
+            if view == "front":
                 out.append(to_front(c, place))
-            elif view == 'back':
+            elif view == "back":
                 # MODEL_VIEW_AXES back: (-x, y)
-                out.append(np.column_stack([c[:, 0] + place['back_w'] - place['dx'],
-                                            place['dy'] - c[:, 1]]))
-            elif view == 'left':
+                out.append(
+                    np.column_stack(
+                        [c[:, 0] + place["back_w"] - place["dx"], place["dy"] - c[:, 1]]
+                    )
+                )
+            elif view == "left":
                 # MODEL_VIEW_AXES left: (z, y)
-                out.append(np.column_stack([c[:, 0], place['dy'] - c[:, 1]]))
+                out.append(np.column_stack([c[:, 0], place["dy"] - c[:, 1]]))
             else:
                 # MODEL_VIEW_AXES top: (x, -z)
-                out.append(np.column_stack([c[:, 0] + place['dx'], -c[:, 1]]))
+                out.append(np.column_stack([c[:, 0] + place["dx"], -c[:, 1]]))
     return out
 
 
@@ -446,112 +472,134 @@ def legends_report(board_dir, glb, raster_meshes, tolerance_mm):
     drawing prints, for the front view.
     """
     extras = glb_legends.legends(glb_json(glb))
-    source = board_dir / 'model' / 'source.json'
+    source = board_dir / "model" / "source.json"
     record = json.loads(source.read_text()) if source.is_file() else {}
-    if not extras and not record.get('legends'):
+    if not extras and not record.get("legends"):
         return None, []
     import legend_placement  # only a model with legends needs fontTools
 
     report = legend_placement.placement(raster_meshes, extras, None, record, tolerance_mm)
     step = quant_step_mm(glb)
-    for entry in record.get('legends') or []:
-        gap = model_raster.legend_clearance(raster_meshes, entry['mesh'] + '_', step,
-                                            on=entry['on'], face=entry.get('face', 'front'))
+    for entry in record.get("legends") or []:
+        gap = model_raster.legend_clearance(
+            raster_meshes,
+            entry["mesh"] + "_",
+            step,
+            on=entry["on"],
+            face=entry.get("face", "front"),
+        )
         if gap is None:
             continue
-        report['meshes'].setdefault(entry['mesh'], {})['clearance'] = gap
-        if not gap['ok']:
-            report['ok'] = False
-            report['problems'].append(
-                f'{entry["mesh"]}: clearance {gap["under_mm"]} mm over {gap["under_mesh"]} '
-                f'(at least {gap["least_mm"]:g}), {gap["over_mesh"]} over it at '
-                f'{gap["over_mm"]}, {gap["off"]} triangle(s) off {entry["on"]}')
+        report["meshes"].setdefault(entry["mesh"], {})["clearance"] = gap
+        if not gap["ok"]:
+            report["ok"] = False
+            report["problems"].append(
+                f"{entry['mesh']}: clearance {gap['under_mm']} mm over {gap['under_mesh']} "
+                f"(at least {gap['least_mm']:g}), {gap['over_mesh']} over it at "
+                f"{gap['over_mm']}, {gap['off']} triangle(s) off {entry['on']}"
+            )
     return report, legend_placement.outlines(board_dir)
 
 
 def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERANCE_MM):
     board_dir = Path(board_dir)
     board = board_dir.name
-    meas = json.loads((board_dir / 'measurements.json').read_text())
-    case = meas['case']
-    disp = meas['display']
+    meas = json.loads((board_dir / "measurements.json").read_text())
+    case = meas["case"]
+    disp = meas["display"]
     nodes = load_model(glb)
     raster_meshes = model_raster.read_glb(glb)
     whole = concat([m for _, m, _, _ in nodes])
-    case_nodes = [m for n, m, _, _ in nodes if n.startswith('case')]
+    case_nodes = [m for n, m, _, _ in nodes if n.startswith("case")]
     case_mesh = concat(case_nodes) if case_nodes else whole
 
-    back_svg = board_dir / 'svg' / 'back.svg'
+    back_svg = board_dir / "svg" / "back.svg"
     views = VIEWS + ((BACK_VIEW,) if back_svg.is_file() else ())
-    sil = {v: render_views.silhouette_polygon(whole, v, render_views.MODEL_VIEW_AXES)
-           for v in views}
-    case_front = render_views.silhouette_polygon(case_mesh, 'front', render_views.MODEL_VIEW_AXES)
-    place = placement(board_dir, case_front, float(case['width']))
+    sil = {
+        v: render_views.silhouette_polygon(whole, v, render_views.MODEL_VIEW_AXES) for v in views
+    }
+    case_front = render_views.silhouette_polygon(case_mesh, "front", render_views.MODEL_VIEW_AXES)
+    place = placement(board_dir, case_front, float(case["width"]))
 
     ext_whole = whole.extents
     ext_case = case_mesh.extents
     report = {
-        'board': board, 'glb': str(glb), 'placement': place['how'],
-        'triangles': int(sum(len(m.faces) for _, m, _, _ in nodes)),
-        'bytes': Path(glb).stat().st_size,
-        'extents': {
-            'measured_mm': [case['width'], case['height'], case['depth']],
-            'model_mm': [round(float(v), 3) for v in ext_whole],
-            'model_delta_mm': [round(float(ext_whole[i]) - [case['width'], case['height'],
-                                                          case['depth']][i], 3) for i in range(3)],
-            'case_mm': [round(float(v), 3) for v in ext_case],
-            'case_delta_mm': [round(float(ext_case[i]) - [case['width'], case['height'],
-                                                        case['depth']][i], 3) for i in range(3)],
+        "board": board,
+        "glb": str(glb),
+        "placement": place["how"],
+        "triangles": int(sum(len(m.faces) for _, m, _, _ in nodes)),
+        "bytes": Path(glb).stat().st_size,
+        "extents": {
+            "measured_mm": [case["width"], case["height"], case["depth"]],
+            "model_mm": [round(float(v), 3) for v in ext_whole],
+            "model_delta_mm": [
+                round(float(ext_whole[i]) - [case["width"], case["height"], case["depth"]][i], 3)
+                for i in range(3)
+            ],
+            "case_mm": [round(float(v), 3) for v in ext_case],
+            "case_delta_mm": [
+                round(float(ext_case[i]) - [case["width"], case["height"], case["depth"]][i], 3)
+                for i in range(3)
+            ],
         },
     }
 
-    svg_path = board_dir / 'svg' / 'front.svg'
+    svg_path = board_dir / "svg" / "front.svg"
     svg_poly = svg_screen = None
     if svg_path.is_file():
         svg_poly, svg_screen = svg_outline(svg_path)
-        report['outline'] = outline_deviation(svg_poly, poly_to_front(sil['front'], place))
+        report["outline"] = outline_deviation(svg_poly, poly_to_front(sil["front"], place))
     back_poly = None
     if back_svg.is_file():
         # the back drawing's outline against the silhouette seen from behind, in its frame
         back_poly, _ = svg_outline(back_svg)
-        report['back_outline'] = outline_deviation(back_poly, poly_to_back(sil['front'], place))
+        report["back_outline"] = outline_deviation(back_poly, poly_to_back(sil["front"], place))
 
-    m_screen = [(n, m) for n, m, _, _ in nodes if n == 'screen']
-    meas_screen = (disp['origin_x_mm'], disp['origin_y_mm'],
-                   disp['origin_x_mm'] + disp['active_w_mm'],
-                   disp['origin_y_mm'] + disp['active_h_mm'])
+    m_screen = [(n, m) for n, m, _, _ in nodes if n == "screen"]
+    meas_screen = (
+        disp["origin_x_mm"],
+        disp["origin_y_mm"],
+        disp["origin_x_mm"] + disp["active_w_mm"],
+        disp["origin_y_mm"] + disp["active_h_mm"],
+    )
     if m_screen:
         v = m_screen[0][1].vertices
         f = to_front(v[:, :2], place)
         model_rect = (f[:, 0].min(), f[:, 1].min(), f[:, 0].max(), f[:, 1].max())
 
         def edges(ref):
-            return {k: round(float(model_rect[i] - ref[i]), 3)
-                    for i, k in enumerate(('left', 'top', 'right', 'bottom'))}
+            return {
+                k: round(float(model_rect[i] - ref[i]), 3)
+                for i, k in enumerate(("left", "top", "right", "bottom"))
+            }
 
-        report['screen'] = {'model_rect_mm': [round(float(c), 3) for c in model_rect],
-                            'vs_measurements_mm': edges(meas_screen)}
+        report["screen"] = {
+            "model_rect_mm": [round(float(c), 3) for c in model_rect],
+            "vs_measurements_mm": edges(meas_screen),
+        }
         if svg_screen:
-            report['screen']['vs_front_svg_mm'] = edges(svg_screen)
-        report['screen']['clearance'] = model_raster.screen_clearance(raster_meshes,
-                                                                      quant_step_mm(glb))
+            report["screen"]["vs_front_svg_mm"] = edges(svg_screen)
+        report["screen"]["clearance"] = model_raster.screen_clearance(
+            raster_meshes, quant_step_mm(glb)
+        )
 
     printed, legend_rings = legends_report(board_dir, glb, raster_meshes, legend_tolerance)
     if printed is not None:
-        report['legends'] = printed
-    report['depth'] = model_raster.coplanar_overlaps(raster_meshes, quant_step_mm(glb))
+        report["legends"] = printed
+    report["depth"] = model_raster.coplanar_overlaps(raster_meshes, quant_step_mm(glb))
 
     # ---- picture
-    ratios = [case['width'], case['depth'] * 1.6, case['width']]
-    ratios += [case['width']] * (len(views) - len(VIEWS))
-    fig, axes = plt.subplots(1, len(views), figsize=(5 * len(views), 7), dpi=150,
-                             gridspec_kw={'width_ratios': ratios})
+    ratios = [case["width"], case["depth"] * 1.6, case["width"]]
+    ratios += [case["width"]] * (len(views) - len(VIEWS))
+    fig, axes = plt.subplots(
+        1, len(views), figsize=(5 * len(views), 7), dpi=150, gridspec_kw={"width_ratios": ratios}
+    )
     zc = (whole.bounds[0][2] + whole.bounds[1][2]) / 2
     boxes = {
-        'front': (0, 0, case['width'], case['height']),
-        'left': (zc - case['depth'] / 2, 0, zc + case['depth'] / 2, case['height']),
-        'top': (0, zc - case['depth'] / 2, case['width'], zc + case['depth'] / 2),
-        'back': (0, 0, case['width'], case['height']),
+        "front": (0, 0, case["width"], case["height"]),
+        "left": (zc - case["depth"] / 2, 0, zc + case["depth"] / 2, case["height"]),
+        "top": (0, zc - case["depth"] / 2, case["width"], zc + case["depth"] / 2),
+        "back": (0, 0, case["width"], case["height"]),
     }
     back_rings = []
     if back_svg.is_file() and printed is not None:
@@ -561,35 +609,57 @@ def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERAN
     for ax, view in zip(axes, views, strict=True):
         draw_shaded(ax, raster_meshes, view, place)
         for ring in outline_coords(sil[view], view, place):
-            ax.plot(ring[:, 0], ring[:, 1], color='#202020', lw=0.5)
+            ax.plot(ring[:, 0], ring[:, 1], color="#202020", lw=0.5)
         x0, y0, x1, y1 = boxes[view]
-        ax.plot([x0, x1, x1, x0, x0], [y0, y0, y1, y1, y0], ls='--', color='#1f6fd1', lw=0.8,
-                label='measurements.json box')
-        if view == 'front':
+        ax.plot(
+            [x0, x1, x1, x0, x0],
+            [y0, y0, y1, y1, y0],
+            ls="--",
+            color="#1f6fd1",
+            lw=0.8,
+            label="measurements.json box",
+        )
+        if view == "front":
             if svg_poly is not None:
                 for ring in [svg_poly.exterior] + list(svg_poly.interiors):
                     c = np.asarray(ring.coords)
-                    ax.plot(c[:, 0], c[:, 1], color='#d62728', lw=0.8, label='front.svg outline')
+                    ax.plot(c[:, 0], c[:, 1], color="#d62728", lw=0.8, label="front.svg outline")
                     break
             sx0, sy0, sx1, sy1 = meas_screen
-            ax.plot([sx0, sx1, sx1, sx0, sx0], [sy0, sy0, sy1, sy1, sy0], color='#2ca02c', lw=0.8,
-                    label='active area (measurements)')
+            ax.plot(
+                [sx0, sx1, sx1, sx0, sx0],
+                [sy0, sy0, sy1, sy1, sy0],
+                color="#2ca02c",
+                lw=0.8,
+                label="active area (measurements)",
+            )
             if svg_screen:
                 sx0, sy0, sx1, sy1 = svg_screen
-                ax.plot([sx0, sx1, sx1, sx0, sx0], [sy0, sy0, sy1, sy1, sy0], color='#e377c2',
-                        lw=0.6, ls=':', label='screen-active (front.svg)')
+                ax.plot(
+                    [sx0, sx1, sx1, sx0, sx0],
+                    [sy0, sy0, sy1, sy1, sy0],
+                    color="#e377c2",
+                    lw=0.6,
+                    ls=":",
+                    label="screen-active (front.svg)",
+                )
             for index, (_plane, _fill, rings) in enumerate(legend_rings):
                 for nth, ring in enumerate(rings):
-                    ax.plot(ring[:, 0], ring[:, 1], color='#17becf', lw=0.25,
-                            label='legends (front.svg)' if index == 0 and nth == 0 else None)
+                    ax.plot(
+                        ring[:, 0],
+                        ring[:, 1],
+                        color="#17becf",
+                        lw=0.25,
+                        label="legends (front.svg)" if index == 0 and nth == 0 else None,
+                    )
         if view == BACK_VIEW:
             for ring in [back_poly.exterior]:
                 c = np.asarray(ring.coords)
-                ax.plot(c[:, 0], c[:, 1], color='#d62728', lw=0.8)
+                ax.plot(c[:, 0], c[:, 1], color="#d62728", lw=0.8)
             for _plane, _fill, rings in back_rings:
                 for ring in rings:
-                    ax.plot(ring[:, 0], ring[:, 1], color='#17becf', lw=0.25)
-        ax.set_aspect('equal')
+                    ax.plot(ring[:, 0], ring[:, 1], color="#17becf", lw=0.25)
+        ax.set_aspect("equal")
         ax.autoscale_view()
         lo_x, hi_x = sorted(ax.get_xlim())
         lo_y, hi_y = sorted(ax.get_ylim())
@@ -597,30 +667,32 @@ def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERAN
         ax.set_ylim(max(hi_y, boxes[view][3]) + 2, min(lo_y, boxes[view][1]) - 2)
         ax.set_title(view)
         ax.grid(True, alpha=0.25)
-        ax.set_xlabel('mm')
-    axes[0].legend(loc='lower center', bbox_to_anchor=(0.5, -0.32), fontsize=7, ncol=2)
-    ext = report['extents']
-    fig.suptitle(f"{board}: model {ext['model_mm'][0]:.2f} x {ext['model_mm'][1]:.2f} x "
-                 f"{ext['model_mm'][2]:.2f} mm, measured {case['width']} x {case['height']} x "
-                 f"{case['depth']} mm, {report['triangles']} triangles")
+        ax.set_xlabel("mm")
+    axes[0].legend(loc="lower center", bbox_to_anchor=(0.5, -0.32), fontsize=7, ncol=2)
+    ext = report["extents"]
+    fig.suptitle(
+        f"{board}: model {ext['model_mm'][0]:.2f} x {ext['model_mm'][1]:.2f} x "
+        f"{ext['model_mm'][2]:.2f} mm, measured {case['width']} x {case['height']} x "
+        f"{case['depth']} mm, {report['triangles']} triangles"
+    )
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    png = out_dir / f'{board}-views.png'
+    png = out_dir / f"{board}-views.png"
     fig.tight_layout()
     fig.savefig(png)
     plt.close(fig)
-    report['png'] = str(png)
+    report["png"] = str(png)
 
     worst = []
-    for key in ('outline', 'back_outline'):
+    for key in ("outline", "back_outline"):
         if key in report:
-            worst += [abs(v) for v in report[key]['edges_mm'].values()]
-            worst.append(report[key]['svg_to_model_max_mm'])
-    worst += [abs(v) for v in report['extents']['case_delta_mm'][:2]]
-    if 'screen' in report:
-        worst += [abs(v) for v in report['screen']['vs_measurements_mm'].values()]
-    report['worst_mm'] = round(max(worst), 3) if worst else 0.0
-    (out_dir / f'{board}-check.json').write_text(json.dumps(report, indent=2) + '\n')
+            worst += [abs(v) for v in report[key]["edges_mm"].values()]
+            worst.append(report[key]["svg_to_model_max_mm"])
+    worst += [abs(v) for v in report["extents"]["case_delta_mm"][:2]]
+    if "screen" in report:
+        worst += [abs(v) for v in report["screen"]["vs_measurements_mm"].values()]
+    report["worst_mm"] = round(max(worst), 3) if worst else 0.0
+    (out_dir / f"{board}-check.json").write_text(json.dumps(report, indent=2) + "\n")
     return report
 
 
@@ -628,83 +700,110 @@ def depth_selftest():
     """Run ``model_raster.coplanar_selftest`` and print it; True when every part passed."""
     clean, results, controls = model_raster.coplanar_selftest(HERE.parent)
     for board, got in clean.items():
-        print(f'depth: the {board} model as committed: '
-              f'{"passes" if got["ok"] else "FAILS"} ({len(got["pairs"])} tie(s))')
-        for pair in got['pairs']:
-            print(f'  {pair["meshes"]} facing {pair["facing"]}, {pair["area_mm2"]} mm2')
+        print(
+            f"depth: the {board} model as committed: "
+            f"{'passes' if got['ok'] else 'FAILS'} ({len(got['pairs'])} tie(s))"
+        )
+        for pair in got["pairs"]:
+            print(f"  {pair['meshes']} facing {pair['facing']}, {pair['area_mm2']} mm2")
     for what, caught, how in results:
-        print(f'depth: {"caught" if caught else "MISSED"}: {what} -> {how}')
+        print(f"depth: {'caught' if caught else 'MISSED'}: {what} -> {how}")
     for what, passed, how in controls:
-        print(f'depth: {"passed" if passed else "FAILED"}: {what} -> {how}')
-    good = (all(got['ok'] for got in clean.values()) and all(c for _, c, _ in results)
-            and all(p for _, p, _ in controls))
-    print('depth selftest ' + ('passed' if good else 'FAILED'))
+        print(f"depth: {'passed' if passed else 'FAILED'}: {what} -> {how}")
+    good = (
+        all(got["ok"] for got in clean.values())
+        and all(c for _, c, _ in results)
+        and all(p for _, p, _ in controls)
+    )
+    print("depth selftest " + ("passed" if good else "FAILED"))
     return good
 
 
 def main(argv=None):
     """Run the check from the command line; return the exit code."""
-    parser = argparse.ArgumentParser(description=__doc__.split('\n', 1)[0])
-    parser.add_argument('board_dir', type=Path, nargs='?',
-                        help='<board>')
-    parser.add_argument('--glb', type=Path, help='the model (default: the spec\'s output, or '
-                        'model/<board>.glb)')
-    parser.add_argument('--out', type=Path, help='where the picture and report go '
-                        '(default: a new temporary directory)')
-    parser.add_argument('--max-dev-mm', type=float,
-                        help='exit 1 when an outline edge, a case extent or a screen edge is '
-                             'further off than this')
-    parser.add_argument('--legend-tolerance-mm', type=float, default=LEGEND_TOLERANCE_MM,
-                        help='how far a legend may lie from where front.svg prints it '
-                             f'(default {LEGEND_TOLERANCE_MM})')
-    parser.add_argument('--selftest', action='store_true',
-                        help="run the checks' own tests: defects planted in the Cardputer "
-                             "ADV's and the T-Deck Plus's models, each of which they must "
-                             'catch')
+    parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    parser.add_argument("board_dir", type=Path, nargs="?", help="<board>")
+    parser.add_argument(
+        "--glb", type=Path, help="the model (default: the spec's output, or model/<board>.glb)"
+    )
+    parser.add_argument(
+        "--out",
+        type=Path,
+        help="where the picture and report go (default: a new temporary directory)",
+    )
+    parser.add_argument(
+        "--max-dev-mm",
+        type=float,
+        help="exit 1 when an outline edge, a case extent or a screen edge is further off than this",
+    )
+    parser.add_argument(
+        "--legend-tolerance-mm",
+        type=float,
+        default=LEGEND_TOLERANCE_MM,
+        help="how far a legend may lie from where front.svg prints it "
+        f"(default {LEGEND_TOLERANCE_MM})",
+    )
+    parser.add_argument(
+        "--selftest",
+        action="store_true",
+        help="run the checks' own tests: defects planted in the Cardputer "
+        "ADV's and the T-Deck Plus's models, each of which they must "
+        "catch",
+    )
     args = parser.parse_args(argv)
     if args.selftest:
         import legend_placement
 
-        legends_ok = legend_placement.main(['--selftest']) == 0
+        legends_ok = legend_placement.main(["--selftest"]) == 0
         return 0 if depth_selftest() and legends_ok else 1
     if args.board_dir is None:
-        parser.error('give a board directory, or --selftest')
+        parser.error("give a board directory, or --selftest")
     board_dir = args.board_dir.resolve()
     glb = args.glb
     if glb is None:
-        spec = board_dir / 'model' / 'spec.json'
-        glb = (REPO / json.loads(spec.read_text())['output'] if spec.is_file()
-               else board_dir / 'model' / f'{board_dir.name}.glb')
-    out = args.out or Path(tempfile.mkdtemp(prefix=f'{board_dir.name}-check-'))
+        spec = board_dir / "model" / "spec.json"
+        glb = (
+            REPO / json.loads(spec.read_text())["output"]
+            if spec.is_file()
+            else board_dir / "model" / f"{board_dir.name}.glb"
+        )
+    out = args.out or Path(tempfile.mkdtemp(prefix=f"{board_dir.name}-check-"))
     report = check(board_dir, glb, out, args.max_dev_mm, args.legend_tolerance_mm)
     shown = dict(report)
-    if 'legends' in shown:
+    if "legends" in shown:
         # the group-by-group table stays in <board>-check.json
-        shown['legends'] = {k: v for k, v in shown['legends'].items() if k != 'per_group'}
+        shown["legends"] = {k: v for k, v in shown["legends"].items() if k != "per_group"}
     print(json.dumps(shown, indent=2))
-    clearance = report.get('screen', {}).get('clearance')
-    if clearance is not None and not clearance['ok']:
-        print(f'FAIL: the screen is {clearance["behind_mm"]} mm in front of the nearest face '
-              f'under it and {clearance["in_front_mm"]} mm behind the nearest over it; each '
-              f'must be at least {clearance["quant_mm"]} mm', file=sys.stderr)
+    clearance = report.get("screen", {}).get("clearance")
+    if clearance is not None and not clearance["ok"]:
+        print(
+            f"FAIL: the screen is {clearance['behind_mm']} mm in front of the nearest face "
+            f"under it and {clearance['in_front_mm']} mm behind the nearest over it; each "
+            f"must be at least {clearance['quant_mm']} mm",
+            file=sys.stderr,
+        )
         return 1
-    printed = report.get('legends')
-    if printed is not None and not printed['ok']:
-        for problem in printed['problems']:
-            print(f'FAIL: legends: {problem}', file=sys.stderr)
+    printed = report.get("legends")
+    if printed is not None and not printed["ok"]:
+        for problem in printed["problems"]:
+            print(f"FAIL: legends: {problem}", file=sys.stderr)
         return 1
-    if not report['depth']['ok']:
-        for pair in report['depth']['pairs']:
-            print(f'FAIL: depth: {pair["meshes"][0]} and {pair["meshes"][1]} cover '
-                  f'{pair["area_mm2"]} mm2 facing {pair["facing"]}, {pair["gap_mm"]} mm apart '
-                  f'(under {report["depth"]["least_mm"]}), near {pair["at_mm"]}', file=sys.stderr)
+    if not report["depth"]["ok"]:
+        for pair in report["depth"]["pairs"]:
+            print(
+                f"FAIL: depth: {pair['meshes'][0]} and {pair['meshes'][1]} cover "
+                f"{pair['area_mm2']} mm2 facing {pair['facing']}, {pair['gap_mm']} mm apart "
+                f"(under {report['depth']['least_mm']}), near {pair['at_mm']}",
+                file=sys.stderr,
+            )
         return 1
-    if args.max_dev_mm is not None and report['worst_mm'] > args.max_dev_mm:
-        print(f'FAIL: worst deviation {report["worst_mm"]} mm > {args.max_dev_mm} mm',
-              file=sys.stderr)
+    if args.max_dev_mm is not None and report["worst_mm"] > args.max_dev_mm:
+        print(
+            f"FAIL: worst deviation {report['worst_mm']} mm > {args.max_dev_mm} mm", file=sys.stderr
+        )
         return 1
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

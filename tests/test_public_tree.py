@@ -6,6 +6,7 @@ private") is then planted in an empty scratch folder and must be caught,
 and the things that look like one and are not must pass. The planted strings
 are assembled here from pieces, so this file holds none of them itself.
 """
+
 from __future__ import annotations
 
 import sys
@@ -51,7 +52,9 @@ def test_the_tree_holds_nothing_private_and_no_vendor_file():
 
 
 @pytest.mark.parametrize("kind", sorted(PLANTED))
-@pytest.mark.parametrize("name", ["bench/2026-11-17-probe.md", "board.json", "netlist.yaml", "tool.py"])
+@pytest.mark.parametrize(
+    "name", ["bench/2026-11-17-probe.md", "board.json", "netlist.yaml", "tool.py"]
+)
 def test_a_planted_private_line_is_caught(tmp_path, kind, name):
     path = tmp_path / "board" / name
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -91,7 +94,8 @@ def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
     # no GLB and no spec beside them yet: a CAD file from somewhere else
     assert sorted(check_public_tree.findings(tmp_path)) == [
         "board/model/board.mtl: a vendor file type (.mtl)",
-        "board/model/board.obj: a vendor file type (.obj)"]
+        "board/model/board.obj: a vendor file type (.obj)",
+    ]
     (model / "board.glb").write_bytes(b"glTF")
     (model / "spec.json").write_text("{}\n", encoding="utf-8")
     assert check_public_tree.findings(tmp_path) == []
@@ -102,14 +106,18 @@ def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
     assert sorted(check_public_tree.findings(tmp_path)) == [
         "board/board.obj: a vendor file type (.obj)",
         "board/case.mtl: a vendor file type (.mtl)",
-        "board/model/case.obj: a vendor file type (.obj)"]
+        "board/model/case.obj: a vendor file type (.obj)",
+    ]
 
 
 def test_a_banner_copy_with_embedded_screens_is_refused(tmp_path):
     """The README banner is read from social by its address: a copy in the tree that embeds pictures is refused, wherever it lands."""
     readme = tmp_path / ".github" / "readme"
     readme.mkdir(parents=True)
-    (readme / "banner-dark.svg").write_text('<svg><image href="data:image/png;base64,AA=="/></svg>\n', encoding="utf-8")
+    (readme / "banner-dark.svg").write_text(
+        '<svg><image href="data:image/png;base64,AA=="/></svg>\n', encoding="utf-8"
+    )
     assert check_public_tree.findings(tmp_path) == [
         ".github/readme/banner-dark.svg: holds '<image\\\\b'",
-        ".github/readme/banner-dark.svg: holds 'data:image'"]
+        ".github/readme/banner-dark.svg: holds 'data:image'",
+    ]

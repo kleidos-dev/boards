@@ -159,8 +159,7 @@ UP_RUNS: Tuple[Tuple[str, float, float, float, float, str, str], ...] = (
 
 # The port's two right cells print their pin names at an angle: (text, x and
 # y of the run's middle, its angle, size, length).
-SLANT_RUNS = (("G32", 13.09, 36.25, -45.0, 1.15, 2.0),
-              ("G33", 15.11, 36.21, -45.0, 1.15, 2.0))
+SLANT_RUNS = (("G32", 13.09, 36.25, -45.0, 1.15, 2.0), ("G33", 15.11, 36.21, -45.0, 1.15, 2.0))
 
 # Fields: (x0, y0, x1, y1, corner radius, ink).
 FIELDS = (
@@ -194,23 +193,25 @@ BANNER_PANEL = ((13.42, 7.92), (21.76, 7.92), (21.76, 11.34), (14.22, 11.34))
 BANNER_PANEL_R = 0.3
 
 
-def run(content: str, x: float, y: float, size: float, length: float,
-        weight: str, ink: str) -> str:
-    return fronts.text(x, y, content, size=size, fill=ink, anchor="start",
-                       weight=weight, length=length)
+def run(content: str, x: float, y: float, size: float, length: float, weight: str, ink: str) -> str:
+    return fronts.text(
+        x, y, content, size=size, fill=ink, anchor="start", weight=weight, length=length
+    )
 
 
-def run_up(content: str, x: float, y: float, size: float, length: float,
-           weight: str, ink: str) -> str:
-    return fronts.cardputer_label_up(x, y, content, size=size, fill=ink,
-                                     weight=weight, length=length)
+def run_up(
+    content: str, x: float, y: float, size: float, length: float, weight: str, ink: str
+) -> str:
+    return fronts.cardputer_label_up(
+        x, y, content, size=size, fill=ink, weight=weight, length=length
+    )
 
 
-def run_slant(content: str, cx: float, cy: float, angle: float, size: float,
-              length: float) -> str:
+def run_slant(content: str, cx: float, cy: float, angle: float, size: float, length: float) -> str:
     """A run centered on (cx, cy), its cap height's middle on that point."""
-    body = fronts.text(cx, cy + 0.3635 * size, content, size=size, fill=BLACK,
-                       anchor="middle", length=length)
+    body = fronts.text(
+        cx, cy + 0.3635 * size, content, size=size, fill=BLACK, anchor="middle", length=length
+    )
     return fronts.cardputer_rotated(angle, cx, cy, body)
 
 
@@ -218,11 +219,13 @@ def rounded_path(x0: float, y0: float, x1: float, y1: float, r: float) -> str:
     """Path data of a rounded rectangle, clockwise on the page."""
     if r <= 0:
         return f"M {f(x0)} {f(y0)} H {f(x1)} V {f(y1)} H {f(x0)} Z"
-    return (f"M {f(x0 + r)} {f(y0)} H {f(x1 - r)} "
-            f"A {f(r)} {f(r)} 0 0 1 {f(x1)} {f(y0 + r)} V {f(y1 - r)} "
-            f"A {f(r)} {f(r)} 0 0 1 {f(x1 - r)} {f(y1)} H {f(x0 + r)} "
-            f"A {f(r)} {f(r)} 0 0 1 {f(x0)} {f(y1 - r)} V {f(y0 + r)} "
-            f"A {f(r)} {f(r)} 0 0 1 {f(x0 + r)} {f(y0)} Z")
+    return (
+        f"M {f(x0 + r)} {f(y0)} H {f(x1 - r)} "
+        f"A {f(r)} {f(r)} 0 0 1 {f(x1)} {f(y0 + r)} V {f(y1 - r)} "
+        f"A {f(r)} {f(r)} 0 0 1 {f(x1 - r)} {f(y1)} H {f(x0 + r)} "
+        f"A {f(r)} {f(r)} 0 0 1 {f(x0)} {f(y1 - r)} V {f(y0 + r)} "
+        f"A {f(r)} {f(r)} 0 0 1 {f(x0 + r)} {f(y0)} Z"
+    )
 
 
 def field(x0: float, y0: float, x1: float, y1: float, r: float, ink: str) -> str:
@@ -237,24 +240,35 @@ def cells() -> List[str]:
     for i, ink in enumerate(CELL_INKS):
         x0, x1 = CELL_X[i], CELL_X[i + 1]
         if i == 0:
-            d = (f"M {f(x0)} {f(bottom)} V {f(top + r)} "
-                 f"A {f(r)} {f(r)} 0 0 1 {f(x0 + r)} {f(top)} H {f(x1)} V {f(bottom)} Z")
+            d = (
+                f"M {f(x0)} {f(bottom)} V {f(top + r)} "
+                f"A {f(r)} {f(r)} 0 0 1 {f(x0 + r)} {f(top)} H {f(x1)} V {f(bottom)} Z"
+            )
         elif i == len(CELL_INKS) - 1:
-            d = (f"M {f(x0)} {f(top)} H {f(x1 - r)} "
-                 f"A {f(r)} {f(r)} 0 0 1 {f(x1)} {f(top + r)} V {f(bottom)} H {f(x0)} Z")
+            d = (
+                f"M {f(x0)} {f(top)} H {f(x1 - r)} "
+                f"A {f(r)} {f(r)} 0 0 1 {f(x1)} {f(top + r)} V {f(bottom)} H {f(x0)} Z"
+            )
         else:
             d = f"M {f(x0)} {f(top)} H {f(x1)} V {f(bottom)} H {f(x0)} Z"
         out.append(f'<path d="{d}" fill="{ink}"/>\n')
     return out
 
 
-def arrow(cx: float, tip: float, neck: float, tail: float, head_w: float,
-          stem_w: float, ink: str) -> str:
+def arrow(
+    cx: float, tip: float, neck: float, tail: float, head_w: float, stem_w: float, ink: str
+) -> str:
     """A block arrow along y: its tip at ``tip``, the head's back at ``neck``,
     the stem's end at ``tail``."""
-    pts = [(cx, tip), (cx + head_w / 2, neck), (cx + stem_w / 2, neck),
-           (cx + stem_w / 2, tail), (cx - stem_w / 2, tail),
-           (cx - stem_w / 2, neck), (cx - head_w / 2, neck)]
+    pts = [
+        (cx, tip),
+        (cx + head_w / 2, neck),
+        (cx + stem_w / 2, neck),
+        (cx + stem_w / 2, tail),
+        (cx - stem_w / 2, tail),
+        (cx - stem_w / 2, neck),
+        (cx - head_w / 2, neck),
+    ]
     return fronts.cardputer_polygon(pts, ink)
 
 
@@ -263,47 +277,62 @@ def banner() -> str:
     x0, y0, x1, y1, r = BANNER
     pr = BANNER_PANEL_R
     (a, top), (b, _), (_, bottom), (c, _) = BANNER_PANEL
-    panel = (f"M {f(a)} {f(top)} H {f(b - pr)} "
-             f"A {f(pr)} {f(pr)} 0 0 1 {f(b)} {f(top + pr)} V {f(bottom - pr)} "
-             f"A {f(pr)} {f(pr)} 0 0 1 {f(b - pr)} {f(bottom)} H {f(c)} Z")
-    return (f'<path d="{rounded_path(x0, y0, x1, y1, r)} {panel}" '
-            f'fill="{YELLOW}" fill-rule="evenodd"/>\n')
+    panel = (
+        f"M {f(a)} {f(top)} H {f(b - pr)} "
+        f"A {f(pr)} {f(pr)} 0 0 1 {f(b)} {f(top + pr)} V {f(bottom - pr)} "
+        f"A {f(pr)} {f(pr)} 0 0 1 {f(b - pr)} {f(bottom)} H {f(c)} Z"
+    )
+    return (
+        f'<path d="{rounded_path(x0, y0, x1, y1, r)} {panel}" '
+        f'fill="{YELLOW}" fill-rule="evenodd"/>\n'
+    )
 
 
-def stroke(points: Sequence[Tuple[float, float]], ink: str, width: float,
-           join: str = "round", cap: str = "butt") -> str:
+def stroke(
+    points: Sequence[Tuple[float, float]],
+    ink: str,
+    width: float,
+    join: str = "round",
+    cap: str = "butt",
+) -> str:
     d = " L ".join(f"{f(x)} {f(y)}" for x, y in points)
-    return (f'<path d="M {d}" fill="none" stroke="{ink}" stroke-width="{f(width)}" '
-            f'stroke-linejoin="{join}" stroke-linecap="{cap}"/>\n')
+    return (
+        f'<path d="M {d}" fill="none" stroke="{ink}" stroke-width="{f(width)}" '
+        f'stroke-linejoin="{join}" stroke-linecap="{cap}"/>\n'
+    )
 
 
-def arc(cx: float, cy: float, r: float, a0: float, a1: float, ink: str,
-        width: float) -> str:
+def arc(cx: float, cy: float, r: float, a0: float, a1: float, ink: str, width: float) -> str:
     """A stroked arc about (cx, cy) from ``a0`` to ``a1`` degrees, clockwise on
     the page (the angle grows towards +y)."""
     p0 = (cx + r * math.cos(math.radians(a0)), cy + r * math.sin(math.radians(a0)))
     p1 = (cx + r * math.cos(math.radians(a1)), cy + r * math.sin(math.radians(a1)))
     large = 1 if (a1 - a0) % 360 > 180 else 0
-    return (f'<path d="M {f(p0[0])} {f(p0[1])} A {f(r)} {f(r)} 0 {large} 1 '
-            f'{f(p1[0])} {f(p1[1])}" fill="none" stroke="{ink}" '
-            f'stroke-width="{f(width)}"/>\n')
+    return (
+        f'<path d="M {f(p0[0])} {f(p0[1])} A {f(r)} {f(r)} 0 {large} 1 '
+        f'{f(p1[0])} {f(p1[1])}" fill="none" stroke="{ink}" '
+        f'stroke-width="{f(width)}"/>\n'
+    )
 
 
-def ring_cut(cx: float, cy: float, outer: float, inner: float, cut_x: float,
-             ink: str) -> str:
+def ring_cut(cx: float, cy: float, outer: float, inner: float, cut_x: float, ink: str) -> str:
     """The part of a ring left of ``x = cut_x``: CE's C and the E's arc."""
+
     def ang(r: float) -> float:
         return math.degrees(math.acos((cut_x - cx) / r))
+
     ao, ai = ang(outer), ang(inner)
     po0 = (cut_x, cy - outer * math.sin(math.radians(ao)))
     po1 = (cut_x, cy + outer * math.sin(math.radians(ao)))
     pi0 = (cut_x, cy + inner * math.sin(math.radians(ai)))
     pi1 = (cut_x, cy - inner * math.sin(math.radians(ai)))
-    return (f'<path d="M {f(po0[0])} {f(po0[1])} '
-            f'A {f(outer)} {f(outer)} 0 1 0 {f(po1[0])} {f(po1[1])} '
-            f'L {f(pi0[0])} {f(pi0[1])} '
-            f'A {f(inner)} {f(inner)} 0 1 1 {f(pi1[0])} {f(pi1[1])} Z" '
-            f'fill="{ink}"/>\n')
+    return (
+        f'<path d="M {f(po0[0])} {f(po0[1])} '
+        f"A {f(outer)} {f(outer)} 0 1 0 {f(po1[0])} {f(po1[1])} "
+        f"L {f(pi0[0])} {f(pi0[1])} "
+        f'A {f(inner)} {f(inner)} 0 1 1 {f(pi1[0])} {f(pi1[1])} Z" '
+        f'fill="{ink}"/>\n'
+    )
 
 
 #: Espressif's mark: the white the ESP32 block prints, as the rings of one
@@ -314,66 +343,258 @@ def ring_cut(cx: float, cy: float, outer: float, inner: float, cut_x: float,
 #: this photo by a scale (0.939), a turn (-0.17 degrees) and a shift, by least
 #: squares on the photo's green channel blurred as the photo is.
 ESPRESSIF_RINGS: Tuple[Tuple[Tuple[float, float], ...], ...] = (
-    ((2.825, 16.940), (2.780, 17.013), (2.738, 17.108), (2.718, 17.205), (2.714, 17.325),
-     (2.738, 17.445), (2.823, 17.587), (2.932, 17.685), (3.122, 17.772), (3.383, 17.827),
-     (3.502, 17.895), (3.574, 17.976), (3.599, 18.017), (3.643, 18.137), (3.653, 18.257),
-     (3.642, 18.377), (3.576, 18.546), (3.600, 18.597), (3.672, 18.660), (3.791, 18.717),
-     (3.909, 18.740), (3.932, 18.735), (3.963, 18.713), (4.051, 18.520), (4.087, 18.351),
-     (4.090, 18.135), (4.051, 17.944), (3.933, 17.729), (3.835, 17.616), (3.739, 17.528),
-     (3.644, 17.466), (3.524, 17.410), (3.430, 17.384), (3.311, 17.367), (3.215, 17.328),
-     (3.184, 17.299), (3.175, 17.252), (3.191, 17.219), (3.220, 17.203), (3.311, 17.196),
-     (3.524, 17.242), (3.714, 17.322), (3.909, 17.464), (4.048, 17.629), (4.120, 17.732),
-     (4.156, 17.800), (4.220, 17.968), (4.258, 18.160), (4.262, 18.255), (4.213, 18.543),
-     (4.217, 18.600), (4.241, 18.628), (4.298, 18.663), (4.432, 18.694), (4.526, 18.679),
-     (4.622, 18.627), (4.655, 18.567), (4.675, 18.471), (4.686, 18.159), (4.667, 17.942),
-     (4.600, 17.727), (4.517, 17.535), (4.451, 17.427), (4.332, 17.272), (4.118, 17.069),
-     (3.952, 16.956), (3.760, 16.856), (3.522, 16.778), (3.405, 16.761), (3.190, 16.757),
-     (3.119, 16.767), (2.952, 16.831), (2.895, 16.868)),
-    ((3.196, 16.364), (3.172, 16.411), (3.160, 16.460), (3.160, 16.507), (3.177, 16.556),
-     (3.238, 16.588), (3.498, 16.625), (3.666, 16.669), (3.926, 16.768), (4.142, 16.898),
-     (4.308, 17.031), (4.451, 17.179), (4.549, 17.295), (4.692, 17.534), (4.766, 17.702),
-     (4.795, 17.799), (4.825, 17.966), (4.853, 18.206), (4.870, 18.253), (4.906, 18.272),
-     (5.025, 18.270), (5.073, 18.256), (5.096, 18.240), (5.210, 18.108), (5.260, 17.989),
-     (5.259, 17.892), (5.219, 17.700), (5.189, 17.605), (5.099, 17.389), (4.985, 17.173),
-     (4.859, 16.982), (4.759, 16.850), (4.568, 16.666), (4.354, 16.514), (3.973, 16.305),
-     (3.809, 16.242), (3.641, 16.198), (3.474, 16.192), (3.403, 16.211), (3.335, 16.244),
-     (3.260, 16.298)),
-    ((2.572, 16.797), (2.484, 17.134), (2.473, 17.254), (2.474, 17.517), (2.485, 17.660),
-     (2.511, 17.780), (2.620, 18.068), (2.750, 18.284), (2.905, 18.476), (2.984, 18.546),
-     (3.173, 18.691), (3.417, 18.833), (3.695, 18.935), (3.980, 18.972), (4.148, 18.974),
-     (4.314, 18.958), (4.552, 18.907), (4.741, 18.831), (4.908, 18.750), (5.011, 18.685),
-     (5.091, 18.612), (5.151, 18.540), (5.161, 18.492), (5.144, 18.462), (5.120, 18.447),
-     (5.097, 18.444), (5.048, 18.468), (4.978, 18.534), (4.764, 18.681), (4.479, 18.794),
-     (4.170, 18.840), (3.980, 18.841), (3.791, 18.820), (3.528, 18.741), (3.363, 18.671),
-     (3.244, 18.602), (3.190, 18.546), (3.184, 18.523), (3.197, 18.498), (3.290, 18.463),
-     (3.337, 18.433), (3.409, 18.357), (3.432, 18.305), (3.436, 18.234), (3.427, 18.162),
-     (3.398, 18.113), (3.328, 18.043), (3.288, 18.024), (3.193, 18.010), (3.146, 18.014),
-     (3.098, 18.034), (3.051, 18.067), (3.009, 18.115), (2.945, 18.259), (2.934, 18.268),
-     (2.910, 18.268), (2.886, 18.254), (2.781, 18.092), (2.724, 17.972), (2.626, 17.660),
-     (2.600, 17.468), (2.605, 17.108), (2.639, 16.965), (2.748, 16.701), (2.805, 16.628),
-     (2.979, 16.365), (2.980, 16.317), (2.951, 16.281), (2.928, 16.274), (2.904, 16.280),
-     (2.856, 16.314), (2.714, 16.509)),
-    ((3.946, 16.049), (3.936, 16.074), (3.949, 16.117), (3.972, 16.138), (4.282, 16.285),
-     (4.444, 16.383), (4.592, 16.486), (4.755, 16.622), (4.901, 16.788), (5.149, 17.126),
-     (5.307, 17.460), (5.355, 17.486), (5.402, 17.463), (5.415, 17.437), (5.420, 17.388),
-     (5.416, 17.220), (5.401, 17.113), (5.379, 17.029), (5.223, 16.669), (5.150, 16.550),
-     (5.069, 16.454), (4.961, 16.359), (4.828, 16.263), (4.543, 16.099), (4.377, 16.050),
-     (4.220, 16.024), (4.091, 16.014), (3.972, 16.029)),
+    (
+        (2.825, 16.940),
+        (2.780, 17.013),
+        (2.738, 17.108),
+        (2.718, 17.205),
+        (2.714, 17.325),
+        (2.738, 17.445),
+        (2.823, 17.587),
+        (2.932, 17.685),
+        (3.122, 17.772),
+        (3.383, 17.827),
+        (3.502, 17.895),
+        (3.574, 17.976),
+        (3.599, 18.017),
+        (3.643, 18.137),
+        (3.653, 18.257),
+        (3.642, 18.377),
+        (3.576, 18.546),
+        (3.600, 18.597),
+        (3.672, 18.660),
+        (3.791, 18.717),
+        (3.909, 18.740),
+        (3.932, 18.735),
+        (3.963, 18.713),
+        (4.051, 18.520),
+        (4.087, 18.351),
+        (4.090, 18.135),
+        (4.051, 17.944),
+        (3.933, 17.729),
+        (3.835, 17.616),
+        (3.739, 17.528),
+        (3.644, 17.466),
+        (3.524, 17.410),
+        (3.430, 17.384),
+        (3.311, 17.367),
+        (3.215, 17.328),
+        (3.184, 17.299),
+        (3.175, 17.252),
+        (3.191, 17.219),
+        (3.220, 17.203),
+        (3.311, 17.196),
+        (3.524, 17.242),
+        (3.714, 17.322),
+        (3.909, 17.464),
+        (4.048, 17.629),
+        (4.120, 17.732),
+        (4.156, 17.800),
+        (4.220, 17.968),
+        (4.258, 18.160),
+        (4.262, 18.255),
+        (4.213, 18.543),
+        (4.217, 18.600),
+        (4.241, 18.628),
+        (4.298, 18.663),
+        (4.432, 18.694),
+        (4.526, 18.679),
+        (4.622, 18.627),
+        (4.655, 18.567),
+        (4.675, 18.471),
+        (4.686, 18.159),
+        (4.667, 17.942),
+        (4.600, 17.727),
+        (4.517, 17.535),
+        (4.451, 17.427),
+        (4.332, 17.272),
+        (4.118, 17.069),
+        (3.952, 16.956),
+        (3.760, 16.856),
+        (3.522, 16.778),
+        (3.405, 16.761),
+        (3.190, 16.757),
+        (3.119, 16.767),
+        (2.952, 16.831),
+        (2.895, 16.868),
+    ),
+    (
+        (3.196, 16.364),
+        (3.172, 16.411),
+        (3.160, 16.460),
+        (3.160, 16.507),
+        (3.177, 16.556),
+        (3.238, 16.588),
+        (3.498, 16.625),
+        (3.666, 16.669),
+        (3.926, 16.768),
+        (4.142, 16.898),
+        (4.308, 17.031),
+        (4.451, 17.179),
+        (4.549, 17.295),
+        (4.692, 17.534),
+        (4.766, 17.702),
+        (4.795, 17.799),
+        (4.825, 17.966),
+        (4.853, 18.206),
+        (4.870, 18.253),
+        (4.906, 18.272),
+        (5.025, 18.270),
+        (5.073, 18.256),
+        (5.096, 18.240),
+        (5.210, 18.108),
+        (5.260, 17.989),
+        (5.259, 17.892),
+        (5.219, 17.700),
+        (5.189, 17.605),
+        (5.099, 17.389),
+        (4.985, 17.173),
+        (4.859, 16.982),
+        (4.759, 16.850),
+        (4.568, 16.666),
+        (4.354, 16.514),
+        (3.973, 16.305),
+        (3.809, 16.242),
+        (3.641, 16.198),
+        (3.474, 16.192),
+        (3.403, 16.211),
+        (3.335, 16.244),
+        (3.260, 16.298),
+    ),
+    (
+        (2.572, 16.797),
+        (2.484, 17.134),
+        (2.473, 17.254),
+        (2.474, 17.517),
+        (2.485, 17.660),
+        (2.511, 17.780),
+        (2.620, 18.068),
+        (2.750, 18.284),
+        (2.905, 18.476),
+        (2.984, 18.546),
+        (3.173, 18.691),
+        (3.417, 18.833),
+        (3.695, 18.935),
+        (3.980, 18.972),
+        (4.148, 18.974),
+        (4.314, 18.958),
+        (4.552, 18.907),
+        (4.741, 18.831),
+        (4.908, 18.750),
+        (5.011, 18.685),
+        (5.091, 18.612),
+        (5.151, 18.540),
+        (5.161, 18.492),
+        (5.144, 18.462),
+        (5.120, 18.447),
+        (5.097, 18.444),
+        (5.048, 18.468),
+        (4.978, 18.534),
+        (4.764, 18.681),
+        (4.479, 18.794),
+        (4.170, 18.840),
+        (3.980, 18.841),
+        (3.791, 18.820),
+        (3.528, 18.741),
+        (3.363, 18.671),
+        (3.244, 18.602),
+        (3.190, 18.546),
+        (3.184, 18.523),
+        (3.197, 18.498),
+        (3.290, 18.463),
+        (3.337, 18.433),
+        (3.409, 18.357),
+        (3.432, 18.305),
+        (3.436, 18.234),
+        (3.427, 18.162),
+        (3.398, 18.113),
+        (3.328, 18.043),
+        (3.288, 18.024),
+        (3.193, 18.010),
+        (3.146, 18.014),
+        (3.098, 18.034),
+        (3.051, 18.067),
+        (3.009, 18.115),
+        (2.945, 18.259),
+        (2.934, 18.268),
+        (2.910, 18.268),
+        (2.886, 18.254),
+        (2.781, 18.092),
+        (2.724, 17.972),
+        (2.626, 17.660),
+        (2.600, 17.468),
+        (2.605, 17.108),
+        (2.639, 16.965),
+        (2.748, 16.701),
+        (2.805, 16.628),
+        (2.979, 16.365),
+        (2.980, 16.317),
+        (2.951, 16.281),
+        (2.928, 16.274),
+        (2.904, 16.280),
+        (2.856, 16.314),
+        (2.714, 16.509),
+    ),
+    (
+        (3.946, 16.049),
+        (3.936, 16.074),
+        (3.949, 16.117),
+        (3.972, 16.138),
+        (4.282, 16.285),
+        (4.444, 16.383),
+        (4.592, 16.486),
+        (4.755, 16.622),
+        (4.901, 16.788),
+        (5.149, 17.126),
+        (5.307, 17.460),
+        (5.355, 17.486),
+        (5.402, 17.463),
+        (5.415, 17.437),
+        (5.420, 17.388),
+        (5.416, 17.220),
+        (5.401, 17.113),
+        (5.379, 17.029),
+        (5.223, 16.669),
+        (5.150, 16.550),
+        (5.069, 16.454),
+        (4.961, 16.359),
+        (4.828, 16.263),
+        (4.543, 16.099),
+        (4.377, 16.050),
+        (4.220, 16.024),
+        (4.091, 16.014),
+        (3.972, 16.029),
+    ),
 )
 
 
 def espressif(out: List[str]) -> None:
     """Espressif's mark in white on the ESP32 block."""
-    d = " ".join("M " + " L ".join(f"{f(x)} {f(y)}" for x, y in ring) + " Z"
-                 for ring in ESPRESSIF_RINGS)
+    d = " ".join(
+        "M " + " L ".join(f"{f(x)} {f(y)}" for x, y in ring) + " Z" for ring in ESPRESSIF_RINGS
+    )
     out.append(f'<path d="{d}" fill="{WHITE}" fill-rule="evenodd"/>\n')
 
 
 def fcc(out: List[str]) -> None:
     """FCC's mark: an F, then two C's about one center, each open to the right."""
-    out.append(fronts.cardputer_polygon(
-        [(9.37, 19.62), (10.51, 19.62), (10.51, 19.98), (9.77, 19.98), (9.77, 20.59),
-         (10.47, 20.59), (10.47, 20.95), (9.77, 20.95), (9.77, 21.89), (9.37, 21.89)], BLACK))
+    out.append(
+        fronts.cardputer_polygon(
+            [
+                (9.37, 19.62),
+                (10.51, 19.62),
+                (10.51, 19.98),
+                (9.77, 19.98),
+                (9.77, 20.59),
+                (10.47, 20.59),
+                (10.47, 20.95),
+                (9.77, 20.95),
+                (9.77, 21.89),
+                (9.37, 21.89),
+            ],
+            BLACK,
+        )
+    )
     out.append(arc(11.59, 20.8, 0.95, 35, 325, BLACK, 0.31))
     out.append(arc(11.59, 20.8, 0.54, 42, 318, BLACK, 0.29))
 
@@ -383,18 +604,28 @@ def giteki(out: List[str]) -> None:
     lightning stroke, over two bars and a stem; then the R box."""
     gx, gy, ring = 4.16, 26.08, 1.0
     start, end = math.radians(-14), math.radians(22)
-    bolt = [(gx - 0.95, gy - 0.3), (gx - 0.03, gy - 0.46), (gx + 0.1, gy - 0.16),
-            (gx + ring * math.cos(start), gy + ring * math.sin(start))]
+    bolt = [
+        (gx - 0.95, gy - 0.3),
+        (gx - 0.03, gy - 0.46),
+        (gx + 0.1, gy - 0.16),
+        (gx + ring * math.cos(start), gy + ring * math.sin(start)),
+    ]
     path = " L ".join(f"{f(px)} {f(py)}" for px, py in bolt)
-    out.append(f'<path d="M {path} A {f(ring)} {f(ring)} 0 1 0 '
-               f'{f(gx + ring * math.cos(end))} {f(gy + ring * math.sin(end))}" '
-               f'fill="none" stroke="{BLACK}" stroke-width="0.1" stroke-linejoin="round"/>\n')
-    out.append(f'<path d="M {f(gx - 0.55)} {f(gy + 0.14)} H {f(gx + 0.6)} '
-               f'M {f(gx - 0.55)} {f(gy + 0.39)} H {f(gx + 0.6)} '
-               f'M {f(gx)} {f(gy + 0.39)} V {f(gy + 0.76)}" fill="none" '
-               f'stroke="{BLACK}" stroke-width="0.09"/>\n')
-    out.append(f'<path d="{rounded_path(5.56, 25.52, 6.78, 26.54, 0.0)}" fill="none" '
-               f'stroke="{GRAY}" stroke-width="0.1"/>\n')
+    out.append(
+        f'<path d="M {path} A {f(ring)} {f(ring)} 0 1 0 '
+        f'{f(gx + ring * math.cos(end))} {f(gy + ring * math.sin(end))}" '
+        f'fill="none" stroke="{BLACK}" stroke-width="0.1" stroke-linejoin="round"/>\n'
+    )
+    out.append(
+        f'<path d="M {f(gx - 0.55)} {f(gy + 0.14)} H {f(gx + 0.6)} '
+        f"M {f(gx - 0.55)} {f(gy + 0.39)} H {f(gx + 0.6)} "
+        f'M {f(gx)} {f(gy + 0.39)} V {f(gy + 0.76)}" fill="none" '
+        f'stroke="{BLACK}" stroke-width="0.09"/>\n'
+    )
+    out.append(
+        f'<path d="{rounded_path(5.56, 25.52, 6.78, 26.54, 0.0)}" fill="none" '
+        f'stroke="{GRAY}" stroke-width="0.1"/>\n'
+    )
     out.append(run("R", 5.86, 26.33, 0.9, 0.62, "400", GRAY))
 
 
@@ -412,13 +643,19 @@ def weee(out: List[str]) -> None:
     out.append(stroke([(11.41, 27.42), (11.62, 30.66), (13.3, 30.66)], BLACK, 0.115))
     out.append(stroke([(13.5, 27.42), (13.36, 30.2)], BLACK, 0.115))
     out.append(stroke([(11.25, 27.42), (13.75, 27.42)], BLACK, 0.12))
-    out.append(stroke([(11.3, 27.38), (11.49, 27.22), (11.66, 27.06), (12.29, 27.06)],
-                      BLACK, 0.1))
+    out.append(stroke([(11.3, 27.38), (11.49, 27.22), (11.66, 27.06), (12.29, 27.06)], BLACK, 0.1))
     out.append(stroke([(11.71, 27.06), (11.71, 27.38)], BLACK, 0.1))
-    out.append(f'<path d="{rounded_path(12.29, 26.93, 12.86, 27.14, 0.0)}" fill="none" '
-               f'stroke="{BLACK}" stroke-width="0.1"/>\n')
-    out.append(stroke([(12.86, 27.06), (13.0, 27.06), (13.35, 27.12), (13.66, 27.23),
-                       (13.75, 27.38)], BLACK, 0.1))
+    out.append(
+        f'<path d="{rounded_path(12.29, 26.93, 12.86, 27.14, 0.0)}" fill="none" '
+        f'stroke="{BLACK}" stroke-width="0.1"/>\n'
+    )
+    out.append(
+        stroke(
+            [(12.86, 27.06), (13.0, 27.06), (13.35, 27.12), (13.66, 27.23), (13.75, 27.38)],
+            BLACK,
+            0.1,
+        )
+    )
     out.append(stroke([(13.52, 27.7), (13.84, 27.7), (13.84, 28.1), (13.48, 28.1)], BLACK, 0.09))
     out.append(fronts.rounded_rect(12.23, 28.2, 0.77, 0.24, r=0.0, fill=BLACK))
     out.append(fronts.circle(13.24, 30.51, 0.27, fill="none", stroke=BLACK, stroke_w=0.11))
@@ -431,12 +668,38 @@ def weee(out: List[str]) -> None:
 def m5_cube(out: List[str]) -> None:
     """M5Stack's cube: a hexagon in outline, open on the upper right and below
     its left corner, the top face's two front edges, and the 5 on that face."""
-    out.append(stroke([(5.81, 33.9), (4.9, 33.54), (3.79, 34.02), (4.9, 34.52),
-                       (6.06, 34.03), (6.08, 34.8), (4.9, 35.32), (3.71, 34.8),
-                       (3.71, 34.24)], CUBE_BLUE, 0.1))
+    out.append(
+        stroke(
+            [
+                (5.81, 33.9),
+                (4.9, 33.54),
+                (3.79, 34.02),
+                (4.9, 34.52),
+                (6.06, 34.03),
+                (6.08, 34.8),
+                (4.9, 35.32),
+                (3.71, 34.8),
+                (3.71, 34.24),
+            ],
+            CUBE_BLUE,
+            0.1,
+        )
+    )
     out.append(stroke([(4.84, 33.74), (4.51, 33.9)], BLACK, 0.1))
-    out.append(stroke([(4.34, 33.99), (4.56, 34.12), (5.11, 33.88), (5.39, 33.96),
-                       (5.38, 34.06), (4.94, 34.27)], BLACK, 0.1))
+    out.append(
+        stroke(
+            [
+                (4.34, 33.99),
+                (4.56, 34.12),
+                (5.11, 33.88),
+                (5.39, 33.96),
+                (5.38, 34.06),
+                (4.94, 34.27),
+            ],
+            BLACK,
+            0.1,
+        )
+    )
 
 
 def append_plus2_back(out: List[str]) -> None:
@@ -456,8 +719,10 @@ def append_plus2_back(out: List[str]) -> None:
     out.append(stroke([(10.12, 4.09), (11.53, 4.55)], BLACK, 0.12))
     for spec in SLANT_RUNS:
         out.append(run_slant(*spec))
-    out.append('<path d="M 1.99 12.46 Q 2.3 13.3 2.78 13.45" fill="none" '
-               f'stroke="{GRAY}" stroke-width="0.13" stroke-linecap="round"/>\n')
+    out.append(
+        '<path d="M 1.99 12.46 Q 2.3 13.3 2.78 13.45" fill="none" '
+        f'stroke="{GRAY}" stroke-width="0.13" stroke-linecap="round"/>\n'
+    )
     out.append(stroke([(21.12, 37.42), (21.6, 37.8)], GRAY, 0.08))
     espressif(out)
     fcc(out)
