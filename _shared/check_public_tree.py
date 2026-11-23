@@ -101,7 +101,7 @@ def tracked(root: Path) -> list[Path]:
             check=True,
         ).stdout
         return [root / name for name in out.decode("utf-8").split("\0") if name]
-    except (OSError, subprocess.CalledProcessError):
+    except OSError, subprocess.CalledProcessError:
         return [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts]
 
 
@@ -156,7 +156,7 @@ def own_fixture_stl(root: Path, rel: Path) -> bool:
         import face_fixture
 
         written = face_fixture.files()
-    except (ImportError, OSError):
+    except ImportError, OSError:
         return False
     finally:
         sys.path.remove(shared)

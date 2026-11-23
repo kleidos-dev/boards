@@ -315,7 +315,7 @@ def pdf_read(
     for num in range(1, int(str(reader.trailer["/Size"]))):
         try:
             obj = reader.get_object(num)
-        except (PyPdfError, ValueError, KeyError):  # a free or unreadable object holds nothing
+        except PyPdfError, ValueError, KeyError:  # a free or unreadable object holds nothing
             continue
         if isinstance(obj, DictionaryObject) and ("/JS" in obj or obj.get("/S") == "/JavaScript"):
             scripts.append(f"object {num} is a script ({str(obj.get('/JS') or '')[:40]!r})")
