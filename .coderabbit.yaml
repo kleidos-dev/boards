@@ -241,7 +241,11 @@ reviews:
         third-party source its notice in NOTICE.md, in the same change.
     - path: "requirements.txt"
       instructions: |
-        Exact pins. The model builder's libraries are the versions each
+        Exact pins with their hashes, every dependency included, compiled
+        from the direct pins with the command in the header (never a hash
+        edited by hand); CI installs it with --require-hashes, and the
+        schematic job takes pytest, pypdf and PyYAML from it as hashed
+        constraints. The model builder's libraries are the versions each
         model's model/source.json records under builder.packages: a bump of
         one of them needs the models rebuilt and their records updated, or
         the models' tests fail.

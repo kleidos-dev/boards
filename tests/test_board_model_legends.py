@@ -414,7 +414,7 @@ CAD_LIBRARIES = {
 }
 QA_REQUIREMENTS = ROOT / "requirements.txt"
 #: What installs the checks' stack, the CAD libraries among it.
-QA_INSTALL = "pip install -r requirements.txt"
+QA_INSTALL = "pip install --require-hashes -r requirements.txt"
 
 
 # --- Helpers ---------------------------------------------------------------------
@@ -1557,7 +1557,9 @@ def test_a_missing_cad_library_fails_in_ci_and_skips_anywhere_else(
     """A skip is for a developer's machine; CI installed the pins, so there it is a failure."""
     monkeypatch.setitem(CAD_LIBRARIES, "no_such_cad_library", "numpy")
     monkeypatch.delenv("CI", raising=False)
-    with pytest.raises(pytest.skip.Exception, match="numpy is not installed.*pip install -r"):
+    with pytest.raises(
+        pytest.skip.Exception, match="numpy is not installed.*pip install --require-hashes -r"
+    ):
         cad_library("no_such_cad_library")
     monkeypatch.setenv("CI", "true")
     with pytest.raises(pytest.fail.Exception, match="numpy is not installed.*broken install"):

@@ -45,7 +45,7 @@ def library(name: str) -> ModuleType:
     except ImportError:
         if os.environ.get("CI"):
             pytest.fail(f"{name} is not installed: a broken install of requirements.txt")
-        pytest.skip(f"{name} is not installed: pip install -r requirements.txt")
+        pytest.skip(f"{name} is not installed: pip install --require-hashes -r requirements.txt")
 
 
 def exporter() -> ModuleType:
