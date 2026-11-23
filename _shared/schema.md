@@ -126,7 +126,7 @@ What each front carries:
 | Cardputer ADV | 56 `hs-key-*`, one per button under its legend |
 | T-Deck Plus | 35 `hs-key-*` and `Trackball` |
 
-The two touch boards have no printed target to take: their A/B/C zones are bands of the sensor, which reaches 40 rows below the last screen row, and a contact there routes to one of three equal columns of the panel's width (the Kleidos firmware's `zoneForSample`, `src/hal/common/m5_touch_button_input.cpp`; `kTouchZoneTopY`, `src/config/device_config.h`). So the three targets are computed from `screen-active`, in the same mm a screenshot is composited into. On the Core2 that lands within 0.25 mm of the three printed rings, which is the cross-check; on the CoreS3 SE the printed `< < O > >` is decoration, and its two inner chevrons sit across a band boundary.
+The two touch boards have no printed target to take: their A/B/C zones are bands of the sensor, which reaches 40 rows below the last screen row, and a contact there routes to one of three equal columns of the panel's width (the Kleidos firmware's `zoneForSample`, `src/hal/input/touch_zone_buttons.cpp`; `kTouchZoneTopY`, `src/config/device_config.h`). So the three targets are computed from `screen-active`, in the same mm a screenshot is composited into. On the Core2 that lands within 0.25 mm of the three printed rings, which is the cross-check; on the CoreS3 SE the printed `< < O > >` is decoration, and its two inner chevrons sit across a band boundary.
 
 A reset has no hotspot on a front: it is not an input a flow presses, and it is seldom on a face the front can show. The CoreInk's is a key on its back, which its back drawing draws and carries as a target ("Back drawings", below).
 
