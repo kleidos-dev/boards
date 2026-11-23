@@ -236,7 +236,7 @@ def read_glb(path: str | Path) -> list[Mesh]:
 
 def _clip_to_box(
     points: npt.NDArray[np.float64], box: tuple[float, float, float, float]
-) -> npt.NDArray[np.float64]:
+) -> list[npt.NDArray[np.float64]]:
     """The part of a polygon (rows of x, y, z) inside x0 <= x <= x1, y0 <= y <= y1
     (Sutherland-Hodgman, plane by plane, so an upright face clips too)."""
     x0, x1, y0, y1 = box
@@ -255,7 +255,7 @@ def _clip_to_box(
             if cur_in:
                 out.append(cur)
         poly = out
-    return np.array(poly, dtype=float).reshape(-1, 3)
+    return poly
 
 
 def screen_clearance(meshes: list[Mesh], quant_mm: float) -> dict[str, Any] | None:
@@ -836,12 +836,12 @@ def rasterize(
     towards = towards / np.linalg.norm(towards)
     if light is None:
         light = towards + np.array([-0.35, 0.55, 0.25])
-    lit = np.asarray(light, dtype=float)
-    lit = lit / np.linalg.norm(lit)
-    half = lit + towards
+    key_dir = np.asarray(light, dtype=float)
+    key_dir = key_dir / np.linalg.norm(key_dir)
+    half = key_dir + towards
     half /= np.linalg.norm(half)
     # the light a face toward the viewer takes, which the shading divides by
-    facing = AMBIENT + KEY * max(float(towards @ lit), 0.0)
+    facing = AMBIENT + KEY * max(float(towards @ key_dir), 0.0)
     shown = [m for m in meshes if len(m.faces) and m.name not in skip and m.name != "glass"]
     drawn = [m for m in shown if m.alpha >= 1.0]
     blended = [m for m in shown if m.alpha < 1.0]
@@ -917,7 +917,7 @@ def rasterize(
                 n /= np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-12)
                 if m.double and (fn[fi] @ towards) < 0:
                     n = -n
-                shade = (AMBIENT + KEY * np.clip(n @ lit, 0, 1))[:, None] / facing
+                shade = (AMBIENT + KEY * np.clip(n @ key_dir, 0, 1))[:, None] / facing
                 shine = (1.0 - m.rough) ** 2
                 lobe = 8 + 120 * shine
                 # the highlight where a face turns toward the light further than

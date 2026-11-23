@@ -2176,7 +2176,7 @@ def build(
                 )
             except legend_mesh.LegendError as exc:
                 raise SpecError(f"{name}: {exc}") from None
-            if not found and web_ppm is not None and plane in legend_mesh.planes(read):
+            if not sheet_arrays and web_ppm is not None and plane in legend_mesh.planes(read):
                 # the web level of detail left nothing of this plane to draw
                 drawn.setdefault(front, set()).add(plane)
                 legends.append(
@@ -2193,7 +2193,7 @@ def build(
                 )
                 print(f"legends {name}: plane {plane!r}, nothing left at {web_ppm} px/mm")
                 continue
-            if not found:
+            if not sheet_arrays:
                 raise SpecError(
                     f"{name}: {drawing} holds no legend group on the plane "
                     f"{plane!r}; it has {legend_mesh.planes(read) or 'none'}"
