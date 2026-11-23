@@ -47,13 +47,13 @@ How the drawings, models and schematics are made, and which script writes each f
 
 ## How Kleidos uses it
 
-This repository is the one place the boards' drawings, facts and models are kept; the Kleidos firmware repository, which also holds the site at [kleidos.dev](https://kleidos.dev), is its first reader:
+This repository is the one place the boards' drawings, facts and models are kept. Its first reader is the site at [kleidos.dev](https://kleidos.dev), which is built today inside the Kleidos firmware repository (`kleidos-dev/kleidos`):
 
 - The site publishes each `svg/front.svg` with the annotations and the press targets stripped, and lays real screen captures on the `screen` quad every model carries over its display.
 - The site's web models are cut from each board's web level of detail (`<board>-web.glb`, tied to its master by `web.json`); the videos draw the masters, close up.
-- Every path recorded here is relative to this repository's root, so a reader that mounts it elsewhere prefixes its own mount path and nothing here changes.
+- Every path recorded here is relative to this repository's root, so a reader that copies a file elsewhere keeps its path below its own folder and nothing here changes.
 
-The firmware repository is to mount this repository as a git submodule, and the digests a reader pins the models by are in [`docs/models-and-drawings.md`](docs/models-and-drawings.md#model-digests).
+Nothing mounts this repository as a submodule. The site holds a byte copy of the nine `svg/front.svg`, the nine `measurements.json` and `_shared/graphite.json` under its `vendor/boards/`, with a `SOURCE.json` naming the commit of this repository it was taken from and each file's SHA-256, and it reads the `.glb` masters only from a checkout of this repository when its web models are cut again. The firmware itself reads nothing here. The digests a reader pins the models by are in [`docs/models-and-drawings.md`](docs/models-and-drawings.md#model-digests).
 
 ## Build and check
 

@@ -397,7 +397,7 @@ def hotspots_block(spots: list[Hotspot]) -> str:
 # bands of the sensor: it reaches TOUCH_ZONE_BAND_PX rows below the last
 # screen row, and a contact there routes to one of three equal columns of
 # the panel's width (the Kleidos firmware's `zoneForSample`,
-# src/hal/common/m5_touch_button_input.cpp;
+# src/hal/input/touch_zone_buttons.cpp;
 # `kTouchZoneTopY`, src/config/device_config.h; both boards set
 # TOUCH_ZONE_STRIP_BELOW_DISPLAY). So the targets follow the screen rect,
 # in the same mm the screenshot is composited into. On the Core2 that lands

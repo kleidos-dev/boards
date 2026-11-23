@@ -83,7 +83,7 @@ KEYBOARD_FIELDS = {
 
 #: The FT6x36 boards: the sensor's rows below the display and the columns a
 #: contact there is split into (the Kleidos firmware's
-#: ``src/config/device_config.h`` and ``src/hal/common/m5_touch_button_input.cpp``).
+#: ``src/config/device_config.h`` and ``src/hal/input/touch_zone_buttons.cpp``).
 TOUCH_BAND_PX = 40
 TOUCH_COLUMNS = 3
 
