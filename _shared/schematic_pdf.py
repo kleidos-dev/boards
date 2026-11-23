@@ -59,9 +59,9 @@ from pypdf.generic import (
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
-import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from brand)
-import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
-from paths import ROOT  # noqa: E402
+import kleidos_kicad as kit
+import media_meta
+from paths import ROOT
 
 #: What the PDF is drawn with besides its sheets, the sources its identifier is derived from too:
 #: the kit's theme, drawing sheet and style.
@@ -140,7 +140,8 @@ def link(rect_pt, dest, alt: str) -> DictionaryObject:
 
 
 def sources_digest(board: str) -> hashlib._Hash:
-    """SHA-256 of what the PDF is drawn from: every sheet of the schematic, then the kit's theme, sheet and style."""
+    """SHA-256 of what the PDF is drawn from: every sheet of the schematic, then the kit's theme,
+    sheet and style."""
     digest = hashlib.sha256()
     for sheet in sorted((ROOT / board / "schematic").glob("*.kicad_sch")):
         digest.update(sheet.read_bytes())
@@ -234,7 +235,7 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
                     del a[key]
             a[NameObject("/Dest")] = dest(j["to"])
             a[NameObject("/Contents")] = TextStringObject(j["alt"])
-        for r, a in rects:  # the rest go to a page: say which
+        for _r, a in rects:  # the rest go to a page: say which
             if "/Contents" not in a and isinstance(a.get("/Dest"), ArrayObject):
                 target = next(
                     (

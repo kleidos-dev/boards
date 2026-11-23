@@ -3,7 +3,8 @@
 
 The landing film lays real captures on the glass of one modeled StickS3. This
 writes that model, as a glTF 2.0 binary: the realistic master the film's web
-model is cut from (the Kleidos repository's ``site/tools/build-web-model.mjs``, which reads it with no
+model is cut from (the Kleidos repository's ``site/tools/build-web-model.mjs``, which reads it with
+no
 decoder). The master itself is not published. The model is described by
 ``model/spec.json`` beside this file and written by the fleet's one builder,
 ``../_shared/build_board_glb.py``; this script keeps the command line the

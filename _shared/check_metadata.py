@@ -48,7 +48,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import media_meta as mm  # noqa: E402  (beside this file; -I leaves it off the path)
+import media_meta as mm
 
 ROOT = mm.ROOT
 MEDIA = {
@@ -339,9 +339,8 @@ def xmp_of(texts) -> str:
 def check_pdf(rel: str, data: bytes, meta: mm.MediaMeta, identity) -> Findings:
     import io
 
-    from pypdf import PdfReader
-
     import schematic_pdf
+    from pypdf import PdfReader
 
     found = Findings()
     reader = PdfReader(io.BytesIO(data))

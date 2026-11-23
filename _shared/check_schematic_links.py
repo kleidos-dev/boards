@@ -64,13 +64,13 @@ from kicad_schematic import (
     PAPER,
     REF_CHAR_W,
     VIEW_LEFT,
-    VIEW_TOP,  # noqa: E402
+    VIEW_TOP,
     chip_of,
     gpio_maps,
     parse,
     zone,
 )
-from paths import ROOT  # noqa: E402
+from paths import ROOT
 
 PT = 72 / 25.4
 SLACK = 0.6  # mm a link's box may miss its text's anchor by
@@ -189,6 +189,7 @@ def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
 def pdf_read(pdf: Path):
     """The PDF's links per page, bookmarks, named destinations, scripts, page size."""
     from pypdf import PdfReader
+    from pypdf.errors import PyPdfError
     from pypdf.generic import DictionaryObject
 
     reader = PdfReader(pdf)
@@ -281,7 +282,7 @@ def pdf_read(pdf: Path):
     for num in range(1, int(reader.trailer["/Size"])):
         try:
             obj = reader.get_object(num)
-        except Exception:  # a free or unreadable object holds nothing
+        except PyPdfError, ValueError, KeyError:  # a free or unreadable object holds nothing
             continue
         if isinstance(obj, DictionaryObject) and ("/JS" in obj or obj.get("/S") == "/JavaScript"):
             scripts.append(f"object {num} is a script ({str(obj.get('/JS') or '')[:40]!r})")
@@ -401,10 +402,10 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
         reach = set()
         p = pages.get(page, {"texts": [], "boxes": [], "fields": []})
 
-        def hits_at(x, y):
+        def hits_at(x, y, links=links):
             return [k for k, lk in enumerate(links) if inside(lk["rect"], x, y)]
 
-        def note(k, kind, label, verdict):
+        def note(k, kind, label, verdict, links=links, used=used, reach=reach, page=page):
             lk = links[k]
             used[k] = True
             r = lk["rect"]
@@ -433,7 +434,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
             hits = hits_at(t["x"] + 0.3, t["y"])
             if not hits:
                 errors.append(
-                    f"page {page}: text {t['body']!r} at ({t['x']:.1f}, {t['y']:.1f}) mm has no link"
+                    f"page {page}: text {t['body']!r} at ({t['x']:.1f}, {t['y']:.1f}) mm has no "
+                    "link"
                 )
                 continue
             if target == page:
@@ -452,7 +454,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
                 elif m:
                     if int(m.group(1)) != target:
                         errors.append(
-                            f"page {page}: {t['body']!r} prints page {m.group(1)} but links to {target}"
+                            f"page {page}: {t['body']!r} prints page {m.group(1)} but links to "
+                            f"{target}"
                         )
                     subject = row_subject(page, t)
                     note(
@@ -474,7 +477,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
             ]
             if not hits:
                 errors.append(
-                    f"page {page}: sheet {b['label']!r} has no link (it should lead to page {b['target']})"
+                    f"page {page}: sheet {b['label']!r} has no link (it should lead to page "
+                    f"{b['target']})"
                 )
             for k in hits:
                 lk = links[k]
@@ -551,7 +555,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
     )
 
     def beside(e: dict, page: int, t: dict) -> str | None:
-        """None when the marker ``t`` sits beside the element entry ``e`` names, else what it sits by."""
+        """None when the marker ``t`` sits beside the element entry ``e`` names, else what it sits
+        by."""
         el = e.get("element") or {}
         kind = next(
             (k for k in ("pin", "part", "net", "gpio", "i2c", "pull", "rail") if k in el), None
@@ -671,7 +676,7 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
         for o in outline
         if o["depth"] == 1 and o["parent"] in drawing_titles
     }
-    for ref, (pg, x, y) in sorted(drawn.items()):
+    for ref, (pg, _x, _y) in sorted(drawn.items()):
         o = kids.get(ref)
         if o is None:
             errors.append(f"bookmarks: no entry for {ref} under its page")
@@ -721,17 +726,18 @@ def main(argv: list[str]) -> int:
         if re.match(r"p\d+ ", line):
             per_page[line.split()[0]] = per_page.get(line.split()[0], 0) + 1
     marks = sum(1 for line in lines if line.startswith("bookmark"))
-    print(
-        f"links: {', '.join(f'{k} {v}' for k, v in sorted(per_page.items(), key=lambda kv: int(kv[0][1:])))}; "
-        f"page bookmarks {marks}"
+    counts = ", ".join(
+        f"{k} {v}" for k, v in sorted(per_page.items(), key=lambda kv: int(kv[0][1:]))
     )
+    print(f"links: {counts}; page bookmarks {marks}")
     for e in errors[:200]:
         print(f"FAIL {e}")
     if len(errors) > 200:
         print(f"FAIL ... and {len(errors) - 200} more")
     if not errors:
         print(
-            f"ok   {args.board}: every link of {pdf.name} lands where it should, and it holds no script"
+            f"ok   {args.board}: every link of {pdf.name} lands where it should, and it holds no "
+            "script"
         )
     return 1 if errors else 0
 

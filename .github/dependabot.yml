@@ -1,11 +1,33 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
+#
+# Keeps the GitHub Actions this repository pins by commit and the Python
+# stack pinned in requirements.txt current: at most one grouped pull request
+# a week for each. Dependabot authors its own commit messages, so the
+# commit-message gate skips its pull requests. The quality kit's workflow
+# references and tool versions are not Dependabot's here: they move with the
+# kit's sync (kleidos-dev/.github docs/quality.md, "Versions").
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    # A release is proposed only once it is a week old, so a compromised or
+    # yanked version has time to be noticed first.
+    cooldown:
+      default-days: 7
+    ignore:
+      - dependency-name: "kleidos-dev/.github*"
+    groups:
+      actions:
+        patterns: ["*"]
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      python:
+        patterns: ["*"]

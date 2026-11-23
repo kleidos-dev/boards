@@ -89,7 +89,7 @@ TOUCH_COLUMNS = 3
 
 def front(device_id: str) -> ET.Element:
     """Parse one device's generated front."""
-    return ET.fromstring((CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8"))
+    return ET.fromstring((CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
 
 
 def group(root: ET.Element, group_id: str) -> ET.Element:
@@ -125,7 +125,7 @@ def test_no_front_draws_a_vendor_screen_or_an_image(devices):
     """The panel is bare: no demo screen, no embedded raster, no clip left for one."""
     for device_id in devices:
         text = (CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8")
-        root = ET.fromstring(text)
+        root = ET.fromstring(text)  # noqa: S314  (this repository's own file)
         assert not root.findall(".//*[@id='screen-demo']"), device_id
         assert "screen-clip_" not in text, device_id
         assert not [el for el in root.iter() if el.tag.endswith("}image")], device_id
@@ -353,7 +353,7 @@ def test_the_coreink_plain_keys_sit_where_they_are_measured():
 
     reset = keys["Reset"]
     assert reset["face"] == "back" and "hs-Reset" not in spots
-    back = ET.fromstring((CAD / "coreink" / "svg" / "back.svg").read_text(encoding="utf-8"))
+    back = ET.fromstring((CAD / "coreink" / "svg" / "back.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
     reset_spot = group(back, "hs-Reset")
     # The back frame's x runs from the case's other edge.
     assert case_w - float(reset_spot.get("cx")) == pytest.approx(reset["center_x_mm"], abs=0.01)

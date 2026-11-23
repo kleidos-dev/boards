@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: MIT
-"""The Kleidos KiCad kit under _shared/kicad/: brand's files, byte for byte, and what the generator takes from them."""
+"""The Kleidos KiCad kit under _shared/kicad/: brand's files, byte for byte, and what the generator
+takes from them."""
 
 from __future__ import annotations
 
@@ -35,22 +36,22 @@ def test_every_file_of_the_kit_is_the_one_its_manifest_records():
 
 def test_the_generator_takes_its_numbers_from_the_kit():
     style = kit.style()
-    assert (ks.GRID, ks.PITCH, ks.PIN_LEN, ks.STUB) == (
+    assert (
         style["lines"]["grid"],
         style["lines"]["pin_pitch"],
         style["lines"]["pin_length"],
         style["lines"]["stub"],
-    )
-    assert (ks.FONT, ks.REF_FONT, ks.ROOT_FONT) == (
+    ) == (ks.GRID, ks.PITCH, ks.PIN_LEN, ks.STUB)
+    assert (
         style["text"]["body"],
         style["text"]["small"],
         style["text"]["running"],
-    )
+    ) == (ks.FONT, ks.REF_FONT, ks.ROOT_FONT)
     assert ks.LINE_MIL == style["lines"]["connection_mil"] == 6
     assert (ks.ZONE_ORIGIN, ks.ZONE_STEP) == (10.0, 50.0)
     assert (ks.KEEPOUT_X, ks.KEEPOUT_Y, ks.NAV_X, ks.NAV_Y) == (125.0, 48.0, 112.0, 47.0)
     assert ks.MARK_COLOUR == (255, 184, 0) and ks.RULE_COLOUR == (136, 153, 170)
-    assert ks.BLOCK_LINES == style["sheet"]["comment_lines"]
+    assert style["sheet"]["comment_lines"] == ks.BLOCK_LINES
 
 
 def test_every_board_s_project_names_the_kit_s_sheet_and_its_variables():

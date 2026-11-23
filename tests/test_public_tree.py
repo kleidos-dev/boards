@@ -17,7 +17,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
 
-import check_public_tree
+import check_public_tree  # noqa: E402
 
 
 def glue(separator: str, *pieces: str) -> str:
@@ -86,7 +86,8 @@ def test_root_license_is_the_mit_text():
 
 
 def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
-    """``<board>/model/<board>.obj`` and ``.mtl`` beside its GLB and spec: ours; any other OBJ: not."""
+    """``<board>/model/<board>.obj`` and ``.mtl`` beside its GLB and
+    spec: ours; any other OBJ: not."""
     model = tmp_path / "board" / "model"
     model.mkdir(parents=True)
     for name in ("board.obj", "board.mtl"):
@@ -111,7 +112,8 @@ def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path):
 
 
 def test_a_banner_copy_with_embedded_screens_is_refused(tmp_path):
-    """The README banner is read from social by its address: a copy in the tree that embeds pictures is refused, wherever it lands."""
+    """The README banner is read from social by its address: a copy in the tree that embeds pictures
+    is refused, wherever it lands."""
     readme = tmp_path / ".github" / "readme"
     readme.mkdir(parents=True)
     (readme / "banner-dark.svg").write_text(

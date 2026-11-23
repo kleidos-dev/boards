@@ -30,7 +30,8 @@ the model's spec (``feet``).
 from __future__ import annotations
 
 import math
-from typing import List, Sequence, Tuple
+from collections.abc import Sequence
+from itertools import pairwise
 
 from emit_front_svg import LEGEND_CLOSE, circle, f, print_open, rounded_rect, text
 
@@ -240,7 +241,7 @@ TEXT_UP = (
 )
 
 # ------------------------------------------------------------------ helpers
-Point = Tuple[float, float]
+Point = tuple[float, float]
 
 
 def _poly(points: Sequence[Point], fill: str) -> str:
@@ -279,12 +280,13 @@ def _dashes(
     pitch: float = 1.12,
     width: float = 0.16,
     lead: float = 0.0,
-) -> List[str]:
-    """A dashed rule along a polyline: dashes ``dash`` long every ``pitch``, each cut at the vertex it
+) -> list[str]:
+    """A dashed rule along a polyline: dashes ``dash`` long every ``pitch``, each cut at the vertex
+    it
     reaches (the pattern itself carries on round the corner)."""
-    out: List[str] = []
+    out: list[str] = []
     s = lead
-    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+    for (x0, y0), (x1, y1) in pairwise(points):
         length = math.hypot(x1 - x0, y1 - y0)
         ux, uy = (x1 - x0) / length, (y1 - y0) / length
         while s < length - 0.05:
@@ -302,16 +304,19 @@ def _dashes_bent(
     pitch: float = 1.12,
     width: float = 0.16,
     lead: float = 0.0,
-) -> List[str]:
-    """A dashed rule along a polyline whose dashes bend round its vertices: dashes ``dash`` long every
+) -> list[str]:
+    """A dashed rule along a polyline whose dashes bend round its vertices: dashes ``dash`` long
+    every
     ``pitch``.
 
-    The first dash starts ``lead`` along the line; a negative lead cuts it short at the line's start.
-    A dash that runs past a vertex goes on along the next segment, so a corner drawn as a run of short
+    The first dash starts ``lead`` along the line; a negative lead cuts it short at the line's
+    start.
+    A dash that runs past a vertex goes on along the next segment, so a corner drawn as a run of
+    short
     segments (``_corner``) bends the dash round it."""
-    out: List[str] = []
+    out: list[str] = []
     seg = []
-    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+    for (x0, y0), (x1, y1) in pairwise(points):
         seg.append(((x0, y0), (x1, y1), math.hypot(x1 - x0, y1 - y0)))
     total = sum(n for _, _, n in seg)
 
@@ -339,7 +344,7 @@ def _dashes_bent(
     return out
 
 
-def _corner(start: Point, center: Point, end: Point, step_deg: float = 10.0) -> List[Point]:
+def _corner(start: Point, center: Point, end: Point, step_deg: float = 10.0) -> list[Point]:
     """A quarter-round corner from *start* to *end* about *center*, as points (start and end
     included), for a dashed rule."""
     a0 = math.atan2(start[1] - center[1], start[0] - center[0])
@@ -395,7 +400,7 @@ def _block_arrow(
 
 def _bulb(
     cx: float, cy: float, r: float, neck_half: float, neck_y: float, step_deg: float = 10.0
-) -> List[Point]:
+) -> list[Point]:
     """A bulb's outline: the circle about (cx, cy) from 40 degrees below its right
     side over the top to 40 below its left, then straight to a neck *neck_half*
     either side of cx at *neck_y*."""
@@ -508,12 +513,12 @@ def paper_path() -> str:
     )
 
 
-def paper_polygon(step_deg: float = 10.0) -> List[Point]:
+def paper_polygon(step_deg: float = 10.0) -> list[Point]:
     """The sticker's outline as points (its arcs at *step_deg*), for the model's paper solid."""
     x0, x1, y0, y1 = PAPER_LEFT, PAPER_RIGHT, PAPER_TOP, PAPER_BOTTOM
     nx, nt, nb = PAPER_NOTCH_X, PAPER_NOTCH_TOP, PAPER_NOTCH_BOTTOM
     r, rn, ri = PAPER_R, PAPER_NOTCH_R, PAPER_INNER_R
-    pts: List[Point] = []
+    pts: list[Point] = []
 
     def corner(cx: float, cy: float, rad: float, a0: float, a1: float) -> None:
         n = max(2, round(abs(a1 - a0) / step_deg))
@@ -542,7 +547,7 @@ def paper_polygon(step_deg: float = 10.0) -> List[Point]:
 #: least squares on the photo's green channel blurred as the photo is; the
 #: points are in the drawing's own frame (inside ``PRINT_STRETCH_Y``).
 ESP_TILE = (18.37, 2.09, 26.84, 10.51, 1.2)
-ESPRESSIF_RINGS: Tuple[Tuple[Point, ...], ...] = (
+ESPRESSIF_RINGS: tuple[tuple[Point, ...], ...] = (
     (
         (20.270, 5.134),
         (20.181, 5.279),
@@ -768,11 +773,11 @@ ESPRESSIF_RINGS: Tuple[Tuple[Point, ...], ...] = (
 )
 
 
-def _smooth_ring(ring: Sequence[Point], steps: int = 4) -> List[Point]:
+def _smooth_ring(ring: Sequence[Point], steps: int = 4) -> list[Point]:
     """A closed ring through every one of its points on a centripetal Catmull-Rom spline,
     *steps* points a span, so its curves read round however near they are seen."""
     n = len(ring)
-    out: List[Point] = []
+    out: list[Point] = []
     for i in range(n):
         p0, p1, p2, p3 = (ring[(i + k) % n] for k in (-1, 0, 1, 2))
         t1 = math.dist(p0, p1) ** 0.5
@@ -789,7 +794,7 @@ def _smooth_ring(ring: Sequence[Point], steps: int = 4) -> List[Point]:
     return out
 
 
-def append_espressif(out: List[str]) -> None:
+def append_espressif(out: list[str]) -> None:
     x0, y0, x1, y1, r = ESP_TILE
     out.append(rounded_rect(x0, y0, x1 - x0, y1 - y0, r, fill=VERMILION))
     d = " ".join(
@@ -799,7 +804,7 @@ def append_espressif(out: List[str]) -> None:
     out.append(f'<path d="{d}" fill="{WHITE}" fill-rule="evenodd"/>\n')
 
 
-def append_table(out: List[str]) -> None:
+def append_table(out: list[str]) -> None:
     """The M-BUS table's cells (their text is ``TEXT``) and its dashed frame and name."""
     for i, (left, right) in enumerate(CELLS):
         y = ROW0 + PITCH * i
@@ -849,7 +854,7 @@ def append_table(out: List[str]) -> None:
 #: photo's resampling, smoothed by 0.05 mm and simplified to 0.006 mm; the S,
 #: then the D and its counter, as the rings of one even-odd shape (drawing
 #: frame).
-MICROSD_SD: Tuple[Tuple[Point, ...], ...] = (
+MICROSD_SD: tuple[tuple[Point, ...], ...] = (
     (
         (33.449, 48.326),
         (33.450, 48.500),
@@ -988,7 +993,7 @@ MICROSD_SD: Tuple[Tuple[Point, ...], ...] = (
 )
 
 
-def append_parts(out: List[str]) -> None:
+def append_parts(out: list[str]) -> None:
     """Every mark of the board's parts beside the table: cells, icons, arrows, rules."""
     # capacitive touch, vibration motor, power key
     out.append(rounded_rect(37.2, 9.45, 6.1, 1.4, 0.3, fill=BLUE))
@@ -1175,8 +1180,10 @@ def append_parts(out: List[str]) -> None:
             BLACK,
         )
     )
-    for x in (33.13, 34.13, 35.14):
-        out.append(f'<rect x="{f(x)}" y="45.6" width="0.7" height="0.93" fill="{YELLOW}"/>\n')
+    out.extend(
+        f'<rect x="{f(x)}" y="45.6" width="0.7" height="0.93" fill="{YELLOW}"/>\n'
+        for x in (33.13, 34.13, 35.14)
+    )
     sd = " ".join(
         "M " + " L ".join(f"{f(x)} {f(y)}" for x, y in ring) + " Z" for ring in MICROSD_SD
     )
@@ -1200,7 +1207,7 @@ def append_parts(out: List[str]) -> None:
         )
 
 
-def append_back(out: List[str]) -> None:
+def append_back(out: list[str]) -> None:
     """The back sticker: its paper (outside the legend group, a solid of the model) and
     everything printed on it, one legend group on the plane ``sticker``."""
     out.append(f'<path d="{paper_path()}" fill="{PAPER}" stroke="#bdbdc1" stroke-width="0.1"/>\n')
@@ -1259,7 +1266,7 @@ def _ring_cut(cx: float, cy: float, outer: float, inner: float, cut_x: float, in
     )
 
 
-def append_ce(out: List[str]) -> None:
+def append_ce(out: list[str]) -> None:
     """The CE mark: two rings 0.8 mm thick, each cut by a vertical just right of its
     center, and the E's middle bar running out of its ring (half-max edges of the photo)."""
     out.append(_ring_cut(30.275, -11.15, 2.83, 2.02, 30.51, BLACK))
@@ -1267,7 +1274,7 @@ def append_ce(out: List[str]) -> None:
     out.append(f'<rect x="32.75" y="-11.57" width="1.98" height="0.84" fill="{BLACK}"/>\n')
 
 
-def append_weee(out: List[str]) -> None:
+def append_weee(out: list[str]) -> None:
     """The crossed-out wheelie bin (EN 50419) and the bar under it: a domed lid with its
     grip on top and a knob at its rear right, the lid's rim, a handle box on the rear
     wall, the tapered body with a slot, a foot at its front and the wheel at its back,
@@ -1297,7 +1304,7 @@ def append_weee(out: List[str]) -> None:
     out.append(f'<rect x="36.09" y="-7.84" width="4.21" height="0.96" fill="{BLACK}"/>\n')
 
 
-def append_fcc(out: List[str]) -> None:
+def append_fcc(out: list[str]) -> None:
     """FCC: an F whose arms run into two C's, one in the other, open to the right."""
     out.append(
         f'<path d="M 27.68 -5.48 V -7.77 H 29.6 V -7.25 H 28.07 V -6.81 H 29.1 V -6.37 '
@@ -1307,7 +1314,7 @@ def append_fcc(out: List[str]) -> None:
     out.append(_arc(30.02, -6.62, 0.38, 50, 310, BLACK, 0.34))
 
 
-def append_giteki(out: List[str]) -> None:
+def append_giteki(out: list[str]) -> None:
     """Japan's radio mark: a ring broken on its right by a lightning stroke, two bars and a
     stem, and the boxed R beside it."""
     gx, gy, ring = 32.55, -7.25, 0.68
@@ -1335,7 +1342,7 @@ def append_giteki(out: List[str]) -> None:
     )
 
 
-def append_top(out: List[str]) -> None:
+def append_top(out: list[str]) -> None:
     """The top side's rating label: one legend group on the plane ``rating``, drawn upright
     as the photo shows it and turned into the top frame by the transform just inside it."""
     (pu, pw), (mu, mw), (sx, sy) = TOP_PHOTO_CENTER, TOP_MODEL_CENTER, TOP_SCALE

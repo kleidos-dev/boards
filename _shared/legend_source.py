@@ -113,7 +113,7 @@ def described(front_svg, plane=None):
     the groups printed on it.
     """
     out = []
-    for group, around in groups(ET.parse(front_svg).getroot()):
+    for group, around in groups(ET.parse(front_svg).getroot()):  # noqa: S314  (this repository's own file)
         if plane is not None and plane_of(group) != plane:
             continue
         transforms, family = placed(around)

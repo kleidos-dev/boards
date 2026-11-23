@@ -22,8 +22,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
-from paths import BOARDS, ROOT  # noqa: E402
+import media_meta
+from paths import BOARDS, ROOT
 
 
 def stamped(board: str) -> tuple[Path, str, str]:

@@ -82,9 +82,8 @@ from fontTools.pens.basePen import BasePen
 from fontTools.ttLib import TTFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import legend_source  # noqa: E402  (beside this file; -I leaves it off the path)
-
-from paths import FONTS  # noqa: E402  (the pinned fonts, fonts/)
+import legend_source
+from paths import FONTS
 
 SVG = legend_source.SVG
 #: The pinned faces of each family a legend may be set in, by CSS weight.
@@ -711,7 +710,7 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
     shape, so its name and plane stay on record.
     """
     faces = faces or Faces()
-    root = ET.parse(front_svg).getroot()
+    root = ET.parse(front_svg).getroot()  # noqa: S314  (this repository's own file)
     out = []
 
     def draw(el, m, family, legend, where, drawn):
@@ -895,8 +894,8 @@ def triangulate(area, grid):
     edge on one side and two on the other.
     """
     points, triangles, base = [], [], 0
-    for poly in _polygons(area):
-        poly = sg.polygon.orient(poly, 1.0)
+    for part in _polygons(area):
+        poly = sg.polygon.orient(part, 1.0)
         rings = [np.asarray(poly.exterior.coords)[:-1]]
         rings += [np.asarray(ring.coords)[:-1] for ring in poly.interiors]
         pts = np.vstack(rings)

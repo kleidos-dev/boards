@@ -67,9 +67,9 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
-import model_raster  # noqa: E402
-from paths import BOARDS, ROOT  # noqa: E402
+import media_meta
+import model_raster
+from paths import BOARDS, ROOT
 
 #: Bumped when the same GLB would give other bytes.
 EXPORTER_VERSION = "1.1.0"
@@ -95,7 +95,8 @@ def name_of(text: str) -> str:
 
 
 def material_names(js: dict) -> list[str]:
-    """The name each material of the GLB takes in the MTL, in its order (``material_<i>`` unnamed)."""
+    """The name each material of the GLB takes in the MTL, in its
+    order (``material_<i>`` unnamed)."""
     return [
         name_of(mat.get("name") or f"material_{index}")
         for index, mat in enumerate(js.get("materials", []))
@@ -129,7 +130,7 @@ def mtl_text(board: str, glb_name: str, glb_sha: str, js: dict, head: list[str])
         "# Kd: base colour in sRGB; d: alpha (1 opaque); Pr, Pm: roughness and metalness "
         "(PBR); Ns, Ks: their classic approximation; illum 0 unlit, 2 lit. No textures.",
     ]
-    for name, mat in zip(material_names(js), js.get("materials", [])):
+    for name, mat in zip(material_names(js), js.get("materials", []), strict=True):
         pbr = mat.get("pbrMetallicRoughness", {})
         factor = pbr.get("baseColorFactor", [1.0, 1.0, 1.0, 1.0])
         kd = model_raster.linear_to_srgb(factor[:3])

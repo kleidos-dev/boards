@@ -78,7 +78,8 @@ def _first_signal_pins(nets):
 
 @pytest.mark.parametrize("board", BOARDS)
 def test_an_unconnected_pin_named_with_a_slash_stays_unconnected(board, tmp_path):
-    """KiCad names an unconnected pin's net after the pin, "/" and all ("unconnected-(U1-IO11/CMD-Pad30)")."""
+    """KiCad names an unconnected pin's net after the pin, "/" and all
+    ("unconnected-(U1-IO11/CMD-Pad30)")."""
     nets = faithful_nodes(board)
     for key in [k for k in nets if k.startswith("unconnected-")]:
         nets[key.replace("-Pad", "-A/B-Pad")] = nets.pop(key)
@@ -276,7 +277,8 @@ def test_test_points_are_named_tp_or_drawn_as_one(board):
 
 @pytest.mark.parametrize("board", BOARDS)
 def test_the_project_ignores_only_the_erc_checks_layout_names(board):
-    """Every board ignores KiCad's two library checks; layout.yaml's erc_ignore adds its own, each said why."""
+    """Every board ignores KiCad's two library checks; layout.yaml's erc_ignore adds its own, each
+    said why."""
     folder = ROOT / board / "schematic"
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
     pro = json.loads((folder / f"{board}.kicad_pro").read_text(encoding="utf-8"))
@@ -288,8 +290,7 @@ def test_the_project_ignores_only_the_erc_checks_layout_names(board):
 
 def _pins(node):
     for unit in (n for n in node if isinstance(n, list) and n and n[0] == "symbol"):
-        for pin in (n for n in unit if isinstance(n, list) and n and n[0] == "pin"):
-            yield pin
+        yield from (n for n in unit if isinstance(n, list) and n and n[0] == "pin")
 
 
 def test_an_own_symbol_takes_its_pin_length_and_may_hide_its_numbers():
@@ -319,7 +320,8 @@ def test_a_transistor_pair_draws_base_collector_and_emitter():
 
 @pytest.mark.parametrize("board", BOARDS)
 def test_the_contents_page_boxes_take_the_layouts_size(board):
-    """A drawing page's box on the contents page is root.sheet_box's height (27.94 mm by default)."""
+    """A drawing page's box on the contents page is root.sheet_box's
+    height (27.94 mm by default)."""
     folder = ROOT / board / "schematic"
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
     h = float((lay["root"].get("sheet_box") or (27.94, 31.75))[0])
@@ -727,7 +729,8 @@ def test_a_gpio_tables_chip_is_the_reference_that_opens_its_titles_brackets():
 
 
 def test_an_index_row_shows_its_element_and_what_hangs_on_it():
-    """The elements whose Kleidos entries a row of an index table, or a box of the power tree, repeats."""
+    """The elements whose Kleidos entries a row of an index table, or a box of the power tree,
+    repeats."""
     net = {
         "components": {
             "R1": {"pins": {"1": "A", "2": "GND"}},
@@ -755,7 +758,8 @@ def test_an_index_row_shows_its_element_and_what_hangs_on_it():
 
 
 def test_a_pin_on_no_net_says_what_it_is_in_the_gpio_table():
-    """The map's own text; else what the Kleidos entries on the row or the pin say; else nothing, since the
+    """The map's own text; else what the Kleidos entries on the row or the pin say; else nothing,
+    since the
     Net cell already reads "not connected"."""
     b = ks.Builder("sticks3")
     gt = {"title": "SoC GPIO (U1)"}
@@ -851,7 +855,8 @@ def test_the_generator_marks_and_lists_every_addition(planted_repo):
         k["title"] == ks.ADD_TITLE
         for k in next(o for o in links["outline"] if o["page"] == 1)["kids"]
     )
-    # the added pins' and the added part's wires are dotted: U9.4 (to ground) and R10's two, which the
+    # the added pins' and the added part's wires are dotted: U9.4 (to ground) and R10's two, which
+    # the
     # layout draws without stubs, so they get one each; a correction (K3, K6) dots nothing
     dotted = {
         f.name: _dotted_wires(ks.parse(f.read_text(encoding="utf-8")))
@@ -868,7 +873,8 @@ def test_the_check_holds_a_generated_drawing_with_additions(planted_repo, monkey
 
 @pytest.mark.parametrize("board", BOARDS)
 def test_each_boards_index_pages_and_title_blocks_say_what_they_should(board):
-    """The committed files: the wording under the heading and in every title block, each entry marked on
+    """The committed files: the wording under the heading and in every title block, each entry
+    marked on
     every row and power-tree box that shows its element again, and what a pin on no net says."""
     assert cs.index_pages(board) == []
 
@@ -879,8 +885,10 @@ def _index_pages(board, folder) -> dict[int, str]:
 
 
 def test_an_entry_is_marked_wherever_an_index_page_shows_its_element_again(planted_repo):
-    """A rail's entry: on its row of the rails table, above each of its boxes in the power tree and on its
-    row of the nets page; a part's: after its reference and on its row of the parts list; a pin's on no
+    """A rail's entry: on its row of the rails table, above each of its boxes in the power tree and
+    on its
+    row of the nets page; a part's: after its reference and on its row of the parts list; a pin's on
+    no
     net: by its cross and on its GPIO's row, which says what the entry says."""
     folder = planted_repo / ADD_BOARD / "schematic"
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
@@ -1000,7 +1008,8 @@ def bare_repo(tmp_path_factory):
 
 
 def test_a_board_without_entries_says_nothing_of_them(bare_repo, monkeypatch):
-    """No table, no marker, no word of them under the heading or in a title block; a pin on no net still
+    """No table, no marker, no word of them under the heading or in a title block; a pin on no net
+    still
     says so on the nets page."""
     folder = bare_repo / ADD_BOARD / "schematic"
     monkeypatch.setattr(cs, "ROOT", bare_repo)
@@ -1101,8 +1110,8 @@ def test_the_links_of_a_pdf_with_additions_lead_both_ways(planted_pdf, monkeypat
 
 
 def _add_link(writer, page, eid):
-    for a in writer.pages[page - 1]["/Annots"]:
-        a = a.get_object()
+    for annot in writer.pages[page - 1]["/Annots"]:
+        a = annot.get_object()
         said = str(a.get("/Contents", ""))
         if a.get("/Subtype") == "/Link" and said.startswith((f"{eid}:", f"{eid} in the ")):
             return a

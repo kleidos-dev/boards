@@ -146,7 +146,7 @@ FACE_DRAWINGS: dict[tuple[str, str], dict[str, set[str]]] = {
 
 
 def back(device_id: str) -> ET.Element:
-    return ET.fromstring((CAD / device_id / "svg" / "back.svg").read_text(encoding="utf-8"))
+    return ET.fromstring((CAD / device_id / "svg" / "back.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
 
 
 def boards_with_models() -> list[str]:
@@ -238,7 +238,7 @@ def test_the_side_drawings_are_the_writers_and_no_other() -> None:
 def test_a_side_drawing_holds_the_backs_contract(board_face: tuple[str, str]) -> None:
     """Its case outline first (the face's rectangle), flat legend groups, the annotations last."""
     board, face = board_face
-    root = ET.fromstring((CAD / board / "svg" / f"{face}.svg").read_text(encoding="utf-8"))
+    root = ET.fromstring((CAD / board / "svg" / f"{face}.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
     shapes = [el for el in root if el.tag.removeprefix(SVG) in {"rect", "path", "polygon"}]
     assert shapes and shapes[0].get("id") == "case-outline", board_face
     assert root[-1].get("id") == "annotations", board_face

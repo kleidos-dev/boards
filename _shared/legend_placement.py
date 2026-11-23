@@ -78,7 +78,6 @@ import numpy as np  # noqa: E402
 import shapely  # noqa: E402
 import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
-
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
 
 #: How far a group's ink may lie from where the drawing puts it, in mm.
@@ -300,8 +299,10 @@ def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
     known = {
         f"{entry['mesh']}_{sheet['fill'][1:]}" for entry in listed for sheet in entry["sheets"]
     }
-    for name in sorted(set(areas) - known):
-        problems.append(f"{name}: a legend mesh its source.json does not record")
+    problems.extend(
+        f"{name}: a legend mesh its source.json does not record"
+        for name in sorted(set(areas) - known)
+    )
     drawings = {}
     planes_read = {}  # (drawing, flatness) -> the planes of it a legends mesh draws
     for entry in listed:
@@ -706,7 +707,8 @@ FACE_FIXTURE = HERE / "fixtures" / "faces"
 
 
 def faces_selftest(board_dir=FACE_FIXTURE):
-    """Plant defects in the back print of the two-face fixture: (the clean report, plants, controls).
+    """Plant defects in the back print of the two-face fixture: (the clean report, plants,
+    controls).
 
     The fixture prints an ``F`` and ``K1`` on its back (``face_fixture.py``),
     built into the model from the back's own drawing. The placement check

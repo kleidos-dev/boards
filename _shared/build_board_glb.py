@@ -275,12 +275,12 @@ import shapely.geometry as sg
 import trimesh
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import board_faces  # noqa: E402  (beside this file; -I leaves it off the path)
-import export_obj  # noqa: E402
-import glb_legends  # noqa: E402
-import legend_source  # noqa: E402
-import media_meta  # noqa: E402
-import model_raster  # noqa: E402
+import board_faces
+import export_obj
+import glb_legends
+import legend_source
+import media_meta
+import model_raster
 
 #: Bumped when the same spec and source would build different bytes, or when
 #: the spec format gains a key (1.1.0: polygon and disc profiles, spheres,
@@ -304,7 +304,8 @@ import model_raster  # noqa: E402
 BUILDER_VERSION = "1.7.0"
 #: How many materials the strictest reader of a model keeps a table of, and how
 #: many of its own it puts there after the model's: the Kleidos site's renderer,
-#: whose lit shader holds ``MATERIAL_SLOTS`` (the Kleidos repository's ``site/src/scripts/film/gl/shaders.ts``).
+#: whose lit shader holds ``MATERIAL_SLOTS`` (the Kleidos repository's
+#: ``site/src/scripts/film/gl/shaders.ts``).
 #: Its landing film's scene added the finger, the nail and the cover glass; the fleet
 #: scene that replaced the film (``site/src/scripts/fleet/scene.ts``) adds the cover glass
 #: alone, so three is the stricter of the two. The Kleidos repository's own tests hold
@@ -754,8 +755,8 @@ def srgb_to_linear(c):
     on every machine, and gives the same 256 values on macOS and glibc.
     """
     out = []
-    for v in np.asarray(c, dtype=float).ravel().tolist():
-        v /= 255.0
+    for channel in np.asarray(c, dtype=float).ravel().tolist():
+        v = channel / 255.0
         out.append(v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4)
     return np.array(out, dtype=float).reshape(np.shape(c))
 
@@ -986,8 +987,8 @@ def loft(axis, sections, caps=()):
         tri = trimesh.creation.triangulate_polygon(sg.Polygon(rings[s][1]))[1]
         base = s * n
         up = (which == "last") == rising  # this cap faces +axis
-        for t in np.asarray(tri):
-            t = [base + int(x) for x in t]
+        for corners in np.asarray(tri):
+            t = [base + int(x) for x in corners]
             faces.append(tuple(t) if up else tuple(t[::-1]))
     # in (u, v, axis) order counterclockwise is +axis; the axis order (u, v, k)
     # of y is a mirror of (x, y, z)
@@ -1262,8 +1263,14 @@ def cached_source(unit, cache, fetch):
     if not path.is_file() and fetch:
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_suffix(path.suffix + ".part")
+        if not str(src["url"]).startswith("https://"):
+            raise SpecError(f"{src['url']}: a vendor file is fetched over https only")
         print(f"fetching {src['url']}")
-        with urllib.request.urlopen(src["url"], timeout=120) as resp, open(tmp, "wb") as fh:
+        # S310 asks for a checked scheme: it is checked just above (https only).
+        with (
+            urllib.request.urlopen(src["url"], timeout=120) as resp,  # noqa: S310
+            open(tmp, "wb") as fh,
+        ):
             while chunk := resp.read(1 << 20):
                 fh.write(chunk)
         digest = sha256_file(tmp)

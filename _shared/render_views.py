@@ -59,7 +59,7 @@ def silhouette_polygon(mesh: trimesh.Trimesh, view: str, axes: dict | None = Non
                 p = p.buffer(0)
                 if not p.is_empty and p.area > 0:
                     polys.append(p)
-        except Exception:
+        except ValueError, shapely.errors.ShapelyError:  # a degenerate face draws nothing
             continue
     if not polys:
         return None

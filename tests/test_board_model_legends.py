@@ -545,7 +545,7 @@ def changed_front(board: str, change, tmp_path: Path, face: str = "front") -> Pa
     it lies in. The copy is written by another serializer than the
     generator's, which by itself changes nothing a model reads.
     """
-    tree = ET.parse(CAD / board / "svg" / f"{face}.svg")
+    tree = ET.parse(CAD / board / "svg" / f"{face}.svg")  # noqa: S314  (this repository's own file)
     root = tree.getroot()
     change(root, {child: parent for parent in root.iter() for child in parent})
     out = tmp_path / f"{board}-{face}.svg"
@@ -568,7 +568,7 @@ def planes_of_front(board: str) -> dict[str, int]:
         path = CAD / board / "svg" / f"{face}.svg"
         if not path.is_file():
             continue
-        root = ET.fromstring(path.read_text(encoding="utf-8"))
+        root = ET.fromstring(path.read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
         for group in root.iter(f"{{{SVG_NS}}}g"):
             if "legend" in (group.get("class") or "").split():
                 plane = plane_key(face, group.get("data-plane", "keys"))
@@ -597,16 +597,14 @@ def node_bytes(js: dict, bin_: bytes) -> dict[str, tuple]:
             continue
         mesh = js["meshes"][node["mesh"]]
         prims = []
-        for prim in mesh["primitives"]:
-            prims.append(
-                (
-                    tuple(
-                        (name, data(index)) for name, index in sorted(prim["attributes"].items())
-                    ),
-                    data(prim["indices"]),
-                    json.dumps(js["materials"][prim["material"]], sort_keys=True),
-                )
+        prims.extend(
+            (
+                tuple((name, data(index)) for name, index in sorted(prim["attributes"].items())),
+                data(prim["indices"]),
+                json.dumps(js["materials"][prim["material"]], sort_keys=True),
             )
+            for prim in mesh["primitives"]
+        )
         described = {k: v for k, v in node.items() if k != "mesh"}
         out[node["name"]] = (json.dumps(described, sort_keys=True), mesh["name"], tuple(prims))
     return out
@@ -890,7 +888,7 @@ def test_a_front_changed_inside_its_legends_is_a_model_to_rebuild(
 
 def changed_back(board: str, change, tmp_path: Path) -> Path:
     """A copy of a board's back drawing with *change* made to its parsed tree."""
-    tree = ET.parse(CAD / board / "svg" / "back.svg")
+    tree = ET.parse(CAD / board / "svg" / "back.svg")  # noqa: S314  (this repository's own file)
     root = tree.getroot()
     change(root, {child: parent for parent in root.iter() for child in parent})
     out = tmp_path / f"{board}-back.svg"
@@ -1142,7 +1140,8 @@ def builder_float(name: str) -> float:
 
 
 def content(data: bytes) -> bytes:
-    """A model less its own metadata (each file's record names that file), laid out as the builder's are."""
+    """A model less its own metadata (each file's record names that file), laid out as the builder's
+    are."""
     js, bin_ = glb_legends.read(data)
     return glb_legends.write(media_meta.gltf_without_metadata(js), bin_)
 
@@ -1155,7 +1154,8 @@ def test_a_board_has_two_levels_of_detail_the_master_and_the_webs(board: str) ->
     drawings. The web level (``web.json``, ``<board>-web.glb``) is built by
     the same builder from the same spec with ``--web-px-per-mm``, the largest
     scale the site draws the board at (the Kleidos repository's
-    ``site/tools/build-web-model.mjs --scales``), and is what the site's web model is cut from. It was built
+    ``site/tools/build-web-model.mjs --scales``), and is what the site's web model is cut from. It
+    was built
     beside the master as it is, under the builder's two rules (a print whose
     strokes cover fewer than ``WEB_MIN_STROKE_PX`` pixels at that scale is
     left out, curves flattened to ``WEB_FLATNESS_PX`` there); less its prints

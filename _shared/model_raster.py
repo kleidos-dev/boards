@@ -564,8 +564,8 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
                 )
                 if other == key:
                     pick &= a[:, None] < there[None, :]
-                for i, j in zip(*np.nonzero(pick), strict=True):
-                    i, j = int(a[i]), int(there[j])
+                for pi, pj in zip(*np.nonzero(pick), strict=True):
+                    i, j = int(a[pi]), int(there[pj])
                     if (
                         owner[i] == owner[j]
                         or (mirror[i] and mirror[j])
@@ -642,7 +642,8 @@ def coplanar_selftest(cad_dir=None):
         return repo / record["model"], record["parameters"]["quant_mm"]
 
     def moved(meshes, name, dz):
-        assert any(m.name == name for m in meshes), name
+        if not any(m.name == name for m in meshes):
+            raise AssertionError(name)
         return [
             dataclasses.replace(m, positions=m.positions + np.array([0.0, 0.0, dz]))
             if m.name == name

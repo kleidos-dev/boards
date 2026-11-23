@@ -36,9 +36,9 @@ drawn mirrored.
 from __future__ import annotations
 
 import math
-from typing import List, Sequence, Tuple
+from collections.abc import Sequence
 
-import emit_front_svg as fronts  # noqa: E402  (beside this file)
+import emit_front_svg as fronts
 
 f = fronts.f
 INK = fronts.CARDPUTER_INK
@@ -101,7 +101,7 @@ def box(x0: float, y0: float, x1: float, y1: float, fill: str, r: float = 0.0) -
     return fronts.rounded_rect(x0, y0, x1 - x0, y1 - y0, r=r, fill=fill)
 
 
-def line(points: Sequence[Tuple[float, float]], ink: str, width: float, cap: str = "butt") -> str:
+def line(points: Sequence[tuple[float, float]], ink: str, width: float, cap: str = "butt") -> str:
     d = " L ".join(f"{f(x)} {f(y)}" for x, y in points)
     return (
         f'<path d="M {d}" fill="none" stroke="{ink}" '
@@ -160,7 +160,7 @@ def kv(
     value_len: float,
     ink: str = INK,
     key_weight: str = "500",
-) -> List[str]:
+) -> list[str]:
     """A pin's name in the label's medium weight and its GPIO in bold, each
     set to the width the photo gives it."""
     return [
@@ -178,13 +178,13 @@ def kv(
 BACK_FRAME = "matrix(0.99276 0 0 0.992695 0.231945 0.245457)"
 
 
-def drawn(u: float, v: float) -> Tuple[float, float]:
+def drawn(u: float, v: float) -> tuple[float, float]:
     """A point read on the paper's registration, in the measured coordinates
     the back is drawn in (``BACK_FRAME`` undone)."""
     return (round((u - 0.231945) / 0.99276, 3), round((v - 0.245457) / 0.992695, 3))
 
 
-def spline(points: Sequence[Tuple[float, float]], ink: str, width: float) -> str:
+def spline(points: Sequence[tuple[float, float]], ink: str, width: float) -> str:
     """A smooth trace through *points*, read on the paper: each span a cubic
     whose tangents at its ends run from the point before to the point after
     (a Catmull-Rom curve)."""
@@ -226,21 +226,20 @@ def heavy(
     return "".join(out)
 
 
-def notches(out: List[str], polygons: Sequence[str]) -> None:
+def notches(out: list[str], polygons: Sequence[str]) -> None:
     """Close, in ``INK``, the tips of a heavy run's notches where they narrow
     below what the model's mesh holds (under about 0.06 mm), so the drawing
     and the print agree there."""
-    for points in polygons:
-        out.append(f'<polygon points="{points}" fill="{INK}"/>\n')
+    out.extend(f'<polygon points="{points}" fill="{INK}"/>\n' for points in polygons)
 
 
-def open_print(out: List[str], name: str, plane: str = PLANE) -> None:
+def open_print(out: list[str], name: str, plane: str = PLANE) -> None:
     out.append(fronts.print_open(name, plane))
     if plane == PLANE:
         out.append(f'<g transform="{BACK_FRAME}">\n')
 
 
-def close_print(out: List[str], plane: str = PLANE) -> None:
+def close_print(out: list[str], plane: str = PLANE) -> None:
     if plane == PLANE:
         out.append("</g>\n")
     out.append(fronts.LEGEND_CLOSE)
@@ -253,7 +252,7 @@ EXT_X0, EXT_PITCH = 32.61, 2.727
 EXT_ROWS = (1.92, 4.56, 7.29)
 
 
-def _ext_header(out: List[str]) -> None:
+def _ext_header(out: list[str]) -> None:
     """The EXT 2.54-14P header's pin table, as the header is seen from behind."""
     open_print(out, "ext-table")
     x1 = EXT_X0 + 7 * EXT_PITCH
@@ -289,7 +288,7 @@ def _ext_header(out: List[str]) -> None:
             )
         )
     two = (("5V", "IN", WHITE), ("5V", "OUT", WHITE), ("G8", "SDA", INK), ("G9", "SCL", INK))
-    for (upper, lower, ink), i in zip(two, (0, 2, 3, 4)):
+    for (upper, lower, ink), i in zip(two, (0, 2, 3, 4), strict=True):
         cx = EXT_X0 + (i + 0.5) * EXT_PITCH
         out.append(t(cx, 5.72, upper, 0.86, ink, weight="700", anchor="middle", length=1.42))
         out.append(
@@ -319,7 +318,7 @@ def _ext_header(out: List[str]) -> None:
     close_print(out)
 
 
-def _mic(out: List[str]) -> None:
+def _mic(out: list[str]) -> None:
     """The microphone beside the header, and its line to the codec."""
     open_print(out, "mic")
     out.append(t(29.8, 4.25, "Mic", 0.95, GRAY, weight="400", length=2.1))
@@ -332,7 +331,7 @@ def _mic(out: List[str]) -> None:
     close_print(out)
 
 
-def _audio(out: List[str]) -> None:
+def _audio(out: list[str]) -> None:
     """The headphone jack, the codec, the amplifier and the speaker."""
     open_print(out, "jack")
     out.append(
@@ -432,7 +431,7 @@ def _audio(out: List[str]) -> None:
     close_print(out)
 
 
-def _usb_imu_stamp(out: List[str]) -> None:
+def _usb_imu_stamp(out: list[str]) -> None:
     """USB-C, the BMI270, the StampS3A, the TCA8418 and their lines."""
     open_print(out, "usb")
     out.append(heavy(2.07, 25.75, "USB", 1.17, INK, 3.58, 0.015))
@@ -546,7 +545,7 @@ def _usb_imu_stamp(out: List[str]) -> None:
     close_print(out)
 
 
-def _power(out: List[str]) -> None:
+def _power(out: list[str]) -> None:
     """The charger, the switch, the battery, the two MOSFETs and the regulators."""
     open_print(out, "usb-5vin")
     # from a gap after the plug, under the word, up to the azure line, where
@@ -769,7 +768,7 @@ def _power(out: List[str]) -> None:
     close_print(out)
 
 
-def _port_a(out: List[str]) -> None:
+def _port_a(out: list[str]) -> None:
     """PORT.A's pins as the right column prints them, and the 5 V switch."""
     open_print(out, "port-a")
     out.append(
@@ -812,15 +811,13 @@ def _port_a(out: List[str]) -> None:
     close_print(out)
 
 
-def _matrix(out: List[str]) -> None:
+def _matrix(out: list[str]) -> None:
     """The keyboard's 8 x 7 matrix as the label draws it, under its name."""
     rows = (30.49, 32.03, 33.54, 35.07, 36.58, 38.09, 39.62, 41.1)
     cols = (32.38, 37.6, 42.85, 48.05, 53.35, 58.55, 63.85)
     open_print(out, "key-matrix")
-    for y in rows:
-        out.append(line([(30.7, y), (65.5, y)], KHAKI, 0.2))
-    for x in cols:
-        out.append(line([(x, 30.15), (x, 41.4)], DARK_GRAY, TRACE))
+    out.extend(line([(30.7, y), (65.5, y)], KHAKI, 0.2) for y in rows)
+    out.extend(line([(x, 30.15), (x, 41.4)], DARK_GRAY, TRACE) for x in cols)
     close_print(out)
     open_print(out, "key-matrix-names")
     for i, x in enumerate(cols):
@@ -831,7 +828,7 @@ def _matrix(out: List[str]) -> None:
     close_print(out)
 
 
-def _lcd(out: List[str]) -> None:
+def _lcd(out: list[str]) -> None:
     """The LCD's name block and its pins."""
     open_print(out, "lcd")
     out.append(curve("M 67.72 31.9 V 24.37 H 79.88 L 80.98 25.47 V 31.9", BOX_GRAY, 0.2))
@@ -862,15 +859,18 @@ def _lcd(out: List[str]) -> None:
     close_print(out)
 
 
-def _legend_and_logo(out: List[str]) -> None:
+def _legend_and_logo(out: list[str]) -> None:
     """The POWER / DATA key, the M5 STACK logotype and the ADV flag."""
     open_print(out, "line-key")
     pts = []
     x0, y0, x1, y1, r = 62.55, 42.9, 73.05, 47.0, 0.85
-    corner = lambda cx, cy, a0: [
-        (cx + r * math.cos(math.radians(a)), cy + r * math.sin(math.radians(a)))
-        for a in range(a0, a0 + 91, 15)
-    ]
+
+    def corner(cx, cy, a0):
+        return [
+            (cx + r * math.cos(math.radians(a)), cy + r * math.sin(math.radians(a)))
+            for a in range(a0, a0 + 91, 15)
+        ]
+
     pts += corner(x1 - r, y0 + r, -90) + corner(x1 - r, y1 - r, 0)
     pts += corner(x0 + r, y1 - r, 90) + corner(x0 + r, y0 + r, 180)
     pts.append(pts[0])
@@ -931,7 +931,7 @@ def _legend_and_logo(out: List[str]) -> None:
     close_print(out)
 
 
-def back(out: List[str]) -> None:
+def back(out: list[str]) -> None:
     """Every print of the ADV's back sticker, in the back frame."""
     _ext_header(out)
     _mic(out)
@@ -953,7 +953,7 @@ def turned(
     y0: float,
     x1: float,
     y1: float,
-    parts: Sequence[Tuple[str, str, float]],
+    parts: Sequence[tuple[str, str, float]],
     ink: str,
 ) -> str:
     """A run of one or more weights set in the box (x0, y0)-(x1, y1) of the
@@ -991,7 +991,7 @@ def _press_mark(x: float, y: float, arc_ink: str) -> str:
     )
 
 
-def top(out: List[str]) -> None:
+def top(out: list[str]) -> None:
     """The top edge's sticker, in the top frame: the front at the bottom, so
     every print the board's user reads from the keyboard side reads upside
     down here."""
@@ -1049,7 +1049,7 @@ def top(out: List[str]) -> None:
     close_print(out, "strip")
 
 
-def left(out: List[str]) -> None:
+def left(out: list[str]) -> None:
     """The left side's sticker round the Grove port, in the left frame: the
     back on the left, the front on the right, so its words read down."""
     open_print(out, "grove-pins", "side")

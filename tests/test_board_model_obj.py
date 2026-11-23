@@ -35,7 +35,8 @@ pytestmark = pytest.mark.models
 
 
 def library(name: str):
-    """A library the check needs: skipped where it is missing, a failure in CI, which installs it."""
+    """A library the check needs: skipped where it is missing, a
+    failure in CI, which installs it."""
     try:
         return __import__(name)
     except ImportError:

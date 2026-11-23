@@ -112,7 +112,8 @@ class MetaError(ValueError):
 
 
 def license_url(spdx_id: str) -> str:
-    """The page of a license: SPDX's for a listed identifier, the text in ``LICENSES/`` otherwise."""
+    """The page of a license: SPDX's for a listed identifier, the
+    text in ``LICENSES/`` otherwise."""
     if spdx_id in SPDX_LISTED:
         return f"https://spdx.org/licenses/{spdx_id}.html"
     if spdx_id.startswith("LicenseRef-") and (ROOT / "LICENSES" / f"{spdx_id}.txt").is_file():
@@ -236,8 +237,8 @@ def reuse_truth(path: str | Path) -> tuple[str, tuple[str, ...]]:
         if lic not in expr:
             expr.append(lic)
     clean = []
-    for h in holders:
-        h = _without_email(h)
+    for holder in holders:
+        h = _without_email(holder)
         if h not in clean:
             clean.append(h)
     if not expr:
@@ -716,8 +717,10 @@ def xmp_packet(meta: MediaMeta, profile: str = "full", pdf: dict | None = None) 
         lines.append(f"{i}<pdf:Keywords>{xml_text(pdf['keywords'])}</pdf:Keywords>")
         lines.append(f"{i}<pdf:Producer>{xml_text(pdf['producer'])}</pdf:Producer>")
         lines.append(f"{i}<xmp:CreatorTool>{xml_text(pdf['creator_tool'])}</xmp:CreatorTool>")
-        for tag in ("CreateDate", "ModifyDate", "MetadataDate"):
-            lines.append(f"{i}<xmp:{tag}>{pdf['date']}</xmp:{tag}>")
+        lines.extend(
+            f"{i}<xmp:{tag}>{pdf['date']}</xmp:{tag}>"
+            for tag in ("CreateDate", "ModifyDate", "MetadataDate")
+        )
         lines.append(f"{i}<xmpMM:DocumentID>{pdf['document_id']}</xmpMM:DocumentID>")
         lines.append(f"{i}<xmpMM:InstanceID>{pdf['instance_id']}</xmpMM:InstanceID>")
     ns = "\n".join(f'        xmlns:{p}="{XMP_NS[p]}"' for p in used)
@@ -793,7 +796,8 @@ _SVG_META = re.compile(
 
 
 def unstamp_svg(svg: str) -> str:
-    """An SVG without what :func:`stamp_svg` writes: its SPDX comment, root title, desc, metadata."""
+    """An SVG without what :func:`stamp_svg` writes: its SPDX
+    comment, root title, desc, metadata."""
     svg = _SVG_SPDX.sub("", svg)
     m = _SVG_ROOT.search(svg)
     if not m:
@@ -1020,8 +1024,7 @@ def png_with_metadata(data: bytes, meta: MediaMeta) -> bytes:
     ]
     at = next(i for i, (k, _) in enumerate(chunks) if k == b"IDAT")
     added = png_metadata_chunks(meta, png_profile(data))
-    out = PNG_SIGNATURE + b"".join(_chunk(k, b) for k, b in chunks[:at] + added + chunks[at:])
-    return out
+    return PNG_SIGNATURE + b"".join(_chunk(k, b) for k, b in chunks[:at] + added + chunks[at:])
 
 
 # ---------------------------------------------------------------- PDF
@@ -1097,7 +1100,8 @@ IDENTITY_ENV = "KLEIDOS_DENY_EXTRA"
 
 
 def identity_patterns() -> list[re.Pattern] | None:
-    """The identity patterns (one regex a line) from the untracked file or the CI secret, or None."""
+    """The identity patterns (one regex a line) from the untracked
+    file or the CI secret, or None."""
     text = os.environ.get(IDENTITY_ENV, "")
     if not text.strip() and IDENTITY_FILE.is_file():
         text = IDENTITY_FILE.read_text(encoding="utf-8")

@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
+# SPDX-License-Identifier: MIT
+#
+# The analysis tools' configuration (this repository is no Python package:
+# its code is scripts under _shared/, a board's builder, the tests and an
+# agent skill's tool). Each tool starts from the quality kit
+# (kleidos-dev/.github docs/quality.md); what follows the kit's part is this
+# repository's own.
+
+[tool.ruff]
+extend = ".github/quality/ruff.toml"
+target-version = "py315"
+
+[tool.mypy]
+# >>> kleidos-quality mypy (synced from kleidos-dev/.github quality/mypy/block.toml; do not edit)
+strict = true
+# An ignore names the error it silences, so it cannot hide a second one.
+enable_error_code = ["ignore-without-code"]
+# <<< kleidos-quality mypy
+python_version = "3.15"
+files = ["_shared", "sticks3", "tests", ".claude/skills"]
+# The scripts import each other from beside them (each puts its own folder on
+# sys.path), so mypy resolves them there too.
+mypy_path = ["_shared", "_shared/kicad"]
+
+# fontTools ships no type information (no py.typed) and typeshed has no stub
+# for it; cairosvg, the skill tool's optional SVG renderer, neither, and it is
+# not in requirements.txt (the tool falls back to rsvg-convert or Inkscape).
+[[tool.mypy.overrides]]
+module = ["fontTools.*", "cairosvg"]
+ignore_missing_imports = true

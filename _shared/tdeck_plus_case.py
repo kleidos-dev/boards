@@ -54,15 +54,15 @@ from __future__ import annotations
 import json
 import math
 import sys
+from itertools import pairwise
 from pathlib import Path
 
-import shapely
 import shapely.geometry as sg
 from shapely.ops import unary_union
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import emit_front_svg as fronts  # noqa: E402
-from paths import ROOT  # noqa: E402
+import emit_front_svg as fronts
+from paths import ROOT
 
 SPEC = ROOT / "tdeck-plus" / "model" / "spec.json"
 MEAS = json.loads((ROOT / "tdeck-plus" / "measurements.json").read_text())
@@ -253,7 +253,7 @@ def bands() -> list:
     out = []
     base = body()
     seam = base.buffer(-SEAM_DEPTH, join_style="mitre")
-    for z0, z1 in zip(cuts, cuts[1:]):
+    for z0, z1 in pairwise(cuts):
         mid = (z0 + z1) / 2
         poly = seam if SEAM_Z[0] <= mid <= SEAM_Z[1] else base
         for n in notches:

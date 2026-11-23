@@ -22,7 +22,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
 
-import check_public_tree
+import check_public_tree  # noqa: E402
 
 #: The vendor's name in its two allowed forms: as printed, and as an identifier.
 ALLOWED = {"LILYGO", "lilygo"}
@@ -33,7 +33,8 @@ ADDRESS = re.compile(r"(?:https?://|www\.)[^\s<>()\"'`|\]]+")
 
 
 def misspellings(text: str) -> list[str]:
-    """Every vendor name in *text* outside an address or the organization's name, spelled neither way allowed."""
+    """Every vendor name in *text* outside an address or the organization's name, spelled neither
+    way allowed."""
     found = []
     for number, line in enumerate(text.splitlines(), 1):
         bare = ADDRESS.sub(" ", line).replace(ORGANIZATION, " ")

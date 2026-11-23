@@ -22,7 +22,8 @@ no-connect flag. After a label of a net that other pages also carry, one
 ``[page/zone]`` per such page names the zone of the net's label there (the
 grid the drawing sheet prints in its border: ``3/C4``) and is a text linked to
 that page; ``schematic_pdf.py`` then sends the link to that label. A part
-documented as not fitted (value NC) carries KiCad's DNP mark. Neighbouring pins of one part on one net share a
+documented as not fitted (value NC) carries KiCad's DNP mark. Neighbouring pins of one part on one
+net share a
 stub bar and a single label. Each block is laid out on its own: the main parts
 in a row, the two-pin parts in columns of flat rows beside or below them. The
 root sheet is the contents: one box per sheet, linked to its page, with what is
@@ -44,7 +45,8 @@ A board with entries says so under its heading and in every title block
 did before. A pin on no net says so in the GPIO tables, or what its Kleidos
 entry says of it (``gpio_what``).
 Wires and pin lines take one width (``LINE_MIL``, the width kicad-cli gives
-pins, set as the project's netclass and default line). The same netlist and layout give the same files byte for byte
+pins, set as the project's netclass and default line). The same netlist and layout give the same
+files byte for byte
 (uuids are derived from names).
 
 Usage: ``python3 _shared/kicad_schematic.py <board>``. Every symbol is this
@@ -61,14 +63,15 @@ import math
 import re
 import sys
 import uuid as uuidlib
+from itertools import pairwise
 from pathlib import Path
 
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
-import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from brand: kicad/KIT.json)
-from paths import ROOT  # noqa: E402
+import kleidos_kicad as kit
+from paths import ROOT
 
 # The style's numbers come from the kit (kicad/style.json): the grid, the pin
 # pitch and length, the stub, the text sizes, the one line width, the zone
@@ -445,7 +448,8 @@ def additions_errors(net: dict, lay: dict) -> list[str]:
     ]:
         if ADD_SUBTITLE.lower() in str(said).lower():
             errors.append(
-                f'layout.yaml {where}: "{ADD_SUBTITLE}" is the generator\'s to add, where a board has entries'
+                f'layout.yaml {where}: "{ADD_SUBTITLE}" is the generator\'s to add, where a board '
+                "has entries"
             )
     if adds and len(tb.get("comments", [])) >= BLOCK_LINES:
         errors.append(
@@ -784,10 +788,13 @@ def generic_symbol(name: str) -> list:
     ]
     hide_names = [[Sym("pin_names"), [Sym("offset"), 1.016], [Sym("hide"), Sym("yes")]]]
     show_names = [[Sym("pin_names"), [Sym("offset"), 1.016]]]
-    two_v = lambda length=1.27, half=3.81: [
-        _g_pin("1", "~", 0, half, 270, length),  # noqa: E731
-        _g_pin("2", "~", 0, -half, 90, length),
-    ]
+
+    def two_v(length=1.27, half=3.81):
+        return [
+            _g_pin("1", "~", 0, half, 270, length),
+            _g_pin("2", "~", 0, -half, 90, length),
+        ]
+
     diode_pins = [_g_pin("1", "K", -3.81, 0, 0, 2.54), _g_pin("2", "A", 3.81, 0, 180, 2.54)]
     ref, flags, gfx, pins, power = "U", hide_both, [], [], None
     m = re.fullmatch(r"Conn_(\d\d)x(\d\d)(?:_(Odd_Even|Counter_Clockwise))?", name)
@@ -1314,8 +1321,8 @@ class Builder:
         wide = title_block_errors(self.lay, bool(self.adds))
         if wide:
             raise SystemExit(
-                "layout.yaml title_block: a line wider than its cell, which KiCad would condense:\n  "
-                + "\n  ".join(wide)
+                "layout.yaml title_block: a line wider than its cell, which KiCad would "
+                "condense:\n  " + "\n  ".join(wide)
             )
         sheets_of: dict[str, set] = {}
         for ref, c in self.comps.items():
@@ -1547,8 +1554,10 @@ class Builder:
             self.marker(
                 part_add, x0 + tw + MARK_GAP, refpos[1], items, box, key=("part", ref, unit)
             )
-        for f in ("Footprint", "Datasheet", "Description"):
-            sym.append([Sym("property"), f, "", at(x, y, 0), effects(hide=True)])
+        sym.extend(
+            [Sym("property"), f, "", at(x, y, 0), effects(hide=True)]
+            for f in ("Footprint", "Datasheet", "Description")
+        )
         ends: dict[tuple, list] = {}
         for num, (px, py, pa, _name, _ln) in sorted(upins.items()):
             vend = pinmap.get(num, num)
@@ -1660,12 +1669,12 @@ class Builder:
         # where the part's pins otherwise carry their labels at the pin's end
         stub = STUB if (every and not stub) else stub
         ends = []
-        for (x, y, *_), dash in zip(run, dashed):
+        for (x, y, *_), dash in zip(run, dashed, strict=True):
             ex, ey = x + vx * stub, y + vy * stub
             if stub:
                 self.wire(x, y, ex, ey, items, ("stub", ref, x, y), dash)
             ends.append((ex, ey))
-        for (ax, ay), (bx, by) in zip(ends, ends[1:]):
+        for (ax, ay), (bx, by) in pairwise(ends):
             self.wire(ax, ay, bx, by, items, ("bar", ref, ax, ay), every)
         for jx, jy in ends[1:-1]:
             self.junction(jx, jy, items)
@@ -1710,7 +1719,8 @@ class Builder:
             box.add(x, y, x, y)
 
     def wire(self, x0, y0, x1, y1, items, key, dashed=False):
-        """A wire, at the project's one width; dotted (``ADD_WIRE``) where it is a Kleidos addition."""
+        """A wire, at the project's one width; dotted (``ADD_WIRE``)
+        where it is a Kleidos addition."""
         items.append(
             [
                 Sym("wire"),
@@ -1775,7 +1785,7 @@ class Builder:
         refs_w = sum(widths) + REF_GAP * max(len(toks) - 1, 0)
         start = x + lw + 1.2 if d == 0 else x - lw - 1.2 - refs_w
         tx = start
-        for p, tok, tw in zip(pages, toks, widths):
+        for p, tok, tw in zip(pages, toks, widths, strict=True):
             node = self.text(
                 tok, tx, y, REF_FONT, "left", href=f"#{p}", key=("ref", *key, f"[{p}]")
             )
@@ -1856,8 +1866,10 @@ class Builder:
             [Sym("property"), "Reference", ref, at(x, y, 0), effects(hide=True)],
             [Sym("property"), "Value", net, at(tx, ty, fa), effects(1.0, justify=just)],
         ]
-        for f in ("Footprint", "Datasheet", "Description"):
-            node.append([Sym("property"), f, "", at(x, y, 0), effects(hide=True)])
+        node.extend(
+            [Sym("property"), f, "", at(x, y, 0), effects(hide=True)]
+            for f in ("Footprint", "Datasheet", "Description")
+        )
         node.append([Sym("pin"), "1", [Sym("uuid"), self.uid("pwrpin", self.cur_path, net, x, y)]])
         node.append(
             [
@@ -1986,7 +1998,8 @@ class Builder:
             )
             if bx + bw > W - KEEPOUT_X and by + bh > H - KEEPOUT_Y and "at" not in blk:
                 print(
-                    f"warning: {sh['file']}: block {blk['title']!r} reaches into the title block's corner",
+                    f"warning: {sh['file']}: block {blk['title']!r} reaches into the title block's "
+                    "corner",
                     file=sys.stderr,
                 )
             if bx + bw > W - 5 or by + bh > H - 5:
@@ -2096,7 +2109,7 @@ class Builder:
                         tx += text_w(t) + 1.27
                 cx += widths[i]
             ys.append(y)
-            y += max(1, max(len(c) for c in cells)) * TABLE_PITCH
+            y += max(1, *(len(c) for c in cells)) * TABLE_PITCH
         return y, ys
 
     def heading(self, body, x, y, items, key, sub=None):
@@ -2197,7 +2210,7 @@ class Builder:
     def mk_table(self, title, head, rows, wraps=None, sub=None, on_rows=None):
         wraps = wraps or [None] * len(head)
         lines = sum(
-            max(1, max(len(self.cell_lines(c, wraps[i])) for i, c in enumerate(r))) for r in rows
+            max(1, *(len(self.cell_lines(c, wraps[i])) for i, c in enumerate(r))) for r in rows
         )
         return {
             "title": title,
@@ -2838,7 +2851,8 @@ class Builder:
             head, (W, H) = ["Rev", "Date", "Change"], PAPER[self.paper]
 
             def laid(chars):
-                """The table with its changes wrapped at ``chars``: the wraps, the widths, the y below it."""
+                """The table with its changes wrapped at ``chars``: the wraps, the widths, the y
+                below it."""
                 wraps = [None, None, chars]
                 lines = sum(len(wrap(r[2], chars)) for r in rows)
                 return (
@@ -2904,17 +2918,20 @@ class Builder:
             top, keep = y + 6.35 + TABLE_PITCH + 0.8, 0
             for r in rows:
                 top += (
-                    max(1, max(len(self.cell_lines(c, ADD_WRAPS[i])) for i, c in enumerate(r)))
+                    max(1, *(len(self.cell_lines(c, ADD_WRAPS[i])) for i, c in enumerate(r)))
                     * TABLE_PITCH
                 )
                 if top > floor:
                     break
                 keep += 1
-        self.adds_rest = list(zip(self.adds[keep:], rows[keep:]))
-        y_end = self.add_rows(x, y + 6.35, list(zip(self.adds[:keep], rows[:keep])), doc)
+        self.adds_rest = list(zip(self.adds[keep:], rows[keep:], strict=True))
+        y_end = self.add_rows(
+            x, y + 6.35, list(zip(self.adds[:keep], rows[:keep], strict=True)), doc
+        )
         if y_end > floor:
             print(
-                f"warning: contents page: the {ADD_TITLE} table reaches into the title block's corner",
+                f"warning: contents page: the {ADD_TITLE} table reaches into the title block's "
+                "corner",
                 file=sys.stderr,
             )
         return y_end + 6.35
@@ -2926,7 +2943,7 @@ class Builder:
         y_end, ys = self.table(
             x, y, ADD_HEAD, [[""] + r[1:] for _, r in rows], self.add_widths, ADD_WRAPS, "adds", doc
         )
-        for (e, r), ry in zip(rows, ys):
+        for (e, r), ry in zip(rows, ys, strict=True):
             self.link_text(
                 e["id"],
                 x,
@@ -2972,7 +2989,8 @@ class Builder:
                 and x + sum(self.add_widths) > PAPER[self.paper][0] - 125.0
             ):
                 print(
-                    f"warning: page {self.cur_page}: the {ADD_TITLE} table reaches into the title block's corner",
+                    f"warning: page {self.cur_page}: the {ADD_TITLE} table reaches into the title "
+                    "block's corner",
                     file=sys.stderr,
                 )
         self.revision_history(x, y, items)
@@ -2992,9 +3010,7 @@ class Skyline:
     def fits(self, x, y, w, h) -> bool:
         if y + h > self.floor + 0.01:
             return False
-        if self.keepout and x + w > self.keepout[0] and y + h > self.keepout[1] + 0.01:
-            return False
-        return True
+        return not (self.keepout and x + w > self.keepout[0] and y + h > self.keepout[1] + 0.01)
 
     def put(self, w: float, h: float) -> tuple[float, float]:
         best = None
@@ -3135,11 +3151,13 @@ def main(argv: list[str]) -> int:
         "(sym_lib_table\n\t(version 7)\n"
         f'\t(lib (name "{args.board}") (type "KiCad") (uri "${{KIPRJMOD}}/{args.board}.kicad_sym") '
         f'(options "") (descr "Kleidos boards: {args.board} symbols"))\n'
-        f'\t(lib (name "{GENERIC_LIB}") (type "KiCad") (uri "${{KIPRJMOD}}/{GENERIC_LIB}.kicad_sym") '
+        f'\t(lib (name "{GENERIC_LIB}") (type "KiCad") (uri '
+        f'"${{KIPRJMOD}}/{GENERIC_LIB}.kicad_sym") '
         f'(options "") (descr "Kleidos boards: the generic symbols"))\n)\n',
         encoding="utf-8",
     )
-    # a board may switch off more ERC checks, each named in layout.yaml's erc_ignore (its README says why)
+    # a board may switch off more ERC checks, each named in layout.yaml's erc_ignore (its README
+    # says why)
     extra = "".join(f',\n      "{rule}": "ignore"' for rule in b.lay.get("erc_ignore") or [])
     (b.dir / f"{args.board}.kicad_pro").write_text(
         PRO_TEMPLATE.replace("@BOARD@", args.board)

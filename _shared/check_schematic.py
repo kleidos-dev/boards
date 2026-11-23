@@ -47,11 +47,12 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import Any
 
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from paths import ROOT  # noqa: E402
+from paths import ROOT
 
 
 def export(board: str, cli: str) -> Path:
@@ -77,7 +78,7 @@ def export(board: str, cli: str) -> Path:
 
 def drawn_nets(xml: Path) -> dict[tuple[str, str], str]:
     """(reference, our pin) -> net name, from KiCad's XML netlist."""
-    root = ET.parse(xml).getroot()
+    root = ET.parse(xml).getroot()  # noqa: S314  (this repository's own file)
     out = {}
     for net in root.iter("net"):
         name = net.get("name")
@@ -117,8 +118,9 @@ def compare(board: str, xml: Path) -> list[str]:
     errors = []
     seen: dict[tuple[str, str], str] = {}
     refs_drawn = {r for r, _ in drawn}
-    for ref in sorted(refs_drawn - set(facts)):
-        errors.append(f"{ref}: drawn but not in netlist.yaml")
+    errors.extend(
+        f"{ref}: drawn but not in netlist.yaml" for ref in sorted(refs_drawn - set(facts))
+    )
     for (ref, ours), net in sorted(drawn.items()):
         if ref not in facts:
             continue
@@ -208,14 +210,14 @@ def additions(board: str) -> list[str]:
             errors.append(f"kleidos {eid}: no row in the contents page's table")
         elif not rows[eid]:
             errors.append(f"kleidos {eid}: its row on the contents page leads nowhere")
-    for eid in sorted(set(markers) - set(ids)):
-        errors.append(
-            f"{eid}: marked on page(s) {sorted(set(markers[eid]))}, but netlist.yaml has no such entry"
-        )
-    for eid in sorted(set(rows) - set(ids)):
-        errors.append(
-            f"{eid}: a row of the contents page's table, but netlist.yaml has no such entry"
-        )
+    errors.extend(
+        f"{eid}: marked on page(s) {sorted(set(markers[eid]))}, but netlist.yaml has no such entry"
+        for eid in sorted(set(markers) - set(ids))
+    )
+    errors.extend(
+        f"{eid}: a row of the contents page's table, but netlist.yaml has no such entry"
+        for eid in sorted(set(rows) - set(ids))
+    )
     return errors
 
 
@@ -276,7 +278,10 @@ def index_tables(page: dict) -> list[dict]:
     marker = lambda t: bool(t["href"] and t["bold"] and ADD_ID.fullmatch(t["body"]))  # noqa: E731
     tables = []
     for x0, x1, ry in page["rules"]:
-        within = lambda t: x0 - 0.1 <= t["x"] <= x1 + 0.1  # noqa: E731
+
+        def within(t: dict[str, Any], lo: float = x0 - 0.1, hi: float = x1 + 0.1) -> bool:
+            return lo <= t["x"] <= hi
+
         head = sorted(
             (t for t in texts if t["bold"] and within(t) and abs(t["y"] - (ry - 1.6)) < 0.05),
             key=lambda t: t["x"],
@@ -366,14 +371,14 @@ def index_pages(board: str) -> list[str]:
         """The markers a row or box carries are those of the entries its elements have."""
         got = sorted(t["body"] for t in marks)
         want = sorted({by_element[k]["id"] for k in keys if k in by_element})
-        for eid in sorted(set(want) - set(got), key=lambda i: int(i[1:])):
-            errors.append(
-                f"page {page}: {eid} is not marked on {where}, which shows its element again"
-            )
-        for eid in sorted(set(got) - set(want), key=lambda i: int(i[1:])):
-            errors.append(
-                f"page {page}: {eid} is marked on {where}, which shows none of its element"
-            )
+        errors.extend(
+            f"page {page}: {eid} is not marked on {where}, which shows its element again"
+            for eid in sorted(set(want) - set(got), key=lambda i: int(i[1:]))
+        )
+        errors.extend(
+            f"page {page}: {eid} is marked on {where}, which shows none of its element"
+            for eid in sorted(set(got) - set(want), key=lambda i: int(i[1:]))
+        )
         if len(got) != len(set(got)):
             errors.append(f"page {page}: a marker is drawn twice on {where}")
 
@@ -389,7 +394,10 @@ def index_pages(board: str) -> list[str]:
         for table in index_tables(items):
             head = table["head"]
             for row in table["rows"]:
-                cell = lambda i: " ".join(row["cells"][i])  # noqa: E731
+
+                def cell(i: int, cells: list[list[str]] = row["cells"]) -> str:
+                    return " ".join(cells[i])
+
                 if head[:3] == ["GPIO", "Pin", "Net"]:
                     kind, name, keys = (
                         "gpio",
@@ -460,16 +468,14 @@ def index_pages(board: str) -> list[str]:
                     page, f"the power tree's box of {name}", marks, index_keys(facts, "tree", name)
                 )
                 seen += marks
-        for t in items["texts"]:
-            if (
-                t["href"]
-                and t["bold"]
-                and ADD_ID.fullmatch(t["body"])
-                and not any(t is s for s in seen)
-            ):
-                errors.append(
-                    f"page {page}: {t['body']} at ({t['x']:.1f}, {t['y']:.1f}) mm marks no row and no box"
-                )
+        errors.extend(
+            f"page {page}: {t['body']} at ({t['x']:.1f}, {t['y']:.1f}) mm marks no row and no box"
+            for t in items["texts"]
+            if t["href"]
+            and t["bold"]
+            and ADD_ID.fullmatch(t["body"])
+            and not any(t is s for s in seen)
+        )
     return errors
 
 

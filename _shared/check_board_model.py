@@ -92,9 +92,8 @@ import render_views  # noqa: E402
 import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
 import trimesh  # noqa: E402
-from shapely.ops import unary_union  # noqa: E402
-
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
+from shapely.ops import unary_union  # noqa: E402
 
 #: How far a legend may lie from where the drawing prints it, in mm.
 LEGEND_TOLERANCE_MM = 0.02

@@ -60,7 +60,8 @@ FOLDER = [
     (
         "board.json",
         "every part on the board, each value with its source "
-        "([`_shared/board.schema.json`](../_shared/board.schema.json)); this page is written from it",
+        "([`_shared/board.schema.json`](../_shared/board.schema.json)); this page is written from "
+        "it",
     ),
     (
         "measurements.json",
@@ -195,9 +196,12 @@ class Page:
             head += " · also sold as " + ", ".join(ident["aka"])
         out += [head + f" {self.src(ident['src'])}", ""]
         out += [
-            "Every value below comes from [`board.json`](board.json), where each one carries the id of its "
-            "source; the numbers in brackets point to the sources listed at the end of this page. This page "
-            "is written from that file by [`_shared/emit_board_readme.py`](../_shared/emit_board_readme.py): "
+            "Every value below comes from [`board.json`](board.json), where each one carries the "
+            "id of its "
+            "source; the numbers in brackets point to the sources listed at the end of this page. "
+            "This page "
+            "is written from that file by "
+            "[`_shared/emit_board_readme.py`](../_shared/emit_board_readme.py): "
             "change the file, then run the script.",
             "",
         ]
@@ -297,7 +301,8 @@ class Page:
                 )
                 rows.append(
                     f"| {cell(self.name(c['id']))} | {cell(self.name(link['to']))} | "
-                    f"{cell(link.get('bus', ''))} | {cell(link.get('address', ''))} | {pins} | {pulls} | "
+                    f"{cell(link.get('bus', ''))} | {cell(link.get('address', ''))} | {pins} | "
+                    f"{pulls} | "
                     f"{cell(link.get('notes', ''))} | {self.src(link.get('src') or c['src'])} |"
                 )
         if not rows:
@@ -388,7 +393,8 @@ def main(argv: list[str]) -> int:
             print(f"wrote {page.relative_to(ROOT)}")
     for board in stale:
         print(
-            f"FAIL {board}/README.md differs from what board.json writes (run _shared/emit_board_readme.py {board})"
+            f"FAIL {board}/README.md differs from what board.json writes (run "
+            f"_shared/emit_board_readme.py {board})"
         )
     return 1 if stale else 0
 

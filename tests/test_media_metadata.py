@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: MIT
-"""Every published media file carries its embedded-metadata record, and the checker catches what is planted.
+"""Every published media file carries its embedded-metadata record, and the checker catches what is
+planted.
 
 ``_shared/media_meta.py`` derives one record per media file and writes it in
 each format; the builders call it, and ``_shared/check_metadata.py`` holds
@@ -81,7 +82,8 @@ def test_every_kind_of_file_is_checked() -> None:
 
 
 def _reuse_spdx() -> dict[str, tuple[set[str], set[str]]]:
-    """{path: (license identifiers, copyright texts without e-mail)} as ``reuse spdx`` states them."""
+    """{path: (license identifiers, copyright texts without e-mail)}
+    as ``reuse spdx`` states them."""
     if shutil.which("reuse") is None and not (Path(sys.executable).parent / "reuse").exists():
         if os.environ.get("CI"):
             pytest.fail("reuse is not installed: a broken install of requirements.txt")
@@ -96,8 +98,8 @@ def _reuse_spdx() -> dict[str, tuple[set[str], set[str]]]:
         licenses = set(re.findall(r"^LicenseInfoInFile: (.+)$", block, re.M))
         text = re.search(r"^FileCopyrightText: <text>(.*?)</text>", block, re.M | re.S)
         holders = set()
-        for line in text.group(1).splitlines() if text else []:
-            line = re.sub(rf"^{mm.TAG_COPYRIGHT}:\s*", "", line.strip())
+        for raw in text.group(1).splitlines() if text else []:
+            line = re.sub(rf"^{mm.TAG_COPYRIGHT}:\s*", "", raw.strip())
             holders.add(re.sub(r"\s*<[^>]*>", "", line).strip())
         files[name.group(1)] = (licenses, holders)
     return files
@@ -359,7 +361,7 @@ def test_the_contact_sheet_was_drawn_from_the_models_as_they_are() -> None:
     rec = json.loads((ROOT / "models-contact-sheet.json").read_text(encoding="utf-8"))
     data = (ROOT / rec["sheet"]).read_bytes()
     assert hashlib.sha256(data).hexdigest() == rec["sha256"] and len(data) == rec["bytes"]
-    for board, model in rec["models"].items():
+    for model in rec["models"].values():
         digest = hashlib.sha256((ROOT / model["model"]).read_bytes()).hexdigest()
         assert digest == model["model_sha256"], (
             f"{model['model']} changed since the sheet was drawn: "

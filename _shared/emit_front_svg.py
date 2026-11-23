@@ -88,12 +88,13 @@ from __future__ import annotations
 import math
 import re
 import sys
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from itertools import pairwise
 from pathlib import Path
-from typing import Callable, List, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
+import media_meta
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -123,7 +124,7 @@ def svg_header(name: str, body_w: float, body_h: float) -> str:
     )
 
 
-def caption_block(name: str, body_w: float, body_h: float, extra: List[str] | None = None) -> str:
+def caption_block(name: str, body_w: float, body_h: float, extra: list[str] | None = None) -> str:
     """The drawing's outside callouts: the two mm dimensions and the title.
 
     They sit in the margins, outside the case, and describe the drawing
@@ -293,7 +294,7 @@ class ScreenRect:
     resolution: str
 
 
-def append_screen(out: List[str], screen: ScreenRect) -> None:
+def append_screen(out: list[str], screen: ScreenRect) -> None:
     """Emit the ``screen-active`` marker over the bare panel the caller drew."""
     out.append(
         f'<rect id="screen-active" x="{f(screen.x)}" y="{f(screen.y)}" '
@@ -365,7 +366,7 @@ def print_open(name: str, plane: str) -> str:
     return f'<g class="legend" data-mark="{_xml_attr(name)}" data-plane="{_xml_attr(plane)}">\n'
 
 
-def hotspots_block(spots: List[Hotspot]) -> str:
+def hotspots_block(spots: list[Hotspot]) -> str:
     """Emit the hotspot group: one circle per control, hidden by default.
 
     ``r`` is half the control's shorter side, the largest fingertip ring
@@ -393,7 +394,8 @@ def hotspots_block(spots: List[Hotspot]) -> str:
 # The A/B/C touch zones of the two FT6x36 boards are not printed marks but
 # bands of the sensor: it reaches TOUCH_ZONE_BAND_PX rows below the last
 # screen row, and a contact there routes to one of three equal columns of
-# the panel's width (the Kleidos firmware's `zoneForSample`, src/hal/common/m5_touch_button_input.cpp;
+# the panel's width (the Kleidos firmware's `zoneForSample`,
+# src/hal/common/m5_touch_button_input.cpp;
 # `kTouchZoneTopY`, src/config/device_config.h; both boards set
 # TOUCH_ZONE_STRIP_BELOW_DISPLAY). So the targets follow the screen rect,
 # in the same mm the screenshot is composited into. On the Core2 that lands
@@ -404,7 +406,7 @@ TOUCH_ZONE_BAND_PX = 40
 TOUCH_ZONE_COLUMNS = 3
 
 
-def touch_zone_hotspots(screen: ScreenRect) -> List[Hotspot]:
+def touch_zone_hotspots(screen: ScreenRect) -> list[Hotspot]:
     """The A/B/C touch-zone targets under a 320x240 FT6x36 panel."""
     rows = float(screen.resolution.split("x")[1])
     band_h = screen.h * TOUCH_ZONE_BAND_PX / rows
@@ -457,8 +459,8 @@ class StickLikeStyle:
     plus: PlusFacePalette | None = None
     # Side buttons as seen from the front, (top, bottom) in mm: BtnB on the
     # right edge, Power on the left edge. None keeps the generic marks.
-    btn_b_span: Tuple[float, float] | None = None
-    power_span: Tuple[float, float] | None = None
+    btn_b_span: tuple[float, float] | None = None
+    power_span: tuple[float, float] | None = None
 
 
 #: Width of the drawn mark that stands for a key on a side edge.
@@ -467,7 +469,7 @@ STICK_SIDE_W = 0.7
 
 def stick_side_spans(
     body_h: float, style: StickLikeStyle
-) -> Tuple[Tuple[float, float], Tuple[float, float]]:
+) -> tuple[tuple[float, float], tuple[float, float]]:
     """The (power, BtnB) side-key spans this style draws, in mm."""
     power = style.power_span or (body_h * 0.72 - 2.6, body_h * 0.72 + 2.6)
     btn_b = style.btn_b_span or (body_h / 2 - 2.0, body_h / 2 + 2.0)
@@ -475,8 +477,8 @@ def stick_side_spans(
 
 
 def append_stick_side_indicators(
-    out: List[str], body_w: float, body_h: float, style: StickLikeStyle
-) -> List[str]:
+    out: list[str], body_w: float, body_h: float, style: StickLikeStyle
+) -> list[str]:
     """Draw the two side keys' marks; return their names for the margin.
 
     The marks stand for the keys and belong to the drawing of the device;
@@ -565,10 +567,10 @@ S3_POWER_SPAN = (39.5, 44.5)
 
 
 def append_s3_window_walls(
-    out: List[str],
+    out: list[str],
     device_id: str,
-    opening: Tuple[float, float, float, float],
-    glass: Tuple[float, float, float, float],
+    opening: tuple[float, float, float, float],
+    glass: tuple[float, float, float, float],
 ) -> None:
     """The StickS3 window opening drawn as its four walls, which meet on
     the diagonals from the opening's corners to the glass corners: the
@@ -597,7 +599,7 @@ def append_s3_window_walls(
 
 
 def append_sticks3_face(
-    out: List[str],
+    out: list[str],
     device_id: str,
     body_w: float,
     body_h: float,
@@ -747,7 +749,7 @@ PLUS_M5_INK = (6.439, 35.239, 17.659, 42.385)
 
 
 def append_plus_face(
-    out: List[str],
+    out: list[str],
     device_id: str,
     body_w: float,
     body_h: float,
@@ -755,7 +757,8 @@ def append_plus_face(
     style: StickLikeStyle,
 ) -> None:
     palette = style.plus
-    assert palette is not None
+    if palette is None:
+        raise ValueError(f"{style!r} has no Plus palette")
     lcd_w = style.screen_w_mm
     lcd_h = style.screen_h_mm
     lcd_x = (body_w - lcd_w) / 2
@@ -790,12 +793,12 @@ def append_plus_face(
         'stroke-linecap="round" fill="none"/>\n'
     )
     m_path = "M " + " L ".join(f"{f(x)} {f(y)}" for x, y in PLUS_M_GLYPH)
-    for d in (m_path + " Z", PLUS_5_GLYPH_PATH):
-        out.append(
-            f'<path d="{d}" fill="{palette.letter}" '
-            f'stroke="{palette.letter_edge}" stroke-width="0.08" '
-            'stroke-linejoin="miter"/>\n'
-        )
+    out.extend(
+        f'<path d="{d}" fill="{palette.letter}" '
+        f'stroke="{palette.letter_edge}" stroke-width="0.08" '
+        'stroke-linejoin="miter"/>\n'
+        for d in (m_path + " Z", PLUS_5_GLYPH_PATH)
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -961,7 +964,7 @@ def se_slot_pale_path() -> str:
     )
 
 
-def append_plus_se_internals(out: List[str], device_id: str) -> None:
+def append_plus_se_internals(out: list[str], device_id: str) -> None:
     """The soft shapes seen through the shell, blurred as the photo shows
     them: the PCB behind the button and the USB, the two side keys and the
     two screw bosses."""
@@ -989,7 +992,7 @@ def append_plus_se_internals(out: List[str], device_id: str) -> None:
     out.append("</g>\n")
 
 
-def append_plus_se_button(out: List[str], device_id: str) -> None:
+def append_plus_se_button(out: list[str], device_id: str) -> None:
     """BtnA: the frosted flap, the raised "M5" on it and the slot around it."""
     cap = se_slot_path(SE_SLOT_W / 2, bottom=SE_CAP_BOTTOM) + " Z"
     out.append(f'<path d="{cap}" fill="url(#cap_{device_id})"/>\n')
@@ -1000,19 +1003,19 @@ def append_plus_se_button(out: List[str], device_id: str) -> None:
     out.append(
         rounded_rect(bar_x, bar_y, bar_w, bar_h, r=bar_h / 2, fill=SE_CAP_BAR_INK, opacity=0.35)
     )
-    for dash_x in SE_CAP_DASHES:
-        out.append(
-            rounded_rect(
-                dash_x - 0.45, bar_y + 0.38, 0.9, 0.34, r=0.15, fill=SE_CAP_DASH_INK, opacity=0.7
-            )
+    out.extend(
+        rounded_rect(
+            dash_x - 0.45, bar_y + 0.38, 0.9, 0.34, r=0.15, fill=SE_CAP_DASH_INK, opacity=0.7
         )
+        for dash_x in SE_CAP_DASHES
+    )
     m_path = "M " + " L ".join(f"{f(x)} {f(y)}" for x, y in PLUS_M_GLYPH)
-    for d in (m_path + " Z", PLUS_5_GLYPH_PATH):
-        out.append(
-            f'<path d="{d}" fill="{SE_LETTER}" '
-            f'stroke="{SE_LETTER_EDGE}" stroke-width="0.06" '
-            'stroke-opacity="0.55" stroke-linejoin="round"/>\n'
-        )
+    out.extend(
+        f'<path d="{d}" fill="{SE_LETTER}" '
+        f'stroke="{SE_LETTER_EDGE}" stroke-width="0.06" '
+        'stroke-opacity="0.55" stroke-linejoin="round"/>\n'
+        for d in (m_path + " Z", PLUS_5_GLYPH_PATH)
+    )
     round_ends = 'stroke-linecap="round" stroke-linejoin="round"'
     # The mold slot runs the whole right leg but only the foot of the left
     # one, which is lit above y 36.15; across the top only the see-through
@@ -1046,17 +1049,17 @@ def append_plus_se_button(out: List[str], device_id: str) -> None:
     )
 
 
-def append_plus_se_usb(out: List[str]) -> None:
+def append_plus_se_usb(out: list[str]) -> None:
     """The USB-C receptacle seen through the bottom end, with its two latch
     holes; the body clip cuts it at the case edge."""
     usb_x, usb_y, usb_w, usb_h = SE_USB
     out.append(rounded_rect(usb_x, usb_y, usb_w, usb_h, r=0.5, fill=SE_USB_INK))
-    for x in SE_USB_HIGHLIGHT_X:
-        out.append(
-            f'<path d="M {f(x)} {f(usb_y + 0.3)} '
-            f'V {f(usb_y + usb_h)}" stroke="{SE_USB_HI}" '
-            'stroke-width="0.35" opacity="0.70" fill="none"/>\n'
-        )
+    out.extend(
+        f'<path d="M {f(x)} {f(usb_y + 0.3)} '
+        f'V {f(usb_y + usb_h)}" stroke="{SE_USB_HI}" '
+        'stroke-width="0.35" opacity="0.70" fill="none"/>\n'
+        for x in SE_USB_HIGHLIGHT_X
+    )
     latch_y, latch_w, latch_h = SE_USB_LATCH
     for x in SE_USB_LATCH_X:
         out.append(rounded_rect(x, latch_y, latch_w, latch_h, r=0.2, fill=SE_LATCH_IN))
@@ -1074,7 +1077,7 @@ def append_plus_se_usb(out: List[str]) -> None:
 
 
 def append_plus_se_face(
-    out: List[str],
+    out: list[str],
     device_id: str,
     body_w: float,
     body_h: float,
@@ -1151,12 +1154,12 @@ def append_plus_se_face(
         rounded_rect(mod_x0, mod_y0, mod_x1 - mod_x0, mod_y1 - mod_y0, r=0.35, fill=SE_LCD_INK)
     )
     out.append(rounded_rect(mod_x0, oy1, mod_x1 - mod_x0, mod_y1 - oy1, r=0.35, fill=SE_LCD_LOW))
-    for dy in SE_LCD_STREAKS:
-        out.append(
-            f'<path d="M {f(mod_x0 + 0.3)} {f(lcd_y + dy)} '
-            f'H {f(mod_x1 - 0.3)}" stroke="{SE_LCD_STREAK}" '
-            'stroke-width="0.14" opacity="0.55" fill="none"/>\n'
-        )
+    out.extend(
+        f'<path d="M {f(mod_x0 + 0.3)} {f(lcd_y + dy)} '
+        f'H {f(mod_x1 - 0.3)}" stroke="{SE_LCD_STREAK}" '
+        'stroke-width="0.14" opacity="0.55" fill="none"/>\n'
+        for dy in SE_LCD_STREAKS
+    )
     fid_x, fid_dy, fid_r = SE_LCD_FIDUCIAL
     out.append(circle(fid_x, lcd_y + fid_dy, fid_r, fill=SE_LCD_FIDUCIAL_INK, opacity=0.6))
     out.append(
@@ -1209,7 +1212,7 @@ STICK_FACES: dict[str, Callable[..., None]] = {
 }
 
 
-def stick_hotspots(body_w: float, body_h: float, style: StickLikeStyle) -> List[Hotspot]:
+def stick_hotspots(body_w: float, body_h: float, style: StickLikeStyle) -> list[Hotspot]:
     """BtnA on the face, and the two side keys on the edges they sit on.
 
     BtnA is the blue pill on the StickS3 and the debossed "M5" on the three
@@ -1304,7 +1307,7 @@ CORE_EDGE_BAND_W = 0.4
 
 
 def append_core_shell(
-    out: List[str], device_id: str, body_w: float, body_h: float, stroke: str
+    out: list[str], device_id: str, body_w: float, body_h: float, stroke: str
 ) -> None:
     """Case outline with its gradient, drop shadow and shaded outer edge."""
     out.append(
@@ -1336,8 +1339,8 @@ def append_core_shell(
 
 
 def core_shell_defs(
-    device_id: str, body_w: float, body_h: float, case: Tuple[str, str], edge: Tuple[str, str]
-) -> List[str]:
+    device_id: str, body_w: float, body_h: float, case: tuple[str, str], edge: tuple[str, str]
+) -> list[str]:
     """Shadow filter and the case and outer-edge gradients."""
     return [
         shadow_filter(device_id),
@@ -1445,7 +1448,7 @@ def cores3_chevron(apex_x: float, direction: int) -> str:
     )
 
 
-def append_cores3_print(out: List[str]) -> None:
+def append_cores3_print(out: list[str]) -> None:
     """Touch marks and the two microphone holes under the glass."""
     cx = CORES3_PRINT_X
     for dx in CORES3_CHEVRON_DX:
@@ -1454,12 +1457,10 @@ def append_cores3_print(out: List[str]) -> None:
     ring_y, ring_r, ring_s = CORES3_RING
     out.append(circle(cx, ring_y, ring_r, stroke=CORES3_PRINT_RED, stroke_w=ring_s))
     rim_color, rim_w = CORES3_MIC_RIM
-    for mic_x in (cx - CORES3_MIC_DX, cx + CORES3_MIC_DX):
-        out.append(
-            circle(
-                mic_x, CORES3_MIC_Y, CORES3_MIC_R, fill="#000000", stroke=rim_color, stroke_w=rim_w
-            )
-        )
+    out.extend(
+        circle(mic_x, CORES3_MIC_Y, CORES3_MIC_R, fill="#000000", stroke=rim_color, stroke_w=rim_w)
+        for mic_x in (cx - CORES3_MIC_DX, cx + CORES3_MIC_DX)
+    )
 
 
 def gen_cores3_se(device_id: str, name: str, body_w: float, body_h: float) -> str:
@@ -1582,7 +1583,7 @@ CORE2_GLARE_END = (20.57, 28.36)
 
 
 def user_space_gradient(
-    grad_id: str, start: Tuple[float, float], end: Tuple[float, float], c_start: str, c_end: str
+    grad_id: str, start: tuple[float, float], end: tuple[float, float], c_start: str, c_end: str
 ) -> str:
     """Opaque linear gradient in user space between two colors."""
     return (
@@ -1597,8 +1598,8 @@ def user_space_gradient(
 
 def white_fade_gradient(
     grad_id: str,
-    start: Tuple[float, float],
-    end: Tuple[float, float],
+    start: tuple[float, float],
+    end: tuple[float, float],
     opacity_start: float,
     opacity_end: float,
 ) -> str:
@@ -1615,7 +1616,7 @@ def white_fade_gradient(
     )
 
 
-def append_core2_case(out: List[str], device_id: str, body_w: float, body_h: float) -> None:
+def append_core2_case(out: list[str], device_id: str, body_w: float, body_h: float) -> None:
     """White case frame: its gradient, outline and shaded outer edge."""
     out.append(
         rounded_rect(
@@ -1645,7 +1646,7 @@ def append_core2_case(out: List[str], device_id: str, body_w: float, body_h: flo
     )
 
 
-def append_core2_glass(out: List[str], device_id: str, body_w: float, body_h: float) -> None:
+def append_core2_glass(out: list[str], device_id: str, body_w: float, body_h: float) -> None:
     """Black glass inside the frame, with its glare."""
     glass_w = body_w - 2 * CORE2_FRAME
     glass_h = body_h - 2 * CORE2_FRAME
@@ -1694,16 +1695,16 @@ def gen_core2(device_id: str, name: str, body_w: float, body_h: float) -> str:
         rounded_rect(screen.x, screen.y, screen.w, screen.h, r=0.15, fill=f"url(#{grad_screen})")
     )
     append_screen(out, screen)
-    for ring_x in CORE2_RING_XS:
-        out.append(
-            circle(
-                ring_x,
-                CORE2_RING_Y,
-                CORE2_RING_R,
-                stroke=CORE2_RING_COLOR,
-                stroke_w=CORE2_RING_STROKE,
-            )
+    out.extend(
+        circle(
+            ring_x,
+            CORE2_RING_Y,
+            CORE2_RING_R,
+            stroke=CORE2_RING_COLOR,
+            stroke_w=CORE2_RING_STROKE,
         )
+        for ring_x in CORE2_RING_XS
+    )
     mark_x, mark_y, mark_r = CORE2_MARK
     out.append(circle(mark_x, mark_y, mark_r, fill="#0d0d0f"))
     out.append(hotspots_block(touch_zone_hotspots(screen)))
@@ -1760,7 +1761,7 @@ COREINK_TOP_KEY = (26.0, 5.28)
 # Debossed logo outline as polygons in drawing order (clockwise on screen):
 # the M (stems 1.19 mm, V-notch at x 16.52) and the 5, whose bowl is two
 # circular arcs given as (cx, cy, r, start, end) in degrees.
-COREINK_M_OUTLINE: List[Tuple[float, float]] = [
+COREINK_M_OUTLINE: list[tuple[float, float]] = [
     (12.32, 42.94),
     (13.51, 42.94),
     (16.52, 46.81),
@@ -1774,7 +1775,7 @@ COREINK_M_OUTLINE: List[Tuple[float, float]] = [
     (13.51, 52.81),
     (12.32, 52.81),
 ]
-COREINK_5_TOP: List[Tuple[float, float]] = [
+COREINK_5_TOP: list[tuple[float, float]] = [
     (21.78, 42.94),
     (28.19, 42.94),
     (28.19, 44.16),
@@ -1807,7 +1808,7 @@ def coreink_body_path(body_w: float, body_h: float) -> str:
     return " ".join(d)
 
 
-def append_coreink_holes(out: List[str], device_id: str) -> None:
+def append_coreink_holes(out: list[str], device_id: str) -> None:
     """Countersink ring around each bore: shaded on its upper-left slope,
     lit on its lower-right slope."""
     grad = f"countersink_{device_id}"
@@ -1837,7 +1838,7 @@ def append_coreink_holes(out: List[str], device_id: str) -> None:
         out.append(circle(cx, cy, ri, stroke="#8e8e8a", stroke_w=0.14))
 
 
-def append_coreink_tab(out: List[str]) -> None:
+def append_coreink_tab(out: list[str]) -> None:
     """Seam of the top cover tab, open at the top edge."""
     x0, x1, y1 = COREINK_TAB
     r = 0.7
@@ -1852,7 +1853,7 @@ def append_coreink_tab(out: List[str]) -> None:
     out.append(f'<path d="{seam}" fill="none" stroke="#9a9a96" stroke-width="0.14"/>\n')
 
 
-def append_coreink_window(out: List[str], device_id: str) -> None:
+def append_coreink_window(out: list[str], device_id: str) -> None:
     """Window opening, its bevel walls, the paper and the demo clock."""
     wx0, wy0, wx1, wy1 = COREINK_WINDOW
     s = COREINK_SCREEN
@@ -1902,7 +1903,7 @@ def append_coreink_window(out: List[str], device_id: str) -> None:
     append_screen(out, s)
 
 
-def append_coreink_dial(out: List[str], device_id: str, body_w: float) -> None:
+def append_coreink_dial(out: list[str], device_id: str, body_w: float) -> None:
     """Pocket in the right edge and the knurled rim of the dial wheel in it."""
     grad = f"dial_pocket_{device_id}"
     out.append(DEFS_OPEN)
@@ -1957,8 +1958,8 @@ def append_coreink_dial(out: List[str], device_id: str, body_w: float) -> None:
 
 
 def coreink_arc_points(
-    arc: Tuple[float, float, float, float, float], steps: int = 14
-) -> List[Tuple[float, float]]:
+    arc: tuple[float, float, float, float, float], steps: int = 14
+) -> list[tuple[float, float]]:
     cx, cy, r, a0, a1 = arc
     return [
         (
@@ -1969,7 +1970,7 @@ def coreink_arc_points(
     ]
 
 
-def coreink_m5_outlines() -> List[List[Tuple[float, float]]]:
+def coreink_m5_outlines() -> list[list[tuple[float, float]]]:
     five = list(COREINK_5_TOP)
     five += coreink_arc_points(COREINK_5_OUTER_BOWL)
     five += [(21.78, 52.81), (21.78, 51.72)]
@@ -1978,7 +1979,7 @@ def coreink_m5_outlines() -> List[List[Tuple[float, float]]]:
     return [COREINK_M_OUTLINE, five]
 
 
-def append_coreink_debossed_m5(out: List[str], device_id: str) -> None:
+def append_coreink_debossed_m5(out: list[str], device_id: str) -> None:
     """The M5 debossed into the cover. Each wall of the recess is shaded by
     how squarely it faces the light from the upper left: walls facing away
     draw a dark line, walls facing it a bright one, walls along the light
@@ -1990,7 +1991,7 @@ def append_coreink_debossed_m5(out: List[str], device_id: str) -> None:
     out.append(f'<g clip-path="url(#{clip_id})" fill="none" stroke-linecap="round">\n')
     lx, ly = COREINK_LIGHT
     for pts in outlines:
-        for (x0, y0), (x1, y1) in zip(pts, pts[1:] + pts[:1]):
+        for (x0, y0), (x1, y1) in zip(pts, pts[1:] + pts[:1], strict=True):
             length = math.hypot(x1 - x0, y1 - y0)
             if length < 1e-6:
                 continue
@@ -2011,7 +2012,7 @@ def append_coreink_debossed_m5(out: List[str], device_id: str) -> None:
     out.append("</g>\n")
 
 
-def coreink_hotspots(body_w: float) -> List[Hotspot]:
+def coreink_hotspots(body_w: float) -> list[Hotspot]:
     """The jog wheel's three detents, the power key and the top key.
 
     The wheel shows in its pocket, so its targets sit on it. The power key
@@ -2047,7 +2048,7 @@ def coreink_hotspots(body_w: float) -> List[Hotspot]:
     return spots
 
 
-def coreink_key_names(body_w: float) -> List[str]:
+def coreink_key_names(body_w: float) -> list[str]:
     """The two wall keys' names, in the margins beside where each key is."""
     power_cy, _ = COREINK_POWER_KEY
     top_cx, _ = COREINK_TOP_KEY
@@ -2102,7 +2103,7 @@ CARDPUTER_INK = "#111113"
 # printed in blue at the upper right, orange navigation arrow drawn behind
 # the primary legend). The colored blocks and the esc / del / ok / space
 # keys are drawn by their own functions.
-CARDPUTER_KEYS: List[List[Tuple[str, str | None, str | None]]] = [
+CARDPUTER_KEYS: list[list[tuple[str, str | None, str | None]]] = [
     [
         ("esc", None, None),
         ("1", "!", None),
@@ -2233,7 +2234,7 @@ def cardputer_legend_cx(col: int) -> float:
 
 
 def cardputer_polygon(
-    points: List[Tuple[float, float]], fill: str, stroke: str = "none", stroke_w: float = 0.0
+    points: list[tuple[float, float]], fill: str, stroke: str = "none", stroke_w: float = 0.0
 ) -> str:
     pts = " ".join(f"{f(x)},{f(y)}" for x, y in points)
     extra = f' stroke="{stroke}" stroke-width="{f(stroke_w)}"' if stroke != "none" else ""
@@ -2279,7 +2280,7 @@ def cardputer_label_up(
     )
 
 
-def append_cardputer_button(out: List[str], cx: float, cy: float) -> None:
+def append_cardputer_button(out: list[str], cx: float, cy: float) -> None:
     w, h = CARDPUTER_BUTTON_W, CARDPUTER_BUTTON_H
     x, y = cx - w / 2, cy - h / 2
     out.append(rounded_rect(x, y + 0.25, w, h, r=0.95, fill="#050506", opacity=0.45))
@@ -2287,7 +2288,7 @@ def append_cardputer_button(out: List[str], cx: float, cy: float) -> None:
     out.append(rounded_rect(x + 0.45, y + 0.25, w - 0.9, 0.45, r=0.22, fill="#4a4a4d", opacity=0.6))
 
 
-def append_cardputer_arrow(out: List[str], kind: str, cx: float, baseline: float) -> None:
+def append_cardputer_arrow(out: list[str], kind: str, cx: float, baseline: float) -> None:
     """Orange navigation arrow printed behind a legend."""
     shapes = {
         "up": [(cx, baseline - 1.22), (cx + 1.91, baseline + 0.69), (cx - 1.91, baseline + 0.69)],
@@ -2393,7 +2394,7 @@ def append_cardputer_ok(out: list[str], row: CardputerRow, legend: str) -> None:
     )
 
 
-def append_cardputer_space(out: List[str]) -> None:
+def append_cardputer_space(out: list[str]) -> None:
     out.append(
         f'<path d="M 77.78 46 V 47.02 H 81.06 V 46 H 80.52 V 46.5 '
         f'H 78.32 V 46 Z" fill="{CARDPUTER_INK}"/>\n'
@@ -2416,14 +2417,16 @@ def cardputer_comma(cx: float, cy: float, scale: float = 1.0, flip: bool = False
     return head + tail
 
 
-def append_cardputer_punctuation(out: List[str], label: str, cx: float, baseline: float) -> bool:
+def append_cardputer_punctuation(out: list[str], label: str, cx: float, baseline: float) -> bool:
     """Draw the heavy punctuation legends as shapes (the printed marks are
     far bolder than any font's); False when ``label`` is not one."""
     if label == "_":
         out.append(rounded_rect(cx - 0.59, baseline - 0.14, 1.18, 0.26, r=0.05, fill=CARDPUTER_INK))
     elif label == "=":
-        for bar_top in (baseline - 1.34, baseline - 0.72):
-            out.append(rounded_rect(cx - 0.5, bar_top, 1.15, 0.31, r=0.05, fill=CARDPUTER_INK))
+        out.extend(
+            rounded_rect(cx - 0.5, bar_top, 1.15, 0.31, r=0.05, fill=CARDPUTER_INK)
+            for bar_top in (baseline - 1.34, baseline - 0.72)
+        )
     elif label == ".":
         out.append(circle(cx + 0.02, baseline - 0.12, 0.34, fill=CARDPUTER_INK))
     elif label == ",":
@@ -2439,7 +2442,7 @@ def append_cardputer_punctuation(out: List[str], label: str, cx: float, baseline
 
 
 def append_cardputer_shift_mark(
-    out: List[str], mark: str, cx: float, shift_baseline: float
+    out: list[str], mark: str, cx: float, shift_baseline: float
 ) -> bool:
     """Draw the shifted legends a font sets too small or too high as
     shapes: the six-spoke asterisk, the heavy caret and the wide dash.
@@ -2482,7 +2485,7 @@ def append_cardputer_shift_mark(
 
 
 def append_cardputer_legend(
-    out: List[str], row: CardputerRow, col: int, key: Tuple[str, str | None, str | None]
+    out: list[str], row: CardputerRow, col: int, key: tuple[str, str | None, str | None]
 ) -> None:
     label, shifted, arrow = key
     cx = cardputer_legend_cx(col)
@@ -2518,9 +2521,9 @@ def append_cardputer_legend(
         )
 
 
-def append_cardputer_keyboard(out: List[str]) -> None:
+def append_cardputer_keyboard(out: list[str]) -> None:
     custom = {(0, 0): "esc", (0, 13): "del", (2, 13): "ok", (3, 13): "space"}
-    for r_idx, (row, keys) in enumerate(zip(CARDPUTER_ROWS, CARDPUTER_KEYS)):
+    for r_idx, (row, keys) in enumerate(zip(CARDPUTER_ROWS, CARDPUTER_KEYS, strict=True)):
         out.append(
             rounded_rect(
                 CARDPUTER_STRIP_X0,
@@ -2578,7 +2581,7 @@ def append_cardputer_keyboard(out: List[str]) -> None:
             append_cardputer_button(out, cardputer_button_cx(c_idx), row.button_cy)
 
 
-def append_cardputer_plate(out: List[str], device_id: str) -> None:
+def append_cardputer_plate(out: list[str], device_id: str) -> None:
     """Lower ledge between the top plate and the keyboard, and the raised
     tongue of the top plate under the LCD (45-degree side and front
     chamfers)."""
@@ -2603,7 +2606,7 @@ def append_cardputer_plate(out: List[str], device_id: str) -> None:
     )
 
 
-def append_cardputer_brand_panel(out: List[str]) -> None:
+def append_cardputer_brand_panel(out: list[str]) -> None:
     """CARDPUTER ADV panel: a light plate with a round notch over the left
     screw, cyan corner marks, the wordmark and a microphone icon."""
     out.append(
@@ -2663,7 +2666,7 @@ def append_cardputer_brand_panel(out: List[str]) -> None:
     out.append(LEGEND_CLOSE)
 
 
-def append_cardputer_debossed_m5(out: List[str], device_id: str) -> None:
+def append_cardputer_debossed_m5(out: list[str], device_id: str) -> None:
     """The M5 debossed into the top plate: a recessed channel, shaded on
     its upper / left walls and lit on its lower / right walls."""
     m_glyph = (
@@ -2694,7 +2697,7 @@ def append_cardputer_debossed_m5(out: List[str], device_id: str) -> None:
     )
 
 
-def append_cardputer_screw(out: List[str], device_id: str, cx: float, cy: float) -> None:
+def append_cardputer_screw(out: list[str], device_id: str, cx: float, cy: float) -> None:
     """Socket-head screw in its counterbore."""
     out.append(circle(cx, cy, 2.0, fill="#2a2a2e"))
     out.append(
@@ -2715,7 +2718,7 @@ def append_cardputer_screw(out: List[str], device_id: str, cx: float, cy: float)
     out.append(circle(cx, cy, 0.42, fill="#5e5e63", opacity=0.8))
 
 
-def append_cardputer_usb_c(out: List[str]) -> None:
+def append_cardputer_usb_c(out: list[str]) -> None:
     """The StampS3A USB-C receptacle in its notch on the right edge."""
     out.append('<path d="M 81.9 4.85 H 84 V 15.1 H 81.9 Z" fill="#a5a5a9"/>\n')
     out.append(
@@ -2767,13 +2770,13 @@ STAMP_WHITE = "#ffffff"
 
 
 def stamp_dots(
-    points: List[Tuple[float, float]], fill: str, pitch: float = 0.18, size: float = 0.06
-) -> List[str]:
+    points: list[tuple[float, float]], fill: str, pitch: float = 0.18, size: float = 0.06
+) -> list[str]:
     """A dotted rule along a polyline: squares ``size`` mm a side every
     ``pitch`` mm (a legend has no dash pattern; the model prints each dot)."""
-    dots: List[str] = []
+    dots: list[str] = []
     carry = pitch / 2
-    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+    for (x0, y0), (x1, y1) in pairwise(points):
         length = math.hypot(x1 - x0, y1 - y0)
         s = carry
         while s <= length:
@@ -2789,19 +2792,19 @@ def stamp_dots(
 
 
 def stamp_dashes(
-    points: List[Tuple[float, float]],
+    points: list[tuple[float, float]],
     ink: str,
     pitch: float = 0.39,
     dash: float = 0.2,
     width: float = 0.08,
     lead: float = 0.3,
-) -> List[str]:
+) -> list[str]:
     """A dashed rule along a polyline: dashes ``dash`` mm long and ``width``
     mm across every ``pitch`` mm, the first centered ``lead`` mm from the
     start (a legend has no dash pattern; the model prints each dash)."""
-    dashes: List[str] = []
+    dashes: list[str] = []
     s = lead
-    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+    for (x0, y0), (x1, y1) in pairwise(points):
         length = math.hypot(x1 - x0, y1 - y0)
         ux, uy = (x1 - x0) / length, (y1 - y0) / length
         while s <= length:
@@ -2835,7 +2838,7 @@ def stamp_number(
     )
 
 
-def stamp_line(points: List[Tuple[float, float]], ink: str, width: float) -> str:
+def stamp_line(points: list[tuple[float, float]], ink: str, width: float) -> str:
     """A stroked polyline, round at its joins."""
     d = " L ".join(f"{f(x)} {f(y)}" for x, y in points)
     return (
@@ -2921,7 +2924,7 @@ def stamp_pill(cx: float, y0: float, y1: float, w: float, fill: str) -> str:
     return rounded_rect(cx - w / 2, y0, w, y1 - y0, r=w / 2, fill=fill)
 
 
-def append_cardputer_stamp_marks(out: List[str]) -> None:
+def append_cardputer_stamp_marks(out: list[str]) -> None:
     """The label's certification marks: Japan's radio mark, the WEEE bin and
     its bar, FCC, CE, and the maker's name, each where the photo has it."""
     # Japan's technical-conformity mark, upright: a ring broken on its right
@@ -2991,7 +2994,7 @@ def append_cardputer_stamp_marks(out: List[str]) -> None:
     out.append(stamp_line([(72.2, 6.32), (72.2, 7.0)], CARDPUTER_INK, 0.22))
 
 
-def append_cardputer_stamp_pins(out: List[str]) -> None:
+def append_cardputer_stamp_pins(out: list[str]) -> None:
     """Pin legend of the StampS3A label, rotated like the module. Every pin
     disc is one size, 1.42 mm across (the photo's discs measure 1.38 to
     1.48 mm), each where the photo centers it. The printed numbers are a
@@ -3004,8 +3007,9 @@ def append_cardputer_stamp_pins(out: List[str]) -> None:
     # even one on its faint lead, under the hairline bracket round GPIO+ADC.
     odd = (59.68, 62.22, 64.75, 67.32, 69.89)
     even = (60.94, 63.47, 66.01, 68.59, 71.0)
-    for x in even:
-        out.append(rounded_rect(x - 0.27, 16.88, 0.54, 1.82, r=0.27, fill=STAMP_PALE_GRAY))
+    out.extend(
+        rounded_rect(x - 0.27, 16.88, 0.54, 1.82, r=0.27, fill=STAMP_PALE_GRAY) for x in even
+    )
     for k in range(5):
         for number, x, y in ((2 * k + 1, odd[k], 18.1), (2 * k + 2, even[k], 16.88)):
             out.append(circle(x, y, disc, fill=STAMP_CYAN))
@@ -3192,7 +3196,7 @@ def append_cardputer_stamp_pins(out: List[str]) -> None:
     out.append(stamp_number(80.06, 18.13, "15", 1.0, CARDPUTER_INK, 0.9))
 
 
-def append_cardputer_stamp(out: List[str]) -> None:
+def append_cardputer_stamp(out: list[str]) -> None:
     """StampS3A module: a black frame around its printed label. The label
     is rotated a quarter turn: its text reads from bottom to top. Its paper
     is the model's ``stamp_label`` solid; everything printed on it is one
@@ -3401,7 +3405,7 @@ def append_cardputer_stamp(out: List[str]) -> None:
     # each row's ink centroid on the photo, rows 12 to 1; the baseline of a
     # row printed upside down sits 0.22 mm above its centroid
     rows = (6.75, 7.45, 8.16, 8.98, 9.77, 10.61, 11.27, 11.89, 12.50, 13.14, 13.77, 14.39)
-    for (line, ink), row in zip(pin_lines, rows):
+    for (line, ink), row in zip(pin_lines, rows, strict=True):
         y = row - 0.22
         out.append(
             cardputer_rotated(
@@ -3459,7 +3463,7 @@ def key_slug(label: str) -> str:
     return KEY_SLUGS.get(label, label)
 
 
-def cardputer_hotspots() -> List[Hotspot]:
+def cardputer_hotspots() -> list[Hotspot]:
     """One target per key, on the button the strip's legend belongs to.
 
     The legend is printed on the strip above its key; what moves is the
@@ -3474,7 +3478,7 @@ def cardputer_hotspots() -> List[Hotspot]:
             CARDPUTER_BUTTON_H,
             label=key[0],
         )
-        for row, keys in zip(CARDPUTER_ROWS, CARDPUTER_KEYS)
+        for row, keys in zip(CARDPUTER_ROWS, CARDPUTER_KEYS, strict=True)
         for col, key in enumerate(keys)
     ]
 
@@ -3536,8 +3540,9 @@ def gen_cardputer(device_id: str, name: str, body_w: float = 84.0, body_h: float
     append_screen(out, ScreenRect(lcd_x, lcd_y, lcd_w, lcd_h, "240x135"))
     append_cardputer_brand_panel(out)
     # Two black slots under the microphone icon.
-    for slot_x in (7.81, 8.99):
-        out.append(rounded_rect(slot_x, 17.2, 0.6, 2.07, r=0.3, fill=CARDPUTER_INK))
+    out.extend(
+        rounded_rect(slot_x, 17.2, 0.6, 2.07, r=0.3, fill=CARDPUTER_INK) for slot_x in (7.81, 8.99)
+    )
     append_cardputer_debossed_m5(out, device_id)
     append_cardputer_usb_c(out)
     append_cardputer_stamp(out)
@@ -3561,7 +3566,7 @@ def gen_cardputer(device_id: str, name: str, body_w: float = 84.0, body_h: float
 # photo's silhouette (0.08 mm rms); the two photos agree within 0.05 mm.
 
 # STEP shell outline without the side rails, clockwise from the top edge.
-TDECK_PLUS_BODY: List[Tuple[float, float]] = [
+TDECK_PLUS_BODY: list[tuple[float, float]] = [
     (12.82, 0),
     (60.37, 0),
     (62.12, 0.15),
@@ -3702,7 +3707,7 @@ TDECK_PLUS_LEGEND_NUDGE = {
     "\u201d": (0.3, 0.5),
 }
 # (primary, secondary) per key.
-TDECK_PLUS_KEY_ROWS: List[List[Tuple[str, str]]] = [
+TDECK_PLUS_KEY_ROWS: list[list[tuple[str, str]]] = [
     [
         ("Q", "#"),
         ("W", "1"),
@@ -3742,7 +3747,7 @@ TDECK_PLUS_KEY_ROWS: List[List[Tuple[str, str]]] = [
 ]
 # Bottom row (photo): key spans in x, top and bottom in y.
 TDECK_PLUS_BOTTOM_ROW_Y = (98.65, 104.14)
-TDECK_PLUS_BOTTOM_KEYS: List[Tuple[str, float, float]] = [
+TDECK_PLUS_BOTTOM_KEYS: list[tuple[str, float, float]] = [
     ("shift", 11.6, 18.35),
     ("mic", 19.55, 26.45),
     ("space", 27.75, 45.95),
@@ -3752,7 +3757,7 @@ TDECK_PLUS_BOTTOM_KEYS: List[Tuple[str, float, float]] = [
 
 # LILYGO prints (photo): each glyph's ink center in x; caps 9.84-12.71 on
 # the glass, 107.16-109.54 under the keyboard.
-TDECK_PLUS_TOP_LETTERS: List[Tuple[str, float]] = [
+TDECK_PLUS_TOP_LETTERS: list[tuple[str, float]] = [
     ("L", 30.33),
     ("I", 32.15),
     ("L", 34.0),
@@ -3760,7 +3765,7 @@ TDECK_PLUS_TOP_LETTERS: List[Tuple[str, float]] = [
     ("G", 39.8),
     ("O", 42.8),
 ]
-TDECK_PLUS_BOTTOM_LETTERS: List[Tuple[str, float]] = [
+TDECK_PLUS_BOTTOM_LETTERS: list[tuple[str, float]] = [
     ("L", 32.0),
     ("I", 33.35),
     ("L", 34.93),
@@ -3773,11 +3778,11 @@ TDECK_PLUS_LEGEND = "#f2f3f5"
 TDECK_PLUS_PRINT = "#dcdde2"
 
 
-def tdeck_plus_shell_points(body_w: float) -> List[Tuple[float, float]]:
+def tdeck_plus_shell_points(body_w: float) -> list[tuple[float, float]]:
     """The STEP outline: the body polygon with the two side rails added."""
     left, right = TDECK_PLUS_BODY_SIDES
     y0, y1, y2, y3 = TDECK_PLUS_RAIL_ENDS
-    points: List[Tuple[float, float]] = []
+    points: list[tuple[float, float]] = []
     count = len(TDECK_PLUS_BODY)
     for index, point in enumerate(TDECK_PLUS_BODY):
         points.append(point)
@@ -3790,8 +3795,8 @@ def tdeck_plus_shell_points(body_w: float) -> List[Tuple[float, float]]:
 
 
 def tdeck_plus_inset(
-    points: List[Tuple[float, float]], d_side: float, d_top: float, d_bottom: float
-) -> List[Tuple[float, float]]:
+    points: list[tuple[float, float]], d_side: float, d_top: float, d_bottom: float
+) -> list[tuple[float, float]]:
     """Offset a clockwise outline inward (mitered corners).
 
     Each edge moves by d_side when vertical, blending to d_top / d_bottom as
@@ -3819,24 +3824,24 @@ def tdeck_plus_inset(
     return out
 
 
-def tdeck_plus_shift_x(points: List[Tuple[float, float]], dx: float) -> List[Tuple[float, float]]:
+def tdeck_plus_shift_x(points: list[tuple[float, float]], dx: float) -> list[tuple[float, float]]:
     """The polygon moved dx mm along x."""
     return [(x + dx, y) for x, y in points]
 
 
 def tdeck_plus_clip_y(
-    points: List[Tuple[float, float]], y_cut: float, keep_above: bool
-) -> List[Tuple[float, float]]:
+    points: list[tuple[float, float]], y_cut: float, keep_above: bool
+) -> list[tuple[float, float]]:
     """Clip a polygon to the part above (or below) the line y = y_cut."""
 
-    def inside(point: Tuple[float, float]) -> bool:
+    def inside(point: tuple[float, float]) -> bool:
         return point[1] <= y_cut if keep_above else point[1] >= y_cut
 
-    def crossing(a: Tuple[float, float], b: Tuple[float, float]) -> Tuple[float, float]:
+    def crossing(a: tuple[float, float], b: tuple[float, float]) -> tuple[float, float]:
         t = (y_cut - a[1]) / (b[1] - a[1])
         return (a[0] + (b[0] - a[0]) * t, y_cut)
 
-    out: List[Tuple[float, float]] = []
+    out: list[tuple[float, float]] = []
     for index, cur in enumerate(points):
         prev = points[index - 1]
         if inside(cur):
@@ -3848,16 +3853,16 @@ def tdeck_plus_clip_y(
     return out
 
 
-def tdeck_plus_path(points: List[Tuple[float, float]]) -> str:
+def tdeck_plus_path(points: list[tuple[float, float]]) -> str:
     head, *rest = points
     return f"M {f(head[0])},{f(head[1])} L " + " ".join(f"{f(x)},{f(y)}" for x, y in rest) + " Z"
 
 
 def tdeck_plus_gradient(
     grad_id: str,
-    start: Tuple[float, float],
-    end: Tuple[float, float],
-    stops: List[Tuple[float, str]],
+    start: tuple[float, float],
+    end: tuple[float, float],
+    stops: list[tuple[float, str]],
 ) -> str:
     """Multi-stop linear gradient in user space (mm)."""
     body = "".join(
@@ -3876,7 +3881,7 @@ def tdeck_plus_flip(x: float, mirrored: bool, axis: float) -> float:
     return 2 * axis - x if mirrored else x
 
 
-def append_tdeck_plus_case(out: List[str], device_id: str, body_w: float) -> None:
+def append_tdeck_plus_case(out: list[str], device_id: str, body_w: float) -> None:
     """Shell, the light bevel around the face, the glass and the plate."""
     body = TDECK_PLUS_BODY
     out.append(
@@ -3934,8 +3939,8 @@ def append_tdeck_plus_case(out: List[str], device_id: str, body_w: float) -> Non
 
 
 def append_tdeck_plus_wordmark(
-    out: List[str],
-    letters: List[Tuple[str, float]],
+    out: list[str],
+    letters: list[tuple[str, float]],
     baseline: float,
     *,
     size: float,
@@ -3948,7 +3953,7 @@ def append_tdeck_plus_wordmark(
         out.append(text(cx, baseline, letter, size=size, fill=fill, weight=weight, scale_x=scale_x))
 
 
-def append_tdeck_plus_top(out: List[str]) -> None:
+def append_tdeck_plus_top(out: list[str]) -> None:
     """The slot above the screen (light ends, dark middle; its purpose is
     undocumented: LILYGO labels nothing there, and the speaker sounds through
     the lower edge) and the LILYGO print on the glass (photo)."""
@@ -3962,7 +3967,7 @@ def append_tdeck_plus_top(out: List[str]) -> None:
 
 
 def append_tdeck_plus_screen(
-    out: List[str], device_id: str, grad_screen: str, grad_wall: str
+    out: list[str], device_id: str, grad_screen: str, grad_wall: str
 ) -> None:
     # The panel fills its viewing window; the picture is the active area,
     # inside it by the panel's 0.77 x 0.62 mm viewing-area margin.
@@ -3998,7 +4003,7 @@ def tdeck_plus_chevron(notch_x: float, tip_x: float, cy: float) -> str:
     )
 
 
-def append_tdeck_plus_band(out: List[str]) -> None:
+def append_tdeck_plus_band(out: list[str]) -> None:
     """Printed chevrons and trace lines either side of the trackball (photo,
     left half measured; the right half mirrors it about the band axis, the
     long traces running to the print's edge on each side)."""
@@ -4042,7 +4047,7 @@ def append_tdeck_plus_band(out: List[str]) -> None:
     out.append(LEGEND_CLOSE)
 
 
-def append_tdeck_plus_trackball(out: List[str], device_id: str) -> None:
+def append_tdeck_plus_trackball(out: list[str], device_id: str) -> None:
     """Trackball (photo radial profile): bezel edge r 5.3, metal ring
     3.45-4.75 brightest at r 4.0, white ring 2.5-3.2 around the 2.48 mm
     ball."""
@@ -4057,7 +4062,7 @@ def append_tdeck_plus_trackball(out: List[str], device_id: str) -> None:
 
 
 def append_tdeck_plus_keycap(
-    out: List[str], device_id: str, x: float, y: float, w: float, h: float
+    out: list[str], device_id: str, x: float, y: float, w: float, h: float
 ) -> None:
     """Keycap with its dark rim; (x, y, w, h) is the rim's outer edge."""
     out.append(
@@ -4074,7 +4079,7 @@ def append_tdeck_plus_keycap(
     )
 
 
-def append_tdeck_plus_key_icon(out: List[str], kind: str, cx: float, top: float) -> None:
+def append_tdeck_plus_key_icon(out: list[str], kind: str, cx: float, top: float) -> None:
     """Icon legends drawn as shapes (photo)."""
     white = TDECK_PLUS_LEGEND
     line = f'stroke="{white}" fill="none" stroke-linejoin="round"'
@@ -4139,7 +4144,7 @@ def append_tdeck_plus_key_icon(out: List[str], kind: str, cx: float, top: float)
         )
 
 
-def append_tdeck_plus_keyboard(out: List[str], device_id: str) -> None:
+def append_tdeck_plus_keyboard(out: list[str], device_id: str) -> None:
     """Three rows of ten keys and the bottom row (photo-measured)."""
     for row_index, row in enumerate(TDECK_PLUS_KEY_ROWS):
         top = TDECK_PLUS_ROW_TOPS[row_index]
@@ -4229,7 +4234,7 @@ def append_tdeck_plus_keyboard(out: List[str], device_id: str) -> None:
 TDECK_PLUS_ROUND_MARKS = ((7.82, 101.72, 0.45), (66.0, 101.78, -0.45))
 
 
-def append_tdeck_plus_round_marks(out: List[str]) -> None:
+def append_tdeck_plus_round_marks(out: list[str]) -> None:
     """The solid part of the two printed round marks: a disc split by a dark
     bar, each inside the ring ``append_tdeck_plus_bottom_print`` draws.
 
@@ -4254,7 +4259,7 @@ def append_tdeck_plus_round_marks(out: List[str]) -> None:
     out.append(LEGEND_CLOSE)
 
 
-def append_tdeck_plus_bottom_print(out: List[str]) -> None:
+def append_tdeck_plus_bottom_print(out: list[str]) -> None:
     """The rings of the two round marks beside the bottom row and the LILYGO
     print under it (photo): traces from 0.5 mm rings, arrowheads, the bold
     wordmark. The marks' discs and bars are a print of their own
@@ -4317,13 +4322,13 @@ def tdeck_plus_bottom_slugs() -> list[str]:
     return slugs
 
 
-def tdeck_plus_hotspots() -> List[Hotspot]:
+def tdeck_plus_hotspots() -> list[Hotspot]:
     """Every keycap, then the trackball.
 
     The bottom row's two shift keys share a legend, so their ids say which
     one: ``hs-key-shift-left`` and ``hs-key-shift-right``.
     """
-    spots: List[Hotspot] = []
+    spots: list[Hotspot] = []
     for row_index, row in enumerate(TDECK_PLUS_KEY_ROWS):
         top = TDECK_PLUS_ROW_TOPS[row_index]
         for col, (primary, _secondary) in enumerate(row):
@@ -4432,7 +4437,7 @@ class DeviceSpec:
     builder_kwargs: dict = field(default_factory=dict)
 
 
-DEVICES: List[DeviceSpec] = [
+DEVICES: list[DeviceSpec] = [
     # M5Stack publishes 48.0 x 24.0 x 13.5 mm for both the Plus 1.1 and the
     # Plus2 (one chassis); its dimension drawing gives 24 x 48 with R3
     # corners, and the registered front photos give a width / height ratio
@@ -4645,7 +4650,7 @@ def contact_sheet_tile(device_id: str, front_svg: str, tile_x: float, tile_y: fl
     )
 
 
-def build_contact_sheet(fronts: List[Tuple[str, str]]) -> str:
+def build_contact_sheet(fronts: list[tuple[str, str]]) -> str:
     """The contact sheet for ``fronts``, a list of (device_id, front.svg)."""
     rows = -(-len(fronts) // SHEET_COLUMNS)
     sheet_w = 2 * SHEET_MARGIN + SHEET_COLUMNS * SHEET_TILE_W + (SHEET_COLUMNS - 1) * SHEET_GAP
@@ -4700,7 +4705,7 @@ def write_contact_sheet() -> None:
     print(f"ok  {CONTACT_SHEET_PATH.name}")
 
 
-def main(argv: List[str]) -> int:
+def main(argv: list[str]) -> int:
     flags = [arg for arg in argv if arg.startswith("--")]
     device_ids = [arg for arg in argv if not arg.startswith("--")]
     unknown_flags = [flag for flag in flags if flag != "--contact-sheet"]
