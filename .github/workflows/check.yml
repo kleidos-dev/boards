@@ -114,7 +114,7 @@ jobs:
           python-version-file: .python-version
           cache: pip
       - name: Install the pinned stack
-        run: pip install -r requirements.txt
+        run: pip install --require-hashes -r requirements.txt
       - name: No vendor file in the tree
         run: python3 _shared/check_public_tree.py
       - name: Board specifications
@@ -147,7 +147,7 @@ jobs:
     needs: [lint, reuse]
     uses: kleidos-dev/.github/.github/workflows/reusable-mypy.yml@30f0dc69833e0917c7865eb93770237fedacff59 # quality-v2.0.0
     with:
-      install: python -m pip install -r requirements.txt
+      install: python -m pip install --require-hashes -r requirements.txt
     permissions:
       contents: read
 
@@ -186,7 +186,7 @@ jobs:
           python-version: "3.15"
           cache: pip
       - name: Install the pinned stack
-        run: pip install -r requirements.txt
+        run: pip install --require-hashes -r requirements.txt
       - name: Board models
         run: python3 -m pytest -rs -m "models and not selftest" tests
 
@@ -210,7 +210,7 @@ jobs:
           python-version: "3.15"
           cache: pip
       - name: Install the pinned stack
-        run: pip install -r requirements.txt
+        run: pip install --require-hashes -r requirements.txt
       - name: The checkers' selftests
         run: python3 -m pytest -rs -m selftest tests
 
@@ -222,7 +222,9 @@ jobs:
   # checked-out tree. The image's own Python is Debian's 3.13, older than the
   # one the code is written for, so the scripts run on the Python
   # .python-version names, which uv (at the version requirements.txt pins)
-  # installs beside it, with pytest, pypdf and PyYAML at the pinned versions.
+  # installs beside it, with pytest, pypdf and PyYAML at the pinned versions:
+  # uv and those three install hash-checked, the three with every dependency
+  # held to requirements.txt's pins and hashes.
   schematic:
     name: "🧫 Schematics (KiCad ERC, netlist, export)"
     needs: [changes, tree, tests]
@@ -244,14 +246,18 @@ jobs:
           set -euo pipefail
           apt-get update
           apt-get install -y --no-install-recommends python3-pip
-          mapfile -t uv < <(grep -E '^uv==' requirements.txt)
-          [[ ${#uv[@]} -eq 1 ]] || { echo "requirements.txt must pin uv"; exit 1; }
-          python3 -m pip install --break-system-packages --root-user-action=ignore "${uv[@]}"
+          # uv's pin with its hashes: the line and the --hash lines it continues.
+          awk '/^uv==/ { p = 1 } p { print } p && !/\\$/ { p = 0 }' requirements.txt > "$RUNNER_TEMP/uv.txt"
+          [[ $(grep -c '^uv==' "$RUNNER_TEMP/uv.txt") -eq 1 ]] || { echo "requirements.txt must pin uv"; exit 1; }
+          python3 -m pip install --break-system-packages --root-user-action=ignore --require-hashes -r "$RUNNER_TEMP/uv.txt"
           # uv reads .python-version and downloads that Python when the image lacks it.
           uv venv --managed-python "$RUNNER_TEMP/python"
-          mapfile -t pins < <(grep -E '^(pytest|pypdf|pyyaml)==' requirements.txt)
-          [[ ${#pins[@]} -eq 3 ]] || { echo "requirements.txt must pin pytest, pypdf and pyyaml"; exit 1; }
-          uv pip install --python "$RUNNER_TEMP/python/bin/python" "${pins[@]}"
+          grep -E '^(pytest|pypdf|pyyaml)==' requirements.txt | cut -d' ' -f1 > "$RUNNER_TEMP/schematic.txt"
+          [[ $(wc -l < "$RUNNER_TEMP/schematic.txt") -eq 3 ]] || { echo "requirements.txt must pin pytest, pypdf and pyyaml"; exit 1; }
+          # The hashes come from requirements.txt as constraints, which also pin
+          # every dependency of the three.
+          uv pip install --python "$RUNNER_TEMP/python/bin/python" --require-hashes \
+            -c requirements.txt -r "$RUNNER_TEMP/schematic.txt"
           echo "$RUNNER_TEMP/python/bin" >> "$GITHUB_PATH"
       - name: The scripts run on that Python
         run: |

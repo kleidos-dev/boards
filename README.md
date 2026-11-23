@@ -61,7 +61,7 @@ Python 3.15 and the pinned `requirements.txt`; the schematic export also needs K
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+.venv/bin/pip install --require-hashes -r requirements.txt
 
 .venv/bin/reuse lint                                          # licenses
 .venv/bin/python _shared/check_public_tree.py                 # no vendor file, nothing private

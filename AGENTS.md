@@ -26,7 +26,7 @@ From a fresh clone, with the Python `.python-version` names and, for schematics,
 
 ```bash
 "python$(cat .python-version)" -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt
+pip install --require-hashes -r requirements.txt
 git clone https://github.com/kleidos-dev/.github.git ../.github
 git -C ../.github checkout "$(python -c 'import json; print(json.load(open(".github/quality/SOURCE.json"))["commit"])')"
 pip install --require-hashes -r ../.github/quality/requirements-tools.txt
