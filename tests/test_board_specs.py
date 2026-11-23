@@ -26,7 +26,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
-import check_board_specs as specs  # noqa: E402
+import check_board_specs as specs  # noqa: E402  after the sys.path set-up above
 
 TODAY = dt.date(2026, 11, 16)
 

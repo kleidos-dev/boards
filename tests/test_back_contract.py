@@ -37,7 +37,7 @@ CAD = ROOT
 SHARED = CAD / "_shared"
 WRITER = SHARED / "emit_back_svg.py"
 sys.path.insert(0, str(SHARED))
-import emit_back_svg  # noqa: E402
+import emit_back_svg  # noqa: E402  after the sys.path set-up above
 
 SVG = "{http://www.w3.org/2000/svg}"
 #: The back drawings that print anything, as {board: {plane: {mark, ...}}};

@@ -16,8 +16,8 @@ KIT = ROOT / "_shared" / "kicad"
 sys.path.insert(0, str(ROOT / "_shared"))
 sys.path.insert(0, str(KIT))
 
-import kicad_schematic as ks  # noqa: E402
-import kleidos_kicad as kit  # noqa: E402
+import kicad_schematic as ks  # noqa: E402  after the sys.path set-up above
+import kleidos_kicad as kit  # noqa: E402  after the sys.path set-up above
 
 IGNORED = {"__pycache__"}
 

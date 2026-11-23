@@ -87,19 +87,19 @@ from shapely.geometry.base import BaseGeometry
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-import matplotlib  # noqa: E402
+import matplotlib  # noqa: E402  after the sys.path set-up above
 
 matplotlib.use("Agg")
-import glb_legends  # noqa: E402
-import matplotlib.pyplot as plt  # noqa: E402
-import model_raster  # noqa: E402
-import numpy as np  # noqa: E402
-import render_views  # noqa: E402
-import shapely.affinity  # noqa: E402
-import shapely.geometry as sg  # noqa: E402
-import trimesh  # noqa: E402
+import glb_legends  # noqa: E402  after the sys.path set-up above
+import matplotlib.pyplot as plt  # noqa: E402  after the sys.path set-up above
+import model_raster  # noqa: E402  after the sys.path set-up above
+import numpy as np  # noqa: E402  after the sys.path set-up above
+import render_views  # noqa: E402  after the sys.path set-up above
+import shapely.affinity  # noqa: E402  after the sys.path set-up above
+import shapely.geometry as sg  # noqa: E402  after the sys.path set-up above
+import trimesh  # noqa: E402  after the sys.path set-up above
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
-from shapely.ops import unary_union  # noqa: E402
+from shapely.ops import unary_union  # noqa: E402  after the sys.path set-up above
 
 #: How far a legend may lie from where the drawing prints it, in mm.
 LEGEND_TOLERANCE_MM = 0.02

@@ -73,10 +73,10 @@ ROOT = Path(__file__).resolve().parents[1]
 CAD = ROOT
 SHARED = ROOT / "_shared"
 sys.path.insert(0, str(SHARED))
-import board_faces  # noqa: E402
-import glb_legends  # noqa: E402
-import legend_source  # noqa: E402
-import media_meta  # noqa: E402
+import board_faces  # noqa: E402  after the sys.path set-up above
+import glb_legends  # noqa: E402  after the sys.path set-up above
+import legend_source  # noqa: E402  after the sys.path set-up above
+import media_meta  # noqa: E402  after the sys.path set-up above
 
 if TYPE_CHECKING:
     import model_raster

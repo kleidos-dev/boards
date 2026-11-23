@@ -23,7 +23,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
 
-import check_public_tree  # noqa: E402
+import check_public_tree  # noqa: E402  after the sys.path set-up above
 
 #: The vendor's name in its two allowed forms: as printed, and as an identifier.
 ALLOWED = {"LILYGO", "lilygo"}

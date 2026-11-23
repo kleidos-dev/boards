@@ -40,8 +40,8 @@ from pytest import MonkeyPatch, TempPathFactory
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
-import check_schematic as cs  # noqa: E402
-import kicad_schematic as ks  # noqa: E402
+import check_schematic as cs  # noqa: E402  after the sys.path set-up above
+import kicad_schematic as ks  # noqa: E402  after the sys.path set-up above
 
 BOARDS = sorted(p.parent.parent.name for p in ROOT.glob("*/schematic/netlist.yaml"))
 
