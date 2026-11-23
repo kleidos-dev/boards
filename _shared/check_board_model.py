@@ -87,19 +87,22 @@ from shapely.geometry.base import BaseGeometry
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-import matplotlib  # noqa: E402  after the sys.path set-up above
+# Every E402 below: the import follows the sys.path set-up above, which
+# finds the sibling modules, and the ones after matplotlib.use() must
+# also follow it, so pyplot loads the Agg backend.
+import matplotlib  # noqa: E402
 
 matplotlib.use("Agg")
-import glb_legends  # noqa: E402  after the sys.path set-up above
-import matplotlib.pyplot as plt  # noqa: E402  after the sys.path set-up above
-import model_raster  # noqa: E402  after the sys.path set-up above
-import numpy as np  # noqa: E402  after the sys.path set-up above
-import render_views  # noqa: E402  after the sys.path set-up above
-import shapely.affinity  # noqa: E402  after the sys.path set-up above
-import shapely.geometry as sg  # noqa: E402  after the sys.path set-up above
-import trimesh  # noqa: E402  after the sys.path set-up above
+import glb_legends  # noqa: E402
+import matplotlib.pyplot as plt  # noqa: E402
+import model_raster  # noqa: E402
+import numpy as np  # noqa: E402
+import render_views  # noqa: E402
+import shapely.affinity  # noqa: E402
+import shapely.geometry as sg  # noqa: E402
+import trimesh  # noqa: E402
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
-from shapely.ops import unary_union  # noqa: E402  after the sys.path set-up above
+from shapely.ops import unary_union  # noqa: E402
 
 #: How far a legend may lie from where the drawing prints it, in mm.
 LEGEND_TOLERANCE_MM = 0.02

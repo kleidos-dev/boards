@@ -47,10 +47,12 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-import media_meta  # noqa: E402  after the sys.path set-up above
-import model_raster  # noqa: E402  after the sys.path set-up above
-import numpy as np  # noqa: E402  after the sys.path set-up above
-from PIL import Image, ImageDraw, ImageFont  # noqa: E402  after the sys.path set-up above
+# Every E402 below: the import follows the sys.path set-up above, which
+# finds the sibling modules.
+import media_meta  # noqa: E402
+import model_raster  # noqa: E402
+import numpy as np  # noqa: E402
+from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
 CAD = HERE.parent
 from paths import ROOT as REPO  # noqa: E402  (the repository root)

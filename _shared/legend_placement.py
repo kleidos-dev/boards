@@ -75,15 +75,17 @@ from shapely.geometry.base import BaseGeometry
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-import board_faces  # noqa: E402  after the sys.path set-up above
-import glb_legends  # noqa: E402  after the sys.path set-up above
-import legend_mesh  # noqa: E402  after the sys.path set-up above
-import legend_source  # noqa: E402  after the sys.path set-up above
-import model_raster  # noqa: E402  after the sys.path set-up above
-import numpy as np  # noqa: E402  after the sys.path set-up above
-import shapely  # noqa: E402  after the sys.path set-up above
-import shapely.affinity  # noqa: E402  after the sys.path set-up above
-import shapely.geometry as sg  # noqa: E402  after the sys.path set-up above
+# Every E402 below: the import follows the sys.path set-up above, which
+# finds the sibling modules.
+import board_faces  # noqa: E402
+import glb_legends  # noqa: E402
+import legend_mesh  # noqa: E402
+import legend_source  # noqa: E402
+import model_raster  # noqa: E402
+import numpy as np  # noqa: E402
+import shapely  # noqa: E402
+import shapely.affinity  # noqa: E402
+import shapely.geometry as sg  # noqa: E402
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
 
 #: How far a group's ink may lie from where the drawing puts it, in mm.
