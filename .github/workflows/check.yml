@@ -219,13 +219,15 @@ jobs:
   # pin for pin, the generator giving back the committed files, and every link
   # of the PDF (the committed one and a fresh export) leading where it should.
   # The image pins the KiCad the files were written with (10.0.8) and its
-  # kicad-cli (no KiCad library is read); root, so the job can write the
-  # checked-out tree. The image's own Python is Debian's 3.13, older than the
-  # one the code is written for, so the scripts run on the Python
-  # .python-version names, which uv (at the version requirements.txt pins)
-  # installs beside it, with pytest, pypdf and PyYAML at the pinned versions:
-  # uv and those three install hash-checked, the three with every dependency
-  # held to requirements.txt's pins and hashes.
+  # kicad-cli (no KiCad library is read), by digest with its tag beside it
+  # (the quality kit's pins rule holds both to the newest KiCad release);
+  # root, so the job can write the checked-out tree. The image's own Python
+  # is Debian's 3.13, older than the one the code is written for, so the
+  # scripts run on the Python .python-version names, which uv (at the
+  # version requirements.txt pins) installs beside it, with pytest, pypdf
+  # and PyYAML at the pinned versions: uv and those three install
+  # hash-checked, the three with every dependency held to requirements.txt's
+  # pins and hashes.
   schematic:
     name: "🧫 Schematics (KiCad ERC, netlist, export)"
     needs: [changes, tree, tests]
@@ -233,7 +235,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     container:
-      image: kicad/kicad:10.0.8
+      image: kicad/kicad@sha256:3f4a01786dfbe803a65f345c3342b765db9add913f5e9448f8356793714ddc34 # 10.0.8
       options: --user root
     defaults:
       run:
