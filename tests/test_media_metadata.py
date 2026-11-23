@@ -1,5 +1,7 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
-"""Every published media file carries its embedded-metadata record, and the checker catches what is planted.
+"""Every published media file carries its embedded-metadata record, and the checker catches what is
+planted.
 
 ``_shared/media_meta.py`` derives one record per media file and writes it in
 each format; the builders call it, and ``_shared/check_metadata.py`` holds
@@ -28,9 +30,13 @@ import shutil
 import struct
 import subprocess
 import sys
+from collections.abc import Callable, Iterable
 from pathlib import Path
+from types import ModuleType
+from typing import Any
 
 import pytest
+from pytest import MonkeyPatch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
@@ -41,7 +47,7 @@ from paths import BOARDS  # noqa: E402
 GOLDEN = ROOT / "tests" / "fixtures" / "meta"
 
 
-def library(name: str):
+def library(name: str) -> ModuleType:
     try:
         return __import__(name)
     except ImportError:
@@ -81,7 +87,8 @@ def test_every_kind_of_file_is_checked() -> None:
 
 
 def _reuse_spdx() -> dict[str, tuple[set[str], set[str]]]:
-    """{path: (license identifiers, copyright texts without e-mail)} as ``reuse spdx`` states them."""
+    """{path: (license identifiers, copyright texts without e-mail)}
+    as ``reuse spdx`` states them."""
     if shutil.which("reuse") is None and not (Path(sys.executable).parent / "reuse").exists():
         if os.environ.get("CI"):
             pytest.fail("reuse is not installed: a broken install of requirements.txt")
@@ -96,8 +103,8 @@ def _reuse_spdx() -> dict[str, tuple[set[str], set[str]]]:
         licenses = set(re.findall(r"^LicenseInfoInFile: (.+)$", block, re.M))
         text = re.search(r"^FileCopyrightText: <text>(.*?)</text>", block, re.M | re.S)
         holders = set()
-        for line in text.group(1).splitlines() if text else []:
-            line = re.sub(rf"^{mm.TAG_COPYRIGHT}:\s*", "", line.strip())
+        for raw in text.group(1).splitlines() if text else []:
+            line = re.sub(rf"^{mm.TAG_COPYRIGHT}:\s*", "", raw.strip())
             holders.add(re.sub(r"\s*<[^>]*>", "", line).strip())
         files[name.group(1)] = (licenses, holders)
     return files
@@ -218,7 +225,7 @@ def test_stamping_is_idempotent_and_leaves_the_drawing() -> None:
 # --- each rule catches what is planted ----------------------------------------------
 
 
-def rules(found) -> set[str]:
+def rules(found: Iterable[tuple[str, str]]) -> set[str]:
     return {rule for rule, _ in found}
 
 
@@ -228,7 +235,7 @@ def front() -> tuple[str, str, mm.MediaMeta]:
     return rel, (ROOT / rel).read_text(encoding="utf-8"), mm.record(rel)
 
 
-def test_svg_plants(front) -> None:
+def test_svg_plants(front: tuple[str, str, mm.MediaMeta]) -> None:
     rel, text, meta = front
     assert check_metadata.check_svg(rel, text.encode(), meta, None) == []
     changed = text.replace(meta.title, "Another title", 1)
@@ -243,7 +250,9 @@ def test_svg_plants(front) -> None:
     assert "M003" in rules(check_metadata.check_svg(rel, gpl.encode(), meta, None))
 
 
-def test_an_identity_pattern_is_found_and_never_printed(front) -> None:
+def test_an_identity_pattern_is_found_and_never_printed(
+    front: tuple[str, str, mm.MediaMeta],
+) -> None:
     rel, text, meta = front
     pattern = [re.compile("kleidos boards", re.I)]
     found = check_metadata.check_svg(rel, text.encode(), meta, pattern)
@@ -251,7 +260,7 @@ def test_an_identity_pattern_is_found_and_never_printed(front) -> None:
     assert all("kleidos boards" not in message.lower() for _, message in found)
 
 
-def _glb(rel: str, change) -> bytes:
+def _glb(rel: str, change: Callable[[dict[str, Any]], object]) -> bytes:
     data = (ROOT / rel).read_bytes()
     n = struct.unpack_from("<I", data, 12)[0]
     js = json.loads(data[20 : 20 + n])
@@ -303,7 +312,7 @@ def test_obj_plants() -> None:
     assert "M003" in rules(check_metadata.check_obj(rel, other, meta, None))
 
 
-def _png(chunks) -> bytes:
+def _png(chunks: Iterable[tuple[bytes, bytes]]) -> bytes:
     return mm.PNG_SIGNATURE + b"".join(mm._chunk(k, b) for k, b in chunks)
 
 
@@ -345,7 +354,9 @@ def test_a_media_file_without_a_record_is_found() -> None:
     assert check_metadata.check("fonts/inter/Inter-Bold.ttf", None) == []
 
 
-def test_the_checker_fails_closed_when_ci_asks_for_identity(monkeypatch, tmp_path) -> None:
+def test_the_checker_fails_closed_when_ci_asks_for_identity(
+    monkeypatch: MonkeyPatch, tmp_path: Path
+) -> None:
     monkeypatch.setenv(mm.IDENTITY_ENV, "")
     monkeypatch.setattr(mm, "IDENTITY_FILE", tmp_path / "none.txt")
     assert check_metadata.main(["--require-identity", str(ROOT / "sticks3/icon.svg")]) == 1
@@ -359,7 +370,7 @@ def test_the_contact_sheet_was_drawn_from_the_models_as_they_are() -> None:
     rec = json.loads((ROOT / "models-contact-sheet.json").read_text(encoding="utf-8"))
     data = (ROOT / rec["sheet"]).read_bytes()
     assert hashlib.sha256(data).hexdigest() == rec["sha256"] and len(data) == rec["bytes"]
-    for board, model in rec["models"].items():
+    for model in rec["models"].values():
         digest = hashlib.sha256((ROOT / model["model"]).read_bytes()).hexdigest()
         assert digest == model["model_sha256"], (
             f"{model['model']} changed since the sheet was drawn: "

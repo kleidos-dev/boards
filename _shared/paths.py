@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The repository root every script resolves its paths against.
 

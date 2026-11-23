@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P06: the LCD controller's ID over SPI, attempted (2026-11-17)
 
 Probe P06 of `../improvements.md`: read the panel controller's ID to tell an ILI9342C from an ILI9342E on the bench unit. The triage assumed no console command could do it; the Kleidos console has `SPIRD <cmd> [len]`, a genuine controller read over the display bus, so it was tried. Read only (no panel command is written); the case was not opened.

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # Cardputer-Adv: idle levels and pulls of G0, G1, G2, G11 (P02)
 
 - Date: 2026-11-17.

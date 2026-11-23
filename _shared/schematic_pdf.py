@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Finish a schematic PDF kicad-cli wrote: links that land on a place, no script.
 
@@ -11,7 +12,7 @@ schematic) and, with ``pypdf``:
   an index table, a box of the power tree) to its place: ``/XYZ left top
   zoom``, the target ``VIEW_LEFT`` mm from the window's left edge and
   ``VIEW_TOP`` mm below its top, at ``VIEW_ZOOM``. Every reader that follows a
-  link honours a page and a position; that is PDF 1.0;
+  link honors a page and a position; that is PDF 1.0;
 - adds a link on every part's reference, to its row in the parts list;
 - gives every link a ``/Contents`` (what it leads to, for screen readers);
 - writes the named destinations (``part-U16``, ``net-VBUS_L0-p3``), so a web
@@ -41,7 +42,9 @@ import hashlib
 import json
 import sys
 import uuid
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 from pypdf import PdfReader, PdfWriter
 from pypdf.generic import (
@@ -59,9 +62,9 @@ from pypdf.generic import (
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
-import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from brand)
-import media_meta  # noqa: E402  (beside this file; -I leaves it off the path)
-from paths import ROOT  # noqa: E402
+import kleidos_kicad as kit
+import media_meta
+from paths import ROOT
 
 #: What the PDF is drawn with besides its sheets, the sources its identifier is derived from too:
 #: the kit's theme, drawing sheet and style.
@@ -70,19 +73,22 @@ KIT_FILES = (kit.theme_file("dark"), kit.sheet("dark"), kit.STYLE)
 PT = 72 / 25.4
 
 
-def xyz(spot: dict, view: dict, height_pt: float) -> tuple[float, float, float]:
+def xyz(spot: dict[str, Any], view: dict[str, Any], height_pt: float) -> tuple[float, float, float]:
     """The /XYZ left, top (points) and zoom that put ``spot`` (mm, y down) in view."""
     left = (spot["x"] - view["left"]) * PT
     top = height_pt - (spot["y"] - view["top"]) * PT
     return round(left, 3), round(top, 3), view["zoom"]
 
 
-def inside(rect, x, y, slack=0.6) -> bool:
+def inside(rect: Sequence[float], x: float, y: float, slack: float = 0.6) -> bool:
     return rect[0] - slack <= x <= rect[2] + slack and rect[1] - slack <= y <= rect[3] + slack
 
 
-def rect_mm(annot, height_pt: float) -> tuple[float, float, float, float]:
-    x0, y0, x1, y1 = (float(v) for v in annot["/Rect"])
+def rect_mm(annot: DictionaryObject, height_pt: float) -> tuple[float, float, float, float]:
+    rect = annot["/Rect"].get_object()
+    if not isinstance(rect, ArrayObject):
+        raise ValueError("an annotation with no /Rect array")
+    x0, y0, x1, y1 = (float(v) for v in rect)
     return (
         min(x0, x1) / PT,
         (height_pt - max(y0, y1)) / PT,
@@ -126,7 +132,7 @@ def strip_scripts(writer: PdfWriter) -> int:
     return gone
 
 
-def link(rect_pt, dest, alt: str) -> DictionaryObject:
+def link(rect_pt: Sequence[float], dest: ArrayObject, alt: str) -> DictionaryObject:
     return DictionaryObject(
         {
             NameObject("/Type"): NameObject("/Annot"),
@@ -140,7 +146,8 @@ def link(rect_pt, dest, alt: str) -> DictionaryObject:
 
 
 def sources_digest(board: str) -> hashlib._Hash:
-    """SHA-256 of what the PDF is drawn from: every sheet of the schematic, then the kit's theme, sheet and style."""
+    """SHA-256 of what the PDF is drawn from: every sheet of the schematic, then the kit's theme,
+    sheet and style."""
     digest = hashlib.sha256()
     for sheet in sorted((ROOT / board / "schematic").glob("*.kicad_sch")):
         digest.update(sheet.read_bytes())
@@ -196,7 +203,7 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
     errors = []
     strip_scripts(writer)
 
-    def dest(spot: dict) -> ArrayObject:
+    def dest(spot: dict[str, Any]) -> ArrayObject:
         left, top, zoom = xyz(spot, view, height)
         return ArrayObject(
             [
@@ -210,7 +217,7 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
 
     # KiCad's own links: the page row and the contents boxes keep their page;
     # every one links.json lists goes to its place
-    by_page: dict[int, list] = {}
+    by_page: dict[int, list[Any]] = {}
     for j in spec["jumps"]:
         by_page.setdefault(j["page"], []).append(j)
     for i, page in enumerate(pages, start=1):
@@ -234,13 +241,14 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
                     del a[key]
             a[NameObject("/Dest")] = dest(j["to"])
             a[NameObject("/Contents")] = TextStringObject(j["alt"])
-        for r, a in rects:  # the rest go to a page: say which
+        for _r, a in rects:  # the rest go to a page: say which
             if "/Contents" not in a and isinstance(a.get("/Dest"), ArrayObject):
                 target = next(
                     (
                         k
                         for k, p in enumerate(pages, start=1)
-                        if p.indirect_reference.idnum == a["/Dest"][0].idnum
+                        if p.indirect_reference is not None
+                        and p.indirect_reference.idnum == a["/Dest"][0].idnum
                     ),
                     None,
                 )

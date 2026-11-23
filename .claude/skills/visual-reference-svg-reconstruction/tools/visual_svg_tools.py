@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Render, crop, overlay and diff a board drawing against a reference image.
 
@@ -207,7 +208,7 @@ def mean_luma_diff(left_image: Any, right_image: Any) -> float:
     )
     histogram = diff.convert("L").histogram()
     total = sum(count * value for value, count in enumerate(histogram))
-    return total / (left_image.width * left_image.height)
+    return float(total / (left_image.width * left_image.height))
 
 
 def draw_label(draw: Any, position: tuple[int, int], label: str) -> None:
@@ -405,11 +406,11 @@ def command_crop_reference(args: argparse.Namespace) -> None:
 
 def command_validate_svg(args: argparse.Namespace) -> None:
     for svg_path in args.svg:
-        ET.parse(svg_path)
+        ET.parse(svg_path)  # noqa: S314  (this repository's own file)
         viewbox = parse_viewbox(svg_path)
         if args.require_viewbox and not viewbox:
             raise SystemExit(f"missing viewBox: {svg_path}")
-        root = ET.parse(svg_path).getroot()
+        root = ET.parse(svg_path).getroot()  # noqa: S314  (this repository's own file)
         image_tags = [element for element in root.iter() if element.tag.endswith("image")]
         if args.reject_images and image_tags:
             raise SystemExit(f"embedded image elements are not allowed: {svg_path}")
@@ -483,7 +484,8 @@ def add_validate_parser(subparsers: argparse._SubParsersAction[argparse.Argument
 
 
 def refuse_outputs_in_repository(args: argparse.Namespace) -> None:
-    """Exit when an output path lies inside the repository: no raster or reference file enters it."""
+    """Exit when an output path lies inside the repository: no
+    raster or reference file enters it."""
     if REPOSITORY_ROOT is None:
         return
     for name in OUTPUT_ARGUMENTS:

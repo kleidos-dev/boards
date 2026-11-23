@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # SYS_INT (GPIO35): pull-up and the two drivers on the net (probe P1)
 
 Bench probe of 2026-11-17 on the M5StickC Plus 1.1 (K016-P), USB connected (AXP192 `POWER_STATUS` 0x00 = 0x38, `vbus_present=1`), the case closed. It settles triage items B4 and C3 (`../improvements.md`).

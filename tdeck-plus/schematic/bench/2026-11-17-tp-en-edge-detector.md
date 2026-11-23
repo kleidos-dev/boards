@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # T-Deck Plus: does a falling edge on ESP_TP_INT switch V3V on? (B3)
 
 - Date: 2026-11-17.

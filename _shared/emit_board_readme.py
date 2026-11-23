@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Write each ``<board>/README.md`` from its ``board.json``, one layout for all.
 
@@ -22,7 +23,9 @@ import argparse
 import json
 import re
 import sys
+from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -60,7 +63,8 @@ FOLDER = [
     (
         "board.json",
         "every part on the board, each value with its source "
-        "([`_shared/board.schema.json`](../_shared/board.schema.json)); this page is written from it",
+        "([`_shared/board.schema.json`](../_shared/board.schema.json)); this page is written from "
+        "it",
     ),
     (
         "measurements.json",
@@ -81,19 +85,19 @@ FOLDER = [
     ("svg/bottom.svg", "the bottom face and what it prints"),
     (
         "model/{b}.glb",
-        "the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format "
+        "the 3D model, glTF 2.0 binary in meters (glTF's unit), every print kept: the format "
         "for the web and most viewers",
     ),
     ("model/{b}-web.glb", "its web level of detail"),
     (
         "model/{b}.obj",
-        "the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format "
+        "the same model as Wavefront OBJ, in millimeters, Y up, one object per part: the format "
         "for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); "
         "written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py)",
     ),
     (
         "model/{b}.mtl",
-        "the OBJ's materials: each part's colour, transparency, roughness and metalness",
+        "the OBJ's materials: each part's color, transparency, roughness and metalness",
     ),
     ("model/spec.json", "the recipe the master and its web level are built from"),
     ("model/source.json", "the master's provenance"),
@@ -109,12 +113,26 @@ FOLDER = [
 ]
 
 
-def cell(text) -> str:
+def cell(text: str) -> str:
     """A value fit for one Markdown table cell."""
     return str(text).replace("|", "\\|").replace("\n", " ").strip()
 
 
-def fmt_value(value) -> str:
+#: Both REUSE lines, copyright first, in an HTML comment at the top of every
+#: page (kleidos-dev/.github docs/quality.md, "Licensing headers"); the pages
+#: were first written in 2026. REUSE reads these lines as the page's, not
+#: this script's, so they sit between its ignore markers.
+# REUSE-IgnoreStart
+README_HEADER = (
+    "<!--",
+    "SPDX-FileCopyrightText: 2026 José M. Requena Plens",
+    "SPDX-License-Identifier: MIT",
+    "-->",
+)
+# REUSE-IgnoreEnd
+
+
+def fmt_value(value: object) -> str:
     if value is None:
         return "none"
     if isinstance(value, bool):
@@ -128,11 +146,11 @@ def fmt_value(value) -> str:
     return str(value)
 
 
-def fmt_number(value, unit: str) -> str:
+def fmt_number(value: object, unit: str) -> str:
     return f"{value:.1f} {unit}" if isinstance(value, (int, float)) else f"{value} {unit}"
 
 
-def ohms(value) -> str:
+def ohms(value: float) -> str:
     if value >= 1_000_000 and value % 1_000_000 == 0:
         return f"{value // 1_000_000:g}M"
     if value >= 1000:
@@ -145,14 +163,14 @@ def label(role: str) -> str:
 
 
 class Page:
-    def __init__(self, board: str, data: dict):
+    def __init__(self, board: str, data: dict[str, Any]) -> None:
         self.board = board
         self.data = data
         self.comps = data["components"]
         self.by_id = {c["id"]: c for c in self.comps}
         self.numbers = {sid: n for n, sid in enumerate(data["sources"], start=1)}
 
-    def src(self, ids) -> str:
+    def src(self, ids: Iterable[str] | None) -> str:
         return " ".join(f"[{self.numbers[i]}]" for i in ids or [])
 
     def name(self, cid: str) -> str:
@@ -162,7 +180,7 @@ class Page:
             return "external"
         c = self.by_id[cid]
         if c.get("part"):
-            return c["part"]
+            return str(c["part"])
         if c.get("designator"):
             return f"{label(c['role'])} {c['designator']}"
         return (
@@ -176,6 +194,8 @@ class Page:
         front = ROOT / self.board / "svg" / "front.svg"
         if front.is_file():
             box = re.search(r'<svg\b[^>]*\bviewBox="([^"]+)"', front.read_text(encoding="utf-8"))
+            if box is None:
+                raise SystemExit(f"{front}: no viewBox on its <svg>")
             _x, _y, w, h = (float(v) for v in box.group(1).split())
             width = round(FRONT_HEIGHT_PX * w / h)
             out += (
@@ -187,7 +207,7 @@ class Page:
 
     def lines(self) -> list[str]:
         d, ident = self.data, self.data["identity"]
-        out = [self.pictures(), "", f"# {ident['name']}", ""]
+        out = [*README_HEADER, "", self.pictures(), "", f"# {ident['name']}", ""]
         head = f"{ident['vendor']} · SKU **{ident['sku']}**"
         if ident.get("revision"):
             head += f" · revision {ident['revision']}"
@@ -195,9 +215,12 @@ class Page:
             head += " · also sold as " + ", ".join(ident["aka"])
         out += [head + f" {self.src(ident['src'])}", ""]
         out += [
-            "Every value below comes from [`board.json`](board.json), where each one carries the id of its "
-            "source; the numbers in brackets point to the sources listed at the end of this page. This page "
-            "is written from that file by [`_shared/emit_board_readme.py`](../_shared/emit_board_readme.py): "
+            "Every value below comes from [`board.json`](board.json), where each one carries the "
+            "id of its "
+            "source; the numbers in brackets point to the sources listed at the end of this page. "
+            "This page "
+            "is written from that file by "
+            "[`_shared/emit_board_readme.py`](../_shared/emit_board_readme.py): "
             "change the file, then run the script.",
             "",
         ]
@@ -297,7 +320,8 @@ class Page:
                 )
                 rows.append(
                     f"| {cell(self.name(c['id']))} | {cell(self.name(link['to']))} | "
-                    f"{cell(link.get('bus', ''))} | {cell(link.get('address', ''))} | {pins} | {pulls} | "
+                    f"{cell(link.get('bus', ''))} | {cell(link.get('address', ''))} | {pins} | "
+                    f"{pulls} | "
                     f"{cell(link.get('notes', ''))} | {self.src(link.get('src') or c['src'])} |"
                 )
         if not rows:
@@ -388,7 +412,8 @@ def main(argv: list[str]) -> int:
             print(f"wrote {page.relative_to(ROOT)}")
     for board in stale:
         print(
-            f"FAIL {board}/README.md differs from what board.json writes (run _shared/emit_board_readme.py {board})"
+            f"FAIL {board}/README.md differs from what board.json writes (run "
+            f"_shared/emit_board_readme.py {board})"
         )
     return 1 if stale else 0
 

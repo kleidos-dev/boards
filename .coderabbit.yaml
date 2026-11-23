@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 #
 # CodeRabbit for the Kleidos repositories: line reviews and committable
@@ -178,7 +179,7 @@ reviews:
         Maintained by hand. Every part, pin, value and dimension names where
         it came from; board.json is held to _shared/board.schema.json by
         _shared/check_board_specs.py. measurements.json must agree with the
-        board's current svg/front.svg (case radius and colour, the
+        board's current svg/front.svg (case radius and color, the
         screen-active rectangle, buttons, rings, keyboard geometry) and holds
         no legend: a keyboard's prints are the front's alone.
     - path: "*/schematic/{netlist,layout}.yaml"
@@ -229,7 +230,7 @@ reviews:
         A test that reads a board model is marked `models`; a planted-defect
         selftest or a fixture rebuild is marked `selftest` (tests/conftest.py,
         and check.yml selects them with -m). A test pins the defect it
-        guards, so it must fail on the old behaviour.
+        guards, so it must fail on the old behavior.
     - path: "{REUSE.toml,NOTICE.md}"
       instructions: |
         Every file has a license in REUSE.toml: what this project writes is

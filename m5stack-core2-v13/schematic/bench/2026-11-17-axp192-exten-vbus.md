@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P04 (register half): EXTEN and the AXP192's VBUS after Kleidos's boot (2026-11-17)
 
 Probe P04 of `../improvements.md` asks for a multimeter on Port A and an EXTEN write from the console. Neither was done: there was no one at the bench with a meter, and the write (`REGW!` on a critical register) needs the owner's go. This record is the read-only half that the console can do: what the AXP192 says about EXTEN and its VBUS input with the board on USB-C, after Kleidos's boot. Nothing was written; the case was not opened.

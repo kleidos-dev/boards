@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P06: USB descriptor of the USB-UART bridge (2026-11-17)
 
 Probe P06 of `../improvements.md`. Read only, on the host: the macOS I/O Registry entry of the device the CoreInk enumerates when its USB-C is plugged into the bench hub (`ioreg -p IOUSB -l`), matched to the board by its serial number (private, left out of this record). No firmware was involved and the case was not opened.

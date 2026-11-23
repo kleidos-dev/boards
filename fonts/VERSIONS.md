@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # Pinned fonts
 
 Inter sets the printed legends of the nine board models, in its Regular, Medium and Bold. `_shared/legend_mesh.py` reads the digests below from this file, refuses a TTF that does not match its pin, and triangulates the glyph outlines into a model's `*_legends_*` meshes. The files are the upstream release, unmodified, redistributed with their license (`inter/OFL.txt`).

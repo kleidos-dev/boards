@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The six faces of a board, and how a drawing of one lies on the model
 
@@ -40,9 +41,11 @@ its viewer, and needs no winding of its own.
 Needs numpy only.
 """
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 import numpy as np
+import numpy.typing as npt
 
 #: Each face's ``u`` axis and up axis, as (axis index, sign), and the two keys
 #: that place its drawing's origin: the build-frame coordinate of ``u`` = 0 on
@@ -58,13 +61,13 @@ FACES = {
 AXES = "xyz"
 
 
-def unit(axis, sign):
+def unit(axis: int, sign: int) -> npt.NDArray[np.float64]:
     out = np.zeros(3)
     out[axis] = float(sign)
     return out
 
 
-def basis(face):
+def basis(face: str) -> npt.NDArray[np.float64]:
     """The rotation whose rows are the face's ``u``, its up and its outward normal."""
     if face not in FACES:
         raise ValueError(f"no face {face!r}; the faces are {list(FACES)}")
@@ -73,19 +76,19 @@ def basis(face):
     return np.vstack([a, b, np.cross(a, b)])
 
 
-def normal(face):
+def normal(face: str) -> tuple[int, int]:
     """(axis index, sign) of a face's outward normal."""
     n = basis(face)[2]
     axis = int(np.flatnonzero(n)[0])
     return axis, int(np.sign(n[axis]))
 
 
-def height_key(face):
+def height_key(face: str) -> str:
     """The spec key that gives a face's sheets their height: ``x``, ``y`` or ``z``."""
     return AXES[normal(face)[0]]
 
 
-def to_face(points, face):
+def to_face(points: npt.ArrayLike, face: str) -> npt.NDArray[np.float64]:
     """Points of the build frame as (a, b, h): along the face's ``u``, its up and its normal.
 
     The front's rotation is the identity and leaves the points as they are, so
@@ -108,7 +111,7 @@ class FaceFrame:
     #: The build-frame coordinate of its ``v`` = 0 on the up axis.
     v0: float
 
-    def offsets(self, center):
+    def offsets(self, center: npt.ArrayLike) -> tuple[float, float]:
         """(du, dv): a drawing point (u, v) lies at a = u + du, b = dv - v, center taken off.
 
         ``a`` and ``b`` are the point's build-frame position less *center*,
@@ -121,7 +124,9 @@ class FaceFrame:
             return self.u0 - float(c[0]), self.v0 - float(c[1])
         return u_sign * (self.u0 - float(c[u_axis])), up_sign * (self.v0 - float(c[up_axis]))
 
-    def embed(self, ab, center, height):
+    def embed(
+        self, ab: npt.ArrayLike, center: npt.ArrayLike, height: float
+    ) -> npt.NDArray[np.float64]:
         """Build-frame positions of (a, b) points of this face lying at *height* on its normal."""
         (u_axis, u_sign), (up_axis, up_sign), _ = FACES[self.face]
         n_axis, _ = normal(self.face)
@@ -137,17 +142,17 @@ class FaceFrame:
         out[:, n_axis] = float(height)
         return out
 
-    def normals(self, count):
+    def normals(self, count: int) -> npt.NDArray[np.float64]:
         """*count* copies of the face's outward normal."""
         return np.tile(basis(self.face)[2], (count, 1))
 
-    def record(self):
+    def record(self) -> dict[str, float]:
         """The two numbers that place the drawing, under the face's own keys."""
         keys = FACES[self.face][2]
         return {keys[0]: self.u0, keys[1]: self.v0}
 
 
-def face_frame(face, numbers):
+def face_frame(face: str, numbers: Mapping[str, float]) -> FaceFrame:
     """A FaceFrame from ``{key: value}`` written under the face's own keys."""
     if face not in FACES:
         raise ValueError(f"no face {face!r}; the faces are {list(FACES)}")
@@ -159,7 +164,9 @@ def face_frame(face, numbers):
     return FaceFrame(face, float(numbers[keys[0]]), float(numbers[keys[1]]))
 
 
-def to_drawing(points, frame, center):
+def to_drawing(
+    points: npt.ArrayLike, frame: FaceFrame, center: npt.ArrayLike
+) -> npt.NDArray[np.float64]:
     """(u, v, h) of build-frame points relative to *center*: where a drawing of the face puts them.
 
     *points* are positions less *center*, as a model stores them; ``h`` is the

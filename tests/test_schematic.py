@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """A board's schematic stays its ``netlist.yaml``, and the check catches what is planted.
 
@@ -17,6 +18,13 @@ Host-only: no hardware, no network.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator
+from types import ModuleType
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from pypdf import PdfWriter
+
 import json
 import os
 import re
@@ -28,6 +36,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from pytest import MonkeyPatch, TempPathFactory
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
@@ -42,7 +51,7 @@ def faithful_nodes(board: str) -> dict[str, list[tuple[str, str]]]:
     folder = ROOT / board / "schematic"
     facts = yaml.safe_load((folder / "netlist.yaml").read_text(encoding="utf-8"))["components"]
     maps = cs.pin_maps(yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8")))
-    nets: dict[str, list] = {}
+    nets: dict[str, list[Any]] = {}
     for ref, comp in facts.items():
         inverse: dict[str, list[str]] = {}
         for ours, vends in maps.get(ref, {}).items():
@@ -55,7 +64,7 @@ def faithful_nodes(board: str) -> dict[str, list[tuple[str, str]]]:
     return nets
 
 
-def write_xml(nets: dict[str, list], path: Path) -> Path:
+def write_xml(nets: dict[str, list[Any]], path: Path) -> Path:
     root = ET.Element("export", version="E")
     xnets = ET.SubElement(root, "nets")
     for code, (name, nodes) in enumerate(sorted(nets.items()), start=1):
@@ -67,18 +76,21 @@ def write_xml(nets: dict[str, list], path: Path) -> Path:
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_a_faithful_drawing_passes(board, tmp_path):
+def test_a_faithful_drawing_passes(board: str, tmp_path: Path) -> None:
     assert cs.compare(board, write_xml(faithful_nodes(board), tmp_path / "n.xml")) == []
 
 
-def _first_signal_pins(nets):
+def _first_signal_pins(nets: dict[str, Any]) -> list[str]:
     named = [k for k, v in nets.items() if k.startswith("/") and k != "/GND" and len(v) >= 2]
     return sorted(named)[:2]
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_an_unconnected_pin_named_with_a_slash_stays_unconnected(board, tmp_path):
-    """KiCad names an unconnected pin's net after the pin, "/" and all ("unconnected-(U1-IO11/CMD-Pad30)")."""
+def test_an_unconnected_pin_named_with_a_slash_stays_unconnected(
+    board: str, tmp_path: Path
+) -> None:
+    """KiCad names an unconnected pin's net after the pin, "/" and all
+    ("unconnected-(U1-IO11/CMD-Pad30)")."""
     nets = faithful_nodes(board)
     for key in [k for k in nets if k.startswith("unconnected-")]:
         nets[key.replace("-Pad", "-A/B-Pad")] = nets.pop(key)
@@ -86,7 +98,7 @@ def test_an_unconnected_pin_named_with_a_slash_stays_unconnected(board, tmp_path
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_a_pin_on_the_wrong_net_fails(board, tmp_path):
+def test_a_pin_on_the_wrong_net_fails(board: str, tmp_path: Path) -> None:
     nets = faithful_nodes(board)
     a, b = _first_signal_pins(nets)
     nets[b].append(nets[a].pop())
@@ -95,7 +107,7 @@ def test_a_pin_on_the_wrong_net_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_a_pin_left_out_fails(board, tmp_path):
+def test_a_pin_left_out_fails(board: str, tmp_path: Path) -> None:
     nets = faithful_nodes(board)
     a, _ = _first_signal_pins(nets)
     nets[a].pop()
@@ -104,7 +116,7 @@ def test_a_pin_left_out_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_two_nets_joined_fail(board, tmp_path):
+def test_two_nets_joined_fail(board: str, tmp_path: Path) -> None:
     nets = faithful_nodes(board)
     a, b = _first_signal_pins(nets)
     nets[a] += nets.pop(b)
@@ -113,7 +125,7 @@ def test_two_nets_joined_fail(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_a_not_connected_pin_joined_fails(board, tmp_path):
+def test_a_not_connected_pin_joined_fails(board: str, tmp_path: Path) -> None:
     nets = faithful_nodes(board)
     nc = sorted(k for k in nets if k.startswith("unconnected-"))[0]
     a, _ = _first_signal_pins(nets)
@@ -123,7 +135,7 @@ def test_a_not_connected_pin_joined_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_a_part_the_netlist_lacks_fails(board, tmp_path):
+def test_a_part_the_netlist_lacks_fails(board: str, tmp_path: Path) -> None:
     nets = faithful_nodes(board)
     nets["/GND"].append(("R999", "1"))
     errors = cs.compare(board, write_xml(nets, tmp_path / "n.xml"))
@@ -131,17 +143,17 @@ def test_a_part_the_netlist_lacks_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_power_symbols_take_no_part(board, tmp_path):
+def test_power_symbols_take_no_part(board: str, tmp_path: Path) -> None:
     nets = faithful_nodes(board)
     nets["/GND"].append(("#PWR001", "1"))
     assert cs.compare(board, write_xml(nets, tmp_path / "n.xml")) == []
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_the_nets_section_agrees_with_the_components(board):
+def test_the_nets_section_agrees_with_the_components(board: str) -> None:
     """netlist.yaml's per-net index lists exactly the pins the components put on it."""
     doc = yaml.safe_load((ROOT / board / "schematic" / "netlist.yaml").read_text(encoding="utf-8"))
-    derived: dict[str, set] = {}
+    derived: dict[str, set[Any]] = {}
     for ref, comp in doc["components"].items():
         for pin, net in comp["pins"].items():
             if net != "NC":
@@ -151,7 +163,7 @@ def test_the_nets_section_agrees_with_the_components(board):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_the_generator_gives_back_the_committed_files(board, tmp_path):
+def test_the_generator_gives_back_the_committed_files(board: str, tmp_path: Path) -> None:
     folder = ROOT / board / "schematic"
     copy = tmp_path / "repo"
     (copy / "_shared").mkdir(parents=True)
@@ -179,7 +191,7 @@ def test_the_generator_gives_back_the_committed_files(board, tmp_path):
 # --- what the generator adds to the drawing ---------------------------------
 
 
-def test_zones_follow_the_drawing_sheets_grid():
+def test_zones_follow_the_drawing_sheets_grid() -> None:
     """KiCad's default A3 sheet: columns 1-8 and rows A-F, 50 mm apart from (10, 10) mm."""
     assert ks.zone(10.0, 10.0) == "A1"
     assert ks.zone(59.9, 59.9) == "A1"
@@ -189,7 +201,7 @@ def test_zones_follow_the_drawing_sheets_grid():
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_parts_not_fitted_are_marked_dnp(board):
+def test_parts_not_fitted_are_marked_dnp(board: str) -> None:
     """A part whose value is NC is drawn with KiCad's DNP mark, and no other part is."""
     folder = ROOT / board / "schematic"
     facts = yaml.safe_load((folder / "netlist.yaml").read_text(encoding="utf-8"))["components"]
@@ -210,19 +222,20 @@ def test_parts_not_fitted_are_marked_dnp(board):
     assert marked == {r for r, c in facts.items() if ks.not_fitted(c["value"])}
 
 
-def test_a_part_is_not_fitted_when_its_value_is_nc_or_says_dnp():
+def test_a_part_is_not_fitted_when_its_value_is_nc_or_says_dnp() -> None:
     for value in ("NC", "nc", "NC(TBD)", "DNP", "RF_C(TBD:DNP)", "10K DNP"):
         assert ks.not_fitted(value), value
     for value in ("10K", "NCP1117", "DNPX", "ADNP", "0.1uF", ""):
         assert not ks.not_fitted(value), value
 
 
-def _nets_sheet(b) -> dict:
-    return next(sh for sh in b.lay["sheets"] if sh.get("index") == "nets")
+def _nets_sheet(b: ks.Builder) -> dict[str, Any]:
+    sheet: dict[str, Any] = next(sh for sh in b.lay["sheets"] if sh.get("index") == "nets")
+    return sheet
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_the_gpio_tables_name_the_boards_own_chips(board):
+def test_the_gpio_tables_name_the_boards_own_chips(board: str) -> None:
     """Each GPIO table of the nets page is titled after a part the board has, and none is empty."""
     b = ks.Builder(board)
     tables = b.gpio_tables(_nets_sheet(b))
@@ -240,7 +253,7 @@ def test_the_gpio_tables_name_the_boards_own_chips(board):
             ), f"{t['title']}: {gpio} is pin {v['pin']}, on {on}, not {v['net']}"
 
 
-def test_the_gpio_tables_default_to_the_esp32_and_its_power_manager():
+def test_the_gpio_tables_default_to_the_esp32_and_its_power_manager() -> None:
     b = ks.Builder("sticks3")
     b.net = {
         "esp32_gpio": {"GPIO1": {"pin": 1, "net": "A"}},
@@ -267,7 +280,7 @@ def test_the_gpio_tables_default_to_the_esp32_and_its_power_manager():
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_test_points_are_named_tp_or_drawn_as_one(board):
+def test_test_points_are_named_tp_or_drawn_as_one(board: str) -> None:
     b = ks.Builder(board)
     for ref in b.comps:
         drawn = b.part(ref)["symbol"] == "kleidos:TestPoint"
@@ -275,8 +288,9 @@ def test_test_points_are_named_tp_or_drawn_as_one(board):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_the_project_ignores_only_the_erc_checks_layout_names(board):
-    """Every board ignores KiCad's two library checks; layout.yaml's erc_ignore adds its own, each said why."""
+def test_the_project_ignores_only_the_erc_checks_layout_names(board: str) -> None:
+    """Every board ignores KiCad's two library checks; layout.yaml's erc_ignore adds its own, each
+    said why."""
     folder = ROOT / board / "schematic"
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
     pro = json.loads((folder / f"{board}.kicad_pro").read_text(encoding="utf-8"))
@@ -286,13 +300,12 @@ def test_the_project_ignores_only_the_erc_checks_layout_names(board):
     )
 
 
-def _pins(node):
+def _pins(node: Any) -> Iterator[list[Any]]:
     for unit in (n for n in node if isinstance(n, list) and n and n[0] == "symbol"):
-        for pin in (n for n in unit if isinstance(n, list) and n and n[0] == "pin"):
-            yield pin
+        yield from (n for n in unit if isinstance(n, list) and n and n[0] == "pin")
 
 
-def test_an_own_symbol_takes_its_pin_length_and_may_hide_its_numbers():
+def test_an_own_symbol_takes_its_pin_length_and_may_hide_its_numbers() -> None:
     spec = {"left": ["1 VBUS", "2 CC1"], "right": ["3 GND"], "bottom": ["4 SHELL"]}
     plain = ks.own_symbol("J", spec)
     assert {p[4][1] for p in _pins(plain)} == {ks.PIN_LEN}
@@ -302,7 +315,7 @@ def test_an_own_symbol_takes_its_pin_length_and_may_hide_its_numbers():
     assert ["pin_numbers", ["hide", "yes"]] in long
 
 
-def test_a_transistor_pair_draws_base_collector_and_emitter():
+def test_a_transistor_pair_draws_base_collector_and_emitter() -> None:
     node = ks.own_symbol(
         "Q",
         {
@@ -318,8 +331,9 @@ def test_a_transistor_pair_draws_base_collector_and_emitter():
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_the_contents_page_boxes_take_the_layouts_size(board):
-    """A drawing page's box on the contents page is root.sheet_box's height (27.94 mm by default)."""
+def test_the_contents_page_boxes_take_the_layouts_size(board: str) -> None:
+    """A drawing page's box on the contents page is root.sheet_box's
+    height (27.94 mm by default)."""
     folder = ROOT / board / "schematic"
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
     h = float((lay["root"].get("sheet_box") or (27.94, 31.75))[0])
@@ -335,7 +349,7 @@ def test_the_contents_page_boxes_take_the_layouts_size(board):
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_the_power_tree_refuses_a_connection_the_netlist_lacks(board):
+def test_the_power_tree_refuses_a_connection_the_netlist_lacks(board: str) -> None:
     b = ks.Builder(board)
     tree = b.lay.get("power_tree")
     if not tree:
@@ -365,7 +379,7 @@ def _pdf(board: str) -> Path:
 PDF_BOARDS = [b for b in BOARDS if _pdf(b).exists()]
 
 
-def _planted(board: str, tmp_path, plant) -> Path:
+def _planted(board: str, tmp_path: Path, plant: Any) -> Path:
     pypdf = pytest.importorskip("pypdf")
     writer = pypdf.PdfWriter(clone_from=str(_pdf(board)))
     plant(pypdf, writer)
@@ -375,14 +389,17 @@ def _planted(board: str, tmp_path, plant) -> Path:
     return out
 
 
-def _page_links(writer, page):
-    return [
-        a for a in writer.pages[page - 1]["/Annots"] if a.get_object().get("/Subtype") == "/Link"
-    ]
+def _annots(writer: PdfWriter, page: int) -> Any:
+    """The /Annots array of a page (from 1) of a PDF being written."""
+    return writer.pages[page - 1]["/Annots"].get_object()
+
+
+def _page_links(writer: PdfWriter, page: int) -> list[Any]:
+    return [a for a in _annots(writer, page) if a.get_object().get("/Subtype") == "/Link"]
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_the_committed_pdf_links_lead_where_they_should(board):
+def test_the_committed_pdf_links_lead_where_they_should(board: str) -> None:
     pytest.importorskip("pypdf")
     import check_schematic_links as csl
 
@@ -391,7 +408,7 @@ def test_the_committed_pdf_links_lead_where_they_should(board):
     assert any(line.startswith("bookmark") for line in lines)
 
 
-def _place_link(writer, page):
+def _place_link(writer: PdfWriter, page: int) -> Any:
     """A link of ``page`` that KiCad made and the PDF step sent to a place (/XYZ)."""
     for a in _page_links(writer, page):
         d = a.get_object().get("/Dest")
@@ -406,10 +423,12 @@ def _place_link(writer, page):
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_a_link_to_the_wrong_page_fails(board, tmp_path):
+def test_a_link_to_the_wrong_page_fails(board: str, tmp_path: Path) -> None:
     import check_schematic_links as csl
 
-    def plant(pypdf, writer):  # a [page/zone] of page 2, sent to page 2 itself
+    def plant(
+        pypdf: ModuleType, writer: PdfWriter
+    ) -> None:  # a [page/zone] of page 2, sent to page 2 itself
         a = _place_link(writer, 2)
         a[pypdf.generic.NameObject("/Dest")] = pypdf.generic.ArrayObject(
             [writer.pages[1].indirect_reference, pypdf.generic.NameObject("/FitB")]
@@ -420,10 +439,12 @@ def test_a_link_to_the_wrong_page_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_a_link_to_the_whole_page_fails(board, tmp_path):
+def test_a_link_to_the_whole_page_fails(board: str, tmp_path: Path) -> None:
     import check_schematic_links as csl
 
-    def plant(pypdf, writer):  # the right page, but the whole of it, as KiCad leaves it
+    def plant(
+        pypdf: ModuleType, writer: PdfWriter
+    ) -> None:  # the right page, but the whole of it, as KiCad leaves it
         a = _place_link(writer, 2)
         a[pypdf.generic.NameObject("/Dest")] = pypdf.generic.ArrayObject(
             [a["/Dest"][0], pypdf.generic.NameObject("/FitB")]
@@ -434,10 +455,10 @@ def test_a_link_to_the_whole_page_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_a_link_to_the_wrong_place_fails(board, tmp_path):
+def test_a_link_to_the_wrong_place_fails(board: str, tmp_path: Path) -> None:
     import check_schematic_links as csl
 
-    def plant(pypdf, writer):  # the right page, 40 mm off its label
+    def plant(pypdf: ModuleType, writer: PdfWriter) -> None:  # the right page, 40 mm off its label
         a = _place_link(writer, 2)
         d = a["/Dest"]
         d[2] = pypdf.generic.FloatObject(float(d[2]) + 40 * 72 / 25.4)
@@ -447,7 +468,7 @@ def test_a_link_to_the_wrong_place_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_a_reference_without_its_link_fails(board, tmp_path):
+def test_a_reference_without_its_link_fails(board: str, tmp_path: Path) -> None:
     import check_schematic_links as csl
 
     lay = yaml.safe_load((ROOT / board / "schematic" / "layout.yaml").read_text(encoding="utf-8"))
@@ -455,8 +476,10 @@ def test_a_reference_without_its_link_fails(board, tmp_path):
         n for n, sh in enumerate(lay["sheets"], start=2) if "index" not in sh
     )  # the first drawing
 
-    def plant(pypdf, writer):  # the links the PDF step adds on that page's references, taken away
-        annots = writer.pages[page - 1]["/Annots"]
+    def plant(
+        pypdf: ModuleType, writer: PdfWriter
+    ) -> None:  # the links the PDF step adds on that page's references, taken away
+        annots = _annots(writer, page)
         keep = [
             a for a in annots if "in the parts list" not in str(a.get_object().get("/Contents", ""))
         ]
@@ -472,10 +495,12 @@ def test_a_reference_without_its_link_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_a_script_in_the_document_fails(board, tmp_path):
+def test_a_script_in_the_document_fails(board: str, tmp_path: Path) -> None:
     import check_schematic_links as csl
 
-    def plant(pypdf, writer):  # KiCad's JSInit, put back in the catalog's name tree
+    def plant(
+        pypdf: ModuleType, writer: PdfWriter
+    ) -> None:  # KiCad's JSInit, put back in the catalog's name tree
         g = pypdf.generic
         js = writer._add_object(
             g.DictionaryObject(
@@ -496,10 +521,10 @@ def test_a_script_in_the_document_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_a_missing_link_fails(board, tmp_path):
+def test_a_missing_link_fails(board: str, tmp_path: Path) -> None:
     import check_schematic_links as csl
 
-    def plant(pypdf, writer):  # every link of page 1 taken away
+    def plant(pypdf: ModuleType, writer: PdfWriter) -> None:  # every link of page 1 taken away
         writer.pages[0][pypdf.generic.NameObject("/Annots")] = pypdf.generic.ArrayObject()
 
     errors, _ = csl.check(board, _planted(board, tmp_path, plant))
@@ -508,10 +533,12 @@ def test_a_missing_link_fails(board, tmp_path):
 
 
 @pytest.mark.parametrize("board", PDF_BOARDS)
-def test_a_script_link_fails(board, tmp_path):
+def test_a_script_link_fails(board: str, tmp_path: Path) -> None:
     import check_schematic_links as csl
 
-    def plant(pypdf, writer):  # a KiCad-style property pop-up over nothing linked
+    def plant(
+        pypdf: ModuleType, writer: PdfWriter
+    ) -> None:  # a KiCad-style property pop-up over nothing linked
         g = pypdf.generic
         annot = g.DictionaryObject(
             {
@@ -528,7 +555,7 @@ def test_a_script_link_fails(board, tmp_path):
                 ),
             }
         )
-        writer.pages[2][g.NameObject("/Annots")].append(writer._add_object(annot))
+        _annots(writer, 3).append(writer._add_object(annot))
 
     errors, _ = csl.check(board, _planted(board, tmp_path, plant))
     assert any("matches nothing drawn" in e and "JavaScript" in e for e in errors)
@@ -546,7 +573,7 @@ def test_a_script_link_fails(board, tmp_path):
 # the board's.
 
 ADD_BOARD = "m5stickc-plus2"
-ADDITIONS = [
+ADDITIONS: list[dict[str, Any]] = [
     {
         "id": "K1",
         "kind": "addition",
@@ -618,7 +645,9 @@ ADDITIONS = [
 ]
 
 
-def _with_additions(adds=ADDITIONS, wording=True) -> tuple[dict, dict]:
+def _with_additions(
+    adds: list[dict[str, Any]] = ADDITIONS, wording: bool = True
+) -> tuple[dict[str, Any], dict[str, Any]]:
     folder = ROOT / ADD_BOARD / "schematic"
     net = yaml.safe_load((folder / "netlist.yaml").read_text(encoding="utf-8"))
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
@@ -634,12 +663,12 @@ def _with_additions(adds=ADDITIONS, wording=True) -> tuple[dict, dict]:
     return net, lay
 
 
-def test_additions_as_planted_are_well_formed():
+def test_additions_as_planted_are_well_formed() -> None:
     assert ks.additions_errors(*_with_additions()) == []
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_each_boards_additions_are_well_formed_and_marked_only_when_present(board):
+def test_each_boards_additions_are_well_formed_and_marked_only_when_present(board: str) -> None:
     folder = ROOT / board / "schematic"
     net = yaml.safe_load((folder / "netlist.yaml").read_text(encoding="utf-8"))
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
@@ -682,27 +711,27 @@ def test_each_boards_additions_are_well_formed_and_marked_only_when_present(boar
         (lambda a: a[1].update(id="R13"), "should be K2"),
     ],
 )
-def test_a_malformed_addition_fails(change, message):
-    adds = [dict(a, source=dict(a["source"]), element=dict(a["element"])) for a in ADDITIONS]
+def test_a_malformed_addition_fails(change: Callable[..., Any], message: str) -> None:
+    adds = [{**a, "source": dict(a["source"]), "element": dict(a["element"])} for a in ADDITIONS]
     change(adds)
     errors = ks.additions_errors(*_with_additions(adds))
     assert any(message in e for e in errors), errors
 
 
-def test_an_id_that_is_a_part_or_a_net_fails():
+def test_an_id_that_is_a_part_or_a_net_fails() -> None:
     net, lay = _with_additions()
     net["components"]["K1"] = {"value": "relay", "pins": {"1": "GND"}}
     assert any("also a part or a net" in e for e in ks.additions_errors(net, lay))
 
 
-def test_the_notes_claim_additions_exactly_when_there_are_some():
+def test_the_notes_claim_additions_exactly_when_there_are_some() -> None:
     assert any("the notes say" in e for e in ks.additions_errors(*_with_additions(wording=False)))
     net, lay = _with_additions()
     net["kleidos"] = []
     assert any("but netlist.yaml has none" in e for e in ks.additions_errors(net, lay))
 
 
-def test_the_layout_leaves_the_subtitle_and_title_block_wording_to_the_generator():
+def test_the_layout_leaves_the_subtitle_and_title_block_wording_to_the_generator() -> None:
     net, lay = _with_additions()
     lay["root"]["subheading"] += f", {ks.ADD_SUBTITLE}"
     assert any(
@@ -720,15 +749,16 @@ def test_the_layout_leaves_the_subtitle_and_title_block_wording_to_the_generator
     )  # and no room is left for the generator's line
 
 
-def test_a_gpio_tables_chip_is_the_reference_that_opens_its_titles_brackets():
+def test_a_gpio_tables_chip_is_the_reference_that_opens_its_titles_brackets() -> None:
     assert ks.chip_of("ESP32-S3 GPIO (U20)") == "U20"
     assert ks.chip_of("ESP32-C3 GPIO (U5, keyboard)") == "U5"
     assert ks.chip_of("Pads") is None
 
 
-def test_an_index_row_shows_its_element_and_what_hangs_on_it():
-    """The elements whose Kleidos entries a row of an index table, or a box of the power tree, repeats."""
-    net = {
+def test_an_index_row_shows_its_element_and_what_hangs_on_it() -> None:
+    """The elements whose Kleidos entries a row of an index table, or a box of the power tree,
+    repeats."""
+    net: dict[str, Any] = {
         "components": {
             "R1": {"pins": {"1": "A", "2": "GND"}},
             "U1": {"pins": {"1": "A", "2": "B", "3": "C"}},
@@ -754,8 +784,9 @@ def test_an_index_row_shows_its_element_and_what_hangs_on_it():
     assert ks.index_keys(net, "parts", "U1") == [("part", "U1")]  # "3 pins"
 
 
-def test_a_pin_on_no_net_says_what_it_is_in_the_gpio_table():
-    """The map's own text; else what the Kleidos entries on the row or the pin say; else nothing, since the
+def test_a_pin_on_no_net_says_what_it_is_in_the_gpio_table() -> None:
+    """The map's own text; else what the Kleidos entries on the row or the pin say; else nothing,
+    since the
     Net cell already reads "not connected"."""
     b = ks.Builder("sticks3")
     gt = {"title": "SoC GPIO (U1)"}
@@ -779,8 +810,8 @@ def test_a_pin_on_no_net_says_what_it_is_in_the_gpio_table():
     assert b.gpio_what(gt, "GPIO8", {"pin": 8, "net": "LED", "what": "the LED"}) == "the LED"
 
 
-def test_a_gpio_in_two_tables_needs_its_table():
-    net = {
+def test_a_gpio_in_two_tables_needs_its_table() -> None:
+    net: dict[str, Any] = {
         "components": {},
         "gpio_maps": [
             {"title": "A (U1)", "map": {"GPIO1": {"pin": 1, "net": "X"}}},
@@ -803,7 +834,7 @@ def test_a_gpio_in_two_tables_needs_its_table():
 
 
 @pytest.fixture(scope="module")
-def planted_repo(tmp_path_factory):
+def planted_repo(tmp_path_factory: TempPathFactory) -> Path:
     """A copy of the Plus2's schematic sources with ADDITIONS planted, generated."""
     root = tmp_path_factory.mktemp("repo")
     (root / ADD_BOARD / "schematic").mkdir(parents=True)
@@ -822,7 +853,7 @@ def planted_repo(tmp_path_factory):
     return root
 
 
-def _dotted_wires(doc) -> int:
+def _dotted_wires(doc: list[Any]) -> int:
     return sum(
         1
         for n in doc
@@ -833,7 +864,7 @@ def _dotted_wires(doc) -> int:
     )
 
 
-def test_the_generator_marks_and_lists_every_addition(planted_repo):
+def test_the_generator_marks_and_lists_every_addition(planted_repo: Path) -> None:
     folder = planted_repo / ADD_BOARD / "schematic"
     links = json.loads((folder / "links.json").read_text(encoding="utf-8"))
     for a in ADDITIONS:
@@ -851,7 +882,8 @@ def test_the_generator_marks_and_lists_every_addition(planted_repo):
         k["title"] == ks.ADD_TITLE
         for k in next(o for o in links["outline"] if o["page"] == 1)["kids"]
     )
-    # the added pins' and the added part's wires are dotted: U9.4 (to ground) and R10's two, which the
+    # the added pins' and the added part's wires are dotted: U9.4 (to ground) and R10's two, which
+    # the
     # layout draws without stubs, so they get one each; a correction (K3, K6) dots nothing
     dotted = {
         f.name: _dotted_wires(ks.parse(f.read_text(encoding="utf-8")))
@@ -860,27 +892,34 @@ def test_the_generator_marks_and_lists_every_addition(planted_repo):
     assert dotted["rails.kicad_sch"] >= 1 and dotted["soc.kicad_sch"] == 2, dotted
 
 
-def test_the_check_holds_a_generated_drawing_with_additions(planted_repo, monkeypatch):
+def test_the_check_holds_a_generated_drawing_with_additions(
+    planted_repo: Path, monkeypatch: MonkeyPatch
+) -> None:
     monkeypatch.setattr(cs, "ROOT", planted_repo)
     assert cs.additions(ADD_BOARD) == []
     assert cs.index_pages(ADD_BOARD) == []
 
 
 @pytest.mark.parametrize("board", BOARDS)
-def test_each_boards_index_pages_and_title_blocks_say_what_they_should(board):
-    """The committed files: the wording under the heading and in every title block, each entry marked on
+def test_each_boards_index_pages_and_title_blocks_say_what_they_should(board: str) -> None:
+    """The committed files: the wording under the heading and in every title block, each entry
+    marked on
     every row and power-tree box that shows its element again, and what a pin on no net says."""
     assert cs.index_pages(board) == []
 
 
-def _index_pages(board, folder) -> dict[int, str]:
+def _index_pages(board: str, folder: Path) -> dict[int, str]:
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
     return {page: sh["file"] for page, sh in enumerate(lay["sheets"], start=2) if "index" in sh}
 
 
-def test_an_entry_is_marked_wherever_an_index_page_shows_its_element_again(planted_repo):
-    """A rail's entry: on its row of the rails table, above each of its boxes in the power tree and on its
-    row of the nets page; a part's: after its reference and on its row of the parts list; a pin's on no
+def test_an_entry_is_marked_wherever_an_index_page_shows_its_element_again(
+    planted_repo: Path,
+) -> None:
+    """A rail's entry: on its row of the rails table, above each of its boxes in the power tree and
+    on its
+    row of the nets page; a part's: after its reference and on its row of the parts list; a pin's on
+    no
     net: by its cross and on its GPIO's row, which says what the entry says."""
     folder = planted_repo / ADD_BOARD / "schematic"
     lay = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
@@ -911,7 +950,7 @@ def test_an_entry_is_marked_wherever_an_index_page_shows_its_element_again(plant
         ), name
 
 
-def _drop_text(path: Path, body: str, nth: int = 1):
+def _drop_text(path: Path, body: str, nth: int = 1) -> None:
     """Take the nth text item reading ``body`` out of a KiCad sheet file."""
     text = path.read_text(encoding="utf-8")
     found = list(
@@ -936,8 +975,8 @@ def _drop_text(path: Path, body: str, nth: int = 1):
     ],
 )
 def test_the_check_fails_index_pages_that_do_not_say_what_they_should(
-    planted_repo, tmp_path, monkeypatch, plant, message
-):
+    planted_repo: Path, tmp_path: Path, monkeypatch: MonkeyPatch, plant: Any, message: str
+) -> None:
     root = tmp_path / "repo"
     shutil.copytree(planted_repo, root)
     folder = root / ADD_BOARD / "schematic"
@@ -980,7 +1019,7 @@ def test_the_check_fails_index_pages_that_do_not_say_what_they_should(
 
 
 @pytest.fixture(scope="module")
-def bare_repo(tmp_path_factory):
+def bare_repo(tmp_path_factory: TempPathFactory) -> Path:
     """A copy of the Plus2's schematic sources with no Kleidos entry at all, generated."""
     root = tmp_path_factory.mktemp("bare")
     folder = root / ADD_BOARD / "schematic"
@@ -999,8 +1038,11 @@ def bare_repo(tmp_path_factory):
     return root
 
 
-def test_a_board_without_entries_says_nothing_of_them(bare_repo, monkeypatch):
-    """No table, no marker, no word of them under the heading or in a title block; a pin on no net still
+def test_a_board_without_entries_says_nothing_of_them(
+    bare_repo: Path, monkeypatch: MonkeyPatch
+) -> None:
+    """No table, no marker, no word of them under the heading or in a title block; a pin on no net
+    still
     says so on the nets page."""
     folder = bare_repo / ADD_BOARD / "schematic"
     monkeypatch.setattr(cs, "ROOT", bare_repo)
@@ -1022,8 +1064,8 @@ def test_a_board_without_entries_says_nothing_of_them(bare_repo, monkeypatch):
     ],
 )
 def test_the_check_fails_a_drawing_whose_additions_are_not_marked_and_listed(
-    planted_repo, tmp_path, monkeypatch, plant, message
-):
+    planted_repo: Path, tmp_path: Path, monkeypatch: MonkeyPatch, plant: Any, message: str
+) -> None:
     root = tmp_path / "repo"
     shutil.copytree(planted_repo, root)
     folder = root / ADD_BOARD / "schematic"
@@ -1064,7 +1106,7 @@ def _kicad_cli() -> str | None:
 
 
 @pytest.fixture(scope="module")
-def planted_pdf(planted_repo):
+def planted_pdf(planted_repo: Path) -> Path:
     if not _kicad_cli():
         pytest.skip("kicad-cli is not installed")
     pytest.importorskip("pypdf")
@@ -1089,7 +1131,9 @@ def planted_pdf(planted_repo):
 
 
 @pytest.mark.selftest
-def test_the_links_of_a_pdf_with_additions_lead_both_ways(planted_pdf, monkeypatch):
+def test_the_links_of_a_pdf_with_additions_lead_both_ways(
+    planted_pdf: Path, monkeypatch: MonkeyPatch
+) -> None:
     import check_schematic_links as csl
 
     monkeypatch.setattr(csl, "ROOT", planted_pdf.parents[2])
@@ -1100,9 +1144,9 @@ def test_the_links_of_a_pdf_with_additions_lead_both_ways(planted_pdf, monkeypat
     )
 
 
-def _add_link(writer, page, eid):
-    for a in writer.pages[page - 1]["/Annots"]:
-        a = a.get_object()
+def _add_link(writer: PdfWriter, page: int, eid: str) -> Any:
+    for annot in _annots(writer, page):
+        a = annot.get_object()
         said = str(a.get("/Contents", ""))
         if a.get("/Subtype") == "/Link" and said.startswith((f"{eid}:", f"{eid} in the ")):
             return a
@@ -1121,8 +1165,8 @@ def _add_link(writer, page, eid):
     ],
 )
 def test_a_pdf_whose_additions_do_not_lead_both_ways_fails(
-    planted_pdf, tmp_path, monkeypatch, plant, message
-):
+    planted_pdf: Path, tmp_path: Path, monkeypatch: MonkeyPatch, plant: Any, message: str
+) -> None:
     import check_schematic_links as csl
     import pypdf
 
@@ -1139,7 +1183,7 @@ def test_a_pdf_whose_additions_do_not_lead_both_ways_fails(
         d[3] = g.FloatObject(float(d[3]) - 40 * 72 / 25.4)
     elif plant == "no-dest":
 
-        def drop(node):  # the name tree may be flat or split into kids
+        def drop(node: Any) -> bool:  # the name tree may be flat or split into kids
             node = node.get_object()
             arr = node.get("/Names")
             if arr is not None:
@@ -1149,13 +1193,15 @@ def test_a_pdf_whose_additions_do_not_lead_both_ways_fails(
                     return True
             return any(drop(kid) for kid in node.get("/Kids", []))
 
-        assert drop(writer._root_object["/Names"]["/Dests"])
+        names: Any = writer._root_object["/Names"].get_object()
+        assert drop(names["/Dests"])
     elif plant == "moved-marker":
         soc = root / ADD_BOARD / "schematic" / "soc.kicad_sch"
         text = soc.read_text()
         m = re.search(
             r'\(text "K4"\n\t+\(exclude_from_sim no\)\n\t+\(at ([\d.]+) ([\d.]+) 0\)', text
         )
+        assert m is not None
         soc.write_text(
             text.replace(
                 m.group(0),
@@ -1171,6 +1217,7 @@ def test_a_pdf_whose_additions_do_not_lead_both_ways_fails(
         m = re.search(
             r'\(text "K7"\n\t+\(exclude_from_sim no\)\n\t+\(at ([\d.]+) ([\d.]+) 0\)', text
         )
+        assert m is not None
         nets.write_text(
             text.replace(
                 m.group(0),

@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What the M5StickS3 prints on its back: the sticker in the back's recess
 
@@ -23,7 +24,7 @@ left edge to its right.
 from __future__ import annotations
 
 import math
-from typing import List, Sequence, Tuple
+from collections.abc import Sequence
 
 import emit_front_svg as fronts
 
@@ -99,12 +100,12 @@ def part(
     return half_box(u0, v0, u1, vm, r, upper, True) + half_box(u0, vm, u1, v1, r, lower, False)
 
 
-def poly(points: Sequence[Tuple[float, float]], ink: str) -> str:
+def poly(points: Sequence[tuple[float, float]], ink: str) -> str:
     return f'<polygon points="{" ".join(f"{f(u)},{f(v)}" for u, v in points)}" fill="{ink}"/>\n'
 
 
 def line(
-    points: Sequence[Tuple[float, float]], ink: str, width: float = TRACE, cap: str = "butt"
+    points: Sequence[tuple[float, float]], ink: str, width: float = TRACE, cap: str = "butt"
 ) -> str:
     d = " L ".join(f"{f(u)} {f(v)}" for u, v in points)
     return (
@@ -120,7 +121,7 @@ def curve(d: str, ink: str, width: float = TRACE) -> str:
     )
 
 
-def spline(points: Sequence[Tuple[float, float]], ink: str, width: float = TRACE) -> str:
+def spline(points: Sequence[tuple[float, float]], ink: str, width: float = TRACE) -> str:
     """A smooth trace through *points*, in order: each span a cubic whose tangents at its ends
     run from the point before to the point after (a Catmull-Rom curve), so a trace read off the
     photo point by point is drawn without corners."""
@@ -137,8 +138,8 @@ def spline(points: Sequence[Tuple[float, float]], ink: str, width: float = TRACE
 
 
 def head(
-    tip: Tuple[float, float],
-    toward: Tuple[float, float],
+    tip: tuple[float, float],
+    toward: tuple[float, float],
     ink: str,
     length: float = 0.3,
     width: float = 0.3,
@@ -159,13 +160,13 @@ def head(
 
 
 def dashes(
-    a: Tuple[float, float],
-    b: Tuple[float, float],
+    a: tuple[float, float],
+    b: tuple[float, float],
     ink: str,
     dash: float,
     gap: float,
     width: float = TRACE,
-) -> List[str]:
+) -> list[str]:
     """A dashed straight line from *a* to *b*, each dash drawn (a legend has no dash pattern)."""
     n = math.hypot(b[0] - a[0], b[1] - a[1])
     du, dv = (b[0] - a[0]) / n, (b[1] - a[1]) / n
@@ -413,19 +414,19 @@ ROT = [
 # ---------------------------------------------------------------- the print
 
 
-def append_cells(out: List[str]) -> None:
+def append_cells(out: list[str]) -> None:
     """The two rows of HAT2 cells across the paper's top, the pins as the back shows them."""
     x0, top, mid, bottom = 1.68, 0.30, 2.88, 5.49
-    for i in range(8):
-        out.append(
-            rect(
-                x0 + i * PITCH,
-                top,
-                x0 + (i + 1) * PITCH,
-                mid,
-                CELL_LIGHT if i % 2 == 0 else CELL_MID,
-            )
+    out.extend(
+        rect(
+            x0 + i * PITCH,
+            top,
+            x0 + (i + 1) * PITCH,
+            mid,
+            CELL_LIGHT if i % 2 == 0 else CELL_MID,
         )
+        for i in range(8)
+    )
     for i, ink in enumerate(
         (BLACK, VERMILION, CELL_MID, CELL_LIGHT, CELL_MID, YELLOW, MAGENTA, DARK_RED)
     ):
@@ -435,7 +436,7 @@ def append_cells(out: List[str]) -> None:
     out.append(rect(4.66, 5.07, 6.48, 5.14, WHITE))
 
 
-def append_top_blocks(out: List[str]) -> None:
+def append_top_blocks(out: list[str]) -> None:
     """IRTX/G46, the banner, IRRX/G42, the IR emitter and the two EXT5V / int5V notes."""
     # the IR emitter: its beam over its cone, its lead below
     out.append(arc(2.85, 7.70, 1.33, 237.0, 303.0, TAN, 0.2))
@@ -458,7 +459,7 @@ def append_top_blocks(out: List[str]) -> None:
     out.append(rect(19.85, 8.27, 22.20, 8.33, VERMILION))
 
 
-def append_audio(out: List[str]) -> None:
+def append_audio(out: list[str]) -> None:
     """The amplifier and codec tiles, their arrows, and the I2S pins."""
     out.append(rect(2.04, 8.53, 4.51, 10.78, CHIP, r=0.25))
     out.append(rect(4.66, 10.27, 4.99, 10.41, BLACK))
@@ -470,7 +471,7 @@ def append_audio(out: List[str]) -> None:
     out.append(head((6.72, 11.76), (7.60, 12.50), VERMILION, 0.34, 0.32))
 
 
-def append_lcd(out: List[str]) -> None:
+def append_lcd(out: list[str]) -> None:
     """The LCD's block: its framed name, ST7789P3 on purple, its pins on a gray panel."""
     out.append(
         f'<path d="M 12.93 8.48 H 21.33 L 22.04 9.12 V 10.22 H 12.93 Z '
@@ -481,7 +482,7 @@ def append_lcd(out: List[str]) -> None:
     out.append(half_box(12.93, 11.58, 22.04, 14.55, 0.3, PANEL, False))
 
 
-def append_power_top(out: List[str]) -> None:
+def append_power_top(out: list[str]) -> None:
     """The first LDO, the speaker enable, VBUS, the IMU and its pins, the second LDO."""
     out.append(part(8.90, 12.34, 12.33, 12.97, 14.18, 0.15, DARK_RED, SALMON))
     out.append(rect(3.93, 13.62, 6.68, 13.68, VERMILION))
@@ -543,8 +544,9 @@ def append_power_top(out: List[str]) -> None:
     out.append(head((9.62, 25.14), (9.10, 25.14), VERMILION, 0.52, 0.40))
 
 
-def append_marks(out: List[str]) -> None:
-    """Japan's radio mark and its number, FC, CE, the Espressif tile, the WEEE bin, the M5 logotype."""
+def append_marks(out: list[str]) -> None:
+    """Japan's radio mark and its number, FC, CE, the Espressif tile,
+    the WEEE bin, the M5 logotype."""
     gu, gv, gr = 15.14, 15.93, 1.05
     # the ring, broken on its right where the lightning stroke leaves it
     out.append(arc(gu, gv, gr, 26.0, 339.0, BLACK, 0.1))
@@ -640,7 +642,7 @@ def append_marks(out: List[str]) -> None:
     )
 
 
-def append_parts(out: List[str]) -> None:
+def append_parts(out: list[str]) -> None:
     """The switch, the third LDO, the PM tile, KEY2, the DC/DCs, the charger, the battery."""
     out.append(part(9.12, 12.73, 18.10, 18.88, 19.93, 0.18, BLACK, CELL_LIGHT))
     out.append(head((11.20, 17.54), (11.20, 18.0), VERMILION, 0.42, 0.40))
@@ -659,7 +661,7 @@ def append_parts(out: List[str]) -> None:
     out.append(rect(3.99, 28.72, 4.16, 29.11, MAGENTA))
 
 
-def append_traces(out: List[str]) -> None:
+def append_traces(out: list[str]) -> None:
     """The power tree's traces and arrows, and the enables' green arrows."""
     # 3V3_L2 up to the Espressif tile, and from the switch down to 3V3_L2
     out.extend(dashes((11.97, 21.47), (12.38, 21.04), VERMILION, 0.2, 0.12, 0.15))
@@ -773,7 +775,7 @@ def append_traces(out: List[str]) -> None:
     out.append(head((12.87, 30.31), (12.87, 30.7), GREEN, 0.42, 0.32))
 
 
-def append_bottom(out: List[str]) -> None:
+def append_bottom(out: list[str]) -> None:
     """KEY1, USB-C, the microphone, PORT.A and its cells, the power key's hand."""
     out.append(rect(13.84, 30.98, 21.97, 32.53, STEEL, r=0.25))
     # USB-C: the receptacle's mouth, its shoulders curving into the body, the two pins
@@ -823,7 +825,7 @@ def append_bottom(out: List[str]) -> None:
     out.append(line(hand, BLACK, 0.13))
 
 
-def append_text(out: List[str]) -> None:
+def append_text(out: list[str]) -> None:
     for content, x, base, size, length, weight, ink in TEXT:
         out.append(run(content, x, base, size, length, weight, ink))
     # the banner, in a face heavier than Inter's bold, as the label prints it
@@ -855,7 +857,7 @@ def append_text(out: List[str]) -> None:
         )
 
 
-def append_back(out: List[str]) -> None:
+def append_back(out: list[str]) -> None:
     """The sticker's print, one legend group on the plane ``label``, over its paper."""
     u0, v0, u1, v1 = PAPER
     r = PAPER_R
@@ -904,7 +906,7 @@ STICK = (
 )
 
 
-def append_left(out: List[str]) -> None:
+def append_left(out: list[str]) -> None:
     """STICK in white on the black strip, then S3 in white on its blue tile, one legend group
     on the plane ``strip``."""
     u0, v0, u1, v1 = STRIP

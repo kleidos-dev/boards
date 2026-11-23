@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What a board prints is in its model, where its drawing prints it, and can be left out.
 
@@ -60,8 +61,12 @@ import re
 import struct
 import sys
 import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from pathlib import Path
+from types import ModuleType
+from typing import TYPE_CHECKING, Any
 
+import numpy.typing as npt
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -72,6 +77,9 @@ import board_faces  # noqa: E402
 import glb_legends  # noqa: E402
 import legend_source  # noqa: E402
 import media_meta  # noqa: E402
+
+if TYPE_CHECKING:
+    import model_raster
 
 #: Every test here reads a board model; the checkers' planted-defect selftests and
 #: the fixture rebuild are ``selftest`` too (``tests/conftest.py``).
@@ -460,7 +468,7 @@ def pins(path: Path) -> dict[str, str]:
     return found
 
 
-def cad_library(module: str):
+def cad_library(module: str) -> ModuleType:
     """A CAD library ``requirements.txt`` pins, imported, at the version it is pinned at.
 
     Where it is missing, or installed at another version, the test skips and
@@ -481,7 +489,7 @@ def cad_library(module: str):
         )
     except ImportError:
         library, short = None, f"{distribution} is not installed"
-    if short is None:
+    if short is None and library is not None:
         return library
     reason = (
         f"{short}: the board-model checks read a drawing and a model with the CAD "
@@ -495,24 +503,30 @@ def cad_library(module: str):
     pytest.skip(reason)
 
 
-def record(board: str) -> dict:
+def record(board: str) -> dict[str, Any]:
     """A board's ``model/source.json``."""
-    return json.loads((CAD / board / "model" / "source.json").read_text(encoding="utf-8"))
+    loaded: dict[str, Any] = json.loads(
+        (CAD / board / "model" / "source.json").read_text(encoding="utf-8")
+    )
+    return loaded
 
 
-def spec(board: str) -> dict:
+def spec(board: str) -> dict[str, Any]:
     """A board's ``model/spec.json``."""
-    return json.loads((CAD / board / "model" / "spec.json").read_text(encoding="utf-8"))
+    loaded: dict[str, Any] = json.loads(
+        (CAD / board / "model" / "spec.json").read_text(encoding="utf-8")
+    )
+    return loaded
 
 
 def model_bytes(board: str) -> bytes:
     """The bytes of a board's committed model."""
-    return (ROOT / record(board)["model"]).read_bytes()
+    return (ROOT / str(record(board)["model"])).read_bytes()
 
 
-def drawing_of(entry: dict) -> str:
+def drawing_of(entry: dict[str, Any]) -> str:
     """The drawing a legends record was read from: ``front`` on the front, ``drawing`` elsewhere."""
-    return entry.get("drawing") or entry["front"]
+    return str(entry.get("drawing") or entry["front"])
 
 
 def plane_key(face: str, plane: str) -> str:
@@ -538,19 +552,32 @@ def stale_planes(board: str, front: Path | None = None, face: str = "front") -> 
     ]
 
 
-def changed_front(board: str, change, tmp_path: Path, face: str = "front") -> Path:
+def changed_front(
+    board: str, change: Callable[..., Any], tmp_path: Path, face: str = "front"
+) -> Path:
     """A copy of a board's front drawing (or *face*'s) with *change* made to its parsed tree.
 
     *change* takes the root element and a map from each element to the one
     it lies in. The copy is written by another serializer than the
     generator's, which by itself changes nothing a model reads.
     """
-    tree = ET.parse(CAD / board / "svg" / f"{face}.svg")
+    tree = ET.parse(CAD / board / "svg" / f"{face}.svg")  # noqa: S314  (this repository's own file)
     root = tree.getroot()
     change(root, {child: parent for parent in root.iter() for child in parent})
     out = tmp_path / f"{board}-{face}.svg"
     tree.write(out, encoding="utf-8", xml_declaration=True)
     return out
+
+
+def _clearance(
+    meshes: list[model_raster.Mesh], prefix: str, step: float, **where: Any
+) -> dict[str, Any]:
+    """``model_raster.legend_clearance`` of a model that has the legends to measure."""
+    import model_raster
+
+    found: dict[str, Any] | None = model_raster.legend_clearance(meshes, prefix, step, **where)
+    assert found is not None, prefix
+    return found
 
 
 def legend_groups(root: ET.Element) -> list[ET.Element]:
@@ -568,7 +595,7 @@ def planes_of_front(board: str) -> dict[str, int]:
         path = CAD / board / "svg" / f"{face}.svg"
         if not path.is_file():
             continue
-        root = ET.fromstring(path.read_text(encoding="utf-8"))
+        root = ET.fromstring(path.read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
         for group in root.iter(f"{{{SVG_NS}}}g"):
             if "legend" in (group.get("class") or "").split():
                 plane = plane_key(face, group.get("data-plane", "keys"))
@@ -576,10 +603,10 @@ def planes_of_front(board: str) -> dict[str, int]:
     return planes
 
 
-def node_bytes(js: dict, bin_: bytes) -> dict[str, tuple]:
+def node_bytes(js: dict[str, Any], bin_: bytes) -> dict[str, tuple[Any, ...]]:
     """{node name: everything its mesh draws}, the accessors as their own bytes."""
 
-    def data(index: int) -> tuple:
+    def data(index: int) -> tuple[Any, ...]:
         accessor = js["accessors"][index]
         view = js["bufferViews"][accessor["bufferView"]]
         start = view.get("byteOffset", 0)
@@ -596,17 +623,15 @@ def node_bytes(js: dict, bin_: bytes) -> dict[str, tuple]:
         if "mesh" not in node:
             continue
         mesh = js["meshes"][node["mesh"]]
-        prims = []
-        for prim in mesh["primitives"]:
-            prims.append(
-                (
-                    tuple(
-                        (name, data(index)) for name, index in sorted(prim["attributes"].items())
-                    ),
-                    data(prim["indices"]),
-                    json.dumps(js["materials"][prim["material"]], sort_keys=True),
-                )
+        prims: list[tuple[Any, ...]] = []
+        prims.extend(
+            (
+                tuple((name, data(index)) for name, index in sorted(prim["attributes"].items())),
+                data(prim["indices"]),
+                json.dumps(js["materials"][prim["material"]], sort_keys=True),
             )
+            for prim in mesh["primitives"]
+        )
         described = {k: v for k, v in node.items() if k != "mesh"}
         out[node["name"]] = (json.dumps(described, sort_keys=True), mesh["name"], tuple(prims))
     return out
@@ -679,17 +704,17 @@ def _by_id(root: ET.Element, name: str) -> ET.Element:
     return found
 
 
-def _nothing(root: ET.Element, parents: dict) -> None:
+def _nothing(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> None:
     """The drawing as it is, written by another serializer."""
 
 
-def _a_new_callout(root: ET.Element, parents: dict) -> None:
+def _a_new_callout(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> None:
     ET.SubElement(
         _by_id(root, "annotations"), f"{{{SVG_NS}}}text", {"x": "0", "y": "0", "font-size": "2"}
     ).text = "new"
 
 
-def _a_new_hotspot(root: ET.Element, parents: dict) -> None:
+def _a_new_hotspot(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> None:
     ET.SubElement(
         _by_id(root, "hotspots"),
         f"{{{SVG_NS}}}circle",
@@ -697,12 +722,12 @@ def _a_new_hotspot(root: ET.Element, parents: dict) -> None:
     )
 
 
-def _the_screen_marker_moved(root: ET.Element, parents: dict) -> None:
+def _the_screen_marker_moved(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> None:
     glass = _by_id(root, "screen-active")
     glass.set("x", str(float(glass.get("x", "0")) + 3.0))
 
 
-def _every_cap_repainted_and_moved(root: ET.Element, parents: dict) -> None:
+def _every_cap_repainted_and_moved(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> None:
     printed = {el for group in legend_groups(root) for el in group.iter()}
     caps = [el for el in root.iter(f"{{{SVG_NS}}}rect") if el not in printed and el.get("fill")]
     assert len(caps) > 20
@@ -711,7 +736,7 @@ def _every_cap_repainted_and_moved(root: ET.Element, parents: dict) -> None:
         cap.set("x", str(float(cap.get("x", "0")) + 0.4))
 
 
-def _other_margins(root: ET.Element, parents: dict) -> None:
+def _other_margins(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> None:
     root.set("viewBox", "-20 -20 200 200")
     root.set("width", "200mm")
     root.set("data-generator", "another")
@@ -731,7 +756,7 @@ OUTSIDE = (
 @pytest.mark.parametrize("board", FRONT_PRINTING)
 @pytest.mark.parametrize("change", OUTSIDE, ids=lambda change: change.__name__.strip("_"))
 def test_a_front_changed_outside_its_legends_leaves_its_model_as_built(
-    board: str, change, tmp_path: Path
+    board: str, change: Callable[..., Any], tmp_path: Path
 ) -> None:
     """A new callout, a hotspot, a cap or the screen marker is no reason to rebuild a model.
 
@@ -754,7 +779,7 @@ def _first_key(root: ET.Element) -> ET.Element:
     return next(group for group in legend_groups(root) if group.get("data-key"))
 
 
-def _a_character_changed(root: ET.Element, parents: dict) -> set[str]:
+def _a_character_changed(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> set[str]:
     text = next(
         el
         for group in legend_groups(root)
@@ -765,13 +790,13 @@ def _a_character_changed(root: ET.Element, parents: dict) -> set[str]:
     return {"keys"}
 
 
-def _a_legend_moved(root: ET.Element, parents: dict) -> set[str]:
+def _a_legend_moved(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> set[str]:
     child = _first_key(root)[0]
     child.set("transform", "translate(0.05 0)")
     return {"keys"}
 
 
-def _an_ink_changed(root: ET.Element, parents: dict) -> set[str]:
+def _an_ink_changed(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> set[str]:
     child = next(el for el in _first_key(root).iter() if el.get("fill", "none") != "none")
     child.set("fill", "#ff0000")
     return {"keys"}
@@ -788,13 +813,15 @@ def _shapes_in_a_legend(root: ET.Element, differing: bool = False) -> tuple[ET.E
     )
 
 
-def _a_shape_taken_out(root: ET.Element, parents: dict) -> set[str]:
+def _a_shape_taken_out(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> set[str]:
     group, shapes = _shapes_in_a_legend(root)
     shapes.remove(shapes[0])
     return {legend_source.plane_of(group)}
 
 
-def _two_shapes_painted_in_the_other_order(root: ET.Element, parents: dict) -> set[str]:
+def _two_shapes_painted_in_the_other_order(
+    root: ET.Element, parents: dict[ET.Element, ET.Element]
+) -> set[str]:
     group, shapes = _shapes_in_a_legend(root, differing=True)
     first = shapes[0]
     shapes.remove(first)
@@ -802,7 +829,9 @@ def _two_shapes_painted_in_the_other_order(root: ET.Element, parents: dict) -> s
     return {legend_source.plane_of(group)}
 
 
-def _two_groups_painted_in_the_other_order(root: ET.Element, parents: dict) -> set[str]:
+def _two_groups_painted_in_the_other_order(
+    root: ET.Element, parents: dict[ET.Element, ET.Element]
+) -> set[str]:
     first, second = [g for g in legend_groups(root) if g.get("data-key")][:2]
     parent = parents[first]
     assert parents[second] is parent
@@ -814,12 +843,14 @@ def _two_groups_painted_in_the_other_order(root: ET.Element, parents: dict) -> s
     return {"keys"}
 
 
-def _a_group_moved_to_another_plane(root: ET.Element, parents: dict) -> set[str]:
+def _a_group_moved_to_another_plane(
+    root: ET.Element, parents: dict[ET.Element, ET.Element]
+) -> set[str]:
     _first_key(root).set("data-plane", "lid")
     return {"keys"}
 
 
-def _a_new_group(root: ET.Element, parents: dict) -> set[str]:
+def _a_new_group(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> set[str]:
     group = ET.SubElement(root, f"{{{SVG_NS}}}g", {"class": "legend", "data-key": "planted"})
     ET.SubElement(
         group,
@@ -829,7 +860,9 @@ def _a_new_group(root: ET.Element, parents: dict) -> set[str]:
     return {"keys"}
 
 
-def _a_transform_around_a_group(root: ET.Element, parents: dict) -> set[str]:
+def _a_transform_around_a_group(
+    root: ET.Element, parents: dict[ET.Element, ET.Element]
+) -> set[str]:
     group = _first_key(root)
     parent = parents[group]
     at = list(parent).index(group)
@@ -840,7 +873,7 @@ def _a_transform_around_a_group(root: ET.Element, parents: dict) -> set[str]:
     return {"keys"}
 
 
-def _another_family_handed_down(root: ET.Element, parents: dict) -> None:
+def _another_family_handed_down(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> None:
     root.set("font-family", "Helvetica, Arial, sans-serif")
 
 
@@ -863,7 +896,7 @@ INSIDE = (
 @pytest.mark.parametrize("board", FRONT_PRINTING)
 @pytest.mark.parametrize("change", INSIDE, ids=lambda change: change.__name__.strip("_"))
 def test_a_front_changed_inside_its_legends_is_a_model_to_rebuild(
-    board: str, change, tmp_path: Path
+    board: str, change: Callable[..., Any], tmp_path: Path
 ) -> None:
     """A legend's characters, place, ink or paint order, or what places its group.
 
@@ -888,9 +921,9 @@ def test_a_front_changed_inside_its_legends_is_a_model_to_rebuild(
     assert set(stale_planes(board, front)) == expected
 
 
-def changed_back(board: str, change, tmp_path: Path) -> Path:
+def changed_back(board: str, change: Callable[..., Any], tmp_path: Path) -> Path:
     """A copy of a board's back drawing with *change* made to its parsed tree."""
-    tree = ET.parse(CAD / board / "svg" / "back.svg")
+    tree = ET.parse(CAD / board / "svg" / "back.svg")  # noqa: S314  (this repository's own file)
     root = tree.getroot()
     change(root, {child: parent for parent in root.iter() for child in parent})
     out = tmp_path / f"{board}-back.svg"
@@ -908,7 +941,7 @@ def stale_back_planes(board: str, back: Path) -> list[str]:
     ]
 
 
-def _a_mark_inked_otherwise(root: ET.Element, parents: dict) -> set[str]:
+def _a_mark_inked_otherwise(root: ET.Element, parents: dict[ET.Element, ET.Element]) -> set[str]:
     group = legend_groups(root)[0]
     child = next(el for el in group.iter() if el.get("fill", "none") != "none")
     child.set("fill", "#ff0000")
@@ -920,7 +953,7 @@ def _a_mark_inked_otherwise(root: ET.Element, parents: dict) -> set[str]:
     "change", (_nothing, _a_new_callout), ids=lambda change: change.__name__.strip("_")
 )
 def test_a_back_changed_outside_its_legends_leaves_its_model_as_built(
-    board: str, change, tmp_path: Path
+    board: str, change: Callable[..., Any], tmp_path: Path
 ) -> None:
     """The back's record digests its prints, not the file: a callout is no reason to rebuild."""
     assert stale_back_planes(board, changed_back(board, change, tmp_path)) == []
@@ -938,7 +971,7 @@ def test_a_back_changed_outside_its_legends_leaves_its_model_as_built(
     ids=lambda change: change.__name__.strip("_"),
 )
 def test_a_back_changed_inside_its_legends_is_a_model_to_rebuild(
-    board: str, change, tmp_path: Path
+    board: str, change: Callable[..., Any], tmp_path: Path
 ) -> None:
     """A back print taken out, repainted, reordered or set in another face: caught on its plane."""
     touched: list[set[str] | None] = []
@@ -1121,9 +1154,12 @@ def test_a_reader_leaves_out_only_the_legends_too_thin_to_draw() -> None:
 # --- Two levels of detail: the master and the web's ------------------------------
 
 
-def web_record(board: str) -> dict:
+def web_record(board: str) -> dict[str, Any]:
     """A board's ``model/web.json``: the record of its web level of detail."""
-    return json.loads((CAD / board / "model" / "web.json").read_text(encoding="utf-8"))
+    loaded: dict[str, Any] = json.loads(
+        (CAD / board / "model" / "web.json").read_text(encoding="utf-8")
+    )
+    return loaded
 
 
 def builder_float(name: str) -> float:
@@ -1137,12 +1173,15 @@ def builder_float(name: str) -> float:
             and node.targets[0].id == name
             and isinstance(node.value, ast.Constant)
         ):
-            return float(node.value.value)
+            value = node.value.value
+            if isinstance(value, (int, float)):
+                return float(value)
     raise AssertionError(f"build_board_glb.py names no number {name}")
 
 
 def content(data: bytes) -> bytes:
-    """A model less its own metadata (each file's record names that file), laid out as the builder's are."""
+    """A model less its own metadata (each file's record names that file), laid out as the builder's
+    are."""
     js, bin_ = glb_legends.read(data)
     return glb_legends.write(media_meta.gltf_without_metadata(js), bin_)
 
@@ -1155,7 +1194,8 @@ def test_a_board_has_two_levels_of_detail_the_master_and_the_webs(board: str) ->
     drawings. The web level (``web.json``, ``<board>-web.glb``) is built by
     the same builder from the same spec with ``--web-px-per-mm``, the largest
     scale the site draws the board at (the Kleidos repository's
-    ``site/tools/build-web-model.mjs --scales``), and is what the site's web model is cut from. It was built
+    ``site/tools/build-web-model.mjs --scales``), and is what the site's web model is cut from. It
+    was built
     beside the master as it is, under the builder's two rules (a print whose
     strokes cover fewer than ``WEB_MIN_STROKE_PX`` pixels at that scale is
     left out, curves flattened to ``WEB_FLATNESS_PX`` there); less its prints
@@ -1256,7 +1296,7 @@ def test_the_legends_lie_three_steps_over_the_mesh_they_are_printed_on(board: st
             height = entry[f"{key}_mm"] - rec["parameters"]["center_mm"][axis]
             assert np.allclose(sheet.positions[:, axis], height, atol=1e-6), sheet.name
             assert np.allclose(sheet.normals, board_faces.basis(face)[2], atol=1e-6), sheet.name
-        gap = model_raster.legend_clearance(meshes, prefix, step, on=entry["on"], face=face)
+        gap = _clearance(meshes, prefix, step, on=entry["on"], face=face)
         assert gap["ok"] and gap["off"] == 0 and gap["over_mm"] is None, (board, entry["mesh"])
         steps = STEPS_OVER_ITS_OWN.get((board, entry["mesh"]), STEPS_OVER)
         assert gap["under_mm"] == pytest.approx(steps * step, abs=1e-6), (board, entry["mesh"])
@@ -1264,7 +1304,7 @@ def test_the_legends_lie_three_steps_over_the_mesh_they_are_printed_on(board: st
 
         def moved(
             across: float = 0.0, down: float = 0.0, prefix: str = prefix, face: str = face
-        ) -> list:
+        ) -> list[Any]:
             # along the face's u and in along its normal, in the build frame
             shift = across * board_faces.basis(face)[0] - down * board_faces.basis(face)[2]
             return [
@@ -1274,13 +1314,9 @@ def test_the_legends_lie_three_steps_over_the_mesh_they_are_printed_on(board: st
                 for m in meshes
             ]
 
-        low = model_raster.legend_clearance(
-            moved(down=(steps - 1) * step), prefix, step, on=entry["on"], face=face
-        )
+        low = _clearance(moved(down=(steps - 1) * step), prefix, step, on=entry["on"], face=face)
         assert not low["ok"] and low["under_mm"] == pytest.approx(step, abs=1e-6)
-        off = model_raster.legend_clearance(
-            moved(across=200.0), prefix, step, on=entry["on"], face=face
-        )
+        off = _clearance(moved(across=200.0), prefix, step, on=entry["on"], face=face)
         assert not off["ok"] and off["off"] == off["triangles"]
 
 
@@ -1301,7 +1337,7 @@ def test_the_model_reader_places_a_mesh_where_its_nodes_place_it(tmp_path: Path)
     plain = {mesh.name: mesh for mesh in model_raster.read_glb(ROOT / record("cardputer")["model"])}
     legend = glb_legends.legends(glb_legends.read(data)[0])[0]["name"]
 
-    def read(change) -> dict:
+    def read(change: Callable[..., Any]) -> dict[str, Any]:
         js, bin_ = glb_legends.read(data)
         change(
             js,
@@ -1312,8 +1348,9 @@ def test_the_model_reader_places_a_mesh_where_its_nodes_place_it(tmp_path: Path)
         path.write_bytes(glb_legends.write(js, bin_))
         return {mesh.name: mesh for mesh in model_raster.read_glb(path)}
 
-    def moved(got: dict, name: str):
-        return got[name].positions - plain[name].positions
+    def moved(got: dict[str, Any], name: str) -> npt.NDArray[Any]:
+        moved_by: npt.NDArray[Any] = got[name].positions - plain[name].positions
+        return moved_by
 
     # the legend's own node, 0.06 mm across: that mesh moves and no other
     got = read(lambda js, node, root: node.update(translation=[0.06e-3, 0.0, 0.0]))
@@ -1442,7 +1479,7 @@ def test_the_cardputers_slanted_grounds_are_the_drawings() -> None:
     each ending at the model's strip above and below.
     """
     front = (CAD / "cardputer" / "svg" / "front.svg").read_text(encoding="utf-8")
-    drawn = {}
+    drawn: dict[str, list[list[tuple[float, ...]]]] = {}
     for points, fill in re.findall(r'<polygon points="([^"]+)" fill="(#[0-9a-f]{6})"/>', front):
         corners = [tuple(float(v) for v in pair.split(",")) for pair in points.split()]
         drawn.setdefault(fill, []).append(corners)
@@ -1473,7 +1510,7 @@ def test_the_cardputers_slanted_grounds_are_the_drawings() -> None:
 # --- Every legend, where the drawing prints it (with the CAD libraries) ----------
 
 
-def placement_module():
+def placement_module() -> ModuleType:
     """``legend_placement``, with the four CAD libraries it reads through (``cad_library``)."""
     for module in CAD_LIBRARIES:
         cad_library(module)
@@ -1582,8 +1619,11 @@ def test_the_placement_check_catches_what_is_planted() -> None:
 FIXTURE = SHARED / "fixtures" / "faces"
 
 
-def fixture_record() -> dict:
-    return json.loads((FIXTURE / "model" / "source.json").read_text(encoding="utf-8"))
+def fixture_record() -> dict[str, Any]:
+    loaded: dict[str, Any] = json.loads(
+        (FIXTURE / "model" / "source.json").read_text(encoding="utf-8")
+    )
+    return loaded
 
 
 def test_every_face_lays_its_drawing_as_its_viewer_reads_it() -> None:
@@ -1675,9 +1715,7 @@ def test_a_back_print_faces_out_of_the_back_three_steps_out_of_its_mesh() -> Non
         turn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])[:, 2]
         assert (turn < 0).all(), f"{sheet.name}: a triangle wound towards the front"
         assert np.allclose(sheet.positions[:, 2], back["z_mm"] - rec["parameters"]["center_mm"][2])
-    gap = model_raster.legend_clearance(
-        meshes, back["mesh"] + "_", step, on=back["on"], face="back"
-    )
+    gap = _clearance(meshes, back["mesh"] + "_", step, on=back["on"], face="back")
     assert gap["ok"] and gap["under_mm"] == pytest.approx(3 * step, abs=1e-6)
     assert gap["under_mesh"] == "base"
     assert model_raster.coplanar_overlaps(meshes, step)["ok"]
@@ -1712,7 +1750,7 @@ def test_the_placement_check_catches_what_is_planted_on_a_back() -> None:
         assert passed, f"{what}: {how}"
 
 
-def builder_module():
+def builder_module() -> ModuleType:
     """``build_board_glb``, where the builder's own libraries are installed (not the QA stack's)."""
     for module in ("trimesh", "scipy", "networkx", "rtree"):
         pytest.importorskip(module, reason="the model builder's libraries (build_board_glb.py)")
@@ -1744,7 +1782,7 @@ def test_the_face_fixture_rebuilds_byte_for_byte(tmp_path: Path) -> None:
         builder.module_paths(spec_, given={"lid": vendor / "base.stl"})
 
 
-def _back_read_as_the_front_too(s: dict) -> None:
+def _back_read_as_the_front_too(s: dict[str, Any]) -> None:
     s["meshes"].append(
         {
             "name": "other_legends",
@@ -1753,36 +1791,36 @@ def _back_read_as_the_front_too(s: dict) -> None:
     )
 
 
-def _back_height_on_y(s: dict) -> None:
+def _back_height_on_y(s: dict[str, Any]) -> None:
     legends = s["meshes"][3]["legends"]
     legends["y"] = legends.pop("z")
 
 
-def _front_named_on_the_back(s: dict) -> None:
+def _front_named_on_the_back(s: dict[str, Any]) -> None:
     s["meshes"][2]["legends"]["face"] = "back"
 
 
-def _no_such_face(s: dict) -> None:
+def _no_such_face(s: dict[str, Any]) -> None:
     s["meshes"][3]["legends"]["face"] = "side"
 
 
-def _drawing_named_twice(s: dict) -> None:
+def _drawing_named_twice(s: dict[str, Any]) -> None:
     s["meshes"][3]["legends"]["front"] = "../svg/back.svg"
 
 
-def _part_named_twice(s: dict) -> None:
+def _part_named_twice(s: dict[str, Any]) -> None:
     s["modules"][0]["parts"][0]["name"] = "body"
 
 
-def _module_named_twice(s: dict) -> None:
+def _module_named_twice(s: dict[str, Any]) -> None:
     s["modules"].append(dict(s["modules"][0]))
 
 
-def _top_frame_short_of_a_key(s: dict) -> None:
+def _top_frame_short_of_a_key(s: dict[str, Any]) -> None:
     s["face_frames"] = {"top": {"left_x": 0}}
 
 
-def _front_given_as_a_face_frame(s: dict) -> None:
+def _front_given_as_a_face_frame(s: dict[str, Any]) -> None:
     s["face_frames"] = {"front": {"left_x": 0, "top_y": 0}}
 
 
@@ -1801,7 +1839,9 @@ def _front_given_as_a_face_frame(s: dict) -> None:
     ],
     ids=lambda value: value.__name__.strip("_") if callable(value) else None,
 )
-def test_the_builder_refuses_a_face_or_a_module_it_cannot_place(change, words) -> None:
+def test_the_builder_refuses_a_face_or_a_module_it_cannot_place(
+    change: Callable[..., Any], words: str
+) -> None:
     """A print on an unnamed face, at a height on the wrong axis, or a part named twice."""
     builder = builder_module()
     spec_ = json.loads((FIXTURE / "model" / "spec.json").read_text(encoding="utf-8"))

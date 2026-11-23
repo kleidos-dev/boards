@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 <img src="icon.svg" width="96" height="96" alt="StickC-Plus SE icon"> <a href="svg/front.svg"><img src="svg/front.svg" width="226" height="320" alt="StickC-Plus SE front drawing, true to scale: the case, the screen, the controls and the printed legends"></a>
 
 # StickC-Plus SE
@@ -189,10 +194,10 @@ Nets and their sources: VESP_3V3 is the AXP192's DCDC1 output and supplies the S
 - [`icon.svg`](icon.svg): a 64 px pictogram of the board.
 - [`svg/front.svg`](svg/front.svg): the front at 1 unit = 1 mm: the screen's active area, a press target for every control and each printed legend as a group of its own.
 - [`svg/back.svg`](svg/back.svg): the back, seen from behind, with what it prints.
-- [`model/m5stickc-plus-se.glb`](model/m5stickc-plus-se.glb): the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format for the web and most viewers.
+- [`model/m5stickc-plus-se.glb`](model/m5stickc-plus-se.glb): the 3D model, glTF 2.0 binary in meters (glTF's unit), every print kept: the format for the web and most viewers.
 - [`model/m5stickc-plus-se-web.glb`](model/m5stickc-plus-se-web.glb): its web level of detail.
-- [`model/m5stickc-plus-se.obj`](model/m5stickc-plus-se.obj): the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
-- [`model/m5stickc-plus-se.mtl`](model/m5stickc-plus-se.mtl): the OBJ's materials: each part's colour, transparency, roughness and metalness.
+- [`model/m5stickc-plus-se.obj`](model/m5stickc-plus-se.obj): the same model as Wavefront OBJ, in millimeters, Y up, one object per part: the format for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py).
+- [`model/m5stickc-plus-se.mtl`](model/m5stickc-plus-se.mtl): the OBJ's materials: each part's color, transparency, roughness and metalness.
 - [`model/spec.json`](model/spec.json): the recipe the master and its web level are built from.
 - [`model/source.json`](model/source.json): the master's provenance.
 - [`model/web.json`](model/web.json): the web level's record.

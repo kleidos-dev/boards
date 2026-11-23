@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # Device measurements schema
 
 Each device folder contains a `measurements.json` following this schema. All distances are in **millimeters**. The coordinate origin is the **top-left corner of the front face**, X to the right, Y downwards (same convention as SVG).

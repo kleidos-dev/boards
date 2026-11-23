@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """List a board model's legend meshes, or write the model without them
 
@@ -34,7 +35,9 @@ import json
 import re
 import struct
 import sys
+from collections.abc import Callable, Iterable
 from pathlib import Path
+from typing import Any
 
 GLB_MAGIC, JSON_CHUNK, BIN_CHUNK = 0x46546C67, 0x4E4F534A, 0x004E4942
 #: A legend mesh's node name ends so; no other node's does.
@@ -45,12 +48,12 @@ INK_PREFIX = "ink_"
 MIN_STROKE_PX = {"msaa4": 1.0, "none": 1.5}
 
 
-def is_legend(name):
+def is_legend(name: str) -> bool:
     """True for the name of a legend mesh's node."""
     return bool(LEGEND_NODE.search(name or ""))
 
 
-def read(data):
+def read(data: bytes) -> tuple[dict[str, Any], bytes]:
     """(the JSON chunk as a dict, the binary chunk) of a GLB's bytes."""
     magic, version, total = struct.unpack_from("<III", data, 0)
     if magic != GLB_MAGIC or version != 2 or total != len(data):
@@ -66,7 +69,7 @@ def read(data):
     return js, bytes(data[at + 8 : at + 8 + blen])
 
 
-def write(js, bin_):
+def write(js: dict[str, Any], bin_: bytes | bytearray) -> bytes:
     """A GLB's bytes from its JSON and its binary chunk, laid out as the builder's are."""
     body = bytearray(bin_)
     while len(body) % 4:
@@ -84,7 +87,7 @@ def write(js, bin_):
     )
 
 
-def legends(js):
+def legends(js: dict[str, Any]) -> list[dict[str, Any]]:
     """What a model's legend meshes are, in its order.
 
     A list of ``{'node', 'name', 'fill', 'stroke_mm', 'on', 'triangles',
@@ -112,7 +115,7 @@ def legends(js):
     return out
 
 
-def too_thin(stroke_mm, px_per_mm, antialias=True):
+def too_thin(stroke_mm: float, px_per_mm: float, antialias: bool = True) -> bool:
     """True when a print of this stroke width covers too little of a pixel to draw.
 
     *px_per_mm* is how many pixels of the frame a millimeter of the board
@@ -121,7 +124,7 @@ def too_thin(stroke_mm, px_per_mm, antialias=True):
     return stroke_mm * px_per_mm < MIN_STROKE_PX["msaa4" if antialias else "none"]
 
 
-def strip(data, drop=None):
+def strip(data: bytes, drop: Callable[[dict[str, Any]], bool] | None = None) -> bytes:
     """The bytes of a model without its legend meshes.
 
     *drop* picks the meshes that go, given each entry of ``legends``; left
@@ -146,7 +149,7 @@ def strip(data, drop=None):
         raise ValueError("a legend mesh is shared with a node that is not a legend")
     mesh_at = {old: new for new, old in enumerate(kept_meshes)}
 
-    def used(mesh_indices):
+    def used(mesh_indices: Iterable[int]) -> tuple[set[int], set[int]]:
         acc, mat = set(), set()
         for i in mesh_indices:
             for prim in js["meshes"][i]["primitives"]:
@@ -226,7 +229,7 @@ def strip(data, drop=None):
     return write(out, body)
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """List or strip a model's legends from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     sub = parser.add_subparsers(dest="command", required=True)
@@ -278,7 +281,7 @@ def main(argv=None):
             )
             return 1
 
-        def drop(entry):
+        def drop(entry: dict[str, Any]) -> bool:
             return too_thin(entry["stroke_mm"], args.px_per_mm, not args.no_antialias)
 
     out = strip(data, drop)

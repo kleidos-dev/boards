@@ -1,6 +1,6 @@
 version = 1
 SPDX-PackageName = "boards"
-SPDX-PackageSupplier = "José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-PackageSupplier = "José M. Requena Plens"
 SPDX-PackageDownloadLocation = "https://github.com/kleidos-dev/boards"
 
 # Everything this project wrote is under the MIT License: the builders, the
@@ -11,7 +11,19 @@ SPDX-PackageDownloadLocation = "https://github.com/kleidos-dev/boards"
 [[annotations]]
 path = ["**"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens"
+SPDX-License-Identifier = "MIT"
+
+# The formats with no comment syntax the header check knows (JSON, the
+# drawings' SVG, KiCad's files, .python-version): this project's, MIT, stated
+# here rather than in the file (kleidos-dev/.github docs/quality.md,
+# "Licensing headers"). The SVGs also carry their SPDX comment, which
+# _shared/media_meta.py writes.
+[[annotations]]
+path = ["**/*.json", "**/*.svg", "**/*.kicad_sch", "**/*.kicad_sym", "**/*.kicad_pro",
+        "**/sym-lib-table", ".python-version"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens"
 SPDX-License-Identifier = "MIT"
 
 # The models' rasterizer tone maps with Khronos's PBR Neutral function
@@ -21,7 +33,7 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = ["_shared/model_raster.py"]
 precedence = "override"
-SPDX-FileCopyrightText = ["2026 José M. Requena Plens <jmrplens@kleidos.dev>",
+SPDX-FileCopyrightText = ["2026 José M. Requena Plens",
                           "2024 The Khronos Group, Inc. (the PBR Neutral tone mapping function)"]
 SPDX-License-Identifier = "MIT AND Apache-2.0"
 
@@ -39,7 +51,7 @@ path = ["sticks3/model/*.glb", "m5stickc-plus2/model/*.glb", "m5stickc-plus1/mod
         "m5stickc-plus-se/model/*.obj", "coreink/model/*.obj", "cores3-se/model/*.obj",
         "m5stack-core2-v13/model/*.obj", "cardputer/model/*.obj"]
 precedence = "override"
-SPDX-FileCopyrightText = ["2026 José M. Requena Plens <jmrplens@kleidos.dev>",
+SPDX-FileCopyrightText = ["2026 José M. Requena Plens",
                           "2021 M5Stack"]
 SPDX-License-Identifier = "MIT"
 
@@ -56,7 +68,7 @@ SPDX-License-Identifier = "MIT"
 path = ["*/model/*.json", "*/model/*.mtl", "tdeck-plus/model/*.obj", "tests/fixtures/meta/**",
         "*/schematic/*.pdf", "tdeck-plus/model/*.glb", "_shared/fixtures/faces/model/*.glb"]
 precedence = "override"
-SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens"
 SPDX-License-Identifier = "MIT"
 
 # The Kleidos KiCad kit, byte copies of the brand repository's kicad/ at the
@@ -69,7 +81,7 @@ SPDX-License-Identifier = "MIT"
 [[annotations]]
 path = ["_shared/kicad/*.kicad_wks"]
 precedence = "override"
-SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens"
 SPDX-License-Identifier = "GPL-3.0-or-later"
 
 # The rest of the kit: the color themes, the resolved style, the helper that
@@ -77,7 +89,7 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 [[annotations]]
 path = ["_shared/kicad/*.json", "_shared/kicad/*.py"]
 precedence = "override"
-SPDX-FileCopyrightText = "2026 José M. Requena Plens <jmrplens@kleidos.dev>"
+SPDX-FileCopyrightText = "2026 José M. Requena Plens"
 SPDX-License-Identifier = "MIT"
 
 # Inter 4.1, unmodified (fonts/VERSIONS.md).

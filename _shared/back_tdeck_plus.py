@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What the LILYGO T-Deck Plus prints on its back, for ``emit_back_svg.py``
 
@@ -45,7 +46,7 @@ as seen from behind, y down from its top.
 
 from __future__ import annotations
 
-from typing import List, Sequence, Tuple
+from collections.abc import Sequence
 
 import emit_front_svg as fronts
 
@@ -74,8 +75,8 @@ INTER_BOLD_REG = (97, 1260, 346, 1510)
 
 #: A word: its cap top and baseline, then each letter with its ink's left and
 #: right edge, and each bar (a hyphen) as x0, x1, y0, y1.
-Word = Tuple[
-    float, float, Sequence[Tuple[str, float, float]], Sequence[Tuple[float, float, float, float]]
+Word = tuple[
+    float, float, Sequence[tuple[str, float, float]], Sequence[tuple[float, float, float, float]]
 ]
 
 #: The top frame's name: 6.11 mm caps (the mean of T's, D's, E's and K's,
@@ -488,8 +489,9 @@ TDECK_MASCOT = (
 )
 
 
-def _letter(out: List[str], char: str, left: float, right: float, top: float, base: float) -> None:
-    """One letter, Inter Bold, its ink from ``left`` to ``right`` and its caps from ``top`` to ``base``."""
+def _letter(out: list[str], char: str, left: float, right: float, top: float, base: float) -> None:
+    """One letter, Inter Bold, its ink from ``left`` to ``right`` and its caps from ``top`` to
+    ``base``."""
     x0, x1 = INTER_BOLD_X[char]
     size = (base - top) * INTER_UPEM / INTER_CAP
     sx = (right - left) / ((x1 - x0) * size / INTER_UPEM)
@@ -501,19 +503,19 @@ def _letter(out: List[str], char: str, left: float, right: float, top: float, ba
     )
 
 
-def _word(out: List[str], word: Word, shift: float = 0.0) -> None:
+def _word(out: list[str], word: Word, shift: float = 0.0) -> None:
     top, base, letters, bars = word
     for char, left, right in letters:
         _letter(out, char, round(left + shift, 4), round(right + shift, 4), top, base)
-    for x0, x1, y0, y1 in bars:
-        x0, x1 = round(x0 + shift, 4), round(x1 + shift, 4)
+    for bar_x0, bar_x1, y0, y1 in bars:
+        x0, x1 = round(bar_x0 + shift, 4), round(bar_x1 + shift, 4)
         out.append(
             f'<rect x="{fronts.f(x0)}" y="{fronts.f(y0)}" width="{fronts.f(round(x1 - x0, 4))}" '
             f'height="{fronts.f(round(y1 - y0, 4))}" fill="{TDECK_BACK_INK}"/>\n'
         )
 
 
-def _registered(out: List[str]) -> None:
+def _registered(out: list[str]) -> None:
     """The ® after LILYGO, Inter Bold's sign scaled to the ring the photo prints."""
     x0, x1, y0, y1 = TDECK_BASE_REG
     gx0, gx1, gy0, gy1 = INTER_BOLD_REG
@@ -528,7 +530,7 @@ def _registered(out: List[str]) -> None:
     )
 
 
-def _mascot(out: List[str]) -> None:
+def _mascot(out: list[str]) -> None:
     rings = " ".join(
         "M "
         + " L ".join(f"{fronts.f(round(x + TDECK_BADGE_SHIFT, 4))} {fronts.f(y)}" for x, y in ring)
@@ -538,7 +540,7 @@ def _mascot(out: List[str]) -> None:
     out.append(f'<path d="{rings}" fill="{TDECK_BACK_INK}" fill-rule="evenodd"/>\n')
 
 
-def _frame_line(out: List[str]) -> None:
+def _frame_line(out: list[str]) -> None:
     points = " L ".join(f"{fronts.f(x)} {fronts.f(y)}" for x, y in TDECK_FRAME_LINE)
     out.append(
         f'<path d="M {points}" fill="none" stroke="{TDECK_BACK_INK}" '
@@ -547,7 +549,7 @@ def _frame_line(out: List[str]) -> None:
     )
 
 
-def append_tdeck_plus_back(out: List[str]) -> None:
+def append_tdeck_plus_back(out: list[str]) -> None:
     """The T-Deck Plus's four back prints, a legend group each, on four planes."""
     out.append(fronts.print_open("tdeck-frame", "frame"))
     _word(out, TDECK_FRAME_WORD)

@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Fail when the tree holds a file or a line this repository may not publish.
 
@@ -100,12 +101,13 @@ def tracked(root: Path) -> list[Path]:
             check=True,
         ).stdout
         return [root / name for name in out.decode("utf-8").split("\0") if name]
-    except OSError, subprocess.CalledProcessError:
+    except (OSError, subprocess.CalledProcessError):
         return [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts]
 
 
 def own_schematic_pdf(root: Path, rel: Path) -> bool:
-    """True for ``<board>/schematic/<board>.pdf`` next to the KiCad schematic it was exported from."""
+    """True for ``<board>/schematic/<board>.pdf`` next to the KiCad
+    schematic it was exported from."""
     parts = rel.parts
     return (
         len(parts) == 3
@@ -154,7 +156,7 @@ def own_fixture_stl(root: Path, rel: Path) -> bool:
         import face_fixture
 
         written = face_fixture.files()
-    except ImportError, OSError:
+    except (ImportError, OSError):
         return False
     finally:
         sys.path.remove(shared)
@@ -194,13 +196,13 @@ def findings(root: Path) -> list[str]:
             and not own_model_export(root, rel)
         ):
             found.append(f"{rel}: a vendor file type ({suffix})")
-        elif name.endswith("_reference.svg") or name.endswith("-silhouette.svg"):
+        elif name.endswith(("_reference.svg", "-silhouette.svg")):
             found.append(f"{rel}: a reference overlay or a traced silhouette")
         elif suffix == ".svg" and path.is_file():
             text = path.read_text(encoding="utf-8", errors="replace")
-            for marker in SVG_MARKERS:
-                if marker.search(text):
-                    found.append(f"{rel}: holds {marker.pattern!r}")
+            found.extend(
+                f"{rel}: holds {marker.pattern!r}" for marker in SVG_MARKERS if marker.search(text)
+            )
         elif suffix in TEXT and path.is_file() and "LICENSES" not in parts:
             try:
                 text = path.read_text(encoding="utf-8")

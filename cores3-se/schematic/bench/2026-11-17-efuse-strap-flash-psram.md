@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # CoreS3 SE bench record: eFuses, strapping latch, flash ID, PSRAM (2026-11-17)
 
 Probes P1 and P2 of `../improvements.md`. One CoreS3 SE (the owner's unit), over its USB-C port on the bench hub, case closed, nothing written to eFuse or flash. Port, MAC and the chip's unique ID are left out of this record.

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # USB-serial bridge identity (triage item B8)
 
 Bench read of 2026-11-17 on the M5StickC Plus 1.1 (K016-P), USB connected to the Mac's hub, the case closed. It settles triage item B8 (`../improvements.md`). Read only: no serial port was opened, so the board was not reset or written.

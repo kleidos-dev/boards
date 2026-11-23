@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The M5StickC Plus2's back label, drawn for ``emit_back_svg.py``
 
@@ -36,11 +37,11 @@ from __future__ import annotations
 
 import math
 import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import List, Sequence, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import emit_front_svg as fronts  # noqa: E402
+import emit_front_svg as fronts
 
 f = fronts.f
 
@@ -89,7 +90,7 @@ CELL_INKS = (BLACK, RED, LIGHT, SILVER, LIGHT, SALMON, YELLOW, RED)
 
 # Horizontal runs: (text, x of the run's start, baseline y, size, drawn
 # length, weight, ink).
-RUNS: Tuple[Tuple[str, float, float, float, float, str, str], ...] = (
+RUNS: tuple[tuple[str, float, float, float, float, str, str], ...] = (
     ("M5StickC", 2.92, 10.51, 2.26, 10.12, "700", BLACK),
     ("PLUS2", 14.66, 10.44, 2.16, 6.56, "700", BLACK),
     ("BTN", 3.42, 13.37, 1.38, 2.62, "700", NAVY),
@@ -143,7 +144,7 @@ RUNS: Tuple[Tuple[str, float, float, float, float, str, str], ...] = (
 
 # Runs reading bottom to top (the pin cells, LCD, MIC): (text, x of the
 # baseline, y where the run starts, size, drawn length, weight, ink).
-UP_RUNS: Tuple[Tuple[str, float, float, float, float, str, str], ...] = (
+UP_RUNS: tuple[tuple[str, float, float, float, float, str, str], ...] = (
     ("GND", 3.8, 6.64, 2.08, 4.5, "500", WHITE),
     ("5V", 6.33, 6.57, 1.98, 2.42, "500", WHITE),
     ("G26", 9.0, 6.3, 2.08, 3.8, "400", BLACK),
@@ -232,7 +233,7 @@ def field(x0: float, y0: float, x1: float, y1: float, r: float, ink: str) -> str
     return f'<path d="{rounded_path(x0, y0, x1, y1, r)}" fill="{ink}"/>\n'
 
 
-def cells() -> List[str]:
+def cells() -> list[str]:
     """The pin cells, the two outer ones rounded with the paper's corners."""
     out = []
     top, bottom = CELL_Y
@@ -289,7 +290,7 @@ def banner() -> str:
 
 
 def stroke(
-    points: Sequence[Tuple[float, float]],
+    points: Sequence[tuple[float, float]],
     ink: str,
     width: float,
     join: str = "round",
@@ -342,7 +343,7 @@ def ring_cut(cx: float, cy: float, outer: float, inner: float, cut_x: float, ink
 #: (the same mark, larger: ``back_plus_se.ESPRESSIF_RINGS``) and fitted to
 #: this photo by a scale (0.939), a turn (-0.17 degrees) and a shift, by least
 #: squares on the photo's green channel blurred as the photo is.
-ESPRESSIF_RINGS: Tuple[Tuple[Tuple[float, float], ...], ...] = (
+ESPRESSIF_RINGS: tuple[tuple[tuple[float, float], ...], ...] = (
     (
         (2.825, 16.940),
         (2.780, 17.013),
@@ -568,7 +569,7 @@ ESPRESSIF_RINGS: Tuple[Tuple[Tuple[float, float], ...], ...] = (
 )
 
 
-def espressif(out: List[str]) -> None:
+def espressif(out: list[str]) -> None:
     """Espressif's mark in white on the ESP32 block."""
     d = " ".join(
         "M " + " L ".join(f"{f(x)} {f(y)}" for x, y in ring) + " Z" for ring in ESPRESSIF_RINGS
@@ -576,7 +577,7 @@ def espressif(out: List[str]) -> None:
     out.append(f'<path d="{d}" fill="{WHITE}" fill-rule="evenodd"/>\n')
 
 
-def fcc(out: List[str]) -> None:
+def fcc(out: list[str]) -> None:
     """FCC's mark: an F, then two C's about one center, each open to the right."""
     out.append(
         fronts.cardputer_polygon(
@@ -599,7 +600,7 @@ def fcc(out: List[str]) -> None:
     out.append(arc(11.59, 20.8, 0.54, 42, 318, BLACK, 0.29))
 
 
-def giteki(out: List[str]) -> None:
+def giteki(out: list[str]) -> None:
     """Japan's technical-conformity mark: a ring broken on its upper right by a
     lightning stroke, over two bars and a stem; then the R box."""
     gx, gy, ring = 4.16, 26.08, 1.0
@@ -629,14 +630,14 @@ def giteki(out: List[str]) -> None:
     out.append(run("R", 5.86, 26.33, 0.9, 0.62, "400", GRAY))
 
 
-def ce(out: List[str]) -> None:
+def ce(out: list[str]) -> None:
     """CE: two rings of one size cut on their right, the E's bar inside."""
     out.append(ring_cut(4.83, 30.66, 2.69, 1.92, 5.11, BLACK))
     out.append(ring_cut(9.48, 30.66, 2.69, 1.92, 9.8, BLACK))
     out.append(fronts.rounded_rect(7.5, 30.29, 1.72, 0.73, r=0.0, fill=BLACK))
 
 
-def weee(out: List[str]) -> None:
+def weee(out: list[str]) -> None:
     """The crossed-out wheelie bin: its lid in outline (a raised handle in the
     middle, a short upright on its left), the lid's bar, the body on a foot,
     the ear on its right and the wheel."""
@@ -665,7 +666,7 @@ def weee(out: List[str]) -> None:
     out.append(stroke([(14.9, 26.54), (10.14, 31.38)], BLACK, 0.09))
 
 
-def m5_cube(out: List[str]) -> None:
+def m5_cube(out: list[str]) -> None:
     """M5Stack's cube: a hexagon in outline, open on the upper right and below
     its left corner, the top face's two front edges, and the 5 on that face."""
     out.append(
@@ -702,7 +703,7 @@ def m5_cube(out: List[str]) -> None:
     )
 
 
-def append_plus2_back(out: List[str]) -> None:
+def append_plus2_back(out: list[str]) -> None:
     """Every print of the Plus2's back label: one legend group on ``label``."""
     out.append(fronts.print_open("back-label", "label"))
     out.append(f'<g transform="matrix(1 0 0 {STRETCH_Y:.6f} 0 {SHIFT_Y:.6f})">\n')
@@ -710,15 +711,11 @@ def append_plus2_back(out: List[str]) -> None:
     out.append(arrow(5.645, 1.94, 2.75, 3.58, 1.37, 0.69, YELLOW))
     out.append(arrow(21.21, 3.51, 2.7, 1.86, 1.44, 0.7, WHITE))
     out.append(banner())
-    for spec in FIELDS:
-        out.append(field(*spec))
-    for spec in RUNS:
-        out.append(run(*spec))
-    for spec in UP_RUNS:
-        out.append(run_up(*spec))
+    out.extend(field(*spec) for spec in FIELDS)
+    out.extend(run(*spec) for spec in RUNS)
+    out.extend(run_up(*spec) for spec in UP_RUNS)
     out.append(stroke([(10.12, 4.09), (11.53, 4.55)], BLACK, 0.12))
-    for spec in SLANT_RUNS:
-        out.append(run_slant(*spec))
+    out.extend(run_slant(*spec) for spec in SLANT_RUNS)
     out.append(
         '<path d="M 1.99 12.46 Q 2.3 13.3 2.78 13.45" fill="none" '
         f'stroke="{GRAY}" stroke-width="0.13" stroke-linecap="round"/>\n'

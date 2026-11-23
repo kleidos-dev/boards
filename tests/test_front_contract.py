@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Every drawn front keeps the elements its readers rely on, and no vendor artwork.
 
@@ -89,7 +90,7 @@ TOUCH_COLUMNS = 3
 
 def front(device_id: str) -> ET.Element:
     """Parse one device's generated front."""
-    return ET.fromstring((CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8"))
+    return ET.fromstring((CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
 
 
 def group(root: ET.Element, group_id: str) -> ET.Element:
@@ -113,7 +114,7 @@ def devices() -> list[str]:
     return found
 
 
-def test_every_front_carries_the_three_contract_elements(devices):
+def test_every_front_carries_the_three_contract_elements(devices: list[str]) -> None:
     """The glass, the annotations and the targets."""
     for device_id in devices:
         root = front(device_id)
@@ -121,24 +122,24 @@ def test_every_front_carries_the_three_contract_elements(devices):
             group(root, element_id)
 
 
-def test_no_front_draws_a_vendor_screen_or_an_image(devices):
+def test_no_front_draws_a_vendor_screen_or_an_image(devices: list[str]) -> None:
     """The panel is bare: no demo screen, no embedded raster, no clip left for one."""
     for device_id in devices:
         text = (CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8")
-        root = ET.fromstring(text)
+        root = ET.fromstring(text)  # noqa: S314  (this repository's own file)
         assert not root.findall(".//*[@id='screen-demo']"), device_id
         assert "screen-clip_" not in text, device_id
         assert not [el for el in root.iter() if el.tag.endswith("}image")], device_id
         assert "data:image" not in text, device_id
 
 
-def test_the_hotspot_group_draws_nothing(devices):
+def test_the_hotspot_group_draws_nothing(devices: list[str]) -> None:
     """It is geometry, not artwork: a front renders the same with or without it."""
     for device_id in devices:
         assert group(front(device_id), "hotspots").get("display") == "none", device_id
 
 
-def test_the_annotations_hold_the_outside_callouts_and_nothing_else(devices):
+def test_the_annotations_hold_the_outside_callouts_and_nothing_else(devices: list[str]) -> None:
     """The mm dimensions, the title, and the names of the keys in a board's walls.
 
     The Sticks name their two side keys, the CoreInk its power key and its top key.
@@ -159,7 +160,7 @@ def test_the_annotations_hold_the_outside_callouts_and_nothing_else(devices):
             assert {"Power", "BtnEXT"} <= set(texts), device_id
 
 
-def test_every_target_names_a_face_and_sits_on_the_case(devices):
+def test_every_target_names_a_face_and_sits_on_the_case(devices: list[str]) -> None:
     """A hotspot is a point on the device, in the front view's own mm."""
     for device_id in devices:
         case_w, case_h = case_box(device_id)
@@ -175,7 +176,7 @@ def test_every_target_names_a_face_and_sits_on_the_case(devices):
             assert r == pytest.approx(min(width, height) / 2, abs=5e-4), name
 
 
-def test_each_front_names_the_controls_it_has(devices):
+def test_each_front_names_the_controls_it_has(devices: list[str]) -> None:
     """A front that lost a control, or grew one, has to say so here."""
     for device_id in devices:
         ids = [spot.get("id", "")[len("hs-") :] for spot in group(front(device_id), "hotspots")]
@@ -185,14 +186,14 @@ def test_each_front_names_the_controls_it_has(devices):
         assert len([name for name in ids if name.startswith("key-")]) == keys, device_id
 
 
-def test_no_front_repeats_an_id(devices):
+def test_no_front_repeats_an_id(devices: list[str]) -> None:
     """Ids have to be unique: the contact sheet merges all nine into one file."""
     for device_id in devices:
         ids = [element.get("id") for element in front(device_id).iter() if element.get("id")]
         assert len(ids) == len(set(ids)), device_id
 
 
-def test_a_key_id_is_addressable(devices):
+def test_a_key_id_is_addressable(devices: list[str]) -> None:
     """A keycap's id is a slug; its printed legend rides along in a label."""
     for device_id in ("cardputer", "tdeck-plus"):
         for spot in group(front(device_id), "hotspots"):
@@ -207,7 +208,7 @@ def legend_groups(root: ET.Element) -> list[ET.Element]:
     return [g for g in root.iter(f"{{{SVG_NS}}}g") if "legend" in (g.get("class") or "").split()]
 
 
-def test_a_front_with_legend_groups_has_one_for_each_key(devices):
+def test_a_front_with_legend_groups_has_one_for_each_key(devices: list[str]) -> None:
     """What is printed for a key sits in its own group, named as its hotspot.
 
     The board model's builder turns these groups into the model's legends and
@@ -252,7 +253,7 @@ def test_a_front_with_legend_groups_has_one_for_each_key(devices):
         assert found == prints, device_id
 
 
-def test_a_keyboards_legends_are_listed_in_its_front_and_nowhere_else(devices):
+def test_a_keyboards_legends_are_listed_in_its_front_and_nowhere_else(devices: list[str]) -> None:
     """``measurements.json`` holds a keyboard's grid and wiring, and no legend.
 
     What a key prints has one source, the generator's own table, and one
@@ -281,7 +282,7 @@ def test_a_keyboards_legends_are_listed_in_its_front_and_nowhere_else(devices):
 
 
 @pytest.mark.parametrize("device_id", ["m5stack-core2-v13", "cores3-se"])
-def test_the_touch_targets_are_the_firmware_zones(device_id):
+def test_the_touch_targets_are_the_firmware_zones(device_id: str) -> None:
     """Not the printed marks: the bands the touch sensor reports below the panel.
 
     The sensor reaches 40 rows below the last screen row and splits that strip
@@ -297,12 +298,12 @@ def test_the_touch_targets_are_the_firmware_zones(device_id):
     spots = {spot.get("id"): spot for spot in group(root, "hotspots")}
     for index, letter in enumerate("ABC"):
         spot = spots[f"hs-Touch{letter}"]
-        assert float(spot.get("cx")) == pytest.approx(x + band_w * (index + 0.5), abs=5e-4)
-        assert float(spot.get("cy")) == pytest.approx(y + h + band_h / 2, abs=5e-4)
+        assert float(spot.attrib["cx"]) == pytest.approx(x + band_w * (index + 0.5), abs=5e-4)
+        assert float(spot.attrib["cy"]) == pytest.approx(y + h + band_h / 2, abs=5e-4)
         assert spot.get("data-face") == "front"
 
 
-def test_the_core2_targets_land_on_its_printed_rings():
+def test_the_core2_targets_land_on_its_printed_rings() -> None:
     """The one board that prints a mark per zone is the cross-check.
 
     Its three rings are photo-measured and sit in ``measurements.json``; the
@@ -317,11 +318,11 @@ def test_the_core2_targets_land_on_its_printed_rings():
     for letter in "ABC":
         ring = rings[f"Touch{letter}"]
         spot = spots[f"hs-Touch{letter}"]
-        assert abs(float(spot.get("cx")) - ring["center_x_mm"]) <= 0.25, letter
-        assert abs(float(spot.get("cy")) - ring["center_y_mm"]) <= 0.25, letter
+        assert abs(float(spot.attrib["cx"]) - ring["center_x_mm"]) <= 0.25, letter
+        assert abs(float(spot.attrib["cy"]) - ring["center_y_mm"]) <= 0.25, letter
 
 
-def test_the_coreink_plain_keys_sit_where_they_are_measured():
+def test_the_coreink_plain_keys_sit_where_they_are_measured() -> None:
     """Its three plain keys: the top key, the power key on the dial's side, the reset on the back.
 
     None shows from the front (each is a tongue of the back shell, flush with
@@ -338,31 +339,31 @@ def test_the_coreink_plain_keys_sit_where_they_are_measured():
 
     top, top_spot = keys["BtnEXT"], spots["hs-BtnEXT"]
     assert top["gpio"] == 5 and top["face"] == top_spot.get("data-face") == "top"
-    assert float(top_spot.get("cx")) == pytest.approx(top["center_x_mm"], abs=0.01)
-    assert float(top_spot.get("cy")) == 0.0
-    assert float(top_spot.get("data-w")) == pytest.approx(top["width_mm"], abs=0.01)
+    assert float(top_spot.attrib["cx"]) == pytest.approx(top["center_x_mm"], abs=0.01)
+    assert float(top_spot.attrib["cy"]) == 0.0
+    assert float(top_spot.attrib["data-w"]) == pytest.approx(top["width_mm"], abs=0.01)
 
     power, power_spot = keys["Power"], spots["hs-Power"]
     assert power["gpio"] == 27 and power["active"] == "low"
     assert power["face"] == power_spot.get("data-face") == "right"
-    assert float(power_spot.get("cx")) == case_w == power["center_x_mm"]
-    assert float(power_spot.get("cy")) == pytest.approx(power["center_y_mm"], abs=0.01)
-    assert float(power_spot.get("data-h")) == pytest.approx(power["height_mm"], abs=0.01)
-    dial = [float(spots[f"hs-{name}"].get("cy")) for name in ("DialUp", "DialMid", "DialDown")]
+    assert float(power_spot.attrib["cx"]) == case_w == power["center_x_mm"]
+    assert float(power_spot.attrib["cy"]) == pytest.approx(power["center_y_mm"], abs=0.01)
+    assert float(power_spot.attrib["data-h"]) == pytest.approx(power["height_mm"], abs=0.01)
+    dial = [float(spots[f"hs-{name}"].attrib["cy"]) for name in ("DialUp", "DialMid", "DialDown")]
     assert power["center_y_mm"] > max(dial), "the power key is under the dial, not in its pocket"
 
     reset = keys["Reset"]
     assert reset["face"] == "back" and "hs-Reset" not in spots
-    back = ET.fromstring((CAD / "coreink" / "svg" / "back.svg").read_text(encoding="utf-8"))
+    back = ET.fromstring((CAD / "coreink" / "svg" / "back.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
     reset_spot = group(back, "hs-Reset")
     # The back frame's x runs from the case's other edge.
-    assert case_w - float(reset_spot.get("cx")) == pytest.approx(reset["center_x_mm"], abs=0.01)
-    assert float(reset_spot.get("cy")) == pytest.approx(reset["center_y_mm"], abs=0.01)
-    assert float(reset_spot.get("data-w")) == pytest.approx(reset["width_mm"], abs=0.01)
-    assert float(reset_spot.get("data-h")) == pytest.approx(reset["height_mm"], abs=0.01)
+    assert case_w - float(reset_spot.attrib["cx"]) == pytest.approx(reset["center_x_mm"], abs=0.01)
+    assert float(reset_spot.attrib["cy"]) == pytest.approx(reset["center_y_mm"], abs=0.01)
+    assert float(reset_spot.attrib["data-w"]) == pytest.approx(reset["width_mm"], abs=0.01)
+    assert float(reset_spot.attrib["data-h"]) == pytest.approx(reset["height_mm"], abs=0.01)
 
 
-def test_the_generator_writes_what_is_committed(tmp_path, devices):
+def test_the_generator_writes_what_is_committed(tmp_path: Path, devices: list[str]) -> None:
     """Running it again changes nothing: the fronts in git are its output."""
     before = {name: (CAD / name / "svg" / "front.svg").read_bytes() for name in devices}
     sheet = (CAD / "fronts-contact-sheet.svg").read_bytes()

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # B3: what PYG0 reads while the cell charges (2026-11-17)
 
 Probe B3 of `../improvements.md`: does the M5PM1's PYG0 input (U16 pin 3, net `PYG0_CHG_STAT`, from the LGS4056 U15) read 0 while the cell charges? An open StickS3 on the bench hub, case closed. USB was taken away and given back with the hub's per-port VBUS switch (`qa/tools/hub_power.py off|on --dut sticks3` in the Kleidos repository), never by hand. The M5PM1's ADC was read raw at 0x22 to 0x27, whose meaning is the vendor's own: `M5PM1_REG_VBAT_L/H` 0x22/0x23, `M5PM1_REG_VIN_L/H` 0x24/0x25 and `M5PM1_REG_5VINOUT_L/H` 0x26/0x27, all in mV (m5stack/M5PM1, `src/M5PM1.h:225-230`, commit `315d2899c`).
@@ -30,4 +35,4 @@ At every edge PYG0 and the two analog readings moved together: when PYG0 fell to
 
 - F4: PYG0 reads 0 while the charger is charging and 1 while it is not, with USB in. The terminal-voltage step and the VIN dip are independent evidence of charge current in each PYG0 = 0 window, so the polarity does not rest on the firmware's own `charging` flag (which is derived from the same bit).
 - The "USB out" half of the probe (bit 0 with no USB) could not be read: with VBUS cut the USB console is gone. It adds nothing to the polarity, which the USB-in windows settle in both directions.
-- Not settled, and not drawn: the charger stopped with the cell at about 4.03 to 4.05 V, below full, several times, and restarted on its own or after a charge-enable toggle. Whether that is the LGS4056's own behaviour or the M5PM1's charge control needs the LGS4056 datasheet or a longer run; it is noted here only because it was seen.
+- Not settled, and not drawn: the charger stopped with the cell at about 4.03 to 4.05 V, below full, several times, and restarted on its own or after a charge-enable toggle. Whether that is the LGS4056's own behavior or the M5PM1's charge control needs the LGS4056 datasheet or a longer run; it is noted here only because it was seen.

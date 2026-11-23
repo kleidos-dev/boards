@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Draw a board's schematic in KiCad from its netlist and a layout.
 
@@ -22,7 +23,8 @@ no-connect flag. After a label of a net that other pages also carry, one
 ``[page/zone]`` per such page names the zone of the net's label there (the
 grid the drawing sheet prints in its border: ``3/C4``) and is a text linked to
 that page; ``schematic_pdf.py`` then sends the link to that label. A part
-documented as not fitted (value NC) carries KiCad's DNP mark. Neighbouring pins of one part on one net share a
+documented as not fitted (value NC) carries KiCad's DNP mark. Neighboring pins of one part on one
+net share a
 stub bar and a single label. Each block is laid out on its own: the main parts
 in a row, the two-pin parts in columns of flat rows beside or below them. The
 root sheet is the contents: one box per sheet, linked to its page, with what is
@@ -35,7 +37,7 @@ pull-downs), ``parts`` (every part, its value, kind, nets, DNP and place),
 each place in them a link.
 What the drawing adds to the vendor's print or corrects in it (``kleidos`` in
 ``netlist.yaml``, each with its source) is marked where it is drawn by its id
-("K3", bold, in ``MARK_COLOUR``), an added connection's wires dotted, and listed
+("K3", bold, in ``MARK_COLOR``), an added connection's wires dotted, and listed
 on the contents page, each id linked to its marker and each marker back to its
 row. The index pages repeat the marker wherever they show the element again:
 on its row of each table and above its box of the power tree (``index_keys``).
@@ -44,7 +46,8 @@ A board with entries says so under its heading and in every title block
 did before. A pin on no net says so in the GPIO tables, or what its Kleidos
 entry says of it (``gpio_what``).
 Wires and pin lines take one width (``LINE_MIL``, the width kicad-cli gives
-pins, set as the project's netclass and default line). The same netlist and layout give the same files byte for byte
+pins, set as the project's netclass and default line). The same netlist and layout give the same
+files byte for byte
 (uuids are derived from names).
 
 Usage: ``python3 _shared/kicad_schematic.py <board>``. Every symbol is this
@@ -61,37 +64,42 @@ import math
 import re
 import sys
 import uuid as uuidlib
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from itertools import pairwise
 from pathlib import Path
+from typing import Any
 
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
-import kleidos_kicad as kit  # noqa: E402  (the Kleidos KiCad kit, copied from brand: kicad/KIT.json)
-from paths import ROOT  # noqa: E402
+import kleidos_kicad as kit
+from paths import ROOT
 
 # The style's numbers come from the kit (kicad/style.json): the grid, the pin
 # pitch and length, the stub, the text sizes, the one line width, the zone
-# grid and the title block of the drawing sheet, the explicit colours.
+# grid and the title block of the drawing sheet, the explicit colors.
 STYLE = kit.style()
-GRID = STYLE["lines"]["grid"]
-PITCH = STYLE["lines"]["pin_pitch"]
-PIN_LEN = STYLE["lines"]["pin_length"]
-STUB = STYLE["lines"]["stub"]
+GRID: float = STYLE["lines"]["grid"]
+PITCH: float = STYLE["lines"]["pin_pitch"]
+PIN_LEN: float = STYLE["lines"]["pin_length"]
+STUB: float = STYLE["lines"]["stub"]
 CHAR_W = 1.12  # an estimate of KiCad's stroke font advance at 1.27 mm (with margin)
 LABEL_CHAR_W = 1.1  # a global label's length per character of its name
 LABEL_PAD = 1.6  # ... plus its outline's (both fitted on rendered labels of 6 to 13 characters)
-FONT = STYLE["text"]["body"]
+FONT: float = STYLE["text"]["body"]
 ROW = 8.89  # pitch of the flat two-pin rows
 GAP = 7.62  # between items in a row, between rows in a block
 COL_GAP = 7.62  # between columns of two-pin rows
 BLOCK_PAD = 5.08
 SHEET_GAP = 7.62
-REF_FONT = STYLE["text"]["small"]  # the "[n]" page links after a label
+REF_FONT: float = STYLE["text"]["small"]  # the "[n]" page links after a label
 REF_CHAR_W = 0.95  # their advance per character at REF_FONT (with margin)
 REF_GAP = 0.8
-ROOT_FONT = STYLE["text"]["running"]  # the contents page's running text
-LINE_PITCH = STYLE["text"]["line_pitch"]  # a multi-line text's line pitch, per unit of its size
+ROOT_FONT: float = STYLE["text"]["running"]  # the contents page's running text
+LINE_PITCH: float = STYLE["text"][
+    "line_pitch"
+]  # a multi-line text's line pitch, per unit of its size
 # Wires and pin lines, in mils: one width for every connection. kicad-cli draws a
 # symbol's pins (and any symbol line left at the default width) at its own fixed
 # symbol line width, 6 mil, whatever the project's default line thickness says
@@ -121,17 +129,17 @@ NAV_Y = float(STYLE["sheet"]["page_row"]["bottom"])
 VIEW_LEFT = 30.0
 VIEW_TOP = 20.0
 VIEW_ZOOM = 2.0
-TABLE_PITCH = STYLE["text"]["table_row"]  # row pitch of the index pages' tables
+TABLE_PITCH: float = STYLE["text"]["table_row"]  # row pitch of the index pages' tables
 TABLE_GAP = 2.54  # between two columns of a table
 # Kleidos additions and corrections (``kleidos`` in netlist.yaml): what the
 # drawing shows beyond the vendor's print, or differently from it, each with its
 # source. Every one is marked where it is drawn by its id ("K3"), bold, in this
-# colour, which nothing else on the drawing takes, and is a row of the table on
+# color, which nothing else on the drawing takes, and is a row of the table on
 # the contents page; an added connection's wires are also dotted, at the one
 # wire width (a pin that carries its label at its end gets a stub to show it).
 # A correction takes the marker only.
-MARK_COLOUR = kit.explicit("dark")["addition"]
-MARK_FONT = STYLE["text"]["small"]
+MARK_COLOR = kit.explicit("dark")["addition"]
+MARK_FONT: float = STYLE["text"]["small"]
 MARK_CHAR_W = 1.1  # a marker's advance per character (bold, with margin)
 MARK_GAP = 1.5  # from what it follows
 TREE_MARK = 1.1  # a power-tree box's markers: this far above its top edge
@@ -153,7 +161,7 @@ ADD_WRAPS = [None, None, 56, 48]
 BLOCK_LINES = STYLE["sheet"][
     "comment_lines"
 ]  # the comments the kit's drawing sheet prints in the title block
-RULE_COLOUR = kit.explicit("dark")["rule"]  # a table's and the power tree's rules
+RULE_COLOR = kit.explicit("dark")["rule"]  # a table's and the power tree's rules
 # What every page's title block prints from the project (kit.cell_findings
 # holds each line to its cell): the license and where the files live.
 LICENSE = "MIT"
@@ -171,7 +179,7 @@ def zone(x: float, y: float, paper: str = "A3") -> str:
     return f"{'ABCDEFGHJK'[row]}{col}"
 
 
-def natural_zone(z: str) -> tuple:
+def natural_zone(z: str) -> tuple[Any, ...]:
     """Sort key of a zone: row, then column (A2 before A10, A10 before B1)."""
     return (z[0], int(z[1:]))
 
@@ -194,20 +202,20 @@ STD_KINDS = [
 ]
 
 
-def natural(ref: str) -> tuple:
+def natural(ref: str) -> tuple[Any, ...]:
     """Sort key: C2 before C10, then by prefix."""
     m = re.match(r"([A-Z]+)(\d+)", ref)
     return (m.group(1), int(m.group(2))) if m else (ref, 0)
 
 
-def not_fitted(value) -> bool:
+def not_fitted(value: object) -> bool:
     """A part the vendor documents as not fitted: its value is NC (or NC(TBD)),
     or says DNP as a word (DNP, RF_C(TBD:DNP))."""
     v = str(value).upper()
     return v.split("(")[0].strip() == "NC" or bool(re.search(r"(?<![A-Z0-9])DNP(?![A-Z0-9])", v))
 
 
-def title_block_lines(lay: dict, adds: bool) -> list[tuple[str, str]]:
+def title_block_lines(lay: dict[str, Any], adds: bool) -> list[tuple[str, str]]:
     """Every line the title blocks of a board print, with the kit's cell it goes in."""
     tb = lay.get("title_block") or {}
     lines = [("comments", str(tb.get("company", "")))]
@@ -224,12 +232,12 @@ def title_block_lines(lay: dict, adds: bool) -> list[tuple[str, str]]:
     return lines
 
 
-def title_block_errors(lay: dict, adds: bool) -> list[str]:
+def title_block_errors(lay: dict[str, Any], adds: bool) -> list[str]:
     """The title-block lines wider than their cell of the kit's drawing sheet."""
     return kit.cell_findings(title_block_lines(lay, adds))
 
 
-def gpio_maps(net: dict, sh: dict) -> list[dict]:
+def gpio_maps(net: dict[str, Any], sh: dict[str, Any]) -> list[dict[str, Any]]:
     """The GPIO maps of the nets page, each {title, map, what, wrap, sort};
     a map with no entry is left out.
 
@@ -271,18 +279,22 @@ def gpio_maps(net: dict, sh: dict) -> list[dict]:
     ]
 
 
-def element_key(el: dict) -> tuple:
+def element_key(el: dict[str, Any]) -> tuple[Any, ...]:
     """What an addition marks, as a key: ("pin", "U9.5"), ("gpio", "GPIO21", table or None)."""
     kind = next(k for k in ADD_ELEMENTS if k in el)
     return (kind, str(el[kind]), el.get("table")) if kind == "gpio" else (kind, str(el[kind]))
 
 
-def additions_by_element(net: dict, lay: dict) -> dict[tuple, dict]:
+def additions_by_element(
+    net: dict[str, Any], lay: dict[str, Any]
+) -> dict[tuple[Any, ...], dict[str, Any]]:
     """The Kleidos additions and corrections by the element each names
     (``element_key()``; a GPIO's key carries its table's title, the one table
     that lists it where the entry names none)."""
-    nets_sheet = next((sh for sh in lay.get("sheets", []) if sh.get("index") == "nets"), {})
-    out: dict[tuple, dict] = {}
+    nets_sheet: dict[str, Any] = next(
+        (sh for sh in lay.get("sheets", []) if sh.get("index") == "nets"), {}
+    )
+    out: dict[tuple[Any, ...], dict[str, Any]] = {}
     for e in net.get("kleidos") or []:
         el = e["element"]
         if "gpio" in el and not el.get("table"):
@@ -303,7 +315,13 @@ def chip_of(title: str) -> str | None:
     return m.group(1) if m else None
 
 
-def index_keys(net: dict, table: str, row: str, pin=None, title: str | None = None) -> list[tuple]:
+def index_keys(
+    net: dict[str, Any],
+    table: str,
+    row: str,
+    pin: str | int | None = None,
+    title: str | None = None,
+) -> list[tuple[Any, ...]]:
     """The elements a row of an index table (or a box of the power tree) shows
     again, as ``element_key()`` keys: every Kleidos addition or correction that
     names one of them is marked on that row too. ``table`` is one of nets,
@@ -333,7 +351,7 @@ def index_keys(net: dict, table: str, row: str, pin=None, title: str | None = No
     raise ValueError(table)
 
 
-def additions_errors(net: dict, lay: dict) -> list[str]:
+def additions_errors(net: dict[str, Any], lay: dict[str, Any]) -> list[str]:
     """What is wrong with netlist.yaml's ``kleidos`` list, the board's additions
     to and corrections of the vendor's print (``docs/models-and-drawings.md``,
     "Schematics"): each entry {id, kind, what, vendor (a correction's), element,
@@ -349,9 +367,11 @@ def additions_errors(net: dict, lay: dict) -> list[str]:
     comps = net.get("components") or {}
     grounds = set(lay.get("grounds") or {})
     nets = {str(n) for c in comps.values() for n in c["pins"].values()} - {"NC"}
-    nets_sheet = next((sh for sh in lay.get("sheets", []) if sh.get("index") == "nets"), {})
+    nets_sheet: dict[str, Any] = next(
+        (sh for sh in lay.get("sheets", []) if sh.get("index") == "nets"), {}
+    )
     tables = gpio_maps(net, nets_sheet)
-    seen: dict[tuple, str] = {}
+    seen: dict[tuple[Any, ...], str] = {}
     for i, e in enumerate(adds, start=1):
         if not isinstance(e, dict):
             errors.append(f"kleidos entry {i}: not a mapping")
@@ -380,7 +400,8 @@ def additions_errors(net: dict, lay: dict) -> list[str]:
                 f"{where}: source.cite is empty (document and page or table, firmware path and "
                 "symbol, or bench record and date)"
             )
-        el = e.get("element")
+        given = e.get("element")
+        el: dict[str, Any] = given if isinstance(given, dict) else {}
         kinds = [k for k in ADD_ELEMENTS if isinstance(el, dict) and k in el]
         if (
             len(kinds) != 1
@@ -445,7 +466,8 @@ def additions_errors(net: dict, lay: dict) -> list[str]:
     ]:
         if ADD_SUBTITLE.lower() in str(said).lower():
             errors.append(
-                f'layout.yaml {where}: "{ADD_SUBTITLE}" is the generator\'s to add, where a board has entries'
+                f'layout.yaml {where}: "{ADD_SUBTITLE}" is the generator\'s to add, where a board '
+                "has entries"
             )
     if adds and len(tb.get("comments", [])) >= BLOCK_LINES:
         errors.append(
@@ -463,7 +485,7 @@ class Sym(str):
 OPEN, CLOSE = object(), object()
 
 
-def tokenize(text: str):
+def tokenize(text: str) -> Iterator[object]:
     i, n = 0, len(text)
     while i < n:
         c = text[i]
@@ -491,8 +513,8 @@ def tokenize(text: str):
             i = j
 
 
-def parse(text: str):
-    stack: list[list] = [[]]
+def parse(text: str) -> list[Any]:
+    stack: list[list[Any]] = [[]]
     for tok in tokenize(text):
         if tok is OPEN:
             stack.append([])
@@ -501,7 +523,8 @@ def parse(text: str):
             stack[-1].append(node)
         else:
             stack[-1].append(tok)
-    return stack[0][0]
+    root: list[Any] = stack[0][0]
+    return root
 
 
 def fmt_num(v: float) -> str:
@@ -512,7 +535,7 @@ def fmt_num(v: float) -> str:
     return s if s != "-0" else "0"
 
 
-def dump(node, indent: int = 0) -> str:
+def dump(node: object, indent: int = 0) -> str:
     """Serialize a node in KiCad's style: a list holding only atoms on one line."""
     if isinstance(node, Sym):
         return str(node)
@@ -520,6 +543,8 @@ def dump(node, indent: int = 0) -> str:
         return '"' + node.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
     if isinstance(node, (int, float)):
         return fmt_num(node)
+    if not isinstance(node, list):
+        raise TypeError(f"not a KiCad node: {node!r}")
     head = [dump(x) for x in node if not isinstance(x, list)]
     kids = [x for x in node if isinstance(x, list)]
     if not kids:
@@ -531,11 +556,11 @@ def dump(node, indent: int = 0) -> str:
     return out + "\n" + "\t" * indent + ")"
 
 
-def at(x, y, a=None):
+def at(x: float, y: float, a: float | None = None) -> list[Any]:
     return [Sym("at"), x, y] + ([] if a is None else [a])
 
 
-def font(size=FONT, bold=False, color=None):
+def font(size: float = FONT, bold: bool = False, color: Sequence[int] | None = None) -> list[Any]:
     f = [Sym("font"), [Sym("size"), size, size]]
     if bold:
         f.append([Sym("bold"), Sym("yes")])
@@ -544,7 +569,14 @@ def font(size=FONT, bold=False, color=None):
     return f
 
 
-def effects(size=FONT, justify=None, hide=False, bold=False, href=None, color=None):
+def effects(
+    size: float = FONT,
+    justify: str | None = None,
+    hide: bool = False,
+    bold: bool = False,
+    href: str | None = None,
+    color: Sequence[int] | None = None,
+) -> list[Any]:
     e = [Sym("effects"), font(size, bold, color)]
     if justify:
         e.append([Sym("justify")] + [Sym(j) for j in justify.split()])
@@ -555,7 +587,7 @@ def effects(size=FONT, justify=None, hide=False, bold=False, href=None, color=No
     return e
 
 
-def stroke(width=0.0, kind="default"):
+def stroke(width: float = 0.0, kind: str = "default") -> list[Any]:
     return [Sym("stroke"), [Sym("width"), width], [Sym("type"), Sym(kind)]]
 
 
@@ -587,24 +619,24 @@ def text_w(s: str, size: float = FONT) -> float:
 
 
 class Box:
-    def __init__(self):
+    def __init__(self) -> None:
         self.x0 = self.y0 = math.inf
         self.x1 = self.y1 = -math.inf
 
-    def add(self, x0, y0, x1, y1):
+    def add(self, x0: float, y0: float, x1: float, y1: float) -> None:
         self.x0, self.y0 = min(self.x0, x0, x1), min(self.y0, y0, y1)
         self.x1, self.y1 = max(self.x1, x0, x1), max(self.y1, y0, y1)
 
     @property
-    def w(self):
+    def w(self) -> float:
         return self.x1 - self.x0
 
     @property
-    def h(self):
+    def h(self) -> float:
         return self.y1 - self.y0
 
     @property
-    def empty(self):
+    def empty(self) -> bool:
         return self.x0 == math.inf
 
 
@@ -612,16 +644,16 @@ class Box:
 class LibSymbol:
     """A symbol's pins per unit (number -> (x, y, angle, name, length)), body and extent."""
 
-    def __init__(self, lib_id: str, node: list):
+    def __init__(self, lib_id: str, node: list[Any]) -> None:
         self.lib_id = lib_id
         self.node = node
-        self.pins: dict[int, dict[str, tuple]] = {}
+        self.pins: dict[int, dict[str, tuple[Any, ...]]] = {}
         self.body = Box()  # graphics and the pins' inner ends
         self.extent = Box()  # the body and the pins' outer ends
         self._scan(node)
 
-    def _scan(self, node):
-        def child(g, key):
+    def _scan(self, node: list[Any]) -> None:
+        def child(g: list[Any], key: str) -> list[Any]:
             return next(x for x in g if isinstance(x, list) and x and x[0] == key)
 
         for kid in node:
@@ -655,7 +687,7 @@ class LibSymbol:
         if not b.empty:
             self.extent.add(b.x0, b.y0, b.x1, b.y1)
 
-    def unit_pins(self, unit: int) -> dict[str, tuple]:
+    def unit_pins(self, unit: int) -> dict[str, tuple[Any, ...]]:
         out = dict(self.pins.get(0, {}))
         out.update(self.pins.get(unit, {}))
         return out
@@ -674,7 +706,7 @@ THIN = 0.0  # a symbol line at KiCad's default width
 THICK = 0.254
 
 
-def _g_line(*pts, width=THIN, fill="none"):
+def _g_line(*pts: tuple[float, float], width: float = THIN, fill: str = "none") -> list[Any]:
     return [
         Sym("polyline"),
         [Sym("pts")] + [[Sym("xy"), x, y] for x, y in pts],
@@ -683,7 +715,9 @@ def _g_line(*pts, width=THIN, fill="none"):
     ]
 
 
-def _g_rect(x0, y0, x1, y1, width=THICK, fill="background"):
+def _g_rect(
+    x0: float, y0: float, x1: float, y1: float, width: float = THICK, fill: str = "background"
+) -> list[Any]:
     return [
         Sym("rectangle"),
         [Sym("start"), x0, y0],
@@ -693,7 +727,7 @@ def _g_rect(x0, y0, x1, y1, width=THICK, fill="background"):
     ]
 
 
-def _g_circle(cx, cy, r, width=THIN, fill="none"):
+def _g_circle(cx: float, cy: float, r: float, width: float = THIN, fill: str = "none") -> list[Any]:
     return [
         Sym("circle"),
         [Sym("center"), cx, cy],
@@ -703,14 +737,23 @@ def _g_circle(cx, cy, r, width=THIN, fill="none"):
     ]
 
 
-def _g_pin(num, name, x, y, ang, length, etype="passive", hide=False):
+def _g_pin(
+    num: str,
+    name: str,
+    x: float,
+    y: float,
+    ang: float,
+    length: float,
+    etype: str = "passive",
+    hide: bool = False,
+) -> list[Any]:
     node = [Sym("pin"), Sym(etype), Sym("line"), at(x, y, ang), [Sym("length"), length]]
     if hide:
         node.append([Sym("hide"), Sym("yes")])
     return node + [[Sym("name"), name, effects()], [Sym("number"), num, effects()]]
 
 
-def _g_arrow(x0, y0, x1, y1, head=0.5):
+def _g_arrow(x0: float, y0: float, x1: float, y1: float, head: float = 0.5) -> list[Any]:
     """A line from (x0, y0) to (x1, y1) with an open head at its end."""
     dx, dy = x1 - x0, y1 - y0
     n = math.hypot(dx, dy)
@@ -727,7 +770,7 @@ def _g_arrow(x0, y0, x1, y1, head=0.5):
     ]
 
 
-def _g_diode(kind):
+def _g_diode(kind: str) -> list[Any]:
     """A diode along x, cathode at x -1.27 (its pin K left), anode at 1.27."""
     out = [
         _g_line((-1.27, 0), (1.27, 0)),
@@ -754,7 +797,7 @@ def _g_diode(kind):
     return out
 
 
-def _g_fet(p_channel):
+def _g_fet(p_channel: bool) -> list[Any]:
     out = [
         _g_circle(0.635, 0, 2.794, THICK),
         _g_line((-2.54, 0), (-1.016, 0)),
@@ -772,22 +815,25 @@ def _g_fet(p_channel):
     return out
 
 
-def _conn_rows(n):
+def _conn_rows(n: int) -> float:
     return math.floor((n - 1) / 2) * PITCH
 
 
-def generic_symbol(name: str) -> list:
+def generic_symbol(name: str) -> list[Any]:
     """This project's drawing of a generic symbol, by name (``kleidos:<name>``)."""
-    hide_both = [
+    hide_both: list[Any] = [
         [Sym("pin_numbers"), [Sym("hide"), Sym("yes")]],
         [Sym("pin_names"), [Sym("offset"), 0], [Sym("hide"), Sym("yes")]],
     ]
-    hide_names = [[Sym("pin_names"), [Sym("offset"), 1.016], [Sym("hide"), Sym("yes")]]]
-    show_names = [[Sym("pin_names"), [Sym("offset"), 1.016]]]
-    two_v = lambda length=1.27, half=3.81: [
-        _g_pin("1", "~", 0, half, 270, length),  # noqa: E731
-        _g_pin("2", "~", 0, -half, 90, length),
-    ]
+    hide_names: list[Any] = [[Sym("pin_names"), [Sym("offset"), 1.016], [Sym("hide"), Sym("yes")]]]
+    show_names: list[Any] = [[Sym("pin_names"), [Sym("offset"), 1.016]]]
+
+    def two_v(length: float = 1.27, half: float = 3.81) -> list[Any]:
+        return [
+            _g_pin("1", "~", 0, half, 270, length),
+            _g_pin("2", "~", 0, -half, 90, length),
+        ]
+
     diode_pins = [_g_pin("1", "K", -3.81, 0, 0, 2.54), _g_pin("2", "A", 3.81, 0, 180, 2.54)]
     ref, flags, gfx, pins, power = "U", hide_both, [], [], None
     m = re.fullmatch(r"Conn_(\d\d)x(\d\d)(?:_(Odd_Even|Counter_Clockwise))?", name)
@@ -1034,14 +1080,14 @@ def generic_symbol(name: str) -> list:
             ("B8", "SBU2", 15.24, -15.24, 180, False),
             ("SH", "SHIELD", -7.62, -22.86, 90, False),
         ]
-        for num, nm, x, y, a, hid in spec:
+        for pnum, nm, x, y, a, hid in spec:
             etype = (
                 "bidirectional" if nm in ("CC1", "CC2", "D-", "D+", "SBU1", "SBU2") else "passive"
             )
-            pins.append(_g_pin(num, nm, x, y, a, 5.08, etype, hid))
+            pins.append(_g_pin(pnum, nm, x, y, a, 5.08, etype, hid))
     else:
         raise SystemExit(f"{GENERIC_LIB}:{name}: no such symbol in this project's library")
-    node = [Sym("symbol"), name]
+    node: list[Any] = [Sym("symbol"), name]
     if power:
         node.append([Sym("power"), Sym(power)])
     node += flags + [
@@ -1066,7 +1112,7 @@ def generic_symbol(name: str) -> list:
     return node
 
 
-def split_pin(p: str):
+def split_pin(p: str) -> tuple[str, str] | None:
     if p == "-":
         return None
     num, _, nm = str(p).partition(" ")
@@ -1074,7 +1120,7 @@ def split_pin(p: str):
     return num, ("~" if nm == num else nm)
 
 
-def own_symbol(name: str, spec: dict) -> list:
+def own_symbol(name: str, spec: dict[str, Any]) -> list[Any]:
     """Our symbol: a box with pins left, right and along the bottom, or a MOSFET pair.
 
     Optional: ``pin_length`` (default ``PIN_LEN``), longer where the vendor's pin
@@ -1153,7 +1199,7 @@ def own_symbol(name: str, spec: dict) -> list:
     return node
 
 
-def mosfet_pair(name: str, spec: dict) -> list:
+def mosfet_pair(name: str, spec: dict[str, Any]) -> list[Any]:
     """Two MOSFETs in one package, one per unit: gate left, drain and source
     right. A unit given as ``{type, b, c, e}`` is a transistor instead: base
     left, collector and emitter right, with the vendor's pin numbers."""
@@ -1193,7 +1239,7 @@ def mosfet_pair(name: str, spec: dict) -> list:
     return node
 
 
-def sym_header(name, ref, value, y_ref, y_val, desc):
+def sym_header(name: str, ref: str, value: str, y_ref: float, y_val: float, desc: str) -> list[Any]:
     return [
         Sym("symbol"),
         name,
@@ -1209,7 +1255,16 @@ def sym_header(name, ref, value, y_ref, y_val, desc):
     ]
 
 
-def pin_node(num, name, x, y, ang, etype, bottom=False, length=PIN_LEN):
+def pin_node(
+    num: str,
+    name: str,
+    x: float,
+    y: float,
+    ang: float,
+    etype: str | None,
+    bottom: bool = False,
+    length: float = PIN_LEN,
+) -> list[Any]:
     return [
         Sym("pin"),
         Sym(etype or "passive"),
@@ -1221,7 +1276,7 @@ def pin_node(num, name, x, y, ang, etype, bottom=False, length=PIN_LEN):
     ]
 
 
-def renamed(node: list, full: str) -> list:
+def renamed(node: list[Any], full: str) -> list[Any]:
     out = list(node)
     out[1] = full
     return out
@@ -1229,15 +1284,15 @@ def renamed(node: list, full: str) -> list:
 
 # ------------------------------------------------------------------ the board
 class Builder:
-    def __init__(self, board: str):
+    def __init__(self, board: str) -> None:
         self.board = board
         self.dir = ROOT / board / "schematic"
         self.net = yaml.safe_load((self.dir / "netlist.yaml").read_text(encoding="utf-8"))
         self.lay = yaml.safe_load((self.dir / "layout.yaml").read_text(encoding="utf-8"))
         self.comps = self.net["components"]
         self.lib: dict[str, LibSymbol] = {}
-        self.own: dict[str, list] = {}
-        self.generic: dict[str, list] = {}
+        self.own: dict[str, list[Any]] = {}
+        self.generic: dict[str, list[Any]] = {}
         self.project = board
         self.root_uuid = self.uid("root")
         self.grounds = dict(self.lay.get("grounds", {}))
@@ -1246,24 +1301,30 @@ class Builder:
         self.paper = self.lay.get("paper", "A3")
         # Recorded while the sheets are drawn, read once every item has its
         # final place (shift() moves the "at" lists these hold in place):
-        self.labels: list[dict] = []  # every net label: net, page, the part it hangs from, its "at"
-        self.tokens: list[dict] = []  # every "[page/zone]" after a label: its text node, net, pages
+        self.labels: list[
+            dict[str, Any]
+        ] = []  # every net label: net, page, the part it hangs from, its "at"
+        self.tokens: list[
+            dict[str, Any]
+        ] = []  # every "[page/zone]" after a label: its text node, net, pages
         self.fields: list[
-            dict
+            dict[str, Any]
         ] = []  # every placed symbol's Reference field: ref, unit, page, "at", width
-        self.jumps: list[dict] = []  # every linked text that leads to a place: page, anchor, target
-        self.marks: dict[str, dict] = {}  # named destinations
-        self.sections: dict[int, list] = {}  # an index page's bookmarks: its tables' headings
+        self.jumps: list[
+            dict[str, Any]
+        ] = []  # every linked text that leads to a place: page, anchor, target
+        self.marks: dict[str, dict[str, Any]] = {}  # named destinations
+        self.sections: dict[int, list[Any]] = {}  # an index page's bookmarks: its tables' headings
         # the Kleidos additions and corrections, by what they mark, and every
         # marker drawn ("K3" beside its element), linked once page 1 is laid out
         errors = additions_errors(self.net, self.lay)
         if errors:
             raise SystemExit("netlist.yaml kleidos:\n  " + "\n  ".join(errors))
-        self.adds: list[dict] = self.net.get("kleidos") or []
+        self.adds: list[dict[str, Any]] = self.net.get("kleidos") or []
         self.add_at = additions_by_element(self.net, self.lay)
-        self.markers: list[dict] = []
+        self.markers: list[dict[str, Any]] = []
 
-    def uid(self, *key) -> str:
+    def uid(self, *key: object) -> str:
         return str(
             uuidlib.uuid5(
                 uuidlib.NAMESPACE_URL, f"kleidos-boards/{self.board}/" + "/".join(map(str, key))
@@ -1288,19 +1349,22 @@ class Builder:
             self.lib[lib_id] = LibSymbol(lib_id, node)
         return self.lib[lib_id]
 
-    def part(self, ref: str) -> dict:
+    def part(self, ref: str) -> dict[str, Any]:
         """The symbol a component takes, its angle, stub and pin map (ours -> the vendor's)."""
         parts = self.lay["parts"]
         spec = parts.get(ref)
         if spec is None:
-            prefix = re.match(r"^[A-Z]+", ref).group(0)
+            found = re.match(r"^[A-Z]+", ref)
+            if found is None:
+                raise SystemExit(f"{ref}: a reference starts with its letters")
+            prefix = found.group(0)
             spec = parts["_by_prefix"].get(prefix)
             if spec is None:
                 raise SystemExit(f"{ref}: no symbol for it in layout.yaml parts")
         return {"symbol": spec} if isinstance(spec, str) else spec
 
     # --- the whole project
-    def build(self) -> dict[str, list]:
+    def build(self) -> dict[str, list[Any]]:
         where = {}
         for sh in self.lay["sheets"]:
             for blk in sh.get("blocks", []):
@@ -1314,10 +1378,10 @@ class Builder:
         wide = title_block_errors(self.lay, bool(self.adds))
         if wide:
             raise SystemExit(
-                "layout.yaml title_block: a line wider than its cell, which KiCad would condense:\n  "
-                + "\n  ".join(wide)
+                "layout.yaml title_block: a line wider than its cell, which KiCad would "
+                "condense:\n  " + "\n  ".join(wide)
             )
-        sheets_of: dict[str, set] = {}
+        sheets_of: dict[str, set[Any]] = {}
         for ref, c in self.comps.items():
             for net in c["pins"].values():
                 sheets_of.setdefault(net, set()).add(where[ref])
@@ -1334,11 +1398,11 @@ class Builder:
             if "index" not in sh:
                 files[sh["file"]] = self.child_sheet(sh, page)
         self.resolve()  # then where every net lands,
-        self.part_rows: dict[str, dict] = {}
+        self.part_rows: dict[str, dict[str, Any]] = {}
         for page, sh in enumerate(self.lay["sheets"], start=2):  # then the pages that index it,
             if "index" in sh and sh["index"] != "additions":
                 files[sh["file"]] = self.index_sheet(sh, page)
-        self.adds_rest: list = []  # the rows of the additions table page 1 has no room for
+        self.adds_rest: list[Any] = []  # the rows of the additions table page 1 has no room for
         files[f"{self.board}.kicad_sch"] = self.root_sheet()  # then the contents,
         for page, sh in enumerate(self.lay["sheets"], start=2):  # and the contents' continuation
             if sh.get("index") == "additions":
@@ -1365,17 +1429,17 @@ class Builder:
 
     # --- where things land, for the PDF's links
     @staticmethod
-    def spot(page: int, node_at: list) -> dict:
+    def spot(page: int, node_at: list[Any]) -> dict[str, Any]:
         return {"page": page, "x": round(float(node_at[1]), 4), "y": round(float(node_at[2]), 4)}
 
-    def zone_of(self, s: dict) -> str:
+    def zone_of(self, s: dict[str, Any]) -> str:
         return zone(s["x"], s["y"], self.paper)
 
-    def where(self, s: dict) -> str:
+    def where(self, s: dict[str, Any]) -> str:
         """A place as a cross-reference prints it: page/zone."""
         return f"{s['page']}/{self.zone_of(s)}"
 
-    def target_label(self, net: str, page: int) -> dict:
+    def target_label(self, net: str, page: int) -> dict[str, Any]:
         """The label a link to ``net`` on ``page`` lands on: the one at the part
         that feeds the rail (``rails.from``), else the first in reading order."""
         cands = [lab for lab in self.labels if lab["net"] == net and lab["page"] == page]
@@ -1386,17 +1450,17 @@ class Builder:
         pool = [lab for lab in cands if lab["ref"] in feeders] or cands
         return min(pool, key=lambda lab: (float(lab["at"][2]), float(lab["at"][1])))
 
-    def net_spot(self, net: str, page: int) -> dict:
+    def net_spot(self, net: str, page: int) -> dict[str, Any]:
         return self.spot(page, self.target_label(net, page)["at"])
 
-    def field_spot(self, ref: str, unit: int | None = None) -> dict:
+    def field_spot(self, ref: str, unit: int | None = None) -> dict[str, Any]:
         f = min(
             (f for f in self.fields if f["ref"] == ref and unit in (None, f["unit"])),
             key=lambda f: f["unit"],
         )
         return self.spot(f["page"], f["at"])
 
-    def resolve(self):
+    def resolve(self) -> None:
         """Give every "[page/??]" its zone, and record where each leads."""
         for t in self.tokens:
             dest = self.net_spot(t["net"], t["to"])
@@ -1416,7 +1480,7 @@ class Builder:
         for ref in sorted(self.comps, key=natural):
             self.marks[f"part-{ref}"] = self.field_spot(ref)
 
-    def link_map(self) -> dict:
+    def link_map(self) -> dict[str, Any]:
         """What the PDF step does to KiCad's PDF (schematic_pdf.py): the links
         it sends to a place instead of a whole page, the links it adds on each
         part's reference, the named destinations and the bookmarks."""
@@ -1471,7 +1535,7 @@ class Builder:
         }
 
     # --- one placed symbol
-    def place(self, ref: str, unit: int, x: float, y: float, items: list, box: Box):
+    def place(self, ref: str, unit: int, x: float, y: float, items: list[Any], box: Box) -> None:
         spec = self.part(ref)
         ls = self.symbol(spec["symbol"])
         angle = int(spec.get("angle", 0))
@@ -1506,7 +1570,7 @@ class Builder:
         flat = len(upins) <= 2 and ext.w >= ext.h
         fa = 90 if angle in (90, 270) else 0  # a field's angle turns with its symbol
         up = any(outward(pa, angle) == 90 for (_, _, pa, _, _) in upins.values())
-        if flat:  # a flat two-pin part: reference above, value below, centred
+        if flat:  # a flat two-pin part: reference above, value below, centered
             refpos, valpos, rj, vj = (
                 (x, min(ext.y0 - 1.27, y - 2.54)),
                 (x, max(ext.y1 + 1.27, y + 2.54)),
@@ -1547,9 +1611,11 @@ class Builder:
             self.marker(
                 part_add, x0 + tw + MARK_GAP, refpos[1], items, box, key=("part", ref, unit)
             )
-        for f in ("Footprint", "Datasheet", "Description"):
-            sym.append([Sym("property"), f, "", at(x, y, 0), effects(hide=True)])
-        ends: dict[tuple, list] = {}
+        sym.extend(
+            [Sym("property"), f, "", at(x, y, 0), effects(hide=True)]
+            for f in ("Footprint", "Datasheet", "Description")
+        )
+        ends: dict[tuple[Any, ...], list[Any]] = {}
         for num, (px, py, pa, _name, _ln) in sorted(upins.items()):
             vend = pinmap.get(num, num)
             vl = []
@@ -1585,7 +1651,7 @@ class Builder:
         )
         items.append(sym)
         stub = float(spec.get("stub", STUB))
-        sides: dict[int, list] = {}
+        sides: dict[int, list[Any]] = {}
         for (ex, ey), lst in ends.items():
             nets = {n for _, n, _, _ in lst}
             if len(nets) != 1:
@@ -1598,7 +1664,7 @@ class Builder:
         for d, pts in sides.items():
             along = 1 if d in (0, 180) else 0
             pts.sort(key=lambda p: p[along])
-            run: list = []
+            run: list[Any] = []
             for p in pts + [None]:
                 if run and (p is None or p[2] != run[-1][2] or p[2] == "NC" or not stub):
                     self.decorate(ref, run, d, stub, items, box)
@@ -1606,8 +1672,8 @@ class Builder:
                 if p is not None:
                     run.append(p)
 
-    # --- what the end of a pin (or of a run of neighbouring pins on one net) gets
-    def pin_adds(self, ref: str, vpins) -> tuple[list[dict], bool]:
+    # --- what the end of a pin (or of a run of neighboring pins on one net) gets
+    def pin_adds(self, ref: str, vpins: Iterable[str]) -> tuple[list[dict[str, Any]], bool]:
         """The additions and corrections marking these vendor pins of ``ref``
         (in id order), and whether their connection is an addition (the part's
         own, or one of the pins')."""
@@ -1622,7 +1688,9 @@ class Builder:
         )
         return [found[k] for k in sorted(found, key=lambda i: int(i[1:]))], added
 
-    def decorate(self, ref, run, d, stub, items, box):
+    def decorate(
+        self, ref: str, run: list[tuple[Any, ...]], d: int, stub: float, items: list[Any], box: Box
+    ) -> None:
         net = run[0][2]
         vx, vy = DIRS[d]
         looks = [self.pin_adds(ref, p[3]) for p in run]
@@ -1660,12 +1728,12 @@ class Builder:
         # where the part's pins otherwise carry their labels at the pin's end
         stub = STUB if (every and not stub) else stub
         ends = []
-        for (x, y, *_), dash in zip(run, dashed):
+        for (x, y, *_), dash in zip(run, dashed, strict=True):
             ex, ey = x + vx * stub, y + vy * stub
             if stub:
                 self.wire(x, y, ex, ey, items, ("stub", ref, x, y), dash)
             ends.append((ex, ey))
-        for (ax, ay), (bx, by) in zip(ends, ends[1:]):
+        for (ax, ay), (bx, by) in pairwise(ends):
             self.wire(ax, ay, bx, by, items, ("bar", ref, ax, ay), every)
         for jx, jy in ends[1:-1]:
             self.junction(jx, jy, items)
@@ -1709,8 +1777,18 @@ class Builder:
         for x, y in ends:
             box.add(x, y, x, y)
 
-    def wire(self, x0, y0, x1, y1, items, key, dashed=False):
-        """A wire, at the project's one width; dotted (``ADD_WIRE``) where it is a Kleidos addition."""
+    def wire(
+        self,
+        x0: float,
+        y0: float,
+        x1: float,
+        y1: float,
+        items: list[Any],
+        key: tuple[Any, ...],
+        dashed: bool = False,
+    ) -> None:
+        """A wire, at the project's one width; dotted (``ADD_WIRE``)
+        where it is a Kleidos addition."""
         items.append(
             [
                 Sym("wire"),
@@ -1720,7 +1798,16 @@ class Builder:
             ]
         )
 
-    def marker(self, entry, x, y, items, box, key, right_to_left=False) -> float:
+    def marker(
+        self,
+        entry: dict[str, Any],
+        x: float,
+        y: float,
+        items: list[Any],
+        box: Box,
+        key: tuple[Any, ...],
+        right_to_left: bool = False,
+    ) -> float:
         """A Kleidos addition's or correction's id ("K3") at (x, y), read from
         the left (or ending at x), linked to its row on the contents page once
         that page is laid out; return its width."""
@@ -1731,7 +1818,7 @@ class Builder:
             entry["id"],
             [Sym("exclude_from_sim"), Sym("no")],
             at(x0, y, 0),
-            effects(MARK_FONT, justify="left", bold=True, href="#1", color=MARK_COLOUR),
+            effects(MARK_FONT, justify="left", bold=True, href="#1", color=MARK_COLOR),
             [Sym("uuid"), self.uid("mark", self.cur_path, entry["id"], *key)],
         ]
         items.append(node)
@@ -1739,7 +1826,7 @@ class Builder:
         box.add(x0, y - 1.4, x0 + w, y + 1.4)
         return w
 
-    def junction(self, x, y, items):
+    def junction(self, x: float, y: float, items: list[Any]) -> None:
         items.append(
             [
                 Sym("junction"),
@@ -1750,7 +1837,17 @@ class Builder:
             ]
         )
 
-    def label(self, net, x, y, d, items, box, key, marks=()):
+    def label(
+        self,
+        net: str,
+        x: float,
+        y: float,
+        d: int,
+        items: list[Any],
+        box: Box,
+        key: tuple[Any, ...],
+        marks: Sequence[dict[str, Any]] = (),
+    ) -> None:
         lw = len(net) * LABEL_CHAR_W + LABEL_PAD
         just = "left" if d == 0 else "right"
         label_at = at(x, y, d)
@@ -1775,7 +1872,7 @@ class Builder:
         refs_w = sum(widths) + REF_GAP * max(len(toks) - 1, 0)
         start = x + lw + 1.2 if d == 0 else x - lw - 1.2 - refs_w
         tx = start
-        for p, tok, tw in zip(pages, toks, widths):
+        for p, tok, tw in zip(pages, toks, widths, strict=True):
             node = self.text(
                 tok, tx, y, REF_FONT, "left", href=f"#{p}", key=("ref", *key, f"[{p}]")
             )
@@ -1798,8 +1895,17 @@ class Builder:
             box.add(x - w, y - 1.4, x, y + 1.4)
 
     def text(
-        self, body, x, y, size=FONT, justify="left", bold=False, href=None, key=None, color=None
-    ):
+        self,
+        body: str,
+        x: float,
+        y: float,
+        size: float = FONT,
+        justify: str = "left",
+        bold: bool = False,
+        href: str | None = None,
+        key: tuple[Any, ...] | None = None,
+        color: Sequence[int] | None = None,
+    ) -> list[Any]:
         """A text item; with ``href`` ("#n" for page n) it is a link in the PDF."""
         return [
             Sym("text"),
@@ -1810,7 +1916,7 @@ class Builder:
             [Sym("uuid"), self.uid("txt", self.cur_path, *(key or (body[:40], x, y)))],
         ]
 
-    def nav(self, x, y, page) -> list:
+    def nav(self, x: float, y: float, page: int) -> list[Any]:
         """A row of page links: the contents, then each page by number."""
         out = []
         size = 1.5
@@ -1832,7 +1938,9 @@ class Builder:
             x += len(tok) * REF_CHAR_W * size / REF_FONT + 1.2
         return out
 
-    def power(self, lib_id, net, x, y, d, items, box):
+    def power(
+        self, lib_id: str, net: str, x: float, y: float, d: int, items: list[Any], box: Box
+    ) -> None:
         """A ground symbol at (x, y) pointing in sheet direction d."""
         self.symbol(lib_id)
         a = {270: 0, 0: 90, 180: 270, 90: 180}[d]
@@ -1856,8 +1964,10 @@ class Builder:
             [Sym("property"), "Reference", ref, at(x, y, 0), effects(hide=True)],
             [Sym("property"), "Value", net, at(tx, ty, fa), effects(1.0, justify=just)],
         ]
-        for f in ("Footprint", "Datasheet", "Description"):
-            node.append([Sym("property"), f, "", at(x, y, 0), effects(hide=True)])
+        node.extend(
+            [Sym("property"), f, "", at(x, y, 0), effects(hide=True)]
+            for f in ("Footprint", "Datasheet", "Description")
+        )
         node.append([Sym("pin"), "1", [Sym("uuid"), self.uid("pwrpin", self.cur_path, net, x, y)]])
         node.append(
             [
@@ -1879,9 +1989,9 @@ class Builder:
             box.add(x - max(1.6, tw / 2), y, x + max(1.6, tw / 2), y + vy * 5.0)
 
     # --- blocks and sheets
-    def item(self, it) -> tuple[list, Box]:
+    def item(self, it: dict[str, Any]) -> tuple[list[Any], Box]:
         """Lay one row item out around the origin; return its nodes and box."""
-        items: list = []
+        items: list[Any] = []
         box = Box()
         if isinstance(it, str):
             ref, _, unit = it.partition(":")
@@ -1893,7 +2003,8 @@ class Builder:
                 cy, bottom = 0.0, -math.inf
                 for ref in col:
                     if ref != "-":  # a row each, or more where a tall part needs it
-                        pitems, pbox = [], Box()
+                        pitems: list[Any] = []
+                        pbox = Box()
                         self.place(ref, 1, 0, cy, pitems, pbox)
                         dy = (
                             0.0
@@ -1929,11 +2040,11 @@ class Builder:
             raise SystemExit(f"layout item not understood: {it}")
         return items, box
 
-    def child_sheet(self, sh: dict, page: int) -> list:
+    def child_sheet(self, sh: dict[str, Any], page: int) -> list[Any]:
         sheet_uuid = self.uid("sheet", sh["file"])
         self.cur_path = f"/{self.root_uuid}/{sheet_uuid}"
         self.cur_page = page
-        out: list = []
+        out: list[Any] = []
         W, H = PAPER[self.lay.get("paper", "A3")]
         margin = 12.7
         sky = Skyline(
@@ -1986,7 +2097,8 @@ class Builder:
             )
             if bx + bw > W - KEEPOUT_X and by + bh > H - KEEPOUT_Y and "at" not in blk:
                 print(
-                    f"warning: {sh['file']}: block {blk['title']!r} reaches into the title block's corner",
+                    f"warning: {sh['file']}: block {blk['title']!r} reaches into the title block's "
+                    "corner",
                     file=sys.stderr,
                 )
             if bx + bw > W - 5 or by + bh > H - 5:
@@ -2003,7 +2115,16 @@ class Builder:
         return self.sheet_header(sh["name"]) + out + [[Sym("embedded_fonts"), Sym("no")]]
 
     # --- the index pages: tables of text, every place in them a link
-    def rule(self, x0, y0, x1, y1, key, width=0.15, color=None):
+    def rule(
+        self,
+        x0: float,
+        y0: float,
+        x1: float,
+        y1: float,
+        key: tuple[Any, ...],
+        width: float = 0.15,
+        color: Sequence[int] | None = None,
+    ) -> list[Any]:
         """A graphic line (no connection)."""
         st = [Sym("stroke"), [Sym("width"), width], [Sym("type"), Sym("solid")]]
         if color:
@@ -2016,7 +2137,18 @@ class Builder:
             [Sym("uuid"), self.uid("rule", self.cur_path, *key)],
         ]
 
-    def link_text(self, body, x, y, to, items, key, size=FONT, bold=False, color=None):
+    def link_text(
+        self,
+        body: str,
+        x: float,
+        y: float,
+        to: dict[str, Any],
+        items: list[Any],
+        key: tuple[Any, ...],
+        size: float = FONT,
+        bold: bool = False,
+        color: Sequence[int] | None = None,
+    ) -> list[Any]:
         """A text that leads to a place (``to``: page, x, y); KiCad links it to
         the page, and the PDF step sends the link to the place."""
         node = self.text(
@@ -2034,7 +2166,7 @@ class Builder:
         return node
 
     @staticmethod
-    def cell_lines(cell, wrap_chars) -> list[list[tuple]]:
+    def cell_lines(cell: Any, wrap_chars: int | None) -> list[list[tuple[Any, ...]]]:
         """A table cell as lines, each a list of (text, place or None)."""
         if cell is None or cell == "":
             return []
@@ -2048,10 +2180,12 @@ class Builder:
         return [[(ln, None)] for ln in lines]
 
     @staticmethod
-    def line_w(line) -> float:
+    def line_w(line: list[tuple[str, Any]]) -> float:
         return sum(text_w(t) for t, _ in line) + 1.27 * max(len(line) - 1, 0)
 
-    def widths(self, head, rows, wraps) -> list[float]:
+    def widths(
+        self, head: Sequence[str], rows: Sequence[Sequence[Any]], wraps: Sequence[int | None]
+    ) -> list[float]:
         out = []
         for i, h in enumerate(head):
             w = text_w(h) * 1.1  # bold
@@ -2061,7 +2195,17 @@ class Builder:
             out.append(snap(w + TABLE_GAP + GRID / 2))
         return out
 
-    def table(self, x, y, head, rows, widths, wraps, key, items) -> tuple[float, list[float]]:
+    def table(
+        self,
+        x: float,
+        y: float,
+        head: Sequence[str],
+        rows: Sequence[Sequence[Any]],
+        widths: Sequence[float],
+        wraps: Sequence[int | None],
+        key: str,
+        items: list[Any],
+    ) -> tuple[float, list[float]]:
         """Draw a table from (x, y): its header, a rule, then the rows; return
         the y below it and the y of each row."""
         cx = x
@@ -2096,10 +2240,18 @@ class Builder:
                         tx += text_w(t) + 1.27
                 cx += widths[i]
             ys.append(y)
-            y += max(1, max(len(c) for c in cells)) * TABLE_PITCH
+            y += max(1, *(len(c) for c in cells)) * TABLE_PITCH
         return y, ys
 
-    def heading(self, body, x, y, items, key, sub=None):
+    def heading(
+        self,
+        body: str,
+        x: float,
+        y: float,
+        items: list[Any],
+        key: tuple[Any, ...],
+        sub: str | None = None,
+    ) -> float:
         items.append(self.text(body, x, y, 2.0, "left", bold=True, key=("head", key)))
         self.sections.setdefault(self.cur_page, []).append(
             {"title": body, "to": {"page": self.cur_page, "x": x, "y": y}}
@@ -2109,7 +2261,9 @@ class Builder:
             return y + 3.81 + TABLE_PITCH + 1.0
         return y + 4.445
 
-    def flow(self, tables, items, x0=15.24, y0=33.02):
+    def flow(
+        self, tables: list[dict[str, Any]], items: list[Any], x0: float = 15.24, y0: float = 33.02
+    ) -> None:
         """Set tables down in columns, top to bottom, a new column where the
         next would run past the page's foot (or into the title block's corner)."""
         W, H = PAPER[self.paper]
@@ -2137,7 +2291,7 @@ class Builder:
                 right, x + w + max(0.0, t.get("mark_w", 0.0) + 1.27 - 7.62)
             )  # a long run of markers
 
-    def adds_of(self, keys: list[tuple]) -> list[dict]:
+    def adds_of(self, keys: list[tuple[Any, ...]]) -> list[dict[str, Any]]:
         """The Kleidos additions and corrections that name any of these
         elements, each once, in id order."""
         found = {self.add_at[k]["id"]: self.add_at[k] for k in keys if k in self.add_at}
@@ -2145,11 +2299,11 @@ class Builder:
 
     def mark_run(
         self,
-        entries: list[dict],
+        entries: list[dict[str, Any]],
         x: float,
         y: float,
-        items: list,
-        key: tuple,
+        items: list[Any],
+        key: tuple[Any, ...],
         right_to_left: bool = False,
     ) -> float:
         """The markers of ``entries`` side by side from x (or ending at x), in
@@ -2163,7 +2317,13 @@ class Builder:
             x += self.marker(e, x, y, items, Box(), key=key) + MARK_GAP
         return x - MARK_GAP - x0 if entries else 0.0
 
-    def row_marks(self, t: dict, keys: list[list[tuple]], items: list, name: str | None = None):
+    def row_marks(
+        self,
+        t: dict[str, Any],
+        keys: list[list[tuple[Any, ...]]],
+        items: list[Any],
+        name: str | None = None,
+    ) -> None:
         """Mark the rows of index table ``t`` that a Kleidos addition or
         correction names (``keys``: the elements each row shows,
         ``index_keys()``), after the row; ``name`` tells apart the tables of
@@ -2176,14 +2336,14 @@ class Builder:
             sum(len(e["id"]) * MARK_CHAR_W * MARK_FONT + MARK_GAP for e in es) for _, es in hits
         )
 
-        def on_rows(x, ys):
+        def on_rows(x: float, ys: list[float]) -> None:
             xe = x + sum(t["widths"]) - TABLE_GAP + 1.27
             for k, es in hits:
                 self.mark_run(es, xe, ys[k], items, key=("row", name, k))
 
         t["on_rows"] = on_rows
 
-    def gpio_what(self, gt: dict, gpio: str, v: dict) -> str:
+    def gpio_what(self, gt: dict[str, Any], gpio: str, v: dict[str, Any]) -> str:
         """A GPIO row's "What it does": the map's own text; where it has none
         and the pin is on no net, what the Kleidos entries on the row or on the
         pin say. Nothing more: the Net cell already says "not connected", so
@@ -2194,10 +2354,18 @@ class Builder:
         entries = self.adds_of(index_keys(self.net, "gpio", str(gpio), v["pin"], gt["title"]))
         return " ".join(str(e["what"]).strip() for e in entries)
 
-    def mk_table(self, title, head, rows, wraps=None, sub=None, on_rows=None):
+    def mk_table(
+        self,
+        title: str,
+        head: list[str],
+        rows: list[list[Any]],
+        wraps: list[int | None] | None = None,
+        sub: str | None = None,
+        on_rows: Callable[[float, list[float]], None] | None = None,
+    ) -> dict[str, Any]:
         wraps = wraps or [None] * len(head)
         lines = sum(
-            max(1, max(len(self.cell_lines(c, wraps[i])) for i, c in enumerate(r))) for r in rows
+            max(1, *(len(self.cell_lines(c, wraps[i])) for i, c in enumerate(r))) for r in rows
         )
         return {
             "title": title,
@@ -2210,7 +2378,7 @@ class Builder:
             "lines": lines,
         }
 
-    def places(self, net, every=False) -> list[tuple]:
+    def places(self, net: str, every: bool = False) -> list[tuple[Any, ...]]:
         """Where a net is drawn, as (page/zone, place): one per page (the
         label a page link lands on), or one per zone of each page."""
         out = []
@@ -2235,21 +2403,21 @@ class Builder:
     def kind(self, ref: str) -> str:
         spec = self.part(ref)
         if spec.get("short"):
-            return spec["short"]
+            return str(spec["short"])
         lib, name = spec["symbol"].split(":", 1)
         if lib == self.board:
             own = self.lay["symbols"][name]
-            return own.get("short") or own.get("description", "")
+            return str(own.get("short") or own.get("description", ""))
         for pat, k in STD_KINDS:
             if re.fullmatch(pat, spec["symbol"]):
                 return k
         return ""
 
-    def index_sheet(self, sh: dict, page: int) -> list:
+    def index_sheet(self, sh: dict[str, Any], page: int) -> list[Any]:
         self.cur_path = f"/{self.root_uuid}/{self.uid('sheet', sh['file'])}"
         self.cur_page = page
         W, H = PAPER[self.paper]
-        out: list = []
+        out: list[Any] = []
         out.append(self.text(sh["name"], 15.24, 20.32, 3.0, "left", bold=True, key=("title",)))
         if sh.get("intro"):
             out.append(self.text(sh["intro"].strip(), 15.24, 25.4, FONT, "left", key=("intro",)))
@@ -2257,7 +2425,7 @@ class Builder:
         out += self.nav(W - NAV_X, H - NAV_Y, page)
         return self.sheet_header(sh["name"]) + out + [[Sym("embedded_fonts"), Sym("no")]]
 
-    def index_parts(self, sh, items):
+    def index_parts(self, sh: dict[str, Any], items: list[Any]) -> None:
         rows, keys = [], []
         for ref in sorted(self.comps, key=natural):
             comp = self.comps[ref]
@@ -2285,7 +2453,8 @@ class Builder:
         n = len(sh.get("columns", [])) or 3
         # split into n columns of about as many lines each
         lines = [max(1, len(self.cell_lines(r[1], 22))) for r in rows]
-        total, groups, acc, start = sum(lines), [], 0, 0
+        groups: list[Any] = []
+        total, acc, start = sum(lines), 0, 0
         for i, ln in enumerate(lines):
             acc += ln
             if acc >= total * (len(groups) + 1) / n and len(groups) < n - 1:
@@ -2296,7 +2465,7 @@ class Builder:
         x = 15.24
         for gi, (a, b) in enumerate(groups):
 
-            def keep(xg, ys, a=a):
+            def keep(xg: float, ys: list[float], a: Any = a) -> None:
                 for k, yy in enumerate(ys):
                     self.part_rows[keys[a + k]] = {
                         "page": self.cur_page,
@@ -2320,7 +2489,7 @@ class Builder:
             for a, b in groups
         )
 
-    def index_nets(self, sh, items):
+    def index_nets(self, sh: dict[str, Any], items: list[Any]) -> None:
         rails = self.net.get("rails") or {}
         nominal = {n: str(r.get("nominal", "")) for n, r in rails.items()}
         multi = [
@@ -2449,7 +2618,7 @@ class Builder:
             )
         self.flow(tables, items)
 
-    def gpio_tables(self, sh) -> list[dict]:
+    def gpio_tables(self, sh: dict[str, Any]) -> list[dict[str, Any]]:
         """The GPIO maps of the nets page (``gpio_maps()``)."""
         return gpio_maps(self.net, sh)
 
@@ -2457,7 +2626,7 @@ class Builder:
         """A test point or pad: a part named TP, or drawn with KiCad's test point symbol."""
         return ref.startswith("TP") or self.part(ref)["symbol"] == "kleidos:TestPoint"
 
-    def index_power(self, sh, items):
+    def index_power(self, sh: dict[str, Any], items: list[Any]) -> None:
         tree = self.lay.get("power_tree") or {}
         y_end = self.power_tree(tree, items, 15.24, 38.1) if tree else 33.02
         rails = self.net.get("rails") or {}
@@ -2484,7 +2653,7 @@ class Builder:
         self.row_marks(t, keys, items)
         self.flow([t], items, y0=y_end + 7.62)
 
-    def power_tree(self, tree, items, x0, y0) -> float:
+    def power_tree(self, tree: dict[str, Any], items: list[Any], x0: float, y0: float) -> float:
         """Boxes for the sources, the parts that pass power on and the rails,
         left to right in the order power flows, each a link to where it is drawn."""
         px, py = tree.get("pitch", [27.94, 17.78])
@@ -2517,11 +2686,11 @@ class Builder:
                 en = self.enable_of(name)
                 if en:
                     lines.append((en, 1.0))
-                colour = (224, 224, 224)
+                color = (224, 224, 224)
                 to = self.field_spot(name)
             elif name in self.net_pages:
                 lines = [(name, FONT), (str(rails.get(name, {}).get("nominal", "")), 1.0)]
-                colour = (127, 230, 255)
+                color = (127, 230, 255)
                 to = self.net_spot(name, self.rail_page(name))
             else:
                 raise SystemExit(f"power_tree: {nid} is neither a part nor a net")
@@ -2536,7 +2705,7 @@ class Builder:
                         Sym("stroke"),
                         [Sym("width"), 0.2],
                         [Sym("type"), Sym("solid")],
-                        [Sym("color"), *colour, 1],
+                        [Sym("color"), *color, 1],
                     ],
                     [Sym("fill"), [Sym("type"), Sym("none")]],
                     [Sym("uuid"), self.uid("tbox", nid)],
@@ -2564,7 +2733,7 @@ class Builder:
             )
             boxes[nid] = (cx, cy, cx + bw)
             bottom = max(bottom, y_top + h)
-        grey = RULE_COLOUR
+        grey = RULE_COLOR
         for a, b in tree["edges"]:
             self.check_edge(a, b)
             ax0, ay, ax1 = boxes[a]
@@ -2643,10 +2812,13 @@ class Builder:
                     return f"{sp[1]} {net}"
         return ""
 
-    def check_edge(self, a: str, b: str):
+    def check_edge(self, a: str, b: str) -> None:
         """A power-tree arrow stands for a connection netlist.yaml has."""
         a0, b0 = a.split("@")[0], b.split("@")[0]
-        nets = lambda r: set(map(str, self.comps[r]["pins"].values())) - {"NC"}  # noqa: E731
+
+        def nets(r: str) -> set[str]:
+            return set(map(str, self.comps[r]["pins"].values())) - {"NC"}
+
         if a0 in self.comps and b0 in self.comps:
             ok = bool((nets(a0) & nets(b0)) - set(self.grounds))
         elif a0 in self.comps:
@@ -2658,7 +2830,7 @@ class Builder:
         if not ok:
             raise SystemExit(f"power_tree: {a} -> {b} is not a connection netlist.yaml has")
 
-    def pwr_flag(self, net, x, y):
+    def pwr_flag(self, net: str, x: float, y: float) -> list[Any]:
         self.symbol("kleidos:PWR_FLAG")
         self.pwr_n += 1
         ref = f"#FLG{self.pwr_n:03d}"
@@ -2692,7 +2864,7 @@ class Builder:
         self.power(self.grounds[net], net, x, y, 270, nodes, Box())
         return nodes
 
-    def sheet_header(self, title: str, root: bool = False) -> list:
+    def sheet_header(self, title: str, root: bool = False) -> list[Any]:
         tb = self.lay["title_block"]
         last = (self.lay.get("revisions") or [tb])[-1]  # the title block shows the latest revision
         comments = list(tb.get("comments", [])) + ([ADD_BLOCK_LINE] if self.adds else [])
@@ -2714,7 +2886,7 @@ class Builder:
             [Sym("lib_symbols")],
         ]
 
-    def root_sheet(self) -> list:
+    def root_sheet(self) -> list[Any]:
         """The contents: a heading, one box per sheet (linked to its page) and a legend."""
         self.cur_path = f"/{self.root_uuid}"
         self.cur_page = 1
@@ -2824,7 +2996,7 @@ class Builder:
             [Sym("embedded_fonts"), Sym("no")],
         ]
 
-    def revision_history(self, x: float, y: float, doc: list):
+    def revision_history(self, x: float, y: float, doc: list[Any]) -> None:
         """The revision history from (x, y), its changes kept left of the title
         block where it reaches down beside it."""
         revs = self.lay.get("revisions") or []
@@ -2837,8 +3009,9 @@ class Builder:
             rows = [[str(r["rev"]), str(r["date"]), str(r["change"])] for r in revs]
             head, (W, H) = ["Rev", "Date", "Change"], PAPER[self.paper]
 
-            def laid(chars):
-                """The table with its changes wrapped at ``chars``: the wraps, the widths, the y below it."""
+            def laid(chars: int) -> tuple[list[int | None], list[float], float]:
+                """The table with its changes wrapped at ``chars``: the wraps, the widths, the y
+                below it."""
                 wraps = [None, None, chars]
                 lines = sum(len(wrap(r[2], chars)) for r in rows)
                 return (
@@ -2860,7 +3033,7 @@ class Builder:
                 )
             self.table(x, y + 6.35, head, rows, widths, wraps, "revs", doc)
 
-    def element_spot(self, eid: str) -> dict:
+    def element_spot(self, eid: str) -> dict[str, Any]:
         """Where an addition or correction is drawn: its first marker, in page
         and reading order."""
         found = [m for m in self.markers if m["id"] == eid]
@@ -2873,7 +3046,7 @@ class Builder:
         )
         return self.spot(first["page"], first["node"][3])
 
-    def additions_table(self, x: float, y: float, doc: list) -> float:
+    def additions_table(self, x: float, y: float, doc: list[Any]) -> float:
         """The contents page's table of the Kleidos additions and corrections:
         each id leads to its element, and each marker of it back to its row;
         return the y below it. The rows page 1 has no room for (above the
@@ -2904,29 +3077,32 @@ class Builder:
             top, keep = y + 6.35 + TABLE_PITCH + 0.8, 0
             for r in rows:
                 top += (
-                    max(1, max(len(self.cell_lines(c, ADD_WRAPS[i])) for i, c in enumerate(r)))
+                    max(1, *(len(self.cell_lines(c, ADD_WRAPS[i])) for i, c in enumerate(r)))
                     * TABLE_PITCH
                 )
                 if top > floor:
                     break
                 keep += 1
-        self.adds_rest = list(zip(self.adds[keep:], rows[keep:]))
-        y_end = self.add_rows(x, y + 6.35, list(zip(self.adds[:keep], rows[:keep])), doc)
+        self.adds_rest = list(zip(self.adds[keep:], rows[keep:], strict=True))
+        y_end = self.add_rows(
+            x, y + 6.35, list(zip(self.adds[:keep], rows[:keep], strict=True)), doc
+        )
         if y_end > floor:
             print(
-                f"warning: contents page: the {ADD_TITLE} table reaches into the title block's corner",
+                f"warning: contents page: the {ADD_TITLE} table reaches into the title block's "
+                "corner",
                 file=sys.stderr,
             )
         return y_end + 6.35
 
-    def add_rows(self, x: float, y: float, rows: list, doc: list) -> float:
+    def add_rows(self, x: float, y: float, rows: list[Any], doc: list[Any]) -> float:
         """Rows of the additions table on the current page, from (x, y), each
-        id drawn as its markers are (bold, in the marker colour) and leading to
+        id drawn as its markers are (bold, in the marker color) and leading to
         its element; every marker of it leads back here. Return the y below."""
         y_end, ys = self.table(
             x, y, ADD_HEAD, [[""] + r[1:] for _, r in rows], self.add_widths, ADD_WRAPS, "adds", doc
         )
-        for (e, r), ry in zip(rows, ys):
+        for (e, r), ry in zip(rows, ys, strict=True):
             self.link_text(
                 e["id"],
                 x,
@@ -2936,7 +3112,7 @@ class Builder:
                 key=("adds", e["id"]),
                 size=MARK_FONT * FONT,
                 bold=True,
-                color=MARK_COLOUR,
+                color=MARK_COLOR,
             )
             row = {"page": self.cur_page, "x": x, "y": round(ry, 4)}
             self.marks[f"add-{e['id']}"] = self.element_spot(e["id"])
@@ -2956,7 +3132,7 @@ class Builder:
                 )
         return y_end
 
-    def index_additions(self, sh, items):
+    def index_additions(self, sh: dict[str, Any], items: list[Any]) -> None:
         """The contents' continuation: the rest of the additions table, if
         page 1 had no room for all of it, then the revision history."""
         x, y = 15.24, 33.02
@@ -2972,7 +3148,8 @@ class Builder:
                 and x + sum(self.add_widths) > PAPER[self.paper][0] - 125.0
             ):
                 print(
-                    f"warning: page {self.cur_page}: the {ADD_TITLE} table reaches into the title block's corner",
+                    f"warning: page {self.cur_page}: the {ADD_TITLE} table reaches into the title "
+                    "block's corner",
                     file=sys.stderr,
                 )
         self.revision_history(x, y, items)
@@ -2982,19 +3159,22 @@ class Skyline:
     """Bottom-left packing: each block goes where it sits highest, then leftmost."""
 
     def __init__(
-        self, x0: float, x1: float, y0: float, floor: float = math.inf, keepout: tuple | None = None
-    ):
+        self,
+        x0: float,
+        x1: float,
+        y0: float,
+        floor: float = math.inf,
+        keepout: tuple[Any, ...] | None = None,
+    ) -> None:
         self.x0, self.x1 = x0, x1
         self.floor = floor  # no block reaches below this
         self.keepout = keepout  # (x from, y from): the title block's corner
         self.segs = [(x0, x1, y0)]  # (start, end, top free y)
 
-    def fits(self, x, y, w, h) -> bool:
+    def fits(self, x: float, y: float, w: float, h: float) -> bool:
         if y + h > self.floor + 0.01:
             return False
-        if self.keepout and x + w > self.keepout[0] and y + h > self.keepout[1] + 0.01:
-            return False
-        return True
+        return not (self.keepout and x + w > self.keepout[0] and y + h > self.keepout[1] + 0.01)
 
     def put(self, w: float, h: float) -> tuple[float, float]:
         best = None
@@ -3033,7 +3213,7 @@ def wrap(text: str, cols: int) -> list[str]:
     return lines
 
 
-def item_refs(it):
+def item_refs(it: dict[str, Any]) -> list[str]:
     if isinstance(it, str):
         return [it]
     if "col" in it:
@@ -3043,13 +3223,13 @@ def item_refs(it):
     return []
 
 
-def shift(nodes: list, dx: float, dy: float):
+def shift(nodes: list[Any], dx: float, dy: float) -> None:
     """Move every sheet coordinate of the given items."""
     for n in nodes:
         _shift(n, dx, dy)
 
 
-def _shift(n, dx, dy):
+def _shift(n: Any, dx: float, dy: float) -> None:
     if not isinstance(n, list) or not n:
         return
     if n[0] in ("at", "xy", "start", "end") and len(n) >= 3 and not isinstance(n[1], list):
@@ -3135,11 +3315,13 @@ def main(argv: list[str]) -> int:
         "(sym_lib_table\n\t(version 7)\n"
         f'\t(lib (name "{args.board}") (type "KiCad") (uri "${{KIPRJMOD}}/{args.board}.kicad_sym") '
         f'(options "") (descr "Kleidos boards: {args.board} symbols"))\n'
-        f'\t(lib (name "{GENERIC_LIB}") (type "KiCad") (uri "${{KIPRJMOD}}/{GENERIC_LIB}.kicad_sym") '
+        f'\t(lib (name "{GENERIC_LIB}") (type "KiCad") (uri '
+        f'"${{KIPRJMOD}}/{GENERIC_LIB}.kicad_sym") '
         f'(options "") (descr "Kleidos boards: the generic symbols"))\n)\n',
         encoding="utf-8",
     )
-    # a board may switch off more ERC checks, each named in layout.yaml's erc_ignore (its README says why)
+    # a board may switch off more ERC checks, each named in layout.yaml's erc_ignore (its README
+    # says why)
     extra = "".join(f',\n      "{rule}": "ignore"' for rule in b.lay.get("erc_ignore") or [])
     (b.dir / f"{args.board}.kicad_pro").write_text(
         PRO_TEMPLATE.replace("@BOARD@", args.board)

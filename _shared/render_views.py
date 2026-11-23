@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Orthographic silhouettes of a mesh, as shapely geometry.
 
@@ -8,10 +9,13 @@ views are named as a person looking at the board sees them.
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import shapely
 import trimesh
 from shapely.geometry import Polygon
+from shapely.geometry.base import BaseGeometry
 from shapely.ops import unary_union
 
 #: Views of a mesh in a CAD frame (mm, +Z up): view -> (plot_x_dim,
@@ -38,7 +42,9 @@ MODEL_VIEW_AXES = {
 }
 
 
-def silhouette_polygon(mesh: trimesh.Trimesh, view: str, axes: dict | None = None):
+def silhouette_polygon(
+    mesh: trimesh.Trimesh, view: str, axes: dict[str, Any] | None = None
+) -> BaseGeometry | None:
     """Return a shapely (Multi)Polygon = union of all triangle projections.
 
     *axes* maps a view name to (plot_x_dim, plot_x_sign, plot_y_dim,
@@ -59,7 +65,7 @@ def silhouette_polygon(mesh: trimesh.Trimesh, view: str, axes: dict | None = Non
                 p = p.buffer(0)
                 if not p.is_empty and p.area > 0:
                     polys.append(p)
-        except Exception:
+        except (ValueError, shapely.errors.ShapelyError):  # a degenerate face draws nothing
             continue
     if not polys:
         return None

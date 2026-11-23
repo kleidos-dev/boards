@@ -1,9 +1,11 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Build ``sticks3.glb``: the M5StickS3 case for the landing film, with a ``screen`` mesh
 
 The landing film lays real captures on the glass of one modeled StickS3. This
 writes that model, as a glTF 2.0 binary: the realistic master the film's web
-model is cut from (the Kleidos repository's ``site/tools/build-web-model.mjs``, which reads it with no
+model is cut from (the Kleidos repository's ``site/tools/build-web-model.mjs``, which reads it with
+no
 decoder). The master itself is not published. The model is described by
 ``model/spec.json`` beside this file and written by the fleet's one builder,
 ``../_shared/build_board_glb.py``; this script keeps the command line the
@@ -76,7 +78,7 @@ import build_board_glb  # noqa: E402  (the path above makes it importable)
 SPEC = HERE / "model" / "spec.json"
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Build the model from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("stl", type=Path, help="M5Stack's StickS3.stl at 48baa75a")

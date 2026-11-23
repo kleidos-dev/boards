@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # RTC_INT: where the BM8563's interrupt goes (probe P2)
 
 Bench probe of 2026-11-17 on the M5StickC Plus 1.1 (K016-P), USB connected (AXP192 `vbus_present=1`), the case closed. It settles triage items B5 and B6 (`../improvements.md`). The print draws U4 pin 3 (BM8563 INT) on RTC_INT: C401 (10 µF) to PWR_KEY (AXP192 pin 23, the power key S1), and R401 (10 kΩ) up to IPSOUT; it never reaches GPIO35.
@@ -44,6 +49,6 @@ No run logged `Board still on` or `PMIC still on: ESP deep sleep fallback`, and 
 ## Result
 
 - RTC_INT does not reach GPIO35 (part 1).
-- RTC_INT presses the AXP192's power key through C401, as the print draws it (part 1), and an RTC countdown powers the board back on from an AXP192 power-off with USB connected (part 2). The board can wake itself on an RTC alarm. Power-on on battery alone was not run: the power-on came from PWR_KEY, which the AXP192 honours on either supply, but that case is not measured here.
+- RTC_INT presses the AXP192's power key through C401, as the print draws it (part 1), and an RTC countdown powers the board back on from an AXP192 power-off with USB connected (part 2). The board can wake itself on an RTC alarm. Power-on on battery alone was not run: the power-on came from PWR_KEY, which the AXP192 honors on either supply, but that case is not measured here.
 
 The board was left on its normal `m5stickc_plus1_debug` image (see `2026-11-17-buzzer-gpio2-load.md` for the reflash).

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5Stack CoreInk (K048): schematic
 
 Kleidos boards: the CoreInk's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net, with the values the vendor documents, laid out with this project's own layout and symbols. It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the filter and decoupling parts on each interface, every rail and what feeds it, and the ESP32-PICO-D4 GPIO of every signal.
@@ -26,7 +31,7 @@ Pages 6 to 8 are written by the generator from `netlist.yaml`, not drawn by hand
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. An amber `K1`... beside a pin, a label or a table row marks a Kleidos addition or correction and leads to its row on page 1; an added connection is drawn dotted (none of the CoreInk's 28 entries adds a wire). Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. An amber `K1`... beside a pin, a label or a table row marks a Kleidos addition or correction and leads to its row on page 1; an added connection is drawn dotted (none of the CoreInk's 28 entries adds a wire). Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label.
 
 No part on the vendor's print is marked not fitted, so no part carries KiCad's DNP mark.
 
@@ -107,7 +112,7 @@ Firmware citations are the Kleidos firmware repository (2026-11-17), code that r
 .venv/bin/python -m pytest tests/test_schematic.py
 ```
 
-The export fails unless the ERC reports nothing (0 errors, 0 warnings), `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names with no pin missing and no net split or joined, every SVG has the theme's background and one width for every line in the wire colour, and `check_schematic_links.py` finds every link of the PDF leading where it should and no script in the document. [The StickS3's schematic README](../../sticks3/schematic/README.md) describes each check in more detail.
+The export fails unless the ERC reports nothing (0 errors, 0 warnings), `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names with no pin missing and no net split or joined, every SVG has the theme's background and one width for every line in the wire color, and `check_schematic_links.py` finds every link of the PDF leading where it should and no script in the document. [The StickS3's schematic README](../../sticks3/schematic/README.md) describes each check in more detail.
 
 ## Open questions
 
@@ -117,7 +122,7 @@ What is still uncertain stays off the drawing. Each item names what would settle
 - **MCU_VDD's value (T25).** 0.6 V x (1 + 22K / 5.1K) = 3.19 V if the SY8089's feedback reference is 0.6 V; the SY8089 datasheet was not read, and P02 (M5-Bus pin 6 to pin 1) did not run. The drawing keeps the print's block title, 3.3 V.
 - **EXT_5VO on the bench (T26).** K26 is computed from the SY7088 datasheet; P03 (M5-Bus pin 4 on battery, about 4.6-4.8 V after D11) did not run.
 - **The charger (T03).** The print writes "TP40P57", the vendor's block diagram "TP4057". Once the TP4057 datasheet's SOT-23-6 pinout is read against the print's pin names it becomes a correction, with the charge current R45 sets; the drawing keeps the print's name until then.
-- **The user LED's own parts (T04).** The LED's colour and polarity are settled and drawn (K29, on the GPIO10 row). The LED and its resistor sit beyond J1, on the HAT board, off the print: which parts they are, and which rail feeds the LED, is not shown anywhere and stays out.
+- **The user LED's own parts (T04).** The LED's color and polarity are settled and drawn (K29, on the GPIO10 row). The LED and its resistor sit beyond J1, on the HAT board, off the print: which parts they are, and which rail feeds the LED, is not shown anywhere and stays out.
 - **The user key beyond J1 (T05).** The firmware reads it active low on the ESP32's internal pull-up (`src/boards/board_m5core_ink.cpp` (`s_btnLock`)), and on 2026-11-17 the pad read high with the key released and the internal pull-up on (P05, [`bench/2026-11-17-led-and-user-key.md`](bench/2026-11-17-led-and-user-key.md)); no record shows it read low with the key held, so "active low" is not drawn. The pressed half of P05 (someone holding the top key while `GPIO? 5` runs) would make it an addition. Whether the HAT board fits a pull of its own cannot show while the internal pull-up is on.
 - **The USB to UART bridge (T06).** The docs say later units carry a CH9102; the bench unit enumerates as WCH `1a86:55d4`, a CH9102 ([`bench/2026-11-17-usb-descriptor.md`](bench/2026-11-17-usb-descriptor.md)). No circuit for the CH9102 version is published, so the drawing keeps the print's CP2104.
 - **U2 pin 10 (T24).** The CP2104's pin 10 is not on the vendor's symbol; the CP2104 datasheet (not read in this pass) would make it an addition.

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5StickS3 (K150): schematic
 
 Kleidos boards: the M5StickS3's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net of the vendor's published schematic, with the values the vendor documents, laid out with this project's own layout and symbols, plus eleven details the print leaves out or gets wrong, each settled by a datasheet, the vendor's own manual or a bench probe and marked where it is drawn (below, "Kleidos additions and corrections"). It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the filter and decoupling parts on each interface, every rail and what feeds it, and the ESP32-S3 GPIO of every signal.
@@ -26,7 +31,7 @@ Pages 7 to 9 are written by the generator from `netlist.yaml`, not drawn by hand
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. An amber `K3` beside a label, a reference, a crossed pin or a table row marks a Kleidos addition or correction; it leads to its row on page 1, and the row back to it. Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. An amber `K3` beside a label, a reference, a crossed pin or a table row marks a Kleidos addition or correction; it leads to its row on page 1, and the row back to it. Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label.
 
 Parts documented as not fitted (value `NC`, `NC(TBD)`) carry KiCad's DNP mark: a red cross over the symbol.
 
@@ -38,9 +43,9 @@ KiCad can give each part a property pop-up, but it is a script that only Acrobat
 
 - a link leads to a page and a position: `/XYZ`, the target placed 30 mm from the window's left edge and 20 mm below its top, at zoom 2 (the 1.27 mm text then reads at about 7 pt). KiCad links a text only to a whole page, so `_shared/schematic_pdf.py` sends each link to its place after the export, from the targets the generator writes into `links.json`;
 - each link carries a `/Contents` saying where it leads, for screen readers (most readers show no tooltip);
-- named destinations open the PDF at a part or at a net's label on a page, from a web page or another document: `sticks3.pdf#nameddest=part-U16`, `sticks3.pdf#nameddest=net-VBUS_L0-p3` (Acrobat, Firefox and Chrome honour the `#nameddest=` address).
+- named destinations open the PDF at a part or at a net's label on a page, from a web page or another document: `sticks3.pdf#nameddest=part-U16`, `sticks3.pdf#nameddest=net-VBUS_L0-p3` (Acrobat, Firefox and Chrome honor the `#nameddest=` address).
 
-Acrobat, pdf.js and PDFium honour the position and zoom of an `/XYZ` destination by their documentation and source code. Preview, iOS, Okular, Evince and Android's viewer have not been tried by hand; a reader that ignores the position still opens the right page, and the printed page/zone says where to look.
+Acrobat, pdf.js and PDFium honor the position and zoom of an `/XYZ` destination by their documentation and source code. Preview, iOS, Okular, Evince and Android's viewer have not been tried by hand; a reader that ignores the position still opens the right page, and the printed page/zone says where to look.
 
 Numbering, where it differs from the vendor's documents:
 
@@ -62,7 +67,7 @@ listed on <https://docs.m5stack.com/en/core/StickS3>. The vendor's host did not 
 | 3 | 04_MUC_Core and Function | pages 4, 5 |
 | 4 | StickS3_PRJ_FPC_V1.0_20251125 (daughterboard) | page 6 |
 
-The connections were read off the printed pages and then taken, pin by pin, from the netlist Altium writes into the same PDF's bookmarks (Nets → Pins, per sheet); the two agree everywhere. The values come from the printed pages; U104's rating, 8 ohm at 1 W, is printed on vendor page 1 (`SPK 扬声器8Ω @ 1W`). The vendor's documentation page (read at Switch Science's mirror, `docs.m5stack.switch-science.com/en/core/StickS3`, on 2026-11-16 and 2026-11-17) gives the I2C addresses, the HAT2 header's pinout and the Grove wire colours that the schematic agrees with, J3's part (an HY2.0-4P interface; the print says only `CON4`, which is J3's value here) and LED1's colour (green: "hold the power button until the green LED blinks"; the print gives none).
+The connections were read off the printed pages and then taken, pin by pin, from the netlist Altium writes into the same PDF's bookmarks (Nets → Pins, per sheet); the two agree everywhere. The values come from the printed pages; U104's rating, 8 ohm at 1 W, is printed on vendor page 1 (`SPK 扬声器8Ω @ 1W`). The vendor's documentation page (read at Switch Science's mirror, `docs.m5stack.switch-science.com/en/core/StickS3`, on 2026-11-16 and 2026-11-17) gives the I2C addresses, the HAT2 header's pinout and the Grove wire colors that the schematic agrees with, J3's part (an HY2.0-4P interface; the print says only `CON4`, which is J3's value here) and LED1's color (green: "hold the power button until the green LED blinks"; the print gives none).
 
 The print does not print the I2C addresses; K9 to K11 take them from the chips' own documents (the M5PM1 manual, the BMI270 and ES8311 datasheets), each against the pins the print ties (the BMI270's SDO and the ES8311's CE), and a bench scan of 2026-11-17 found exactly those three on the bus (`bench/2026-11-17-i2c-scan-l3b.md`).
 
@@ -120,13 +125,13 @@ The generator reads no KiCad library and writes the same files byte for byte fro
 
 - the ERC reports nothing: 0 errors, 0 warnings. Two checks are switched off in `sticks3.kicad_pro` because the drawing does not depend on them: whether a library is configured for each symbol, and whether a library's symbol differs from the copy the files embed. The drawing carries its own copy of every symbol;
 - `check_schematic.py` finds every vendor pin on the net `netlist.yaml` names, no pin missing, no net split or joined, and nothing drawn that the netlist lacks;
-- every SVG has the theme's background (kicad-cli falls back to its default theme without a word when it cannot find the one it is given) and every line in the wire colour, wires and pin lines alike, has the one width the project sets (6 mil: kicad-cli draws pins at its fixed symbol line width, whatever the project says, so the wires take that width too);
+- every SVG has the theme's background (kicad-cli falls back to its default theme without a word when it cannot find the one it is given) and every line in the wire color, wires and pin lines alike, has the one width the project sets (6 mil: kicad-cli draws pins at its fixed symbol line width, whatever the project says, so the wires take that width too);
 - `check_schematic_links.py` finds every link of the PDF leading where it should: the contents boxes and the page row to their page; every `[page/zone]` within 5 mm of a label of its net on that page, in the zone it prints; every place in the index pages on the part or net its row names; every part's reference to its row in the parts list and the row back to it; every bookmark and named destination on its part or label. Nothing else is clickable, every link says where it leads, and the document holds no script.
 
 ## Left out, and why
 
 - Part numbers no vendor document gives: the HAT2 socket J2, the battery connector J4, inductor L2 (only "2.2uH"), the keys S1-S3, the daughterboard's MOSFET Q101, photodiode U102 and speaker U104. J3's part, HY2.0-4P, comes from the docs page and stays in its note and above: no element of the generator can mark a part's value without drawing its printed wires as added.
-- LED1's colour: the print gives none, the vendor's docs page says green, and the owner saw it green on his unit (2026-11-17; the LED sits inside the case); it stays in LED1's note, not on the drawing, for the same reason as J3's part.
+- LED1's color: the print gives none, the vendor's docs page says green, and the owner saw it green on his unit (2026-11-17; the LED sits inside the case); it stays in LED1's note, not on the drawing, for the same reason as J3's part.
 - The panel on J6 (an ST7789P3, 1.14 inch, 135 × 240 by the docs page): J6 is the connector, and the panel is not on the print.
 - Internal pull-ups with no part: the M5PM1 enables one on PWR_BTN (pin 7) beside R17 (manual V1.9, Table 1 p. 2 and Table 2 p. 3); U101's output has one to VS (VSOP383.. datasheet, p. 1). No element of the generator draws a pull that has no resistor without dotting a printed wire.
 - The ESP32-S3 module's internals (flash, PSRAM, crystal) are inside U20; its SPI flash pins are left unconnected, and GPIO26 and GPIO33-37 are marked as the PSRAM's (K2-K7).
@@ -138,7 +143,7 @@ The generator reads no KiCad library and writes the same files byte for byte fro
 What is still uncertain stays out of the drawing ([`improvements.md`](improvements.md) gives the evidence of each item by its id):
 
 - **Which daughterboard a unit carries (A10).** B4 read GPIO42 low at idle with GROVE_5V at 5.1 V, which a fitted IR receiver (D6) and the Lite board both give; a TV remote at the IR window, or a meter on HAT2 pin 17, would settle it. The drawing shows the board the vendor prints.
-- **LED1's colour on the drawing (A5).** The M5PM1 switches it (B2) and it is green, inside the case (the owner's unit, 2026-11-17, in `board.json`); the colour is still not marked on the drawing, since no element carries a part's value without dotting its printed wires.
+- **LED1's color on the drawing (A5).** The M5PM1 switches it (B2) and it is green, inside the case (the owner's unit, 2026-11-17, in `board.json`); the color is still not marked on the drawing, since no element carries a part's value without dotting its printed wires.
 - **3V3_L2's voltage (D9).** No JW5712 datasheet was found to confirm that VSEL1-3 tied high select 3.3 V (the net name says 3V3), and the firmware has no ADC path to the rail; B5 (a multimeter on the HAT2 3V3 pin) did not run. Through the M5PM1's own ADC and the printed dividers, GROVE_5V read 5.10 V with EXT5V on, 5VIN_L0 about 5.2 V on USB and the cell 4.0 to 4.19 V (`bench/2026-11-17-pmic-rails-and-led.md`); BOOST_OUT's printed 5.0 V and the 1.6 V idle level at GPIO42 are not measured.
 - **The charger (D8).** No LGS4056 datasheet was found: CHRG's output type, TEMP on GND, and the charge current R12 4.7K sets against the printed 190 mA rest on the print. B3 also saw the charger stop more than once at about 4.03 to 4.05 V, below full; the cause is not known (`bench/2026-11-17-charge-status-pyg0.md`).
 - **U16 pin 1 (D5).** The print names it BAT_ADC_EN_OD (open drain); the M5PM1 manual V1.9 calls it a push-pull output (Table 1, p. 2). Two vendor documents disagree on a pad the firmware sets; the drawing keeps the print's name.

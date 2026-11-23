@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # Checks of this repository
 
 Run from the repository root, in its own virtual environment (Python 3.15, the version each model's `source.json` records):

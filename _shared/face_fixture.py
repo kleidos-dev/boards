@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """A board of two boxes that prints on its front and its back, for the checks' own tests
 
@@ -36,7 +37,9 @@ import hashlib
 import json
 import struct
 import sys
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 FIXTURE = HERE / "fixtures" / "faces"
@@ -100,7 +103,11 @@ MEASUREMENTS = {
 }
 
 
-def box_triangles(x0, x1, y0, y1, z0, z1):
+def box_triangles(
+    x0: float, x1: float, y0: float, y1: float, z0: float, z1: float
+) -> list[
+    tuple[tuple[float, float, float], tuple[float, float, float], tuple[float, float, float]]
+]:
     """The twelve triangles of a box, each wound counterclockwise seen from outside."""
     c = [(x, y, z) for z in (z0, z1) for y in (y0, y1) for x in (x0, x1)]
     quads = [(0, 2, 3, 1), (4, 5, 7, 6), (0, 1, 5, 4), (2, 6, 7, 3), (0, 4, 6, 2), (1, 3, 7, 5)]
@@ -110,7 +117,11 @@ def box_triangles(x0, x1, y0, y1, z0, z1):
     return out
 
 
-def stl(triangles):
+def stl(
+    triangles: Sequence[
+        tuple[tuple[float, float, float], tuple[float, float, float], tuple[float, float, float]]
+    ],
+) -> bytes:
     """A binary STL of *triangles*, each with its own unit normal."""
     out = bytearray(STL_HEADER + struct.pack("<I", len(triangles)))
     for a, b, c in triangles:
@@ -122,7 +133,7 @@ def stl(triangles):
     return bytes(out)
 
 
-def source(name, data, note):
+def source(name: str, data: bytes, note: str) -> dict[str, Any]:
     return {
         "vendor": "Kleidos",
         "format": "stl",
@@ -136,7 +147,7 @@ def source(name, data, note):
     }
 
 
-def spec(body, base):
+def spec(body: bytes, base: bytes) -> dict[str, Any]:
     """The fixture's spec: the body as its own source, the base as a module."""
     return {
         "schema": 1,
@@ -197,7 +208,7 @@ def spec(body, base):
     }
 
 
-def files():
+def files() -> dict[str, bytes]:
     """{path under the fixture: bytes} of everything this script writes."""
     body = stl(box_triangles(*BODY))
     base = stl(box_triangles(*BASE))
@@ -211,7 +222,7 @@ def files():
     }
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Write the fixture, or with --check say whether the committed one is what it writes."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument(

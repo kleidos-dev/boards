@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What a board's drawings print on it, as flat geometry for the board model
 
@@ -69,22 +70,28 @@ import math
 import re
 import sys
 import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from hashlib import sha256
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, Literal
 
 import mapbox_earcut
 import numpy as np
+import numpy.typing as npt
 import shapely
 import shapely.affinity
 import shapely.geometry as sg
 from fontTools.pens.basePen import BasePen
 from fontTools.ttLib import TTFont
+from shapely.geometry.base import BaseGeometry
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import legend_source  # noqa: E402  (beside this file; -I leaves it off the path)
+import legend_source
 
-from paths import FONTS  # noqa: E402  (the pinned fonts, fonts/)
+if TYPE_CHECKING:
+    import board_faces
+from paths import FONTS
 
 SVG = legend_source.SVG
 #: The pinned faces of each family a legend may be set in, by CSS weight.
@@ -135,7 +142,11 @@ KEYS_PLANE = legend_source.KEYS_PLANE
 #: SVG's default ``stroke-miterlimit``: a miter longer than this many stroke
 #: widths is a bevel in a browser, which this module does not draw.
 MITER_LIMIT = 4.0
-_CAPS = {"round": "round", "butt": "flat", "square": "square"}
+_CAPS: dict[str, Literal["round", "flat", "square"]] = {
+    "round": "round",
+    "butt": "flat",
+    "square": "square",
+}
 _JOINS = ("miter", "round", "bevel")
 
 
@@ -154,9 +165,9 @@ class Legend:
     #: True for a key's legend, False for another print on the board.
     key: bool
     #: (fill as ``rrggbb``, the shape in the drawing's front frame, mm)
-    shapes: list = field(default_factory=list)
+    shapes: list[Any] = field(default_factory=list)
     #: The pinned font files its texts are set in (paths under ``fonts``).
-    fonts: set = field(default_factory=set)
+    fonts: set[Any] = field(default_factory=set)
     #: How many of its drawn elements a reader's ``keep`` left out (``read_legends``).
     dropped: int = 0
 
@@ -164,7 +175,7 @@ class Legend:
 # ---------------------------------------------------------------- the faces
 
 
-def pinned_digests():
+def pinned_digests() -> dict[str, str]:
     """{path under fonts: sha256} as ``fonts/VERSIONS.md`` pins them."""
     text = (FONTS / "VERSIONS.md").read_text(encoding="utf-8")
     return dict(re.findall(r"`([\w./\[\],-]+\.ttf)`\s+`([0-9a-f]{64})`", text))
@@ -173,13 +184,13 @@ def pinned_digests():
 class Faces:
     """The pinned font files, opened once each, and their flattened glyphs."""
 
-    def __init__(self):
-        self._fonts = {}
-        self._glyphs = {}
-        self._pins = None
-        self.used = {}
+    def __init__(self) -> None:
+        self._fonts: dict[str, TTFont] = {}
+        self._glyphs: dict[tuple[str, str, float], tuple[float, BaseGeometry]] = {}
+        self._pins: dict[str, str] | None = None
+        self.used: dict[str, str] = {}
 
-    def font(self, family, weight):
+    def font(self, family: str, weight: int) -> tuple[str, TTFont]:
         """(path under fonts, TTFont) for a family at a CSS weight."""
         faces = FACES.get(family)
         if faces is None:
@@ -197,19 +208,22 @@ class Faces:
         if rel not in self._fonts:
             if self._pins is None:
                 self._pins = pinned_digests()
+            pins = self._pins
             data = (FONTS / rel).read_bytes()
             digest = sha256(data).hexdigest()
-            if self._pins.get(rel) != digest:
+            if pins.get(rel) != digest:
                 raise LegendError(f"fonts/{rel} is not the file VERSIONS.md pins (sha256 {digest})")
             self._fonts[rel] = TTFont(FONTS / rel)
             self.used[rel] = digest
         return rel, self._fonts[rel]
 
-    def glyph(self, rel, font, char, tolerance):
+    def glyph(
+        self, rel: str, font: TTFont, char: str, tolerance: float
+    ) -> tuple[float, BaseGeometry]:
         """(advance, shapely geometry) of one character, in font units, y up."""
         key = (rel, char, round(tolerance, 6))
         if key not in self._glyphs:
-            name = font.getBestCmap().get(ord(char))
+            name = (font.getBestCmap() or {}).get(ord(char))
             if name is None:
                 raise LegendError(f"fonts/{rel} has no glyph for {char!r} (U+{ord(char):04X})")
             pen = _Outline(font.getGlyphSet(), tolerance)
@@ -221,33 +235,37 @@ class Faces:
 class _Outline(BasePen):
     """A glyph's contours as closed rings of points, curves flattened to a tolerance."""
 
-    def __init__(self, glyph_set, tolerance):
+    def __init__(self, glyph_set: Any, tolerance: float) -> None:
         super().__init__(glyph_set)
         self.tolerance = tolerance
-        self.rings = []
-        self._ring = None
+        self.rings: list[list[tuple[float, float]]] = []
+        self._ring: list[tuple[float, float]] = []
 
-    def _moveTo(self, pt):
+    def _moveTo(self, pt: tuple[float, float]) -> None:
         self._ring = [pt]
 
-    def _lineTo(self, pt):
+    def _lineTo(self, pt: tuple[float, float]) -> None:
         self._ring.append(pt)
 
-    def _qCurveToOne(self, pt1, pt2):
+    def _qCurveToOne(self, pt1: tuple[float, float], pt2: tuple[float, float]) -> None:
         self._ring += quadratic(self._ring[-1], pt1, pt2, self.tolerance)
 
-    def _curveToOne(self, pt1, pt2, pt3):
+    def _curveToOne(
+        self, pt1: tuple[float, float], pt2: tuple[float, float], pt3: tuple[float, float]
+    ) -> None:
         self._ring += cubic(self._ring[-1], pt1, pt2, pt3, self.tolerance)
 
-    def _closePath(self):
-        if self._ring and len(self._ring) >= 3:
+    def _closePath(self) -> None:
+        if len(self._ring) >= 3:
             self.rings.append(self._ring)
-        self._ring = None
+        self._ring = []
 
     _endPath = _closePath
 
 
-def quadratic(p0, p1, p2, tolerance):
+def quadratic(
+    p0: tuple[float, float], p1: tuple[float, float], p2: tuple[float, float], tolerance: float
+) -> list[tuple[float, float]]:
     """The points after *p0* of a quadratic curve, each chord within *tolerance* of it.
 
     A chord across a parameter step h strays |p0 - 2 p1 + p2| h^2 / 4 at most.
@@ -262,7 +280,13 @@ def quadratic(p0, p1, p2, tolerance):
     return out
 
 
-def cubic(p0, p1, p2, p3, tolerance):
+def cubic(
+    p0: tuple[float, float],
+    p1: tuple[float, float],
+    p2: tuple[float, float],
+    p3: tuple[float, float],
+    tolerance: float,
+) -> list[tuple[float, float]]:
     """The points after *p0* of a cubic curve, each chord within *tolerance* of it."""
     bend = max(
         math.hypot(p0[0] - 2 * p1[0] + p2[0], p0[1] - 2 * p1[1] + p2[1]),
@@ -282,54 +306,62 @@ def cubic(p0, p1, p2, p3, tolerance):
     return out
 
 
-def _fill(rings):
+def _fill(rings: list[list[tuple[float, float]]]) -> BaseGeometry:
     """The area a set of closed rings fills by the nonzero rule, for rings that nest.
 
     From the largest ring inward, a ring wound as the largest one adds its
     area and one wound the other way takes it away: an outline, its counters,
     and an island inside a counter each land as drawn.
     """
-    polys = []
+    polys: list[tuple[float, BaseGeometry]] = []
     for ring in rings:
         poly = sg.Polygon(ring)
         if poly.area > 0:
             polys.append((_signed_area(ring), shapely.make_valid(poly)))
     polys.sort(key=lambda item: -abs(item[0]))
-    area = sg.Polygon()
-    for signed, poly in polys:
+    area: BaseGeometry = sg.Polygon()
+    for signed, part in polys:
         same = (signed > 0) == (polys[0][0] > 0)
-        area = area.union(poly) if same else area.difference(poly)
+        area = area.union(part) if same else area.difference(part)
     return area
 
 
-def _signed_area(ring):
+def _signed_area(ring: npt.ArrayLike) -> float:
     pts = np.asarray(ring, dtype=float)
     x, y = pts[:, 0], pts[:, 1]
     return float((x * np.roll(y, -1) - np.roll(x, -1) * y).sum() / 2)
 
 
-def _even_odd(rings):
+def _even_odd(rings: list[list[tuple[float, float]]]) -> BaseGeometry:
     """The area a set of closed rings fills by the even-odd rule, for rings that do not cross.
 
     From the largest ring inward, each ring turns over what it covers: an
     outline, the counter inside it, an island inside the counter.
     """
-    polys = []
+    polys: list[BaseGeometry] = []
     for ring in rings:
         poly = sg.Polygon(ring)
         if poly.area > 0:
             polys.append(shapely.make_valid(poly))
     polys.sort(key=lambda poly: -poly.area)
-    area = sg.Polygon()
-    for poly in polys:
-        area = area.symmetric_difference(poly)
+    area: BaseGeometry = sg.Polygon()
+    for part in polys:
+        area = area.symmetric_difference(part)
     return area
 
 
 # ---------------------------------------------------------------- the drawing
 
 
-def _matrix(text):
+def _number(el: ET.Element, name: str) -> float:
+    """A numeric attribute an element must carry."""
+    value = el.get(name)
+    if value is None:
+        raise LegendError(f"a <{el.tag.removeprefix(SVG)}> with no {name}")
+    return float(value)
+
+
+def _matrix(text: str | None) -> npt.NDArray[np.float64]:
     """An SVG ``transform`` attribute as a 3 x 3 matrix."""
     m = np.eye(3)
     for kind, args in _TRANSFORM.findall(text or ""):
@@ -353,18 +385,18 @@ def _matrix(text):
     return m
 
 
-def _apply(geom, m):
+def _apply(geom: BaseGeometry, m: npt.NDArray[np.float64]) -> BaseGeometry:
     return shapely.affinity.affine_transform(
         geom, [m[0, 0], m[0, 1], m[1, 0], m[1, 1], m[0, 2], m[1, 2]]
     )
 
 
-def _stretch(m):
+def _stretch(m: npt.NDArray[np.float64]) -> float:
     """The most a matrix lengthens a unit step."""
     return float(np.linalg.svd(m[:2, :2], compute_uv=False)[0])
 
 
-def _color(value, where):
+def _color(value: str | None, where: str) -> str:
     """A fill as ``rrggbb``; a legend's ink is one flat opaque color."""
     v = (value or "").strip().lower()
     if re.fullmatch(r"#[0-9a-f]{3}", v):
@@ -374,14 +406,14 @@ def _color(value, where):
     return v[1:]
 
 
-def _arc_steps(radius, tolerance, turn=2 * math.pi):
+def _arc_steps(radius: float, tolerance: float, turn: float = 2 * math.pi) -> int:
     """How many chords keep within *tolerance* of an arc of *radius* over *turn*."""
     if radius <= tolerance:
         return max(1, math.ceil(turn / (math.pi / 2)))
     return max(1, math.ceil(turn / (2 * math.acos(1 - tolerance / radius))))
 
 
-def _rounded(x, y, w, h, r, tolerance):
+def _rounded(x: float, y: float, w: float, h: float, r: float, tolerance: float) -> sg.Polygon:
     r = min(r, w / 2, h / 2)
     if r <= 0:
         return sg.box(x, y, x + w, y + h)
@@ -399,7 +431,16 @@ def _rounded(x, y, w, h, r, tolerance):
     return sg.Polygon(pts)
 
 
-def _arc(p0, rx, ry, turn_deg, large, sweep, p1, tolerance):
+def _arc(
+    p0: tuple[float, float],
+    rx: float,
+    ry: float,
+    turn_deg: float,
+    large: bool,
+    sweep: bool,
+    p1: tuple[float, float],
+    tolerance: float,
+) -> list[tuple[float, float]]:
     """The points after *p0* of an SVG elliptical arc, each chord within *tolerance* of it.
 
     The center is found from the two ends as SVG 1.1 gives it (F.6.5); radii
@@ -438,16 +479,20 @@ def _arc(p0, rx, ry, turn_deg, large, sweep, p1, tolerance):
     return out
 
 
-def _path_rings(d, tolerance, where):
+def _path_rings(
+    d: str, tolerance: float, where: str
+) -> tuple[list[list[tuple[float, float]]], list[bool]]:
     """(rings, closed flags) of a path's M L H V Q C A Z commands, either case."""
     tokens = _PATH_TOKEN.findall(d)
     if "".join(tokens) != re.sub(r"[\s,]+", "", d):
         raise LegendError(f"{where}: a path command this module does not draw in {d!r}")
-    rings, closed, ring = [], [], None
+    rings: list[list[tuple[float, float]]] = []
+    closed: list[bool] = []
+    ring: list[tuple[float, float]] = []
     pos = start = (0.0, 0.0)
-    i, cmd = 0, None
+    i, cmd = 0, ""
 
-    def take(n):
+    def take(n: int) -> list[float]:
         nonlocal i
         vals = [float(t) for t in tokens[i : i + n]]
         i += n
@@ -457,6 +502,8 @@ def _path_rings(d, tolerance, where):
         if tokens[i].isalpha():
             cmd = tokens[i]
             i += 1
+        if not cmd:
+            raise LegendError(f"{where}: a path that does not start with a command in {d!r}")
         rel = cmd.islower()
         base = pos if rel else (0.0, 0.0)
         op = cmd.upper()
@@ -502,7 +549,7 @@ def _path_rings(d, tolerance, where):
         elif op == "Z":
             rings.append(ring)
             closed.append(True)
-            ring, pos = None, start
+            ring, pos = [], start
         else:  # pragma: no cover - the token pattern admits no other letter
             raise LegendError(f"{where}: path command {cmd!r}")
     if ring:
@@ -511,7 +558,7 @@ def _path_rings(d, tolerance, where):
     return rings, closed
 
 
-def _miter_ratio(rings, closed):
+def _miter_ratio(rings: list[list[tuple[float, float]]], closed: list[bool]) -> float:
     """The longest miter of a set of polylines, in stroke widths.
 
     Where two segments turn by an angle t, the miter reaches 1 / cos(t / 2)
@@ -538,7 +585,13 @@ def _miter_ratio(rings, closed):
     return worst
 
 
-def _stroke(el, rings, closed, tolerance, where):
+def _stroke(
+    el: ET.Element,
+    rings: list[list[tuple[float, float]]],
+    closed: list[bool],
+    tolerance: float,
+    where: str,
+) -> BaseGeometry:
     """The area a stroke along a set of polylines covers."""
     half = float(el.get("stroke-width", "0")) / 2
     if half <= 0:
@@ -573,14 +626,29 @@ def _stroke(el, rings, closed, tolerance, where):
             ]
         )
     return shapely.union_all(
-        [ln.buffer(half, cap_style=_CAPS[cap], join_style=join, quad_segs=quad) for ln in lines]
+        [
+            ln.buffer(
+                half,
+                cap_style=_CAPS[cap],
+                join_style="round" if join == "round" else "bevel",
+                quad_segs=quad,
+            )
+            for ln in lines
+        ]
     )
 
 
-def _text(el, m, faces, inherited_family, flatness, where):
+def _text(
+    el: ET.Element,
+    m: npt.NDArray[np.float64],
+    faces: Faces,
+    inherited_family: str | None,
+    flatness: float,
+    where: str,
+) -> tuple[BaseGeometry, str]:
     family = (el.get("font-family") or inherited_family or "").split(",")[0].strip(" '\"")
     weight = int(el.get("font-weight", "400"))
-    size = float(el.get("font-size"))
+    size = _number(el, "font-size")
     rel, font = faces.font(family, weight)
     own = _matrix(el.get("transform"))
     upm = font["head"].unitsPerEm
@@ -601,7 +669,7 @@ def _text(el, m, faces, inherited_family, flatness, where):
     if el.get("textLength") is not None:
         if el.get("lengthAdjust") != "spacingAndGlyphs":
             raise LegendError(f'{where}: textLength without lengthAdjust="spacingAndGlyphs"')
-        widen = float(el.get("textLength")) / (pen * scale)
+        widen = _number(el, "textLength") / (pen * scale)
     anchor = {"start": 0.0, "middle": 0.5, "end": 1.0}[el.get("text-anchor", "start")]
     x, y = float(el.get("x", "0")), float(el.get("y", "0"))
     # font units, y up -> the text's own user space, y down
@@ -611,7 +679,7 @@ def _text(el, m, faces, inherited_family, flatness, where):
     return _apply(shapely.union_all(run), full @ place), rel
 
 
-def _disc(cx, cy, r, tolerance):
+def _disc(cx: float, cy: float, r: float, tolerance: float) -> sg.Polygon:
     n = max(8, _arc_steps(r, tolerance))
     return sg.Polygon(
         [
@@ -621,7 +689,9 @@ def _disc(cx, cy, r, tolerance):
     )
 
 
-def _shape(el, tag, m, flatness, where):
+def _shape(
+    el: ET.Element, tag: str, m: npt.NDArray[np.float64], flatness: float, where: str
+) -> BaseGeometry:
     full = m @ _matrix(el.get("transform"))
     tolerance = flatness / _stretch(full)
     stroked = el.get("stroke", "none") != "none"
@@ -629,8 +699,9 @@ def _shape(el, tag, m, flatness, where):
         raise LegendError(
             f'{where}: a <{tag}> both filled and stroked (a stroked one says fill="none")'
         )
+    geom: BaseGeometry
     if tag == "polygon":
-        v = [float(t) for t in re.findall(_NUMBER, el.get("points"))]
+        v = [float(t) for t in re.findall(_NUMBER, el.get("points", ""))]
         if len(v) % 2 or len(v) < 6:
             raise LegendError(f"{where}: a polygon of {len(v)} numbers")
         geom = sg.Polygon(list(zip(v[0::2], v[1::2], strict=True)))
@@ -641,13 +712,13 @@ def _shape(el, tag, m, flatness, where):
         geom = _rounded(
             float(el.get("x", "0")),
             float(el.get("y", "0")),
-            float(el.get("width")),
-            float(el.get("height")),
+            _number(el, "width"),
+            _number(el, "height"),
             rx,
             tolerance,
         )
     elif tag == "circle":
-        r = float(el.get("r"))
+        r = _number(el, "r")
         cx, cy = float(el.get("cx", "0")), float(el.get("cy", "0"))
         if stroked:
             # a ring: the stroke lies half its width either side of the circle
@@ -660,7 +731,7 @@ def _shape(el, tag, m, flatness, where):
         else:
             geom = _disc(cx, cy, r, tolerance)
     else:
-        rings, closed = _path_rings(el.get("d"), tolerance, where)
+        rings, closed = _path_rings(el.get("d", ""), tolerance, where)
         rule = el.get("fill-rule", "nonzero")
         if rule not in ("nonzero", "evenodd"):
             raise LegendError(f"{where}: fill-rule {rule!r}")
@@ -675,7 +746,7 @@ def _shape(el, tag, m, flatness, where):
     return _apply(shapely.make_valid(geom), full)
 
 
-def width_mm(geom):
+def width_mm(geom: BaseGeometry) -> float:
     """How wide a drawn element's strokes are, in mm: what a reader weighs against a pixel.
 
     Each polygon is taken as the rectangle of its area and its outline's
@@ -697,7 +768,12 @@ def width_mm(geom):
     return weighted / total if total else 0.0
 
 
-def read_legends(front_svg, flatness, faces=None, keep=None):
+def read_legends(
+    front_svg: str | Path,
+    flatness: float,
+    faces: Faces | None = None,
+    keep: Callable[[BaseGeometry], bool] | None = None,
+) -> list[Legend]:
     """[Legend] of a drawing, in its own frame (mm, y down), in paint order.
 
     *flatness* is the most a flattened curve strays from the drawn one, in mm.
@@ -711,10 +787,17 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
     shape, so its name and plane stay on record.
     """
     faces = faces or Faces()
-    root = ET.parse(front_svg).getroot()
+    root = ET.parse(front_svg).getroot()  # noqa: S314  (this repository's own file)
     out = []
 
-    def draw(el, m, family, legend, where, drawn):
+    def draw(
+        el: ET.Element,
+        m: npt.NDArray[np.float64],
+        family: str | None,
+        legend: Legend,
+        where: str,
+        drawn: list[Any],
+    ) -> None:
         tag = el.tag.removeprefix(SVG)
         if legend_source.is_legend(el):
             raise LegendError(f"{where}: a legend group inside a legend group")
@@ -735,7 +818,7 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
             legend.fonts.add(rel)
             fill = _color(el.get("fill"), where)
             # texts set in one face at one size, as drawn, are kept or left together
-            size = float(el.get("font-size")) * _stretch(m @ _matrix(el.get("transform")))
+            size = _number(el, "font-size") * _stretch(m @ _matrix(el.get("transform")))
             style = (rel, round(size, 4))
         else:
             geom = _shape(el, tag, m, flatness, where)
@@ -744,7 +827,7 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
             raise LegendError(f"{where}: <{tag}> draws nothing")
         drawn.append((fill, geom, style))
 
-    def group(el):
+    def group(el: ET.Element) -> Legend:
         """The Legend a group's own attributes describe, with no shape yet."""
         extra = sorted(set(el.attrib) - _GROUP)
         if extra:
@@ -757,7 +840,7 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
             )
         name = key if mark is None else mark
         plane = el.get("data-plane", KEYS_PLANE if mark is None else None)
-        if plane is None:
+        if name is None or plane is None:
             raise LegendError(f"legend {name!r}: a print that is not a key's names its data-plane")
         for what, value in (("name", name), ("plane", plane)):
             if not _NAME.fullmatch(value):
@@ -777,7 +860,7 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
                 m = m @ _matrix(outer.get("transform"))
         legend = group(el)
         inner = m @ _matrix(el.get("transform"))
-        drawn = []
+        drawn: list[tuple[str, BaseGeometry, Any]] = []
         for child in el:
             draw(child, inner, family, legend, f"legend {legend.name!r}", drawn)
         if keep is None:
@@ -785,7 +868,7 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
         else:
             # a text is judged with the texts set like it in its group: by
             # the most legible of them, so a line of labels goes or stays whole
-            alike = {}
+            alike: dict[Any, list[BaseGeometry]] = {}
             for _fill, geom, style in drawn:
                 if style is not None:
                     alike.setdefault(style, []).append(geom)
@@ -805,7 +888,7 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
     return out
 
 
-def planes(legends):
+def planes(legends: list[Legend]) -> list[str]:
     """The planes a list of legends names, in the drawing's order."""
     return list(dict.fromkeys(legend.plane for legend in legends))
 
@@ -813,20 +896,22 @@ def planes(legends):
 # ---------------------------------------------------------------- the sheets
 
 
-def _polygons(geom):
+def _polygons(geom: BaseGeometry) -> list[sg.Polygon]:
     """The polygons of any geometry, lines and points dropped."""
     if geom.is_empty:
         return []
-    if geom.geom_type == "Polygon":
+    if isinstance(geom, sg.Polygon):
         return [geom]
     return [p for g in getattr(geom, "geoms", []) for p in _polygons(g)]
 
 
-def _area(geom):
+def _area(geom: BaseGeometry) -> BaseGeometry:
     return shapely.union_all(_polygons(geom)) if not geom.is_empty else sg.Polygon()
 
 
-def partition(legends, to_model, grid):
+def partition(
+    legends: list[Legend], to_model: Callable[[BaseGeometry], BaseGeometry], grid: float
+) -> dict[str, BaseGeometry]:
     """{fill: area} in the model's plane, on its grid, no two areas overlapping.
 
     *to_model* maps a front-frame geometry into the model's frame less its
@@ -836,7 +921,7 @@ def partition(legends, to_model, grid):
     covers, on the grid, which also gives two areas that meet the same
     corners along the line they share.
     """
-    areas = {}
+    areas: dict[str, BaseGeometry] = {}
     for legend in legends:
         for fill, geom in legend.shapes:
             shape = _area(shapely.set_precision(to_model(geom), grid))
@@ -856,7 +941,9 @@ def partition(legends, to_model, grid):
     return {fill: area for fill, area in areas.items() if not area.is_empty}
 
 
-def _split_at_corners(steps, tri):
+def _split_at_corners(
+    steps: npt.NDArray[np.int64], tri: npt.NDArray[np.int64]
+) -> npt.NDArray[np.int64]:
     """*tri* with every triangle cut where a corner of the polygon lies inside one of its edges.
 
     Ear clipping can leave a corner on the edge of a triangle that does not
@@ -868,7 +955,7 @@ def _split_at_corners(steps, tri):
     steps, so "on the edge" is exact.
     """
 
-    def cut(i, j, k):
+    def cut(i: int, j: int, k: int) -> list[tuple[int, int, int]]:
         for a, b, c in ((i, j, k), (j, k, i), (k, i, j)):
             along = steps[b] - steps[a]
             off = steps - steps[a]
@@ -884,7 +971,9 @@ def _split_at_corners(steps, tri):
     return np.asarray(out, dtype=np.int64).reshape(-1, 3)
 
 
-def triangulate(area, grid):
+def triangulate(
+    area: BaseGeometry, grid: float
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.int64]]:
     """(points[N, 2], triangles[M, 3]) of an area on the grid, each triangle counterclockwise.
 
     Ear clipping uses the polygons' own corners and adds none, so every point
@@ -895,8 +984,8 @@ def triangulate(area, grid):
     edge on one side and two on the other.
     """
     points, triangles, base = [], [], 0
-    for poly in _polygons(area):
-        poly = sg.polygon.orient(poly, 1.0)
+    for part in _polygons(area):
+        poly = sg.polygon.orient(part, 1.0)
         rings = [np.asarray(poly.exterior.coords)[:-1]]
         rings += [np.asarray(ring.coords)[:-1] for ring in poly.interiors]
         pts = np.vstack(rings)
@@ -920,12 +1009,25 @@ def triangulate(area, grid):
     return np.vstack(points), np.vstack(triangles)
 
 
-def stroke_mm(area):
+def stroke_mm(area: BaseGeometry) -> float:
     """The mean stroke width of an area: twice the area over its outline's length."""
     return 2 * area.area / area.length if area.length else 0.0
 
 
-def sheets(legends, plane, frame, center, z, grid, faces=None):
+def sheets(
+    legends: list[Legend],
+    plane: str,
+    frame: board_faces.FaceFrame,
+    center: npt.ArrayLike,
+    z: float,
+    grid: float,
+    faces: Faces | None = None,
+) -> tuple[
+    list[
+        tuple[str, npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64], float]
+    ],
+    dict[str, Any],
+]:
     """The legends of one plane of a drawing as flat sheets in the build frame.
 
     *legends* is what ``read_legends`` gave; those of *plane* are drawn.
@@ -944,7 +1046,7 @@ def sheets(legends, plane, frame, center, z, grid, faces=None):
     drawn = [legend for legend in legends if legend.plane == plane]
     du, dv = frame.offsets(center)
 
-    def to_model(geom):
+    def to_model(geom: BaseGeometry) -> BaseGeometry:
         # the drawing's frame (v down) -> along the face's u and up, less the center
         return shapely.affinity.affine_transform(geom, [1, 0, 0, -1, du, dv])
 

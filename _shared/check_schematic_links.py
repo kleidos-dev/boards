@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Hold every link of a board's schematic PDF to the place it should lead to.
 
@@ -53,7 +54,9 @@ import argparse
 import math
 import re
 import sys
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -64,13 +67,13 @@ from kicad_schematic import (
     PAPER,
     REF_CHAR_W,
     VIEW_LEFT,
-    VIEW_TOP,  # noqa: E402
+    VIEW_TOP,
     chip_of,
     gpio_maps,
     parse,
     zone,
 )
-from paths import ROOT  # noqa: E402
+from paths import ROOT
 
 PT = 72 / 25.4
 SLACK = 0.6  # mm a link's box may miss its text's anchor by
@@ -83,11 +86,19 @@ NAV = re.compile(r"^\[(\d+)\]$")
 GROUND_SYMBOLS = ("kleidos:GND", "kleidos:GNDA", "kleidos:GNDREF")
 
 
-def child(node, key):
+def child(node: list[Any], key: str) -> list[Any] | None:
     return next((x for x in node if isinstance(x, list) and x and x[0] == key), None)
 
 
-def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
+def need(node: list[Any], key: str) -> list[Any]:
+    """The child ``(key ...)`` of a node, which a KiCad file always writes there."""
+    found = child(node, key)
+    if found is None:
+        raise ValueError(f"a ({node[0] if node else '?'} ...) node with no ({key} ...)")
+    return found
+
+
+def read_sheets(board: str) -> tuple[dict[int, dict[str, Any]], dict[str, Any]]:
     """page -> what is drawn on it; and the board's facts."""
     folder = ROOT / board / "schematic"
     layout = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
@@ -113,7 +124,7 @@ def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
             if not isinstance(item, list) or not item:
                 continue
             if item[0] == "text":
-                pos, eff = child(item, "at"), child(item, "effects")
+                pos, eff = need(item, "at"), child(item, "effects")
                 href = child(eff, "href") if eff else None
                 info["texts"].append(
                     {
@@ -124,7 +135,7 @@ def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
                     }
                 )
             elif item[0] == "global_label":
-                pos = child(item, "at")
+                pos = need(item, "at")
                 lw = (
                     len(str(item[1])) * LABEL_CHAR_W + LABEL_PAD
                 )  # the box KiCad draws round the name
@@ -145,12 +156,12 @@ def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
                         and f[:2] == ["property", "Reference"]
                         and not str(f[2]).startswith("#")
                     ):
-                        pos = child(f, "at")
+                        pos = need(f, "at")
                         info["fields"].append(
                             {"ref": str(f[2]), "x": float(pos[1]), "y": float(pos[2])}
                         )
-                if str(child(item, "lib_id")[1]) in GROUND_SYMBOLS:  # a ground: its net and place
-                    pos = child(item, "at")
+                if str(need(item, "lib_id")[1]) in GROUND_SYMBOLS:  # a ground: its net and place
+                    pos = need(item, "at")
                     value = next(
                         str(f[2])
                         for f in item
@@ -158,10 +169,10 @@ def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
                     )
                     info["powers"].append((value, float(pos[1]), float(pos[2])))
             elif item[0] == "no_connect":
-                pos = child(item, "at")
+                pos = need(item, "at")
                 info["ncs"].append((float(pos[1]), float(pos[2])))
             elif item[0] == "polyline":
-                pts = child(item, "pts")[1:]
+                pts = need(item, "pts")[1:]
                 if len(pts) == 2 and abs(float(pts[0][2]) - float(pts[1][2])) < 1e-6:
                     info["rules"].append(
                         (
@@ -171,7 +182,7 @@ def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
                         )
                     )
             elif item[0] == "sheet":
-                pos, size = child(item, "at"), child(item, "size")
+                pos, size = need(item, "at"), need(item, "size")
                 sname = next(
                     str(f[2])
                     for f in item
@@ -186,16 +197,37 @@ def read_sheets(board: str) -> tuple[dict[int, dict], dict]:
     return pages, facts
 
 
-def pdf_read(pdf: Path):
+def _page_number(reader: Any, destination: Any) -> int:
+    """The page (from 1) a bookmark or a named destination leads to."""
+    number = reader.get_destination_page_number(destination)
+    if number is None:
+        raise ValueError(f"a destination that leads to no page: {destination!r}")
+    return int(number) + 1
+
+
+def pdf_read(
+    pdf: Path,
+) -> tuple[
+    dict[int, list[dict[str, Any]]],
+    list[dict[str, Any]],
+    dict[str, Any],
+    list[str],
+    tuple[float, float],
+]:
     """The PDF's links per page, bookmarks, named destinations, scripts, page size."""
     from pypdf import PdfReader
+    from pypdf.errors import PyPdfError
     from pypdf.generic import DictionaryObject
 
     reader = PdfReader(pdf)
-    index = {p.indirect_reference.idnum: i for i, p in enumerate(reader.pages, start=1)}
+    index = {
+        p.indirect_reference.idnum: i
+        for i, p in enumerate(reader.pages, start=1)
+        if p.indirect_reference is not None
+    }
     height = float(reader.pages[0].mediabox.height)
 
-    def where(dest):
+    def where(dest: Any) -> tuple[int | None, str, float | None, float | None] | None:
         """(page, kind, landing x, landing y) of an explicit destination array."""
         if not (isinstance(dest, list) and dest and hasattr(dest[0], "idnum")):
             return None
@@ -210,7 +242,7 @@ def pdf_read(pdf: Path):
             )
         return page, kind, None, None
 
-    out: dict[int, list] = {}
+    out: dict[int, list[Any]] = {}
     for i, page in enumerate(reader.pages, start=1):
         links = []
         for ref in page.get("/Annots") or []:
@@ -243,14 +275,14 @@ def pdf_read(pdf: Path):
         out[i] = links
     outline = []
 
-    def walk(items, depth, parent=None):
+    def walk(items: list[Any], depth: int, parent: str | None = None) -> None:
         last = parent
         for it in items:
             if isinstance(it, list):
                 walk(it, depth + 1, last)
                 continue
             last = str(it.title)
-            page = reader.get_destination_page_number(it) + 1
+            page = _page_number(reader, it)
             land = None
             if str(it.typ) == "/XYZ" and it.left is not None and it.top is not None:
                 land = (float(it.left) / PT + VIEW_LEFT, (height - float(it.top)) / PT + VIEW_TOP)
@@ -270,18 +302,20 @@ def pdf_read(pdf: Path):
         land = None
         if str(d.typ) == "/XYZ" and d.left is not None and d.top is not None:
             land = (float(d.left) / PT + VIEW_LEFT, (height - float(d.top)) / PT + VIEW_TOP)
-        marks[str(name)] = (reader.get_destination_page_number(d) + 1, land)
+        marks[str(name)] = (_page_number(reader, d), land)
     scripts = []
-    root = reader.trailer["/Root"]
+    root = reader.trailer["/Root"].get_object()
+    if not isinstance(root, DictionaryObject):
+        raise ValueError(f"{pdf}: the catalog is not a dictionary")
     names = root.get("/Names")
     if names is not None and "/JavaScript" in names.get_object():
         scripts.append("the catalog's /Names holds a /JavaScript tree")
     if "/OpenAction" in root or "/AA" in root:
         scripts.append("the catalog has an open action")
-    for num in range(1, int(reader.trailer["/Size"])):
+    for num in range(1, int(str(reader.trailer["/Size"]))):
         try:
             obj = reader.get_object(num)
-        except Exception:  # a free or unreadable object holds nothing
+        except (PyPdfError, ValueError, KeyError):  # a free or unreadable object holds nothing
             continue
         if isinstance(obj, DictionaryObject) and ("/JS" in obj or obj.get("/S") == "/JavaScript"):
             scripts.append(f"object {num} is a script ({str(obj.get('/JS') or '')[:40]!r})")
@@ -289,7 +323,7 @@ def pdf_read(pdf: Path):
     return out, outline, marks, scripts, size
 
 
-def inside(rect, x, y, slack=SLACK) -> bool:
+def inside(rect: Sequence[float], x: float, y: float, slack: float = SLACK) -> bool:
     return rect[0] - slack <= x <= rect[2] + slack and rect[1] - slack <= y <= rect[3] + slack
 
 
@@ -328,7 +362,7 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
             return [(f["x"], f["y"]) for f in p["fields"] if f["ref"] == subject]
         return [(lab["x"], lab["y"]) for lab in p["labels"] if lab["net"] == subject]
 
-    def row_subject(page: int, t: dict) -> str | None:
+    def row_subject(page: int, t: dict[str, Any]) -> str | None:
         """The part or net a table row is about: its first cell that names one."""
         p = pages[page]
         if p["index"] is None:  # on the drawing: the label its run of tokens follows
@@ -373,9 +407,16 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
         if not cells:
             return None
         y = max(c["y"] for c in cells)
-        return min((c for c in cells if abs(c["y"] - y) < 0.2), key=lambda c: c["x"])["body"]
+        return str(min((c for c in cells if abs(c["y"] - y) < 0.2), key=lambda c: c["x"])["body"])
 
-    def judge(page, what, link, target_page, subject, printed_zone=None) -> str | None:
+    def judge(
+        page: int,
+        what: str,
+        link: dict[str, Any],
+        target_page: int,
+        subject: str | None,
+        printed_zone: str | None = None,
+    ) -> str | None:
         """None when ``link`` lands on ``subject`` on ``target_page``, else what is wrong."""
         if link["other"]:
             return f"does {link['other']}"
@@ -398,13 +439,22 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
     for page in sorted(got):
         links = got[page]
         used = [False] * len(links)
-        reach = set()
+        reach: set[int] = set()
         p = pages.get(page, {"texts": [], "boxes": [], "fields": []})
 
-        def hits_at(x, y):
+        def hits_at(x: float, y: float, links: list[dict[str, Any]] = links) -> list[int]:
             return [k for k, lk in enumerate(links) if inside(lk["rect"], x, y)]
 
-        def note(k, kind, label, verdict):
+        def note(
+            k: int,
+            kind: str,
+            label: str,
+            verdict: str | None,
+            links: list[dict[str, Any]] = links,
+            used: list[bool] = used,
+            reach: set[int] = reach,
+            page: int = page,
+        ) -> None:
             lk = links[k]
             used[k] = True
             r = lk["rect"]
@@ -433,7 +483,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
             hits = hits_at(t["x"] + 0.3, t["y"])
             if not hits:
                 errors.append(
-                    f"page {page}: text {t['body']!r} at ({t['x']:.1f}, {t['y']:.1f}) mm has no link"
+                    f"page {page}: text {t['body']!r} at ({t['x']:.1f}, {t['y']:.1f}) mm has no "
+                    "link"
                 )
                 continue
             if target == page:
@@ -452,7 +503,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
                 elif m:
                     if int(m.group(1)) != target:
                         errors.append(
-                            f"page {page}: {t['body']!r} prints page {m.group(1)} but links to {target}"
+                            f"page {page}: {t['body']!r} prints page {m.group(1)} but links to "
+                            f"{target}"
                         )
                     subject = row_subject(page, t)
                     note(
@@ -474,7 +526,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
             ]
             if not hits:
                 errors.append(
-                    f"page {page}: sheet {b['label']!r} has no link (it should lead to page {b['target']})"
+                    f"page {page}: sheet {b['label']!r} has no link (it should lead to page "
+                    f"{b['target']})"
                 )
             for k in hits:
                 lk = links[k]
@@ -497,7 +550,7 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
             for k in hits:
                 lk = links[k]
                 if lk["other"]:
-                    verdict = f"does {lk['other']}"
+                    verdict: str | None = f"does {lk['other']}"
                 elif lk["to"][0] != parts_page:
                     verdict = (
                         f"leads to page {lk['to'][0]}, not to the parts list (page {parts_page})"
@@ -550,14 +603,18 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
         facts, next((sh for sh in layout["sheets"] if sh.get("index") == "nets"), {})
     )
 
-    def beside(e: dict, page: int, t: dict) -> str | None:
-        """None when the marker ``t`` sits beside the element entry ``e`` names, else what it sits by."""
+    def beside(e: dict[str, Any], page: int, t: dict[str, Any]) -> str | None:
+        """None when the marker ``t`` sits beside the element entry ``e`` names, else what it sits
+        by."""
         el = e.get("element") or {}
         kind = next(
             (k for k in ("pin", "part", "net", "gpio", "i2c", "pull", "rail") if k in el), None
         )
         val, p = str(el.get(kind, "")), pages[page]
-        line = lambda y: abs(y - t["y"]) < 0.3  # noqa: E731
+
+        def line(y: float, at: float = t["y"]) -> bool:
+            return abs(y - at) < 0.3
+
         if p["index"] is not None:
             # an index page: on a row that names the element (a pin's: its part, or its GPIO in its
             # chip's table), or just above the power-tree box whose first line names it
@@ -634,7 +691,8 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
             or min(math.hypot(x - m[1][0], y - m[1][1]) for x, y in targets(eid, m[0])) > LAND
         ):
             errors.append(f"named destination add-{eid}: missing, or not on a marker of {eid}")
-        src = e.get("source") if isinstance(e.get("source"), dict) else {}
+        given = e.get("source")
+        src: dict[str, Any] = given if isinstance(given, dict) else {}
         if not str(src.get("cite") or "").strip() or not str(src.get("type") or "").strip():
             errors.append(f"kleidos {eid}: its source is empty")
     for pg, info in pages.items():
@@ -671,7 +729,7 @@ def check(board: str, pdf: Path) -> tuple[list[str], list[str]]:
         for o in outline
         if o["depth"] == 1 and o["parent"] in drawing_titles
     }
-    for ref, (pg, x, y) in sorted(drawn.items()):
+    for ref, (pg, _x, _y) in sorted(drawn.items()):
         o = kids.get(ref)
         if o is None:
             errors.append(f"bookmarks: no entry for {ref} under its page")
@@ -721,17 +779,18 @@ def main(argv: list[str]) -> int:
         if re.match(r"p\d+ ", line):
             per_page[line.split()[0]] = per_page.get(line.split()[0], 0) + 1
     marks = sum(1 for line in lines if line.startswith("bookmark"))
-    print(
-        f"links: {', '.join(f'{k} {v}' for k, v in sorted(per_page.items(), key=lambda kv: int(kv[0][1:])))}; "
-        f"page bookmarks {marks}"
+    counts = ", ".join(
+        f"{k} {v}" for k, v in sorted(per_page.items(), key=lambda kv: int(kv[0][1:]))
     )
+    print(f"links: {counts}; page bookmarks {marks}")
     for e in errors[:200]:
         print(f"FAIL {e}")
     if len(errors) > 200:
         print(f"FAIL ... and {len(errors) - 200} more")
     if not errors:
         print(
-            f"ok   {args.board}: every link of {pdf.name} lands where it should, and it holds no script"
+            f"ok   {args.board}: every link of {pdf.name} lands where it should, and it holds no "
+            "script"
         )
     return 1 if errors else 0
 

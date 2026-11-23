@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # M5StickC Plus2 (K016-P2): schematic
 
 Kleidos boards: the M5StickC Plus2's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1 (sources below and in `netlist.yaml`): every part, pin and net of the vendor's published schematic, with the values the vendor prints, laid out with this project's own layout and symbols, plus fifteen details the print leaves out or gets wrong, each settled by a datasheet or a bench probe and marked where it is drawn (below, "Kleidos additions and corrections"). It tells what connects where and how: pull-ups and pull-downs with their values, series parts, the filter and decoupling parts, every rail and what feeds it, and the ESP32 GPIO of every signal.
@@ -26,7 +31,7 @@ Pages 7 to 9 are written by the generator from `netlist.yaml`, not drawn by hand
 
 ## How to read it
 
-Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighbouring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. An amber `K3` beside a label, a reference, a crossed pin or a table row marks a Kleidos addition or correction; it leads to its row on page 1, and the row back to it. Wires and pin lines are one colour and one width, so a connection reads as one line from the part to its label.
+Pins connect by net labels, not by wires. Two pins whose labels carry the same name are on one net, on any page. After a label, each `[3/C4]` names another page that carries the net and the zone of its label there (the border prints columns 1-8 and rows A-F, 50 mm apart): page 3, row C, column 4. Clicking it lands on that label, zoomed in; on a page where the net has several labels, it lands on the one at the part that feeds the rail (`rails.from` in `netlist.yaml`), or else on the first in reading order. A label with none is on its page only. Neighboring pins of one part on one net share a short bar and one label. A cross on a pin end means the pin is unconnected. An amber `K3` beside a label, a reference, a crossed pin or a table row marks a Kleidos addition or correction; it leads to its row on page 1, and the row back to it. Wires and pin lines are one color and one width, so a connection reads as one line from the part to its label.
 
 Parts documented as not fitted (value `NC`: C10) carry KiCad's DNP mark: a red cross over the symbol.
 
@@ -70,7 +75,7 @@ The drawing improves on the vendor's print where a primary source makes a detail
 | --- | --- | --- | --- | --- |
 | K1 | addition | The RTC U9 answers at I2C address 0x51 (write A2h, read A3h). | page 8, I2C table | BM8563 datasheet V1.1, p. 1; seen on the bus by `bench/2026-11-17-i2c-scan.md` |
 | K2 | addition | `+VDD` is 3.3 V: the CH9102F's own regulator output V3 (pin 6), which also feeds its VIO (pin 5); it is up only while USB feeds VDD5 through D29. | page 7, rails table | CH9102 datasheet 1C, p. 2 pin table and pp. 4-5, power and supply schemes |
-| K3 | correction | U2's pins carry the CH9102F's QFN24 names: 3 UD+, 4 UD-, 6 V3, 7 VDD5, 10 ACT#, 11 WAKEUP/GPIO3, 12 TNOW/GPIO2, 13 RXS/GPIO1, 14 TXS/GPIO0, 15 SUSPEND#, 16 GPIO4. The print gives them the CP2104's names on a part labelled CH9102F. | page 3, U2's reference | CH9102 datasheet 1C, pp. 2-4, pin definitions |
+| K3 | correction | U2's pins carry the CH9102F's QFN24 names: 3 UD+, 4 UD-, 6 V3, 7 VDD5, 10 ACT#, 11 WAKEUP/GPIO3, 12 TNOW/GPIO2, 13 RXS/GPIO1, 14 TXS/GPIO0, 15 SUSPEND#, 16 GPIO4. The print gives them the CP2104's names on a part labeled CH9102F. | page 3, U2's reference | CH9102 datasheet 1C, pp. 2-4, pin definitions |
 | K4 | addition | U2 RST (pin 9) has a built-in pull-up, beside R14. | page 3, `CH9102_RST` labels | CH9102 datasheet 1C, p. 3 |
 | K5 | addition | U2 RXD (pin 20, net `UTX`) has a built-in pull-up. | pages 2 and 3, `UTX` labels | CH9102 datasheet 1C, p. 3 |
 | K6 | addition | U2 VBUS (pin 8) has a built-in pull-down. | page 3, `CH9102_VBUS` labels | CH9102 datasheet 1C, p. 3 |

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 <!-- BEGIN GENERATED: banner (kleidos-dev/social, tools/sync_readme_banners.py); do not edit by hand -->
 
 <picture>
@@ -31,7 +36,7 @@ Each board folder holds:
 - `measurements.json`: the case, display, button and keyboard geometry the front is drawn against ([`_shared/schema.md`](_shared/schema.md)).
 - `svg/`: the board's faces at 1 SVG unit = 1 mm. `front.svg` has the screen's active area, a press target for every control and each printed legend as a group of its own; `back.svg` is the back seen from behind with what it prints; a side that prints anything has its own drawing (`left.svg`, `top.svg`).
 - `icon.svg`: a 64 px pictogram of the board.
-- `model/`: the 3D model at two levels, glTF 2.0 binaries in metres (glTF's unit): the master (`<board>.glb`, every print kept) and its web level of detail (`<board>-web.glb`), with the recipe they are built from (`spec.json`) and their provenance (`source.json`, `web.json`). The master is also there as Wavefront OBJ (`<board>.obj`, in millimetres, Y up, one object per part) with its material library (`<board>.mtl`), written from the GLB by [`_shared/export_obj.py`](_shared/export_obj.py).
+- `model/`: the 3D model at two levels, glTF 2.0 binaries in meters (glTF's unit): the master (`<board>.glb`, every print kept) and its web level of detail (`<board>-web.glb`), with the recipe they are built from (`spec.json`) and their provenance (`source.json`, `web.json`). The master is also there as Wavefront OBJ (`<board>.obj`, in millimeters, Y up, one object per part) with its material library (`<board>.mtl`), written from the GLB by [`_shared/export_obj.py`](_shared/export_obj.py).
 - `schematic/`: the board's connectivity in KiCad, documented from the vendor's public documentation, with Kleidos additions and corrections listed on page 1. `netlist.yaml` holds every part, pin and net with its source, and the entries `K1`, `K2`... that add what the vendor's print leaves out or correct what it gets wrong, each settled by a datasheet, the vendor's other documents, the firmware or a bench probe; `bench/` holds the probe records, `improvements.md` the triage behind the entries, and the folder's `README.md` the sources and the open questions. The PDF (`<board>.pdf`) is made to be followed by clicking; the export writes one SVG per page into `svg/` when it runs, and git does not keep them.
 
 Every board but the CoreInk also has a `sources.md`: the vendor drawings, photos and CAD files its front and measurements were taken on, by address (with the digest where one was recorded), what each gave, and what could not be established. No folder holds a vendor file: photos, renders, drawings, schematics, datasheets and CAD files are cited by address, never copied.
@@ -92,4 +97,4 @@ Vendor files (photos, renders, drawings, schematics, datasheets, CAD files) are 
 
 ## Trademarks
 
-M5Stack, LILYGO, Espressif and the other names and logos printed on these boards are trademarks of their respective owners. The third-party logos and marks drawn on the boards and their models (Espressif, M5, LILYGO, CE, FCC and the others) remain their owners' and are shown only so the products can be recognised. This project is not affiliated with, sponsored or endorsed by any of them. The licenses in this repository cover our drawings, models and code; they grant no right to use any trademark.
+M5Stack, LILYGO, Espressif and the other names and logos printed on these boards are trademarks of their respective owners. The third-party logos and marks drawn on the boards and their models (Espressif, M5, LILYGO, CE, FCC and the others) remain their owners' and are shown only so the products can be recognized. This project is not affiliated with, sponsored or endorsed by any of them. The licenses in this repository cover our drawings, models and code; they grant no right to use any trademark.

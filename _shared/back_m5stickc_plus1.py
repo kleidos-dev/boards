@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What the M5StickC Plus 1.1 prints on its back: the label, in the back frame
 
@@ -13,7 +14,8 @@ label's upright edges, and every ink is the photo's, taken where the print is
 solid; every place is checked again on M5Stack's own straight-on photo of the
 back (14.9 px/mm), and where the two read a different color the ink sits
 between them. The I2C line reads ``SDA G21:SCL:G22/INT:G35`` on both photos,
-its separators a pixel or two wide. ``emit_back_svg.py`` draws it; the model lays it on its ``back_label``
+its separators a pixel or two wide. ``emit_back_svg.py`` draws it; the model lays it on its
+``back_label``
 paper (``m5stickc-plus1/model/spec.json``, ``label_legends``).
 
 Inter is the only face (``fonts/inter``). The label is set in a
@@ -32,10 +34,9 @@ from __future__ import annotations
 import math
 import sys
 from pathlib import Path
-from typing import List, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import emit_front_svg as fronts  # noqa: E402
+import emit_front_svg as fronts
 
 f = fronts.f
 
@@ -98,7 +99,7 @@ PIN_BOTTOM = 6.3
 #: bottom to top), x is the baseline and y where the run starts. ``length``
 #: is the run's drawn width (``textLength``), which puts its ink where the
 #: photo's is.
-PLUS1_TEXTS: Tuple[Tuple[str, str, float, float, float, float, int, int, str], ...] = (
+PLUS1_TEXTS: tuple[tuple[str, str, float, float, float, float, int, int, str], ...] = (
     ("gnd", "GND", 3.710, 5.969, 2.170, 5.218, 500, -90, PLUS1_WHITE),
     ("5v_l", "5V", 6.340, 5.807, 2.309, 2.719, 500, -90, PLUS1_WHITE),
     ("g26", "G26", 8.960, 5.522, 2.279, 4.392, 500, -90, PLUS1_INK),
@@ -166,7 +167,7 @@ PLUS1_SLANTED = (
 PLUS1_SLANT_DEG = -45.0
 
 
-def text_run(key_row: Tuple[str, str, float, float, float, float, int, int, str]) -> str:
+def text_run(key_row: tuple[str, str, float, float, float, float, int, int, str]) -> str:
     """One row of ``PLUS1_TEXTS`` as a ``<text>``."""
     _key, content, x, y, size, length, weight, rot, ink = key_row
     attrs = (
@@ -184,7 +185,7 @@ def text_run(key_row: Tuple[str, str, float, float, float, float, int, int, str]
 
 
 def slanted_run(
-    content: str, center: Tuple[float, float], size: float, length: float, ink: str
+    content: str, center: tuple[float, float], size: float, length: float, ink: str
 ) -> str:
     """A run centered on ``center``, its cap height centered across, turned
     by ``PLUS1_SLANT_DEG`` (reading up and to the right)."""
@@ -203,7 +204,7 @@ def rect(x0: float, y0: float, x1: float, y1: float, fill: str, r: float = 0.0) 
 
 
 def line(
-    points: List[Tuple[float, float]],
+    points: list[tuple[float, float]],
     ink: str,
     width: float,
     cap: str = "butt",
@@ -216,7 +217,7 @@ def line(
     )
 
 
-def polygon(points: List[Tuple[float, float]], fill: str) -> str:
+def polygon(points: list[tuple[float, float]], fill: str) -> str:
     pts = " ".join(f"{f(x)},{f(y)}" for x, y in points)
     return f'<polygon points="{pts}" fill="{fill}"/>\n'
 
@@ -251,7 +252,7 @@ def outline_box(
     )
 
 
-def append_pin_row(out: List[str]) -> None:
+def append_pin_row(out: list[str]) -> None:
     """The eight fields over the header, the paper's top corners rounding
     the first and the last, and the two 5V arrows."""
     x0, top, x1, _, r = PAPER_TOP
@@ -283,7 +284,7 @@ def append_pin_row(out: List[str]) -> None:
     out.append(line([(9.77, 2.86), (11.78, 3.62)], PLUS1_INK, 0.11))
 
 
-def append_title(out: List[str]) -> None:
+def append_title(out: list[str]) -> None:
     """``M5STICK`` white on a blue field cut on a slant, ``CPlus 1.1`` black
     on the paper, both inside one blue rounded frame."""
     x0, y0, x1, y1, r = 1.98, 6.64, 21.95, 10.92, 0.45
@@ -302,7 +303,7 @@ def append_title(out: List[str]) -> None:
     out.append(rect(21.97, 7.42, 22.33, 10.12, PLUS1_TAB, 0.08))
 
 
-def append_fields(out: List[str]) -> None:
+def append_fields(out: list[str]) -> None:
     """The colored fields under the title, each a rounded rectangle."""
     for x0, y0, x1, y1, r, fill in (
         (2.86, 11.02, 6.40, 13.94, 0.3, PLUS1_CYAN),
@@ -335,7 +336,7 @@ def append_fields(out: List[str]) -> None:
 #: fitted to both photos at once (least squares on their blurred green
 #: inside the mark's disc: scale 1.0006, turned -0.14 deg; each photo alone
 #: places it within 0.02 mm of the other).
-ESPRESSIF_RINGS: Tuple[Tuple[Tuple[float, float], ...], ...] = (
+ESPRESSIF_RINGS: tuple[tuple[tuple[float, float], ...], ...] = (
     (
         (3.460, 15.487),
         (3.411, 15.565),
@@ -561,7 +562,7 @@ ESPRESSIF_RINGS: Tuple[Tuple[Tuple[float, float], ...], ...] = (
 )
 
 
-def append_espressif(out: List[str]) -> None:
+def append_espressif(out: list[str]) -> None:
     """Espressif's mark on the ESP32 tile, white."""
     d = " ".join(
         "M " + " L ".join(f"{f(x)} {f(y)}" for x, y in ring) + " Z" for ring in ESPRESSIF_RINGS
@@ -569,7 +570,7 @@ def append_espressif(out: List[str]) -> None:
     out.append(f'<path d="{d}" fill="{PLUS1_WHITE}" fill-rule="evenodd"/>\n')
 
 
-def append_marks(out: List[str]) -> None:
+def append_marks(out: list[str]) -> None:
     """FCC, Japan's radio mark and its number, CE, the crossed-out bin and
     its bar, the maker's cube, the two button marks."""
     # FCC: an F, then two Cs one inside the other, open to the right
@@ -653,7 +654,7 @@ def append_marks(out: List[str]) -> None:
     out.append(line([(20.92, 36.74), (21.68, 37.42)], PLUS1_MAKER, 0.11))
 
 
-def append_m5stickc_plus1_back(out: List[str]) -> None:
+def append_m5stickc_plus1_back(out: list[str]) -> None:
     """The paper, then the label's one legend group on the plane ``label``."""
     for x0, y0, x1, y1, r in (PAPER_TOP, PAPER_BOTTOM):
         out.append(rect(x0, y0, x1, y1, PAPER, r))
@@ -663,8 +664,7 @@ def append_m5stickc_plus1_back(out: List[str]) -> None:
     append_fields(out)
     append_espressif(out)
     append_marks(out)
-    for row in PLUS1_TEXTS:
-        out.append(text_run(row))
+    out.extend(text_run(row) for row in PLUS1_TEXTS)
     for content, center, size, length, ink in PLUS1_SLANTED:
         out.append(slanted_run(content, center, size, length, ink))
     out.append(fronts.LEGEND_CLOSE)

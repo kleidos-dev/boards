@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Build one board's ``.glb`` from its vendor CAD file and its ``model/spec.json``
 
@@ -226,7 +227,7 @@ draws the two at one depth: the builder reads the written model back and
 refuses it otherwise (``model_raster.screen_clearance``).
 
 A board's master (a spec whose ``output`` is ``<board>/model/<board>.glb``)
-is also written as Wavefront OBJ and MTL beside it, in millimetres, by
+is also written as Wavefront OBJ and MTL beside it, in millimeters, by
 ``export_obj.py`` from the GLB just written and from nothing else, and
 ``source.json`` records the two files under ``obj``; the GLB's bytes do not
 change for it. The checks' fixture gets no OBJ.
@@ -267,20 +268,47 @@ import struct
 import sys
 import tempfile
 import urllib.request
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
+import numpy.typing as npt
 import shapely
 import shapely.geometry as sg
 import trimesh
+from shapely.geometry.base import BaseGeometry
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import board_faces  # noqa: E402  (beside this file; -I leaves it off the path)
-import export_obj  # noqa: E402
-import glb_legends  # noqa: E402
-import legend_source  # noqa: E402
-import media_meta  # noqa: E402
-import model_raster  # noqa: E402
+import board_faces
+import export_obj
+import glb_legends
+import legend_source
+import media_meta
+import model_raster
+
+# trimesh ships these without annotations: the signatures this builder calls
+# them with, so every call is checked like the rest (mypy's strict mode).
+_rotation_matrix = cast(
+    "Callable[[float, Sequence[float]], npt.NDArray[np.float64]]",
+    trimesh.transformations.rotation_matrix,
+)
+_triangle_normals = cast(
+    "Callable[[npt.NDArray[np.float64]], tuple[npt.NDArray[np.float64], npt.NDArray[np.bool_]]]",
+    trimesh.triangles.normals,
+)
+_slice_mesh_plane = cast(
+    "Callable[..., trimesh.Trimesh]",
+    trimesh.intersections.slice_mesh_plane,
+)
+
+
+def _one_mesh(geometry: object, what: str) -> trimesh.Trimesh:
+    """*geometry* as one mesh: what trimesh's loaders and concatenate give here."""
+    if not isinstance(geometry, trimesh.Trimesh):
+        raise SpecError(f"{what}: not one triangle mesh ({type(geometry).__name__})")
+    return geometry
+
 
 #: Bumped when the same spec and source would build different bytes, or when
 #: the spec format gains a key (1.1.0: polygon and disc profiles, spheres,
@@ -304,7 +332,8 @@ import model_raster  # noqa: E402
 BUILDER_VERSION = "1.7.0"
 #: How many materials the strictest reader of a model keeps a table of, and how
 #: many of its own it puts there after the model's: the Kleidos site's renderer,
-#: whose lit shader holds ``MATERIAL_SLOTS`` (the Kleidos repository's ``site/src/scripts/film/gl/shaders.ts``).
+#: whose lit shader holds ``MATERIAL_SLOTS`` (the Kleidos repository's
+#: ``site/src/scripts/film/gl/shaders.ts``).
 #: Its landing film's scene added the finger, the nail and the cover glass; the fleet
 #: scene that replaced the film (``site/src/scripts/fleet/scene.ts``) adds the cover glass
 #: alone, so three is the stricter of the two. The Kleidos repository's own tests hold
@@ -463,7 +492,7 @@ LOFT_CAPS = ("first", "last")
 PROFILES = ("rect", "rounded_rect", "stadium", "polygon", "rounded")
 
 
-def keys(obj, kind, where):
+def keys(obj: dict[str, Any], kind: str, where: str) -> None:
     """Refuse a key the builder would not read (``note`` is always admitted)."""
     if not isinstance(obj, dict):
         raise SpecError(f"{where}: expected an object, got {obj!r}")
@@ -472,14 +501,14 @@ def keys(obj, kind, where):
         raise SpecError(f"{where}: unknown key(s) {extra}; a {kind} takes {sorted(KEYS[kind])}")
 
 
-def one_of(obj, names, where):
+def one_of(obj: dict[str, Any], names: Iterable[str], where: str) -> str:
     got = [k for k in names if k in obj]
     if len(got) != 1:
         raise SpecError(f"{where}: needs exactly one of {list(names)}, has {got}")
-    return got[0]
+    return str(got[0])
 
 
-def units(spec):
+def units(spec: dict[str, Any]) -> list[tuple[str | None, dict[str, Any]]]:
     """[(name, object)] of the vendor files a spec builds from: its own, then its modules'.
 
     The spec's own source is named ``None``; a module is named by its ``name``.
@@ -494,12 +523,12 @@ def units(spec):
 OWN_SOURCE_KEYS = {"format", "license", "copyright", "license_note"}
 
 
-def own_model(spec):
+def own_model(spec: dict[str, Any]) -> bool:
     """True for a spec built from no vendor file: ``source`` ``format`` ``none``."""
     return isinstance(spec.get("source"), dict) and spec["source"].get("format") == "none"
 
 
-def _validate_own(spec):
+def _validate_own(spec: dict[str, Any]) -> None:
     """A model of no vendor file names nothing a vendor file would give."""
     extra = sorted(set(spec["source"]) - OWN_SOURCE_KEYS - {"note"})
     if extra:
@@ -521,7 +550,7 @@ def _validate_own(spec):
         raise SpecError("a model of no vendor file writes center_mm and front_frame in numbers")
 
 
-def _validate_unit(unit, where):
+def _validate_unit(unit: dict[str, Any], where: str) -> None:
     keys(unit["source"], "source", f"{where}source")
     if "tessellation" in unit:
         keys(unit["tessellation"], "tessellation", f"{where}tessellation")
@@ -537,12 +566,12 @@ def _validate_unit(unit, where):
             keys(op[kind], "cull_op" if kind == "cull" else kind, f"{at} {kind}")
 
 
-def legends_drawing(leg):
+def legends_drawing(leg: dict[str, Any]) -> tuple[str, str]:
     """(the drawing a legends mesh reads, relative to the spec; the face it draws)."""
-    return leg.get("drawing", leg.get("front")), leg.get("face", "front")
+    return str(leg.get("drawing", leg.get("front"))), str(leg.get("face", "front"))
 
 
-def validate(spec):
+def validate(spec: dict[str, Any]) -> None:
     """Check every object of *spec* for keys the builder would not read."""
     keys(spec, "spec", "spec")
     modules = spec.get("modules", [])
@@ -608,8 +637,8 @@ def validate(spec):
     if twice:
         raise SpecError(f"mesh names repeat: {twice}")
     solid = {entry["name"] for entry in spec["meshes"] if "legends" not in entry}
-    planes = {}
-    faces_of = {}  # drawing -> the faces legends meshes read it as
+    planes: dict[tuple[str, Any], Any] = {}
+    faces_of: dict[str, set[str]] = {}  # drawing -> the faces legends meshes read it as
     for entry in spec["meshes"]:
         where = f"mesh {entry.get('name')!r}"
         keys(entry, "mesh", where)
@@ -718,18 +747,22 @@ _BINOPS = {
 }
 
 
-def _arith(node):
-    if isinstance(node, ast.Constant) and type(node.value) in (int, float):
-        return node.value
+def _arith(node: ast.AST) -> float:
+    if (
+        isinstance(node, ast.Constant)
+        and isinstance(node.value, (int, float))
+        and not isinstance(node.value, bool)
+    ):
+        return float(node.value)
     if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.USub, ast.UAdd)):
         v = _arith(node.operand)
         return -v if isinstance(node.op, ast.USub) else +v
     if isinstance(node, ast.BinOp) and type(node.op) in _BINOPS:
-        return _BINOPS[type(node.op)](_arith(node.left), _arith(node.right))
+        return float(_BINOPS[type(node.op)](_arith(node.left), _arith(node.right)))
     raise SpecError(f"not arithmetic: {ast.dump(node)}")
 
 
-def num(v):
+def num(v: float | str) -> float:
     """A spec number: a JSON number, or a string of arithmetic."""
     if isinstance(v, str):
         return float(_arith(ast.parse(v, mode="eval").body))
@@ -738,14 +771,14 @@ def num(v):
     return float(v)
 
 
-def nums(seq, n=None):
+def nums(seq: Sequence[float | str], n: int | None = None) -> list[float]:
     out = [num(v) for v in seq]
     if n is not None and len(out) != n:
         raise SpecError(f"expected {n} numbers, got {seq!r}")
     return out
 
 
-def srgb_to_linear(c):
+def srgb_to_linear(c: npt.ArrayLike) -> npt.NDArray[np.float64]:
     """sRGB 0-255 to linear light 0-1, one channel at a time through the C library's pow.
 
     numpy's vectorised power runs a different routine on a CPU with AVX-512
@@ -754,8 +787,8 @@ def srgb_to_linear(c):
     on every machine, and gives the same 256 values on macOS and glibc.
     """
     out = []
-    for v in np.asarray(c, dtype=float).ravel().tolist():
-        v /= 255.0
+    for channel in np.asarray(c, dtype=float).ravel().tolist():
+        v = channel / 255.0
         out.append(v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4)
     return np.array(out, dtype=float).reshape(np.shape(c))
 
@@ -763,7 +796,9 @@ def srgb_to_linear(c):
 # ---------------------------------------------------------------- shading
 
 
-def crease_normals(mesh, crease_deg, planar_min_area):
+def crease_normals(
+    mesh: trimesh.Trimesh, crease_deg: float, planar_min_area: float
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]:
     """Per-corner normals: flat on planar facets, smooth across fillets.
 
     A corner of a face that belongs to a large coplanar group keeps the face
@@ -796,7 +831,9 @@ def crease_normals(mesh, crease_deg, planar_min_area):
     vf = mesh.vertex_faces  # padded with -1
     cos_crease = np.cos(np.radians(crease_deg))
 
-    out_pos, out_nrm, out_faces = [], [], []
+    out_pos: list[Any] = []
+    out_nrm: list[Any] = []
+    out_faces: list[Any] = []
     index = {}
     for fi, face in enumerate(faces):
         if not has_normal[fi]:
@@ -826,7 +863,9 @@ def crease_normals(mesh, crease_deg, planar_min_area):
     return (np.array(out_pos), np.array(out_nrm), np.array(out_faces, dtype=np.int64))
 
 
-def flat(mesh, planar_min_area):
+def flat(
+    mesh: trimesh.Trimesh, planar_min_area: float
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]:
     """Flat-shaded arrays for small hard-edged primitives (boxes)."""
     m = mesh.copy()
     m.merge_vertices()
@@ -836,18 +875,20 @@ def flat(mesh, planar_min_area):
 # ---------------------------------------------------------------- shapes
 
 
-def box(x0, x1, y0, y1, z0, z1):
-    b = trimesh.creation.box(extents=[x1 - x0, y1 - y0, z1 - z0])
+def box(x0: float, x1: float, y0: float, y1: float, z0: float, z1: float) -> trimesh.Trimesh:
+    b: trimesh.Trimesh = trimesh.creation.box(extents=[x1 - x0, y1 - y0, z1 - z0])
     b.apply_translation([(x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2])
     return b
 
 
-def rounded_rect(x0, x1, y0, y1, r, res=6):
+def rounded_rect(
+    x0: float, x1: float, y0: float, y1: float, r: float, res: int = 6
+) -> BaseGeometry:
     core = sg.box(x0 + r, y0 + r, x1 - r, y1 - r)
     return core.buffer(r, quad_segs=res, join_style="round")
 
 
-def stadium(cu, cv, w, h, res=10):
+def stadium(cu: float, cv: float, w: float, h: float, res: int = 10) -> BaseGeometry:
     """A stadium (rounded slot) w wide and h tall centered on (cu, cv); w == h
     is a disc. A slot taller than wide is drawn in the other axis order."""
     if w < h:
@@ -857,7 +898,9 @@ def stadium(cu, cv, w, h, res=10):
     return core.buffer(r, quad_segs=res)
 
 
-def polygon(points, holes=()):
+def polygon(
+    points: Sequence[Sequence[float]], holes: Sequence[Sequence[Sequence[float]]] = ()
+) -> sg.Polygon:
     """A simple polygon from (u, v) points, holes optional, counter-clockwise."""
     poly = sg.Polygon(points, list(holes))
     if not poly.is_valid or poly.area <= 0:
@@ -865,7 +908,7 @@ def polygon(points, holes=()):
     return sg.polygon.orient(poly, 1.0)
 
 
-def extrude(poly, axis, a0, a1):
+def extrude(poly: sg.Polygon, axis: str, a0: float, a1: float) -> trimesh.Trimesh:
     """Extrude a polygon drawn in the two axes other than *axis* from a0 to a1.
 
     The polygon's (u, v) are (x, y) for axis z, (x, z) for axis y and (y, z)
@@ -875,7 +918,7 @@ def extrude(poly, axis, a0, a1):
     m = trimesh.creation.extrude_polygon(poly, height=a1 - a0)
     # read the triangles straight from the arrays: the mesh's cached normals
     # would follow it through the moves below and be reused downstream
-    _, covers = trimesh.triangles.normals(np.asarray(m.vertices)[np.asarray(m.faces)])
+    _, covers = _triangle_normals(np.asarray(m.vertices)[np.asarray(m.faces)])
     if not covers.all():
         m.update_faces(covers)
         m.remove_unreferenced_vertices()
@@ -900,7 +943,9 @@ def extrude(poly, axis, a0, a1):
 PRISM_FACES = ("top", "bottom", "outer", "inner")
 
 
-def prism_faces(mesh, poly, axis, which):
+def prism_faces(
+    mesh: trimesh.Trimesh, poly: sg.Polygon, axis: str, which: Sequence[str] | None
+) -> trimesh.Trimesh:
     """Only the named faces of *mesh*, the prism ``extrude`` built from *poly* along *axis*.
 
     ``top`` is the cap at the range's far end (facing +axis), ``bottom`` the
@@ -934,23 +979,27 @@ def prism_faces(mesh, poly, axis, which):
     return m
 
 
-def cylinder(axis, cu, cv, r, a0, a1, sections=20):
-    c = trimesh.creation.cylinder(radius=r, height=a1 - a0, sections=sections)
+def cylinder(
+    axis: str, cu: float, cv: float, r: float, a0: float, a1: float, sections: int = 20
+) -> trimesh.Trimesh:
+    c: trimesh.Trimesh = trimesh.creation.cylinder(radius=r, height=a1 - a0, sections=sections)
     mid = (a0 + a1) / 2
     if axis == "z":
         c.apply_translation([cu, cv, mid])
     elif axis == "y":
-        c.apply_transform(trimesh.transformations.rotation_matrix(-np.pi / 2, [1, 0, 0]))
+        c.apply_transform(_rotation_matrix(-np.pi / 2, [1, 0, 0]))
         c.apply_translation([cu, mid, cv])
     elif axis == "x":
-        c.apply_transform(trimesh.transformations.rotation_matrix(np.pi / 2, [0, 1, 0]))
+        c.apply_transform(_rotation_matrix(np.pi / 2, [0, 1, 0]))
         c.apply_translation([mid, cu, cv])
     else:
         raise SpecError(f"unknown axis {axis!r}")
     return c
 
 
-def loft(axis, sections, caps=()):
+def loft(
+    axis: str, sections: Sequence[tuple[float, Sequence[Sequence[float]]]], caps: Sequence[str] = ()
+) -> trimesh.Trimesh:
     """The side surface through *sections*, [(at, [(u, v), ...]), ...] along *axis*.
 
     Point i of a section is joined to point i of the next by two triangles;
@@ -986,9 +1035,10 @@ def loft(axis, sections, caps=()):
         tri = trimesh.creation.triangulate_polygon(sg.Polygon(rings[s][1]))[1]
         base = s * n
         up = (which == "last") == rising  # this cap faces +axis
-        for t in np.asarray(tri):
-            t = [base + int(x) for x in t]
-            faces.append(tuple(t) if up else tuple(t[::-1]))
+        for corners in np.asarray(tri):
+            t = [base + int(x) for x in corners]
+            a, b, c = t if up else t[::-1]
+            faces.append((a, b, c))
     # in (u, v, axis) order counterclockwise is +axis; the axis order (u, v, k)
     # of y is a mirror of (x, y, z)
     m = trimesh.Trimesh(vertices, np.asarray(faces), process=False)
@@ -998,7 +1048,9 @@ def loft(axis, sections, caps=()):
     return m
 
 
-def quad_xy(x0, x1, y0, y1, z, facing=1):
+def quad_xy(
+    x0: float, x1: float, y0: float, y1: float, z: float, facing: int = 1
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]:
     """Quad in the x-y plane at z, facing +Z (facing=1) or -Z."""
     pos = np.array([[x0, y1, z], [x1, y1, z], [x1, y0, z], [x0, y0, z]], dtype=float)
     nrm = np.tile([0.0, 0.0, float(facing)], (4, 1))
@@ -1009,7 +1061,9 @@ def quad_xy(x0, x1, y0, y1, z, facing=1):
     return pos, nrm, faces
 
 
-def quad_xz(x0, x1, z0, z1, y, facing=-1):
+def quad_xz(
+    x0: float, x1: float, z0: float, z1: float, y: float, facing: int = -1
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]:
     """Quad in the x-z plane at y, facing -Y (facing=-1) or +Y."""
     pos = np.array([[x0, y, z1], [x1, y, z1], [x1, y, z0], [x0, y, z0]], dtype=float)
     nrm = np.tile([0.0, float(facing), 0.0], (4, 1))
@@ -1020,10 +1074,22 @@ def quad_xz(x0, x1, z0, z1, y, facing=-1):
     return pos, nrm, faces
 
 
-def quad_grid(axis, at, facing, uc, vc, cols, rows, pitch, size):
+def quad_grid(
+    axis: str,
+    at: float,
+    facing: int,
+    uc: float,
+    vc: float,
+    cols: int,
+    rows: int,
+    pitch: float,
+    size: float,
+) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]:
     """A rows x cols grid of flat squares centered on (uc, vc) in the plane
     normal to *axis* at *at*; rows run along v, columns along u."""
-    qp, qn, qf = [], [], []
+    qp: list[npt.NDArray[np.float64]] = []
+    qn: list[npt.NDArray[np.float64]] = []
+    qf: list[npt.NDArray[np.int64]] = []
     for row in range(rows):
         for col in range(cols):
             cu = uc + (col - (cols - 1) / 2) * pitch
@@ -1050,38 +1116,44 @@ def quad_grid(axis, at, facing, uc, vc, cols, rows, pitch, size):
 class Frame:
     """The front frame of measurements.json placed in the build frame."""
 
-    def __init__(self, left_x, top_y):
+    def __init__(self, left_x: float, top_y: float) -> None:
         self.left_x = left_x
         self.top_y = top_y
 
-    def x(self, fx):
+    def x(self, fx: float) -> float:
         return self.left_x + fx
 
-    def y(self, fy):
+    def y(self, fy: float) -> float:
         return self.top_y - fy
 
-    def xr(self, f0, f1):
+    def xr(self, f0: float, f1: float) -> tuple[float, float]:
         return self.x(f0), self.x(f1)
 
-    def yr(self, f0, f1):
+    def yr(self, f0: float, f1: float) -> tuple[float, float]:
         # front y grows down, build y grows up: the range swaps ends
         return self.y(f1), self.y(f0)
 
-    def u(self, axis, f0, f1):
+    def u(self, axis: str, f0: float, f1: float) -> tuple[float, float]:
         """A (u0, u1) profile range of a prism along *axis*."""
         return self.xr(f0, f1) if axis in ("z", "y") else self.yr(f0, f1)
 
-    def v(self, axis, f0, f1):
+    def v(self, axis: str, f0: float, f1: float) -> tuple[float, float]:
         return self.yr(f0, f1) if axis == "z" else (f0, f1)
 
-    def a(self, axis, f0, f1):
+    def a(self, axis: str, f0: float, f1: float) -> tuple[float, float]:
         """The extrusion range along *axis*."""
-        return {"x": self.xr, "y": self.yr, "z": lambda a, b: (a, b)}[axis](f0, f1)
+        if axis == "x":
+            return self.xr(f0, f1)
+        if axis == "y":
+            return self.yr(f0, f1)
+        if axis == "z":
+            return f0, f1
+        raise KeyError(axis)
 
-    def cu(self, axis, f):
+    def cu(self, axis: str, f: float) -> float:
         return self.x(f) if axis in ("z", "y") else self.y(f)
 
-    def cv(self, axis, f):
+    def cv(self, axis: str, f: float) -> float:
         return self.y(f) if axis == "z" else f
 
 
@@ -1089,11 +1161,11 @@ class Frame:
 
 
 class Glb:
-    def __init__(self, root_name, center, quant_mm):
+    def __init__(self, root_name: str, center: npt.ArrayLike, quant_mm: float) -> None:
         self.center = np.asarray(center, dtype=float)
         self.quant_mm = quant_mm
         self.bin = bytearray()
-        self.gltf = {
+        self.gltf: dict[str, Any] = {
             "asset": {"version": "2.0"},
             "scene": 0,
             "scenes": [{"nodes": [0]}],
@@ -1105,10 +1177,10 @@ class Glb:
             "buffers": [{"byteLength": 0}],
             "extensionsUsed": [],
         }
-        self.mat_index = {}
+        self.mat_index: dict[str, int] = {}
         self.triangles = 0
 
-    def _view(self, data, target, stride=None):
+    def _view(self, data: bytes, target: int | None, stride: int | None = None) -> int:
         while len(self.bin) % 4:
             self.bin.append(0)
         off = len(self.bin)
@@ -1121,7 +1193,16 @@ class Glb:
         self.gltf["bufferViews"].append(bv)
         return len(self.gltf["bufferViews"]) - 1
 
-    def _acc(self, arr, ctype, typ, target, minmax=False, normalized=False, pad_to=None):
+    def _acc(
+        self,
+        arr: npt.NDArray[Any],
+        ctype: int,
+        typ: str,
+        target: int | None,
+        minmax: bool = False,
+        normalized: bool = False,
+        pad_to: int | None = None,
+    ) -> int:
         data = arr
         stride = None
         if pad_to:
@@ -1140,17 +1221,26 @@ class Glb:
         self.gltf["accessors"].append(acc)
         return len(self.gltf["accessors"]) - 1
 
-    def _require(self, ext):
+    def _require(self, ext: str) -> None:
         for key in ("extensionsUsed", "extensionsRequired"):
             lst = self.gltf.setdefault(key, [])
             if ext not in lst:
                 lst.append(ext)
 
-    def material(self, name, rgb, rough, metal=0.0, alpha=None, unlit=False, double=False):
+    def material(
+        self,
+        name: str,
+        rgb: Sequence[float],
+        rough: float,
+        metal: float = 0.0,
+        alpha: float | None = None,
+        unlit: bool = False,
+        double: bool = False,
+    ) -> int:
         if name in self.mat_index:
             return self.mat_index[name]
         lin = srgb_to_linear(rgb).tolist()
-        m = {
+        m: dict[str, Any] = {
             "name": name,
             "pbrMetallicRoughness": {
                 "baseColorFactor": lin + [1.0 if alpha is None else alpha],
@@ -1170,7 +1260,13 @@ class Glb:
         self.mat_index[name] = len(self.gltf["materials"]) - 1
         return self.mat_index[name]
 
-    def mesh(self, name, prims, extras=None, quantize=True):
+    def mesh(
+        self,
+        name: str,
+        prims: list[tuple[Any, ...]],
+        extras: dict[str, Any] | None = None,
+        quantize: bool = True,
+    ) -> None:
         """prims: list of (pos_mm, nrm, faces, uv_or_None, material_index).
 
         quantize: KHR_mesh_quantization. Positions become int16 in units of
@@ -1222,7 +1318,7 @@ class Glb:
         self.gltf["nodes"].append(node)
         self.gltf["nodes"][0]["children"].append(len(self.gltf["nodes"]) - 1)
 
-    def write(self, path):
+    def write(self, path: str | Path) -> int:
         while len(self.bin) % 4:
             self.bin.append(0)
         self.gltf["buffers"][0]["byteLength"] = len(self.bin)
@@ -1245,7 +1341,7 @@ class Glb:
 # ---------------------------------------------------------------- source
 
 
-def sha256_file(path):
+def sha256_file(path: str | Path) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as fh:
         for chunk in iter(lambda: fh.read(1 << 20), b""):
@@ -1253,17 +1349,23 @@ def sha256_file(path):
     return h.hexdigest()
 
 
-def cached_source(unit, cache, fetch):
+def cached_source(unit: dict[str, Any], cache: str | Path, fetch: bool) -> Path:
     """A vendor file from the cache, downloaded first when *fetch* is set.
 
     *unit* is the spec, for its own file, or one of its ``modules``."""
     src = unit["source"]
-    path = Path(cache) / src["sha256"][:12] / src["file"]
+    path: Path = Path(cache) / src["sha256"][:12] / src["file"]
     if not path.is_file() and fetch:
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_suffix(path.suffix + ".part")
+        if not str(src["url"]).startswith("https://"):
+            raise SpecError(f"{src['url']}: a vendor file is fetched over https only")
         print(f"fetching {src['url']}")
-        with urllib.request.urlopen(src["url"], timeout=120) as resp, open(tmp, "wb") as fh:
+        # S310 asks for a checked scheme: it is checked just above (https only).
+        with (
+            urllib.request.urlopen(src["url"], timeout=120) as resp,  # noqa: S310
+            open(tmp, "wb") as fh,
+        ):
             while chunk := resp.read(1 << 20):
                 fh.write(chunk)
         digest = sha256_file(tmp)
@@ -1274,30 +1376,29 @@ def cached_source(unit, cache, fetch):
     return path
 
 
-def apply_transform(mesh, ops):
+def apply_transform(mesh: trimesh.Trimesh, ops: list[dict[str, Any]]) -> trimesh.Trimesh:
     for op in ops:
         if "rotate" in op:
             r = op["rotate"]
             axis = {"x": [1, 0, 0], "y": [0, 1, 0], "z": [0, 0, 1]}[r["axis"]]
-            mesh.apply_transform(
-                trimesh.transformations.rotation_matrix(np.radians(num(r["deg"])), axis)
-            )
+            mesh.apply_transform(_rotation_matrix(np.radians(num(r["deg"])), axis))
         elif "translate" in op:
             mesh.apply_translation(nums(op["translate"], 3))
         elif "scale" in op:
-            mesh.apply_scale(num(op["scale"]))
+            scale = num(op["scale"])
+            mesh.apply_transform(np.diag([scale, scale, scale, 1.0]))
         else:
             raise SpecError(f"unknown transform {op!r}")
     return mesh
 
 
-def step_mesh_dir(spec, src_path, cache):
+def step_mesh_dir(spec: dict[str, Any], src_path: str | Path, cache: str | Path) -> Path:
     """Tessellate a STEP once into a GLB in the cache; return its path."""
     import cascadio  # only a STEP needs it
 
     tes = spec.get("tessellation", {})
     tl, ta = num(tes.get("tol_linear", 0.01)), num(tes.get("tol_angular", 0.5))
-    out = Path(cache) / spec["source"]["sha256"][:12] / f"step-{tl:g}-{ta:g}.glb"
+    out: Path = Path(cache) / spec["source"]["sha256"][:12] / f"step-{tl:g}-{ta:g}.glb"
     if not out.is_file():
         out.parent.mkdir(parents=True, exist_ok=True)
         rc = cascadio.step_to_glb(
@@ -1308,7 +1409,7 @@ def step_mesh_dir(spec, src_path, cache):
     return out
 
 
-def clean(mesh):
+def clean(mesh: trimesh.Trimesh) -> trimesh.Trimesh:
     """Drop zero-area and repeated faces (a STEP tessellation has both)."""
     mesh.update_faces(mesh.nondegenerate_faces(height=1e-6))
     mesh.update_faces(mesh.unique_faces())
@@ -1316,12 +1417,14 @@ def clean(mesh):
     return mesh
 
 
-def load_components(spec, src_path, cache):
+def load_components(
+    spec: dict[str, Any], src_path: str | Path, cache: str | Path
+) -> list[tuple[str, trimesh.Trimesh]]:
     """[(name, mesh)] in the build frame: STL pieces or STEP parts."""
     src = spec["source"]
     ops = spec.get("transform", [])
     if src["format"] == "stl":
-        mesh = trimesh.load(str(src_path), force="mesh")
+        mesh = _one_mesh(trimesh.load(str(src_path), force="mesh"), str(src_path))
         if ops:
             apply_transform(mesh, ops)
         mesh.merge_vertices()
@@ -1331,12 +1434,14 @@ def load_components(spec, src_path, cache):
         return [(f"piece{i}", p) for i, p in enumerate(pieces)]
     if src["format"] == "step":
         scene = trimesh.load(str(step_mesh_dir(spec, src_path, cache)))
+        if not isinstance(scene, trimesh.Scene):
+            raise SpecError(f"{src_path}: the STEP tessellation is not a scene")
         out = []
         for node in scene.graph.nodes_geometry:
             transform, gname = scene.graph[node]
             m = scene.geometry[gname].copy()
             m.apply_transform(transform)
-            m.apply_scale(1000.0)  # cascadio writes meters
+            m.apply_transform(np.diag([1000.0, 1000.0, 1000.0, 1.0]))  # cascadio writes meters
             if ops:
                 apply_transform(m, ops)
             m.merge_vertices()
@@ -1351,11 +1456,13 @@ def load_components(spec, src_path, cache):
     raise SpecError(f"unknown source format {src['format']!r}")
 
 
-def matches(name, mesh, rule):
+def matches(name: str, mesh: trimesh.Trimesh, rule: dict[str, Any]) -> bool:
     lo, hi = mesh.bounds
     ext = mesh.extents
 
-    def axes(key, values, test):
+    def axes(
+        key: str, values: npt.NDArray[np.float64], test: Callable[[float, float], bool]
+    ) -> bool:
         lim = rule.get(key)
         if lim is None:
             return True
@@ -1377,11 +1484,16 @@ def matches(name, mesh, rule):
     )
 
 
-def part_ops(mesh, ops, volumes, name="?"):
+def part_ops(
+    mesh: trimesh.Trimesh,
+    ops: list[dict[str, Any]],
+    volumes: dict[str, list[list[float]]],
+    name: str = "?",
+) -> trimesh.Trimesh:
     for op in ops:
         if "slice" in op:
             s = op["slice"]
-            mesh = trimesh.intersections.slice_mesh_plane(
+            mesh = _slice_mesh_plane(
                 mesh,
                 plane_normal=nums(s["normal"], 3),
                 plane_origin=nums(s["origin"], 3),
@@ -1405,10 +1517,14 @@ def part_ops(mesh, ops, volumes, name="?"):
     return mesh
 
 
-def gather_parts(spec, components, volumes):
+def gather_parts(
+    spec: dict[str, Any],
+    components: list[tuple[str, trimesh.Trimesh]],
+    volumes: dict[str, list[list[float]]],
+) -> dict[str, trimesh.Trimesh]:
     select = spec.get("select", {})
     rules = spec["parts"]
-    found = {r["name"]: [] for r in rules}
+    found: dict[str, list[trimesh.Trimesh]] = {r["name"]: [] for r in rules}
     for name, mesh in components:
         if not matches(name, mesh, select):
             continue
@@ -1416,7 +1532,7 @@ def gather_parts(spec, components, volumes):
             if matches(name, mesh, rule.get("match", {})):
                 found[rule["name"]].append(mesh)
                 break
-    parts = {}
+    parts: dict[str, trimesh.Trimesh] = {}
     for rule in rules:
         got = found[rule["name"]]
         if not got:
@@ -1425,7 +1541,7 @@ def gather_parts(spec, components, volumes):
             continue
         if len(got) > 1 and not rule.get("merge", True):
             raise SpecError(f"part {rule['name']!r}: {len(got)} components match")
-        mesh = got[0] if len(got) == 1 else trimesh.util.concatenate(got)
+        mesh = got[0] if len(got) == 1 else _one_mesh(trimesh.util.concatenate(got), rule["name"])
         parts[rule["name"]] = part_ops(mesh, rule.get("ops", []), volumes, rule["name"])
     return parts
 
@@ -1433,7 +1549,11 @@ def gather_parts(spec, components, volumes):
 # ---------------------------------------------------------------- build
 
 
-def inside_box(points, box_, margin=0.06):
+def inside_box(
+    points: npt.NDArray[np.float64],
+    box_: list[float],
+    margin: float = 0.06,
+) -> npt.NDArray[np.bool_]:
     x0, x1, y0, y1, z0, z1 = box_
     return (
         (points[:, 0] > x0 + margin)
@@ -1445,14 +1565,23 @@ def inside_box(points, box_, margin=0.06):
     )
 
 
-def inside_any(points, boxes, margin=0.06):
+def inside_any(
+    points: npt.NDArray[np.float64],
+    boxes: Sequence[list[float]],
+    margin: float = 0.06,
+) -> npt.NDArray[np.bool_]:
     inside = np.zeros(len(points), dtype=bool)
     for b in boxes:
         inside |= inside_box(points, b, margin)
     return inside
 
 
-def drop_hidden(mesh, solid_boxes, margin=0.06, same_box=False):
+def drop_hidden(
+    mesh: trimesh.Trimesh,
+    solid_boxes: Sequence[list[float]],
+    margin: float = 0.06,
+    same_box: bool = False,
+) -> tuple[trimesh.Trimesh, int]:
     """Remove the faces opaque filler boxes hide.
 
     A face goes when each of its three corners sits inside one of the boxes,
@@ -1474,7 +1603,14 @@ def drop_hidden(mesh, solid_boxes, margin=0.06, same_box=False):
     return m, int((~keep).sum())
 
 
-def split_by_boxes(arrays, boxes, name="?"):
+def split_by_boxes(
+    arrays: tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]],
+    boxes: Sequence[list[float]],
+    name: str = "?",
+) -> tuple[
+    tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]],
+    tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]],
+]:
     """(inside, outside): the faces of shaded *arrays* one box holds whole, and the rest.
 
     *arrays* is (positions, normals, faces) as ``crease_normals`` gives them
@@ -1509,14 +1645,35 @@ def split_by_boxes(arrays, boxes, name="?"):
     return out[0], out[1]
 
 
-def cull_boxes(volumes, names):
+def cull_boxes(volumes: dict[str, list[list[float]]], names: Sequence[str]) -> list[list[float]]:
     try:
         return [b for name in names for b in volumes[name]]
     except KeyError as exc:
         raise SpecError(f"cull: no volume {exc.args[0]!r}") from None
 
 
-def shape_meshes(shape, volumes, frame):
+def _polygon(geom: BaseGeometry) -> sg.Polygon:
+    """A profile as the one polygon a prism is extruded from."""
+    if not isinstance(geom, sg.Polygon):
+        raise SpecError(f"a prism profile is one polygon, not a {geom.geom_type}")
+    return geom
+
+
+def _front(frame: Frame | None) -> Frame:
+    """The spec's front frame, for a value written in it: refused when the spec sets none."""
+    if frame is None:
+        raise SpecError("a value is written in the front frame, but the spec has no front_frame")
+    return frame
+
+
+def shape_meshes(
+    shape: dict[str, Any],
+    volumes: dict[str, list[list[float]]],
+    frame: Frame | None,
+) -> (
+    list[trimesh.Trimesh]
+    | tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]
+):
     """A spec shape as a list of trimesh solids, or one (pos, nrm, faces)."""
     front = shape.get("frame") == "front"
     if front and frame is None:
@@ -1524,7 +1681,7 @@ def shape_meshes(shape, volumes, frame):
     if "box" in shape:
         x0, x1, y0, y1, z0, z1 = nums(shape["box"], 6)
         if front:
-            (x0, x1), (y0, y1) = frame.xr(x0, x1), frame.yr(y0, y1)
+            (x0, x1), (y0, y1) = _front(frame).xr(x0, x1), _front(frame).yr(y0, y1)
         return [box(x0, x1, y0, y1, z0, z1)]
     if "volume" in shape:
         return [box(*b) for b in volumes[shape["volume"]]]
@@ -1543,24 +1700,25 @@ def shape_meshes(shape, volumes, frame):
                 poly = rounded_rect(u0, u1, v0, v1, num(prof["rounded"]), int(prof.get("res", 6)))
             else:
                 poly = sg.box(u0, v0, u1, v1)
-            return [prism_faces(extrude(poly, axis, a0, a1), poly, axis, p.get("faces"))]
+            solid = _polygon(poly)
+            return [prism_faces(extrude(solid, axis, a0, a1), solid, axis, p.get("faces"))]
         a0, a1 = nums(p["range"], 2)
         if front:
-            a0, a1 = frame.a(axis, a0, a1)
+            a0, a1 = _front(frame).a(axis, a0, a1)
         if "rect" in prof:
             u0, u1, v0, v1 = nums(prof["rect"], 4)
             if front:
-                (u0, u1), (v0, v1) = frame.u(axis, u0, u1), frame.v(axis, v0, v1)
+                (u0, u1), (v0, v1) = _front(frame).u(axis, u0, u1), _front(frame).v(axis, v0, v1)
             poly = sg.box(u0, v0, u1, v1)
         elif "rounded_rect" in prof:
             u0, u1, v0, v1 = nums(prof["rounded_rect"], 4)
             if front:
-                (u0, u1), (v0, v1) = frame.u(axis, u0, u1), frame.v(axis, v0, v1)
+                (u0, u1), (v0, v1) = _front(frame).u(axis, u0, u1), _front(frame).v(axis, v0, v1)
             poly = rounded_rect(u0, u1, v0, v1, num(prof["r"]), int(prof.get("res", 6)))
         elif "stadium" in prof:
             cu, cv, w, h = nums(prof["stadium"], 4)
             if front:
-                cu, cv = frame.cu(axis, cu), frame.cv(axis, cv)
+                cu, cv = _front(frame).cu(axis, cu), _front(frame).cv(axis, cv)
             res = int(prof.get("res", 10))
             poly = stadium(cu, cv, w, h, res)
             if "inner" in prof:
@@ -1568,27 +1726,28 @@ def shape_meshes(shape, volumes, frame):
                 poly = poly.difference(stadium(cu, cv, iw, ih, res))
         elif "polygon" in prof:
 
-            def ring(points):
-                pts = [nums(p, 2) for p in points]
+            def ring(points: Sequence[Sequence[float | str]]) -> list[tuple[float, float]]:
+                pts = [(u, v) for u, v in (nums(p, 2) for p in points)]
                 if front:
-                    pts = [(frame.cu(axis, u), frame.cv(axis, v)) for u, v in pts]
+                    pts = [(_front(frame).cu(axis, u), _front(frame).cv(axis, v)) for u, v in pts]
                 return pts
 
             poly = polygon(ring(prof["polygon"]), [ring(h) for h in prof.get("holes", [])])
         else:
             raise SpecError(f"unknown profile {prof!r}")
-        return [prism_faces(extrude(poly, axis, a0, a1), poly, axis, p.get("faces"))]
+        solid = _polygon(poly)
+        return [prism_faces(extrude(solid, axis, a0, a1), solid, axis, p.get("faces"))]
     if "sphere" in shape:
         s = shape["sphere"]
         cx, cy, cz = nums(s["c"], 3)
         if front:
-            cx, cy = frame.x(cx), frame.y(cy)
+            cx, cy = _front(frame).x(cx), _front(frame).y(cy)
         sph = trimesh.creation.icosphere(
             subdivisions=int(s.get("subdivisions", 2)), radius=num(s["r"])
         )
         sph.apply_translation([cx, cy, cz])
         if "z_min" in s:
-            sph = trimesh.intersections.slice_mesh_plane(
+            sph = _slice_mesh_plane(
                 sph, plane_normal=[0, 0, 1], plane_origin=[0, 0, num(s["z_min"])]
             )
         return [sph]
@@ -1598,8 +1757,8 @@ def shape_meshes(shape, volumes, frame):
         cu, cv = nums(c["c"], 2)
         a0, a1 = nums(c["range"], 2)
         if front:
-            cu, cv = frame.cu(axis, cu), frame.cv(axis, cv)
-            a0, a1 = frame.a(axis, a0, a1)
+            cu, cv = _front(frame).cu(axis, cu), _front(frame).cv(axis, cv)
+            a0, a1 = _front(frame).a(axis, a0, a1)
         return [cylinder(axis, cu, cv, num(c["r"]), a0, a1, int(c.get("sections", 20)))]
     if "loft" in shape:
         lf = shape["loft"]
@@ -1607,10 +1766,10 @@ def shape_meshes(shape, volumes, frame):
         sections = []
         for sec in lf["sections"]:
             at = num(sec["at"])
-            pts = [nums(p, 2) for p in sec["polygon"]]
+            pts = [(u, v) for u, v in (nums(p, 2) for p in sec["polygon"])]
             if front:
-                (at, _) = frame.a(axis, at, at)
-                pts = [(frame.cu(axis, a), frame.cv(axis, b)) for a, b in pts]
+                (at, _) = _front(frame).a(axis, at, at)
+                pts = [(_front(frame).cu(axis, a), _front(frame).cv(axis, b)) for a, b in pts]
             sections.append((at, pts))
         return [loft(axis, sections, lf.get("caps", []))]
     if "quad_grid" in shape:
@@ -1618,10 +1777,10 @@ def shape_meshes(shape, volumes, frame):
         axis = q["axis"]
         at, uc, vc = num(q["at"]), num(q["u_center"]), num(q["v_center"])
         if front:
-            uc = frame.cu(axis, uc)
-            vc = frame.cv(axis, vc)
+            uc = _front(frame).cu(axis, uc)
+            vc = _front(frame).cv(axis, vc)
             if axis == "y":
-                at = frame.y(at)
+                at = _front(frame).y(at)
         return quad_grid(
             axis,
             at,
@@ -1636,7 +1795,7 @@ def shape_meshes(shape, volumes, frame):
     raise SpecError(f"unknown shape {shape!r}")
 
 
-def load_spec(spec_path):
+def load_spec(spec_path: str | Path) -> dict[str, Any]:
     spec_path = Path(spec_path)
     spec = json.loads(spec_path.read_text())
     if spec.get("schema") != 1:
@@ -1644,17 +1803,19 @@ def load_spec(spec_path):
     validate(spec)
     spec["_dir"] = spec_path.parent
     spec["_path"] = spec_path
-    return spec
+    out: dict[str, Any] = spec
+    return out
 
 
-def measurements(spec):
+def measurements(spec: dict[str, Any]) -> dict[str, Any] | None:
     rel = spec.get("measurements")
     if not rel:
         return None
-    return json.loads((spec["_dir"] / rel).read_text())
+    meas: dict[str, Any] = json.loads((spec["_dir"] / rel).read_text())
+    return meas
 
 
-def numeric_frame(spec, why):
+def numeric_frame(spec: dict[str, Any], why: str) -> Frame:
     """The front Frame of a spec whose front_frame is written in numbers."""
     ff = spec.get("front_frame")
     if ff is None or "auto" in (ff.get("left_x"), ff.get("top_y")):
@@ -1662,7 +1823,9 @@ def numeric_frame(spec, why):
     return Frame(float(num(ff["left_x"])), float(num(ff["top_y"])))
 
 
-def resolve_volumes(spec):
+def resolve_volumes(
+    spec: dict[str, Any],
+) -> dict[str, list[list[float]]]:
     """{name: [box, ...]} in the build frame (a front-frame volume moved there)."""
     out = {}
     for name, vol in spec.get("volumes", {}).items():
@@ -1677,7 +1840,7 @@ def resolve_volumes(spec):
             boxes = []
             for b in vol["boxes"]:
                 x0, x1, y0, y1, z0, z1 = nums(b, 6)
-                (x0, x1), (y0, y1) = frame.xr(x0, x1), frame.yr(y0, y1)
+                (x0, x1), (y0, y1) = _front(frame).xr(x0, x1), _front(frame).yr(y0, y1)
                 boxes.append([x0, x1, y0, y1, z0, z1])
             out[name] = boxes
         else:
@@ -1685,10 +1848,14 @@ def resolve_volumes(spec):
     return out
 
 
-def resolve_frame(spec, parts):
+def resolve_frame(
+    spec: dict[str, Any], parts: dict[str, trimesh.Trimesh]
+) -> tuple[npt.NDArray[np.float64], Frame | None]:
     """center (build-frame mm) and the front Frame, auto values filled in."""
 
-    def union_bounds(names):
+    def union_bounds(
+        names: Sequence[str],
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]]:
         b = np.array([parts[n].bounds for n in names])
         return b[:, 0].min(axis=0), b[:, 1].max(axis=0)
 
@@ -1710,7 +1877,7 @@ def resolve_frame(spec, parts):
     return center, frame
 
 
-def pinned_file(unit, path):
+def pinned_file(unit: dict[str, Any], path: str | Path) -> Path:
     """*path*, refused unless it holds the bytes *unit*'s source pins."""
     src = unit["source"]
     if not Path(path).is_file():
@@ -1724,7 +1891,12 @@ def pinned_file(unit, path):
     return Path(path)
 
 
-def module_paths(spec, cache=DEFAULT_CACHE, fetch=False, given=None):
+def module_paths(
+    spec: dict[str, Any],
+    cache: str | Path = DEFAULT_CACHE,
+    fetch: bool = False,
+    given: dict[str, str | Path] | None = None,
+) -> dict[str, Path]:
     """{module name: its vendor file}: the one *given* names, or the cache's, each checked."""
     given = dict(given or {})
     names = [m["name"] for m in spec.get("modules", [])]
@@ -1741,7 +1913,9 @@ def module_paths(spec, cache=DEFAULT_CACHE, fetch=False, given=None):
     }
 
 
-def face_frames(spec, frame, meas):
+def face_frames(
+    spec: dict[str, Any], frame: Frame | None, meas: dict[str, Any] | None
+) -> dict[str, board_faces.FaceFrame]:
     """{face: board_faces.FaceFrame} of every face a drawing of the spec may draw.
 
     The front's is ``front_frame``. Another face's is the spec's
@@ -1767,8 +1941,14 @@ def face_frames(spec, frame, meas):
 
 
 def build(
-    spec, src_path, out_path, cache=DEFAULT_CACHE, with_legends=True, modules=None, web_ppm=None
-):
+    spec: dict[str, Any],
+    src_path: str | Path | None,
+    out_path: str | Path,
+    cache: str | Path = DEFAULT_CACHE,
+    with_legends: bool = True,
+    modules: Mapping[str, str | Path] | None = None,
+    web_ppm: float | None = None,
+) -> dict[str, Any]:
     """Build the model of *spec* from the vendor file at *src_path* into
     *out_path*; return a summary dict for source.json.
 
@@ -1785,11 +1965,11 @@ def build(
     quant_mm = num(spec.get("quant_mm", 0.01))
 
     volumes = resolve_volumes(spec)
-    parts = (
-        {}
-        if own_model(spec)
-        else gather_parts(spec, load_components(spec, src_path, cache), volumes)
-    )
+    parts: dict[str, trimesh.Trimesh] = {}
+    if not own_model(spec):
+        if src_path is None:
+            raise SpecError(f"{spec['board']}: a model of a vendor file needs that file")
+        parts = gather_parts(spec, load_components(spec, src_path, cache), volumes)
     if spec.get("modules"):
         found = module_paths(spec, cache) if modules is None else modules
         for module in spec["modules"]:
@@ -1839,7 +2019,7 @@ def build(
             double=bool(m.get("double", False)),
         )
 
-    screen = None
+    screen: dict[str, Any] | None = None
     if meas is not None and frame is not None:
         d = meas["display"]
         aw, ah = float(d["active_w_mm"]), float(d["active_h_mm"])
@@ -1857,14 +2037,27 @@ def build(
             "resolution": [int(d["resolution_w_px"]), int(d["resolution_h_px"])],
         }
 
-    def shade(name, mesh, smooth_deg):
+    def shade(
+        name: str, mesh: trimesh.Trimesh, smooth_deg: float | None
+    ) -> tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]:
         if len(mesh.faces) == 0:
             raise SpecError(f"{name}: no faces left (culled or sliced away)")
         if smooth_deg:
             return crease_normals(mesh, smooth_deg, planar_min_area)
         return flat(mesh, planar_min_area)
 
-    def add(name, mesh_or_arrays, mat, smooth_deg=None, uv=None, extras=None, quantize=True):
+    def add(
+        name: str,
+        mesh_or_arrays: trimesh.Trimesh
+        | tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]],
+        mat: int | None,
+        smooth_deg: float | None = None,
+        uv: npt.NDArray[np.float64] | None = None,
+        extras: dict[str, Any] | None = None,
+        quantize: bool = True,
+    ) -> None:
+        if mat is None:
+            raise SpecError(f"{name}: a mesh of no material")
         if isinstance(mesh_or_arrays, trimesh.Trimesh):
             arr = shade(name, mesh_or_arrays, smooth_deg)
             g.mesh(name, [(arr[0], arr[1], arr[2], None, mat)], extras, quantize)
@@ -1876,7 +2069,7 @@ def build(
 
     legends = []
     drawings = {}  # (drawing, flatness) -> (its legends, the faces they were read with)
-    drawn = {}  # drawing -> the planes of it some legends mesh draws
+    drawn: dict[Path, set[str]] = {}  # drawing -> the planes of it some legends mesh draws
     frames = face_frames(spec, frame, meas)
     for entry in spec["meshes"]:
         name = entry["name"]
@@ -1893,10 +2086,12 @@ def build(
             if clips:
                 # shaded whole, then split: each half keeps the part's normals at the seam
                 ((clip, keep),) = clips
-                mesh = split_by_boxes(shade(name, mesh, smooth_deg), volumes[entry[clip]], name)[
+                half = split_by_boxes(shade(name, mesh, smooth_deg), volumes[entry[clip]], name)[
                     keep
                 ]
-            add(name, mesh, mat, smooth_deg=smooth_deg, quantize=quantize)
+                add(name, half, mat, smooth_deg=smooth_deg, quantize=quantize)
+            else:
+                add(name, mesh, mat, smooth_deg=smooth_deg, quantize=quantize)
         elif "screen" in entry:
             if screen is None:
                 raise SpecError("a screen needs measurements and front_frame")
@@ -1927,7 +2122,7 @@ def build(
                 raise SpecError("a glass needs a screen")
             x0, x1, y0, y1 = nums(entry["glass"]["rect"], 4)
             if entry["glass"].get("frame") == "front":
-                (x0, x1), (y0, y1) = frame.xr(x0, x1), frame.yr(y0, y1)
+                (x0, x1), (y0, y1) = _front(frame).xr(x0, x1), _front(frame).yr(y0, y1)
             gpos, gnrm, gfaces = quad_xy(x0, x1, y0, y1, num(entry["glass"]["z"]))
             guv = np.column_stack(
                 [
@@ -1956,12 +2151,15 @@ def build(
                 raise SpecError(f"{name}: {height} {z} is not on the model's {quant_mm} mm grid")
             front = (spec["_dir"] / drawing).resolve()
             flatness = num(leg.get("flatness", 0.004))
-            keep = None
+            legible: Callable[[BaseGeometry], bool] | None = None
             if web_ppm is not None:
+                ppm = web_ppm
                 flatness = max(flatness, WEB_FLATNESS_PX / web_ppm)
 
-                def keep(geom):
-                    return legend_mesh.width_mm(geom) * web_ppm >= WEB_MIN_STROKE_PX
+                def keep_legible(geom: BaseGeometry, ppm: float = ppm) -> bool:
+                    return legend_mesh.width_mm(geom) * ppm >= WEB_MIN_STROKE_PX
+
+                legible = keep_legible
 
             plane = leg.get("plane", legend_mesh.KEYS_PLANE)
             rough = num(leg.get("rough", 0.55))
@@ -1969,16 +2167,16 @@ def build(
                 if (front, flatness) not in drawings:
                     faces_read = legend_mesh.Faces()
                     drawings[front, flatness] = (
-                        legend_mesh.read_legends(front, flatness, faces_read, keep),
+                        legend_mesh.read_legends(front, flatness, faces_read, legible),
                         faces_read,
                     )
                 read, faces_read = drawings[front, flatness]
-                found, record = legend_mesh.sheets(
+                sheet_arrays, record = legend_mesh.sheets(
                     read, plane, face_frame, center, z, quant_mm, faces_read
                 )
             except legend_mesh.LegendError as exc:
                 raise SpecError(f"{name}: {exc}") from None
-            if not found and web_ppm is not None and plane in legend_mesh.planes(read):
+            if not sheet_arrays and web_ppm is not None and plane in legend_mesh.planes(read):
                 # the web level of detail left nothing of this plane to draw
                 drawn.setdefault(front, set()).add(plane)
                 legends.append(
@@ -1995,13 +2193,15 @@ def build(
                 )
                 print(f"legends {name}: plane {plane!r}, nothing left at {web_ppm} px/mm")
                 continue
-            if not found:
+            if not sheet_arrays:
                 raise SpecError(
                     f"{name}: {drawing} holds no legend group on the plane "
                     f"{plane!r}; it has {legend_mesh.planes(read) or 'none'}"
                 )
             drawn.setdefault(front, set()).add(plane)
-            for sheet, (fill, pos, nrm, faces, stroke) in zip(record["sheets"], found, strict=True):
+            for sheet, (fill, pos, nrm, faces, stroke) in zip(
+                record["sheets"], sheet_arrays, strict=True
+            ):
                 ink_name = f"{INK_PREFIX}{fill}"
                 known = g.mat_index.get(ink_name)
                 if (
@@ -2053,21 +2253,31 @@ def build(
                 )
             )
         elif "shapes" in entry:
-            solids, arrays = [], []
+            solids: list[list[trimesh.Trimesh]] = []
+            arrays: list[
+                tuple[npt.NDArray[np.float64], npt.NDArray[np.float64], npt.NDArray[np.int64]]
+            ] = []
             for shape in entry["shapes"]:
                 got = shape_meshes(shape, volumes, frame)
-                (arrays if isinstance(got, tuple) else solids).append(got)
+                if isinstance(got, tuple):
+                    arrays.append(got)
+                else:
+                    solids.append(got)
             if solids and arrays:
                 raise SpecError(f"{name}: solids and quad grids in one mesh")
             if arrays:
                 pos = np.vstack([a[0] for a in arrays])
                 nrm = np.vstack([a[1] for a in arrays])
-                offs = np.cumsum([0] + [len(a[0]) for a in arrays[:-1]])
+                offs = np.cumsum(np.array([0] + [len(a[0]) for a in arrays[:-1]], dtype=np.int64))
                 faces = np.vstack([a[2] + o for a, o in zip(arrays, offs, strict=True)])
                 add(name, (pos, nrm, faces), mat, quantize=quantize)
             else:
                 flat_list = [m for group in solids for m in group]
-                mesh = flat_list[0] if len(flat_list) == 1 else trimesh.util.concatenate(flat_list)
+                mesh = (
+                    flat_list[0]
+                    if len(flat_list) == 1
+                    else _one_mesh(trimesh.util.concatenate(flat_list), name)
+                )
                 add(name, mesh, mat, smooth_deg=smooth_deg, quantize=quantize)
         else:
             raise SpecError(f"{name}: no part, screen, glass, legends or shapes")
@@ -2136,6 +2346,8 @@ def build(
         gap = model_raster.legend_clearance(
             written, entry["mesh"] + "_", quant_mm, on=entry["on"], face=entry.get("face", "front")
         )
+        if gap is None:
+            raise SpecError(f"{entry['mesh']}: no legend mesh of it is in the written model")
         if not gap["ok"]:
             staged.unlink()
             if gap["over_mm"] is not None:
@@ -2194,8 +2406,8 @@ def build(
 # ---------------------------------------------------------------- outputs
 
 
-def package_versions():
-    out = {}
+def package_versions() -> dict[str, str | None]:
+    out: dict[str, str | None] = {}
     for name in PINNED:
         try:
             out[name] = importlib.metadata.version(name)
@@ -2204,7 +2416,8 @@ def package_versions():
     return out
 
 
-def rel(path):
+def rel(path: str | Path) -> str:
+    path = Path(path)
     path = Path(path).resolve()
     try:
         return path.relative_to(REPO).as_posix()
@@ -2212,7 +2425,7 @@ def rel(path):
         return path.as_posix()
 
 
-def without_legends_record(data):
+def without_legends_record(data: bytes) -> dict[str, Any]:
     """What a model weighs with its legend meshes taken out (``glb_legends.strip``)."""
     bare = glb_legends.strip(data)
     js, _ = glb_legends.read(bare)
@@ -2240,7 +2453,12 @@ SOURCE_KEYS = (
 )
 
 
-def source_json(spec, out_path, summary, obj=None):
+def source_json(
+    spec: dict[str, Any],
+    out_path: str | Path,
+    summary: dict[str, Any],
+    obj: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """The provenance record written beside a board's model.
 
     A spec with ``modules`` records each module's vendor file and transform
@@ -2315,12 +2533,14 @@ def source_json(spec, out_path, summary, obj=None):
     }
 
 
-def web_path(spec):
+def web_path(spec: dict[str, Any]) -> Path:
     """Where a board's web level of detail is written: beside its spec, named after its model."""
-    return spec["_dir"] / f"{Path(spec['output']).stem}-web.glb"
+    return Path(spec["_dir"]) / f"{Path(spec['output']).stem}-web.glb"
 
 
-def web_json(spec, out_path, summary, ppm):
+def web_json(
+    spec: dict[str, Any], out_path: str | Path, summary: dict[str, Any], ppm: float
+) -> dict[str, Any]:
     """The record of a board's web level of detail, written beside its spec as ``web.json``.
 
     It names the master it was built beside (its path and bytes, as the
@@ -2360,7 +2580,7 @@ def web_json(spec, out_path, summary, ppm):
     }
 
 
-def describe_glb(path):
+def describe_glb(path: str | Path) -> tuple[dict[str, Any], dict[str, npt.NDArray[np.float64]]]:
     """(json, {mesh name: positions in mm}) of a GLB this builder wrote."""
     raw = Path(path).read_bytes()
     jlen = struct.unpack_from("<I", raw, 12)[0]
@@ -2389,7 +2609,7 @@ def describe_glb(path):
     return js, out
 
 
-def compare_glb(built, reference, tolerance_mm):
+def compare_glb(built: str | Path, reference: str | Path, tolerance_mm: float) -> bool:
     """True when *built* matches *reference*: the same bytes, or (with a
     tolerance) the same meshes with every position within it."""
     a, b = Path(built).read_bytes(), Path(reference).read_bytes()
@@ -2423,7 +2643,7 @@ def compare_glb(built, reference, tolerance_mm):
     return ok and tolerance_mm > 0
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Build a board model from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("spec", type=Path, help="<board>/model/spec.json")
@@ -2530,7 +2750,7 @@ def main(argv=None):
                 file=sys.stderr,
             )
             return 1
-        given = {}
+        given: dict[str, str | Path] = {}
         for item in args.module_source:
             name, sep, path = item.partition("=")
             if not sep or not name or not path:
@@ -2539,7 +2759,7 @@ def main(argv=None):
         modules = module_paths(spec, args.cache, args.fetch, given)
         target = REPO / spec["output"]
 
-        def record(model, summary):
+        def record(model: str | Path, summary: dict[str, Any]) -> None:
             # a board's master is also written as OBJ and MTL, from the GLB itself
             obj = (
                 export_obj.write(model, spec["board"])

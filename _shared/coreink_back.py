@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What the M5Stack CoreInk carries on its back, for ``svg/back.svg``
 
@@ -36,7 +37,7 @@ drawings").
 from __future__ import annotations
 
 import math
-from typing import List, Sequence, Tuple
+from collections.abc import Sequence
 
 import emit_front_svg as fronts  # beside this file
 
@@ -450,12 +451,12 @@ def _rect(x0: float, y0: float, x1: float, y1: float, ink: str, r: float = 0.0) 
     )
 
 
-def _poly(points: Sequence[Tuple[float, float]], ink: str) -> str:
+def _poly(points: Sequence[tuple[float, float]], ink: str) -> str:
     return f'<polygon points="{" ".join(f"{f(x)},{f(y)}" for x, y in points)}" fill="{ink}"/>\n'
 
 
 def _line(
-    points: Sequence[Tuple[float, float]],
+    points: Sequence[tuple[float, float]],
     ink: str,
     width: float,
     cap: str = "butt",
@@ -477,7 +478,7 @@ def _path(d: str, ink: str, width: float | None = None, cap: str = "butt") -> st
     )
 
 
-def _runs(axis: str, at: float, runs: Sequence[Tuple[float, float]]) -> List[str]:
+def _runs(axis: str, at: float, runs: Sequence[tuple[float, float]]) -> list[str]:
     """Dashes measured one by one: along v = ``at`` (``h``) or u = ``at`` (``v``),
     each (start, end) one gray dash."""
     if axis == "h":
@@ -486,7 +487,7 @@ def _runs(axis: str, at: float, runs: Sequence[Tuple[float, float]]) -> List[str
 
 
 def _arrow_head(
-    tip: Tuple[float, float], toward: Tuple[float, float], length: float, width: float, ink: str
+    tip: tuple[float, float], toward: tuple[float, float], length: float, width: float, ink: str
 ) -> str:
     """A filled triangle with its tip at ``tip``, pointing away from ``toward``."""
     tx, ty = tip
@@ -536,7 +537,7 @@ def _half_ring(cx: float, cy: float, ri: float, ro: float) -> str:
     )
 
 
-def _cells(out: List[str]) -> None:
+def _cells(out: list[str]) -> None:
     """The colored cells and tiles, under every print that stands on them."""
     # The HAT pin strip: eight cells along the top end, its edges the paper's.
     for u0, u1, ink in (
@@ -565,12 +566,15 @@ def _cells(out: List[str]) -> None:
     # The MI-BUS table: five rows of two cells, three of two wide ones.
     tops = [27.55 + 2.586 * i for i in range(8)]
     for top, (left, right) in zip(
-        tops,
+        tops[:5],
         ((DARK_GRAY, CYAN), (DARK_GRAY, CYAN), (SALMON, CYAN), (ORANGE, ORANGE), (GREEN, GREEN)),
+        strict=True,
     ):
         out.append(_rect(19.15, top, 23.2, top + 2.27, left, 0.08))
         out.append(_rect(23.62, top, 27.76, top + 2.27, right, 0.08))
-    for top, (left, right) in zip(tops[5:], ((YELLOW, RULE_GRAY), (RED, DARK_RED), (MAGENTA, INK))):
+    for top, (left, right) in zip(
+        tops[5:], ((YELLOW, RULE_GRAY), (RED, DARK_RED), (MAGENTA, INK)), strict=True
+    ):
         out.append(_rect(17.12, top, 23.27, top + 2.27, left, 0.08))
         out.append(_rect(23.65, top, 29.73, top + 2.27, right, 0.08))
     # The Ext.PORT tab and its four cells.
@@ -584,7 +588,7 @@ def _cells(out: List[str]) -> None:
         out.append(_rect(u0, 51.88, u1, 54.48, ink))
 
 
-def _marks(out: List[str]) -> None:
+def _marks(out: list[str]) -> None:
     """Every drawn mark that is no letter."""
     # Strip: the two yellow arrows, 5V in (up) and 5V out (down).
     out.append(
@@ -946,7 +950,7 @@ def _marks(out: List[str]) -> None:
     out.append(_rect(12.0, 47.6, 12.54, 48.15, INK, 0.04))
 
 
-def _table_texts(out: List[str]) -> None:
+def _table_texts(out: list[str]) -> None:
     """The MI-BUS table's pin names and cell names, centered in their rows."""
     tops = [27.55 + 2.586 * i for i in range(8)]
     rows = (
@@ -956,7 +960,7 @@ def _table_texts(out: List[str]) -> None:
         ("G22", "SCL", "SDA", "G21", 2.62, 2.75),
         ("G14", "TXD2", "RXD2", "G13", 3.8, 3.88),
     )
-    for top, (pl, cl, cr, pr, wl, wr) in zip(tops, rows):
+    for top, (pl, cl, cr, pr, wl, wr) in zip(tops[:5], rows, strict=True):
         mid = top + 1.135
         out.append(_centered(pl, 400, 18.04, mid, 1.74, 0.71, INK))
         out.append(_centered(pr, 400, 28.84, mid, 1.74, 0.71, INK))
@@ -967,7 +971,7 @@ def _table_texts(out: List[str]) -> None:
         ("5VOUT", "5VIN", 5.3, 3.88, WHITE, WHITE),
         ("BAT", "GND", 3.25, 4.0, WHITE, WHITE),
     )
-    for top, (cl, cr, wl, wr, il, ir) in zip(tops[5:], wide):
+    for top, (cl, cr, wl, wr, il, ir) in zip(tops[5:], wide, strict=True):
         mid = top + 1.135
         out.append(_centered(cl, 400, 20.2, mid, wl, 1.3, il))
         out.append(_centered(cr, 400, 26.69, mid, wr, 1.3, ir))
@@ -1019,7 +1023,7 @@ RESET_PAD = "#f7f7f5"  # the case's own white
 RESET_EDGE = "#bcbcb8"  # the case outline's stroke
 
 
-def append_reset_key(out: List[str]) -> None:
+def append_reset_key(out: list[str]) -> None:
     """The reset key as the back shows it: its opening, the gap, the tongue."""
     x0, y0, x1, y1 = RESET_OPENING
     r = (x1 - x0) / 2
@@ -1055,25 +1059,25 @@ def append_reset_key(out: List[str]) -> None:
     out.append("</g>\n")
 
 
-def reset_pad() -> Tuple[float, float, float, float]:
+def reset_pad() -> tuple[float, float, float, float]:
     """The pad's box: its center and its size, (cx, cy, w, h) in the back frame."""
     top = RESET_ROUND_CY - RESET_PAD_HALF
     return (RESET_CX, (top + RESET_PAD_CREASE) / 2, 2 * RESET_PAD_HALF, RESET_PAD_CREASE - top)
 
 
-def back_hotspots() -> List[fronts.Hotspot]:
+def back_hotspots() -> list[fronts.Hotspot]:
     """The back's one control: the reset key, a target on its pad."""
     cx, cy, w, h = reset_pad()
     return [fronts.Hotspot("Reset", cx, cy, w, h, face="back")]
 
 
-def back_callouts() -> List[str]:
+def back_callouts() -> list[str]:
     """The reset key's name, in the right margin level with its pad."""
     _cx, cy, _w, _h = reset_pad()
     return [fronts.text(40.0 + 1.2, cy + 0.5, "Reset", size=1.4, fill="#7d7d80", anchor="start")]
 
 
-def append_coreink_back(out: List[str]) -> None:
+def append_coreink_back(out: list[str]) -> None:
     """The reset key, then the back sticker as one legend group on the plane ``label``."""
     append_reset_key(out)
     out.append(fronts.print_open(MARK, PLANE))
@@ -1098,7 +1102,7 @@ LEFT_PLANE = "side"
 LEFT_MARK = "side-label"
 
 
-def append_coreink_left(out: List[str]) -> None:
+def append_coreink_left(out: list[str]) -> None:
     """The CoreInk's left-side label, in the left frame (u along +Z from the back, v down)."""
     out.append(fronts.print_open(LEFT_MARK, LEFT_PLANE))
     for text, weight, x, base, size, length, transform in (

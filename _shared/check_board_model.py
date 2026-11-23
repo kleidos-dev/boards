@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Render a board model's front, left, top and back views against its drawings
 
@@ -76,7 +77,12 @@ import re
 import struct
 import sys
 import tempfile
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
+
+import numpy.typing as npt
+from shapely.geometry.base import BaseGeometry
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -92,9 +98,8 @@ import render_views  # noqa: E402
 import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
 import trimesh  # noqa: E402
-from shapely.ops import unary_union  # noqa: E402
-
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
+from shapely.ops import unary_union  # noqa: E402
 
 #: How far a legend may lie from where the drawing prints it, in mm.
 LEGEND_TOLERANCE_MM = 0.02
@@ -110,27 +115,30 @@ TOWARDS_VIEWER = {"front": (0, 0, 1), "left": (-1, 0, 0), "top": (0, 1, 0), "bac
 # ---------------------------------------------------------------- model
 
 
-def glb_json(path):
+def glb_json(path: str | Path) -> dict[str, Any]:
     raw = Path(path).read_bytes()
     if struct.unpack_from("<I", raw, 0)[0] != 0x46546C67:
         raise ValueError(f"{path}: not a GLB")
     jlen = struct.unpack_from("<I", raw, 12)[0]
-    return json.loads(raw[20 : 20 + jlen])
+    js: dict[str, Any] = json.loads(raw[20 : 20 + jlen])
+    return js
 
 
-def quant_step_mm(path):
+def quant_step_mm(path: str | Path) -> float:
     """The quantization step of a model's quantized meshes, in mm (its nodes'
     scale), or 0.01 when it has none."""
     scales = [n["scale"][0] for n in glb_json(path)["nodes"] if "scale" in n]
     return round(min(scales) * 1000.0, 9) if scales else 0.01
 
 
-def linear_to_srgb(c):
-    c = np.clip(np.asarray(c, dtype=float), 0, 1)
-    return np.where(c <= 0.0031308, c * 12.92, 1.055 * c ** (1 / 2.4) - 0.055)
+def linear_to_srgb(c: npt.ArrayLike) -> npt.NDArray[np.float64]:
+    x: npt.NDArray[np.float64] = np.clip(np.asarray(c, dtype=float), 0, 1)
+    return np.where(x <= 0.0031308, x * 12.92, 1.055 * x ** (1 / 2.4) - 0.055)
 
 
-def load_model(path):
+def load_model(
+    path: str | Path,
+) -> list[tuple[str, trimesh.Trimesh, npt.NDArray[np.float64], float]]:
     """[(node name, mesh in mm, sRGB color, alpha)] in the glTF frame."""
     js = glb_json(path)
     looks = {}
@@ -143,6 +151,8 @@ def load_model(path):
         alpha = f[3] if mat.get("alphaMode") == "BLEND" else 1.0
         looks[node["name"]] = (linear_to_srgb(f[:3]), alpha)
     scene = trimesh.load(str(path))
+    if not isinstance(scene, trimesh.Scene):
+        raise TypeError(f"{path}: not a glTF scene")
     out = []
     for node in scene.graph.nodes_geometry:
         transform, gname = scene.graph[node]
@@ -154,8 +164,13 @@ def load_model(path):
     return out
 
 
-def concat(meshes):
-    return meshes[0] if len(meshes) == 1 else trimesh.util.concatenate(meshes)
+def concat(meshes: list[trimesh.Trimesh]) -> trimesh.Trimesh:
+    if len(meshes) == 1:
+        return meshes[0]
+    joined = trimesh.util.concatenate(meshes)
+    if not isinstance(joined, trimesh.Trimesh):
+        raise TypeError("the meshes did not concatenate into one")
+    return joined
 
 
 # ---------------------------------------------------------------- front.svg
@@ -164,7 +179,18 @@ def concat(meshes):
 _TOKEN = re.compile(r"[MmLlHhVvAaCcQqZz]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?")
 
 
-def _arc(x1, y1, rx, ry, phi_deg, fa, fs, x2, y2, step=0.15):
+def _arc(
+    x1: float,
+    y1: float,
+    rx: float,
+    ry: float,
+    phi_deg: float,
+    fa: int,
+    fs: int,
+    x2: float,
+    y2: float,
+    step: float = 0.15,
+) -> list[tuple[float, float]]:
     """Points along an SVG elliptical arc (SVG 1.1 F.6.5), end included."""
     if rx == 0 or ry == 0:
         return [(x2, y2)]
@@ -185,7 +211,7 @@ def _arc(x1, y1, rx, ry, phi_deg, fa, fs, x2, y2, step=0.15):
     cx = cp * cxp - sp * cyp + (x1 + x2) / 2
     cy = sp * cxp + cp * cyp + (y1 + y2) / 2
 
-    def ang(ux, uy, vx, vy):
+    def ang(ux: float, uy: float, vx: float, vy: float) -> float:
         return math.atan2(ux * vy - uy * vx, ux * vx + uy * vy)
 
     th1 = ang(1, 0, (x1p - cxp) / rx, (y1p - cyp) / ry)
@@ -207,8 +233,8 @@ def _arc(x1, y1, rx, ry, phi_deg, fa, fs, x2, y2, step=0.15):
     return pts
 
 
-def _bezier(p, steps=16):
-    p = np.asarray(p, dtype=float)
+def _bezier(points: Sequence[Sequence[float]], steps: int = 16) -> list[tuple[float, float]]:
+    p = np.asarray(points, dtype=float)
     t = np.linspace(0, 1, steps + 1)[1:, None]
     if len(p) == 3:
         q = (1 - t) ** 2 * p[0] + 2 * (1 - t) * t * p[1] + t**2 * p[2]
@@ -219,17 +245,18 @@ def _bezier(p, steps=16):
             + 3 * (1 - t) * t**2 * p[2]
             + t**3 * p[3]
         )
-    return [tuple(v) for v in q]
+    return [(float(v[0]), float(v[1])) for v in q]
 
 
-def path_rings(d):
+def path_rings(d: str) -> list[list[tuple[float, float]]]:
     """The subpaths of an SVG path's ``d`` as point lists."""
     toks = _TOKEN.findall(d)
-    rings, ring = [], []
+    rings: list[list[tuple[float, float]]] = []
+    ring: list[tuple[float, float]] = []
     i, cmd = 0, None
     x = y = sx = sy = 0.0
 
-    def take(n):
+    def take(n: int) -> list[float]:
         nonlocal i
         vals = [float(v) for v in toks[i : i + n]]
         i += n
@@ -245,6 +272,8 @@ def path_rings(d):
                 ring = []
                 x, y = sx, sy
                 continue
+        if not cmd:
+            raise ValueError(f"a path that does not start with a command: {d!r}")
         rel = cmd.islower()
         c = cmd.upper()
         if c == "M":
@@ -287,11 +316,13 @@ def path_rings(d):
     return rings
 
 
-def _attrs(tag):
+def _attrs(tag: str) -> dict[str, str]:
     return dict(re.findall(r'([\w:-]+)="([^"]*)"', tag))
 
 
-def svg_outline(svg_path):
+def svg_outline(
+    svg_path: str | Path,
+) -> tuple[sg.Polygon, tuple[float, float, float, float] | None]:
     """(case outline polygon, screen-active box) of a front.svg, front-frame mm."""
     text = Path(svg_path).read_text()
     body = re.sub(r"<defs>.*?</defs>", "", text, flags=re.S)
@@ -330,13 +361,15 @@ def svg_outline(svg_path):
 # ---------------------------------------------------------------- geometry
 
 
-def largest(poly):
-    if poly.geom_type == "Polygon":
+def largest(poly: BaseGeometry) -> sg.Polygon:
+    if isinstance(poly, sg.Polygon):
         return poly
-    return max(poly.geoms, key=lambda g: g.area)
+    if isinstance(poly, sg.MultiPolygon):
+        return max(poly.geoms, key=lambda g: g.area)
+    raise TypeError(f"no polygon in a {poly.geom_type}")
 
 
-def outline_deviation(svg_poly, model_poly):
+def outline_deviation(svg_poly: BaseGeometry, model_poly: BaseGeometry) -> dict[str, Any]:
     """Distances in mm between the two outlines' exteriors."""
     a = sg.LinearRing(largest(svg_poly).exterior.coords)
     b = sg.LinearRing(largest(model_poly).exterior.coords)
@@ -359,31 +392,41 @@ def outline_deviation(svg_poly, model_poly):
     }
 
 
-def to_front(points, place):
+def to_front(points: npt.ArrayLike, place: dict[str, Any]) -> npt.NDArray[np.float64]:
     """glTF-frame mm (x, y) -> front-frame mm (x across, y down)."""
     pts = np.asarray(points, dtype=float)
     return np.column_stack([pts[:, 0] + place["dx"], place["dy"] - pts[:, 1]])
 
 
-def poly_to_front(poly, place):
-    def tf(ring):
+def poly_to_front(poly: BaseGeometry, place: dict[str, Any]) -> BaseGeometry:
+    def tf(ring: BaseGeometry) -> npt.NDArray[np.float64]:
         return to_front(np.asarray(ring.coords)[:, :2], place)
 
-    def one(p):
+    def one(p: sg.Polygon) -> sg.Polygon:
         return sg.Polygon(tf(p.exterior), [tf(r) for r in p.interiors])
 
     if poly.geom_type == "Polygon":
-        return one(poly)
-    return unary_union([one(p) for p in poly.geoms])
+        return one(largest(poly))
+    return unary_union([one(p) for p in getattr(poly, "geoms", [])])
 
 
-def poly_to_back(poly, place):
+def poly_to_back(poly: BaseGeometry, place: dict[str, Any]) -> BaseGeometry:
     """A glTF-frame silhouette seen from the front, as the back's viewer sees it, back-frame mm."""
     front = poly_to_front(poly, place)
     return shapely.affinity.affine_transform(front, [-1, 0, 0, 1, place["back_w"], 0])
 
 
-def placement(board_dir, case_front_poly, width=None):
+def _silhouette(mesh: trimesh.Trimesh, view: str) -> BaseGeometry:
+    """The model's silhouette in one view (a model always draws one)."""
+    found = render_views.silhouette_polygon(mesh, view, render_views.MODEL_VIEW_AXES)
+    if found is None:
+        raise ValueError(f"the model draws no silhouette in the {view} view")
+    return found
+
+
+def placement(
+    board_dir: str | Path, case_front_poly: BaseGeometry | None, width: float | None = None
+) -> dict[str, Any]:
     """How glTF-frame mm map to the front frame: front x = x + dx, y = dy - y.
 
     ``back_w`` is how far the back frame's origin lies across the front frame
@@ -391,7 +434,7 @@ def placement(board_dir, case_front_poly, width=None):
     It is the back frame's ``right_x`` less the front's ``left_x`` where
     ``source.json`` records one, else *width*, the case's.
     """
-    rec = board_dir / "model" / "source.json"
+    rec = Path(board_dir) / "model" / "source.json"
     if rec.is_file():
         p = json.loads(rec.read_text()).get("parameters", {})
         c, ff = p.get("center_mm"), p.get("front_frame")
@@ -403,6 +446,8 @@ def placement(board_dir, case_front_poly, width=None):
                 "how": "source.json",
                 "back_w": back["right_x"] - ff["left_x"] if back else width,
             }
+    if case_front_poly is None:
+        raise ValueError(f"{board_dir}: the case draws no front silhouette to place it by")
     minx, _, _, maxy = case_front_poly.bounds
     return {"dx": -minx, "dy": maxy, "how": "silhouette top-left", "back_w": width}
 
@@ -410,7 +455,7 @@ def placement(board_dir, case_front_poly, width=None):
 # ---------------------------------------------------------------- drawing
 
 
-def view_coords(points, view, place):
+def view_coords(points: npt.ArrayLike, view: str, place: dict[str, Any]) -> npt.NDArray[np.float64]:
     """(h, v) plot coordinates of glTF-frame mm points in one view."""
     p = np.asarray(points, dtype=float)
     fx = p[..., 0] + place["dx"]
@@ -424,11 +469,11 @@ def view_coords(points, view, place):
     return np.stack([fx, p[..., 2]], axis=-1)  # top: z down the page after the flip
 
 
-def draw_shaded(ax, meshes, view, place):
+def draw_shaded(ax: Any, meshes: list[model_raster.Mesh], view: str, place: dict[str, Any]) -> None:
     """Draw the model's shaded view, depth-buffered, under the outlines."""
     towards = np.array(TOWARDS_VIEWER[view], dtype=float)
 
-    def project(p):
+    def project(p: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         # the plot's v grows down the page: the raster's up is -v
         hv = view_coords(p, view, place)
         return np.column_stack([hv[:, 0], -hv[:, 1], p @ towards])
@@ -437,11 +482,14 @@ def draw_shaded(ax, meshes, view, place):
     ax.imshow(img, extent=[h0, h1, -v0, -v1], origin="upper", interpolation="bilinear", zorder=0)
 
 
-def outline_coords(poly, view, place):
+def outline_coords(
+    poly: BaseGeometry, view: str, place: dict[str, Any]
+) -> list[npt.NDArray[np.float64]]:
     """A glTF-frame silhouette's rings in one view's plot coordinates."""
     out = []
-    for p in [poly] if poly.geom_type == "Polygon" else list(poly.geoms):
-        for ring in [p.exterior] + list(p.interiors):
+    parts = [poly] if isinstance(poly, sg.Polygon) else list(getattr(poly, "geoms", []))
+    for p in parts:
+        for ring in [p.exterior, *p.interiors]:
             c = np.asarray(ring.coords)
             if view == "front":
                 out.append(to_front(c, place))
@@ -464,7 +512,9 @@ def outline_coords(poly, view, place):
 # ---------------------------------------------------------------- check
 
 
-def legends_report(board_dir, glb, raster_meshes, tolerance_mm):
+def legends_report(
+    board_dir: Path, glb: str | Path, raster_meshes: list[model_raster.Mesh], tolerance_mm: float
+) -> tuple[dict[str, Any] | None, list[Any]]:
     """(report, outlines) of a model's legends against its drawing; (None, []) with none.
 
     The report is ``legend_placement.placement``'s, with each legends mesh's
@@ -501,7 +551,13 @@ def legends_report(board_dir, glb, raster_meshes, tolerance_mm):
     return report, legend_placement.outlines(board_dir)
 
 
-def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERANCE_MM):
+def check(
+    board_dir: str | Path,
+    glb: str | Path,
+    out_dir: str | Path,
+    max_dev: float | None = None,
+    legend_tolerance: float = LEGEND_TOLERANCE_MM,
+) -> dict[str, Any]:
     board_dir = Path(board_dir)
     board = board_dir.name
     meas = json.loads((board_dir / "measurements.json").read_text())
@@ -515,9 +571,7 @@ def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERAN
 
     back_svg = board_dir / "svg" / "back.svg"
     views = VIEWS + ((BACK_VIEW,) if back_svg.is_file() else ())
-    sil = {
-        v: render_views.silhouette_polygon(whole, v, render_views.MODEL_VIEW_AXES) for v in views
-    }
+    sil = {v: _silhouette(whole, v) for v in views}
     case_front = render_views.silhouette_polygon(case_mesh, "front", render_views.MODEL_VIEW_AXES)
     place = placement(board_dir, case_front, float(case["width"]))
 
@@ -567,7 +621,7 @@ def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERAN
         f = to_front(v[:, :2], place)
         model_rect = (f[:, 0].min(), f[:, 1].min(), f[:, 0].max(), f[:, 1].max())
 
-        def edges(ref):
+        def edges(ref: Sequence[float]) -> dict[str, float]:
             return {
                 k: round(float(model_rect[i] - ref[i]), 3)
                 for i, k in enumerate(("left", "top", "right", "bottom"))
@@ -621,8 +675,8 @@ def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERAN
         )
         if view == "front":
             if svg_poly is not None:
-                for ring in [svg_poly.exterior] + list(svg_poly.interiors):
-                    c = np.asarray(ring.coords)
+                for edge in [svg_poly.exterior, *svg_poly.interiors]:
+                    c = np.asarray(edge.coords)
                     ax.plot(c[:, 0], c[:, 1], color="#d62728", lw=0.8, label="front.svg outline")
                     break
             sx0, sy0, sx1, sy1 = meas_screen
@@ -652,9 +706,9 @@ def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERAN
                         lw=0.25,
                         label="legends (front.svg)" if index == 0 and nth == 0 else None,
                     )
-        if view == BACK_VIEW:
-            for ring in [back_poly.exterior]:
-                c = np.asarray(ring.coords)
+        if view == BACK_VIEW and back_poly is not None:
+            for edge in [back_poly.exterior]:
+                c = np.asarray(edge.coords)
                 ax.plot(c[:, 0], c[:, 1], color="#d62728", lw=0.8)
             for _plane, _fill, rings in back_rings:
                 for ring in rings:
@@ -696,7 +750,7 @@ def check(board_dir, glb, out_dir, max_dev=None, legend_tolerance=LEGEND_TOLERAN
     return report
 
 
-def depth_selftest():
+def depth_selftest() -> bool:
     """Run ``model_raster.coplanar_selftest`` and print it; True when every part passed."""
     clean, results, controls = model_raster.coplanar_selftest(HERE.parent)
     for board, got in clean.items():
@@ -719,7 +773,7 @@ def depth_selftest():
     return good
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Run the check from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("board_dir", type=Path, nargs="?", help="<board>")

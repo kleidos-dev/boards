@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Generate the committed ``svg/back.svg`` of every board that has a model
 
@@ -50,21 +51,21 @@ from __future__ import annotations
 import json
 import re
 import sys
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable, Dict, List, Tuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import emit_front_svg as fronts  # noqa: E402  (beside this file; -I leaves it off the path)
-import media_meta  # noqa: E402
-import back_plus_se  # noqa: E402
-import cardputer_faces  # noqa: E402
-import coreink_back  # noqa: E402
-import core2_prints  # noqa: E402
-import sticks3_back  # noqa: E402
-import cores3_prints  # noqa: E402
-import back_tdeck_plus  # noqa: E402
-import back_m5stickc_plus1  # noqa: E402
-import back_plus2  # noqa: E402
+import back_m5stickc_plus1
+import back_plus2
+import back_plus_se
+import back_tdeck_plus
+import cardputer_faces
+import core2_prints
+import coreink_back
+import cores3_prints
+import emit_front_svg as fronts
+import media_meta
+import sticks3_back
 
 ROOT = fronts.ROOT
 #: The boards that have a model, and so a back drawing.
@@ -81,7 +82,7 @@ BOARDS = (
 )
 #: What each back prints: a function that appends its legend groups, in the
 #: back frame (``fronts.print_open`` ... ``fronts.LEGEND_CLOSE``).
-BACK_PRINTS: Dict[str, Callable[[List[str]], None]] = {
+BACK_PRINTS: dict[str, Callable[[list[str]], None]] = {
     "cardputer": cardputer_faces.back,
     "coreink": coreink_back.append_coreink_back,
     "m5stack-core2-v13": core2_prints.append_back,
@@ -93,18 +94,18 @@ BACK_PRINTS: Dict[str, Callable[[List[str]], None]] = {
 }
 #: The controls on a back, as {board: a function that returns its targets, in
 #: the back frame}: only the CoreInk has one, its reset key.
-BACK_HOTSPOTS: Dict[str, Callable[[], List[fronts.Hotspot]]] = {
+BACK_HOTSPOTS: dict[str, Callable[[], list[fronts.Hotspot]]] = {
     "coreink": coreink_back.back_hotspots,
 }
 #: The names of those controls, as {board: a function that returns the margin
 #: callouts the annotations carry beside the dimensions}.
-BACK_CALLOUTS: Dict[str, Callable[[], List[str]]] = {
+BACK_CALLOUTS: dict[str, Callable[[], list[str]]] = {
     "coreink": coreink_back.back_callouts,
 }
 #: What a board prints on another face than its back, as {(board, face): a
 #: function that appends its legend groups in that face's frame}; each is
 #: written to ``svg/<face>.svg`` (``build_face``).
-FACE_PRINTS: Dict[Tuple[str, str], Callable[[List[str]], None]] = {
+FACE_PRINTS: dict[tuple[str, str], Callable[[list[str]], None]] = {
     ("cardputer", "left"): cardputer_faces.left,
     ("cardputer", "top"): cardputer_faces.top,
     ("coreink", "left"): coreink_back.append_coreink_left,
@@ -115,7 +116,7 @@ FACE_PRINTS: Dict[Tuple[str, str], Callable[[List[str]], None]] = {
 #: A side face whose outline is not the case's own, as {(board, face): (across,
 #: along) in mm}: the CoreS3 SE stands on its battery base, so its top side
 #: runs 23.5 mm from the base's floor to the front, not the case's 15.
-FACE_EXTENT: Dict[Tuple[str, str], Tuple[float, float]] = {
+FACE_EXTENT: dict[tuple[str, str], tuple[float, float]] = {
     ("cores3-se", "top"): (54.0, 23.5),
 }
 _NUMBER = r"[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?"
@@ -146,7 +147,7 @@ def mirror_path(d: str, width: float) -> str:
     tokens = _PATH_TOKEN.findall(d)
     if "".join(tokens) != re.sub(r"[\s,]+", "", d):
         raise ValueError(f"a path this mirror does not read: {d!r}")
-    out: List[str] = []
+    out: list[str] = []
     i, cmd = 0, None
     while i < len(tokens):
         if tokens[i].isalpha():
@@ -163,7 +164,8 @@ def mirror_path(d: str, width: float) -> str:
             raise ValueError(f"{cmd} short of numbers in {d!r}")
         i += len(args)
         absolute = cmd.isupper()
-        for kind, value in zip(args, values):
+        for kind, given in zip(args, values, strict=True):
+            value = given
             if kind == "x":
                 value = width - value if absolute else -value
             elif kind == "a":
@@ -179,7 +181,9 @@ def mirror_path(d: str, width: float) -> str:
 def mirror_points(points: str, width: float) -> str:
     """A polygon's points mirrored across x = width / 2."""
     v = [float(t) for t in re.findall(_NUMBER, points)]
-    return " ".join(f"{fronts.f(width - x)},{fronts.f(y)}" for x, y in zip(v[0::2], v[1::2]))
+    return " ".join(
+        f"{fronts.f(width - x)},{fronts.f(y)}" for x, y in zip(v[0::2], v[1::2], strict=True)
+    )
 
 
 def front_outline(svg: str) -> str:
@@ -197,7 +201,10 @@ def back_outline(outline: str, width: float, fill: str) -> str:
     Its stroke is the front's; its fill is flat (the front's gradient and
     shadow belong to the front's light).
     """
-    tag = re.match(r"<(\w+)", outline).group(1)
+    opening = re.match(r"<(\w+)", outline)
+    if opening is None:
+        raise ValueError(f"not an element: {outline[:40]!r}")
+    tag = opening.group(1)
     attrs = dict(re.findall(r'([\w:-]+)="([^"]*)"', outline))
     stroke = (
         f' stroke="{attrs["stroke"]}" stroke-width="{attrs["stroke-width"]}"'
@@ -314,7 +321,7 @@ def stamped(path: Path, svg: str) -> str:
     return media_meta.stamp_svg(svg, media_meta.record(path.relative_to(ROOT).as_posix()))
 
 
-def main(argv: List[str]) -> int:
+def main(argv: list[str]) -> int:
     unknown = [d for d in argv if d not in BOARDS]
     if unknown:
         print(

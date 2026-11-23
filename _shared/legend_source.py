@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """What a board model reads from its drawings, and the digest of it
 
@@ -41,19 +42,21 @@ import hashlib
 import json
 import sys
 import xml.etree.ElementTree as ET
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 SVG = "{http://www.w3.org/2000/svg}"
 #: The plane of a key's group that names none.
 KEYS_PLANE = "keys"
 
 
-def is_legend(el):
+def is_legend(el: ET.Element) -> bool:
     """True for a ``<g>`` whose class list holds ``legend``."""
     return el.tag == SVG + "g" and "legend" in (el.get("class") or "").split()
 
 
-def groups(root):
+def groups(root: ET.Element) -> list[tuple[ET.Element, tuple[ET.Element, ...]]]:
     """[(a legend group, the elements it lies in, outermost first)] in the drawing's order.
 
     A legend group is not looked into for more: one inside another is the
@@ -61,7 +64,7 @@ def groups(root):
     """
     out = []
 
-    def walk(el, around):
+    def walk(el: ET.Element, around: tuple[ET.Element, ...]) -> None:
         if is_legend(el):
             out.append((el, around))
             return
@@ -73,12 +76,12 @@ def groups(root):
     return out
 
 
-def plane_of(group):
+def plane_of(group: ET.Element) -> str:
     """The plane a legend group is printed on, as it names it or as a key's defaults."""
     return group.get("data-plane", KEYS_PLANE)
 
 
-def placed(around):
+def placed(around: Sequence[ET.Element]) -> tuple[list[str | None], str | None]:
     """(the transforms of the ``<g>`` elements around a group, outermost first; the
     ``font-family`` the group inherits, or None)."""
     transforms = [
@@ -92,7 +95,7 @@ def placed(around):
     return transforms, family
 
 
-def _described(el):
+def _described(el: ET.Element) -> dict[str, Any]:
     """One element of a legend as the reader reads it: tag, attributes, characters, children."""
     tag = el.tag.removeprefix(SVG)
     out = {
@@ -105,7 +108,7 @@ def _described(el):
     return out
 
 
-def described(front_svg, plane=None):
+def described(front_svg: str | Path, plane: str | None = None) -> list[dict[str, Any]]:
     """What a model reads from a front drawing: its legend groups and what places each.
 
     A list in the drawing's order of ``{'placed': [transform, ...], 'family':
@@ -113,7 +116,7 @@ def described(front_svg, plane=None):
     the groups printed on it.
     """
     out = []
-    for group, around in groups(ET.parse(front_svg).getroot()):
+    for group, around in groups(ET.parse(front_svg).getroot()):  # noqa: S314  (this repository's own file)
         if plane is not None and plane_of(group) != plane:
             continue
         transforms, family = placed(around)
@@ -121,7 +124,7 @@ def described(front_svg, plane=None):
     return out
 
 
-def digest(front_svg, plane=None):
+def digest(front_svg: str | Path, plane: str | None = None) -> str:
     """The SHA-256 of what a model reads from a front drawing (of one *plane*, or of all)."""
     text = json.dumps(
         described(front_svg, plane), sort_keys=True, separators=(",", ":"), ensure_ascii=True
@@ -129,7 +132,7 @@ def digest(front_svg, plane=None):
     return hashlib.sha256(text.encode("ascii")).hexdigest()
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Print a drawing's legend digest from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("front", type=Path, help="<board>/svg/front.svg")

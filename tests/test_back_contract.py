@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Every board with a model has a back drawing, in the back's frame, of the back's contract.
 
@@ -146,7 +147,7 @@ FACE_DRAWINGS: dict[tuple[str, str], dict[str, set[str]]] = {
 
 
 def back(device_id: str) -> ET.Element:
-    return ET.fromstring((CAD / device_id / "svg" / "back.svg").read_text(encoding="utf-8"))
+    return ET.fromstring((CAD / device_id / "svg" / "back.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
 
 
 def boards_with_models() -> list[str]:
@@ -175,7 +176,9 @@ def test_a_back_draws_the_front_outline_mirrored_first(device_id: str) -> None:
     assert 'id="case-outline"' in first, first
     spec = emit_back_svg.device(device_id)
     front = (CAD / device_id / "svg" / "front.svg").read_text(encoding="utf-8")
-    fill = re.search(r'fill="([^"]+)"', first).group(1)
+    found_fill = re.search(r'fill="([^"]+)"', first)
+    assert found_fill is not None, first
+    fill = found_fill.group(1)
     assert first + "\n" == emit_back_svg.back_outline(
         emit_back_svg.front_outline(front), spec.body_w, fill
     )
@@ -198,10 +201,10 @@ def test_a_back_holds_its_contract_and_nothing_of_a_fronts(device_id: str) -> No
         case = emit_back_svg.device(device_id)
         for spot in spots:
             assert spot.get("data-face") == "back", spot.attrib
-            x, y, r = (float(spot.get(a)) for a in ("cx", "cy", "r"))
+            x, y, r = (float(spot.attrib[a]) for a in ("cx", "cy", "r"))
             assert 0.0 <= x <= case.body_w and 0.0 <= y <= case.body_h, spot.attrib
             assert r == pytest.approx(
-                min(float(spot.get("data-w")), float(spot.get("data-h"))) / 2, abs=5e-4
+                min(float(spot.attrib["data-w"]), float(spot.attrib["data-h"])) / 2, abs=5e-4
             )
         names = {el.text for el in root[-1]}
         assert controls <= names, "a back names its controls in the margin"
@@ -212,7 +215,7 @@ def test_a_back_holds_its_contract_and_nothing_of_a_fronts(device_id: str) -> No
             continue
         assert group.get("data-key") is None, "a back has no keys"
         assert set(group.attrib) == {"class", "data-mark", "data-plane"}, group.attrib
-        found.setdefault(group.get("data-plane"), set()).add(group.get("data-mark"))
+        found.setdefault(group.get("data-plane", ""), set()).add(group.get("data-mark", ""))
         drawn = [el for el in group.iter() if el is not group]
         assert drawn, group.attrib
         for el in drawn:
@@ -238,7 +241,7 @@ def test_the_side_drawings_are_the_writers_and_no_other() -> None:
 def test_a_side_drawing_holds_the_backs_contract(board_face: tuple[str, str]) -> None:
     """Its case outline first (the face's rectangle), flat legend groups, the annotations last."""
     board, face = board_face
-    root = ET.fromstring((CAD / board / "svg" / f"{face}.svg").read_text(encoding="utf-8"))
+    root = ET.fromstring((CAD / board / "svg" / f"{face}.svg").read_text(encoding="utf-8"))  # noqa: S314  (this repository's own file)
     shapes = [el for el in root if el.tag.removeprefix(SVG) in {"rect", "path", "polygon"}]
     assert shapes and shapes[0].get("id") == "case-outline", board_face
     assert root[-1].get("id") == "annotations", board_face
@@ -247,7 +250,7 @@ def test_a_side_drawing_holds_the_backs_contract(board_face: tuple[str, str]) ->
         if "legend" not in (group.get("class") or "").split():
             continue
         assert set(group.attrib) == {"class", "data-mark", "data-plane"}, group.attrib
-        found.setdefault(group.get("data-plane"), set()).add(group.get("data-mark"))
+        found.setdefault(group.get("data-plane", ""), set()).add(group.get("data-mark", ""))
         for el in group.iter():
             if el is not group:
                 assert "legend" not in (el.get("class") or "").split(), "a group in a group"

@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Draw every board model side by side, at one scale: ``models-contact-sheet.png``
 
@@ -39,7 +40,9 @@ import io
 import json
 import sys
 import tempfile
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -75,7 +78,7 @@ SHEET = "models-contact-sheet.png"
 RECORD = "models-contact-sheet.json"
 
 
-def board_entry(board):
+def board_entry(board: str) -> dict[str, Any]:
     spec = json.loads((CAD / board / "model" / "spec.json").read_text())
     meas = json.loads((CAD / board / "measurements.json").read_text())
     record = json.loads((CAD / board / "model" / "source.json").read_text())
@@ -88,7 +91,7 @@ def board_entry(board):
     }
 
 
-def render(glb, towards, ppm):
+def render(glb: Path, towards: Sequence[float], ppm: float) -> Image.Image:
     """An RGBA uint8 image of one view, cropped to the model."""
     meshes = model_raster.read_glb(glb)
     project, d = model_raster.orthographic(towards)
@@ -100,7 +103,7 @@ def render(glb, towards, ppm):
     return pic.crop(pic.getbbox())
 
 
-def main(argv=None):
+def main(argv: list[str] | None = None) -> int:
     """Draw the sheet; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
     parser.add_argument("--out", type=Path, default=CAD / "models-contact-sheet.png")
@@ -217,7 +220,7 @@ def main(argv=None):
     return 0
 
 
-def sheet_record(data, entries, ppm):
+def sheet_record(data: bytes, entries: list[dict[str, Any]], ppm: float) -> dict[str, Any]:
     """What ``models-contact-sheet.json`` records: the PNG and the models it was drawn from."""
     return {
         "sheet": SHEET,

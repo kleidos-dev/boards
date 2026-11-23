@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # P6: GPIO27 high shuts VBUS out of the AXP192 (2026-11-17)
 
 Probe P6 of `../improvements.md` (item T27). The case was not opened; the board was on USB with its battery fitted (4.16 V, full, not charging).

@@ -1,5 +1,5 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2026 José M. Requena Plens <jmrplens@kleidos.dev>
 #
 # M5StickS3 (K150): every component, every pin and the net it is on, as the
 # vendor's published schematic shows them, plus the Kleidos additions and
@@ -38,7 +38,7 @@ source:
   also_read:
     - url: https://docs.m5stack.switch-science.com/en/core/StickS3
       mirror_of: https://docs.m5stack.com/en/core/StickS3
-      used_for: I2C addresses, the PinMap, the HAT2 header pinout, the Grove wire colours, J3's HY2.0-4P part, LED1's colour (green, "Download Mode")
+      used_for: I2C addresses, the PinMap, the HAT2 header pinout, the Grove wire colors, J3's HY2.0-4P part, LED1's color (green, "Download Mode")
       checked: 2026-11-17
     - url: https://github.com/m5stack/M5PM1/blob/main/docs/M5PM1_Datasheet_EN.pdf
       title: M5PM1 Chip User Manual V1.9 (M5Stack)
@@ -979,7 +979,7 @@ components:
   LED1:
     value: LED
     page: 2
-    note: "Pin 1 (anode) through R25 to 3V3_L0, pin 2 (cathode) to Q3 drain. The print gives no colour; the vendor's docs page calls it green (\"Download Mode\"), and it is green, inside the case, on the owner's unit (observed 2026-11-17)."
+    note: "Pin 1 (anode) through R25 to 3V3_L0, pin 2 (cathode) to Q3 drain. The print gives no color; the vendor's docs page calls it green (\"Download Mode\"), and it is green, inside the case, on the owner's unit (observed 2026-11-17)."
     pins:
       "1": LED1_A
       "2": LED1_K

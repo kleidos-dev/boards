@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """Hold every ``<board>/board.json`` to ``_shared/board.schema.json`` and to its sources.
 
@@ -34,7 +35,9 @@ import datetime as _dt
 import json
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "_shared" / "board.schema.json"
@@ -62,7 +65,7 @@ _TYPES = {
 # ------------------------------------------------------------- the schema
 
 
-def _is_type(value, name: str) -> bool:
+def _is_type(value: object, name: str) -> bool:
     if name == "integer":
         return isinstance(value, int) and not isinstance(value, bool)
     if name == "number":
@@ -70,7 +73,7 @@ def _is_type(value, name: str) -> bool:
     return isinstance(value, _TYPES[name])
 
 
-def _resolve(schema: dict, root: dict) -> dict:
+def _resolve(schema: dict[str, Any], root: dict[str, Any]) -> dict[str, Any]:
     while "$ref" in schema:
         ref = schema["$ref"]
         if not ref.startswith("#/"):
@@ -82,7 +85,9 @@ def _resolve(schema: dict, root: dict) -> dict:
     return schema
 
 
-def validate(value, schema: dict, root: dict, where: str = "$") -> list[str]:
+def validate(
+    value: object, schema: dict[str, Any], root: dict[str, Any], where: str = "$"
+) -> list[str]:
     """The ways *value* breaks *schema*, as ``path: problem`` lines.
 
     Supports what ``board.schema.json`` uses: ``$ref`` into ``$defs``,
@@ -110,9 +115,9 @@ def validate(value, schema: dict, root: dict, where: str = "$") -> list[str]:
         if "exclusiveMinimum" in schema and value <= schema["exclusiveMinimum"]:
             problems.append(f"{where}: {value} <= {schema['exclusiveMinimum']}")
     if isinstance(value, dict):
-        for key in schema.get("required", []):
-            if key not in value:
-                problems.append(f"{where}: missing '{key}'")
+        problems.extend(
+            f"{where}: missing '{key}'" for key in schema.get("required", []) if key not in value
+        )
         props = schema.get("properties", {})
         extra = schema.get("additionalProperties", True)
         for key, item in value.items():
@@ -133,14 +138,15 @@ def validate(value, schema: dict, root: dict, where: str = "$") -> list[str]:
     return problems
 
 
-def load_schema() -> dict:
-    return json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+def load_schema() -> dict[str, Any]:
+    schema: dict[str, Any] = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    return schema
 
 
 # ------------------------------------------------------- the source rules
 
 
-def _walk_src(node, where: str):
+def _walk_src(node: object, where: str) -> Iterator[tuple[str, list[Any]]]:
     """Every (path, src list) in a document, wherever a ``src`` sits."""
     if isinstance(node, dict):
         for key, item in node.items():
@@ -153,14 +159,16 @@ def _walk_src(node, where: str):
             yield from _walk_src(item, f"{where}[{index}]")
 
 
-def _real_date(text: str) -> _dt.date | None:
+def _real_date(text: object) -> _dt.date | None:
+    if not isinstance(text, str):
+        return None
     try:
         return _dt.date.fromisoformat(text)
-    except TypeError, ValueError:
+    except ValueError:
         return None
 
 
-def source_problems(doc: dict, today: _dt.date) -> tuple[list[str], list[str]]:
+def source_problems(doc: dict[str, Any], today: _dt.date) -> tuple[list[str], list[str]]:
     """(problems, notices) of the file's sources and of what cites them."""
     problems: list[str] = []
     sources = doc.get("sources", {}) if isinstance(doc.get("sources"), dict) else {}
@@ -200,13 +208,15 @@ def source_problems(doc: dict, today: _dt.date) -> tuple[list[str], list[str]]:
     return problems, notices
 
 
-def component_problems(doc: dict) -> list[str]:
+def component_problems(doc: dict[str, Any]) -> list[str]:
     """Unique component ids, and every connection reaching one of them."""
     problems: list[str] = []
     components = [c for c in doc.get("components", []) if isinstance(c, dict)]
-    ids = [c.get("id") for c in components]
-    for repeated in sorted({i for i in ids if ids.count(i) > 1}):
-        problems.append(f"$.components: id '{repeated}' is used twice")
+    ids = [str(c.get("id")) for c in components]
+    problems.extend(
+        f"$.components: id '{repeated}' is used twice"
+        for repeated in sorted({i for i in ids if ids.count(i) > 1})
+    )
     known = set(ids) | {"external"}
     for index, component in enumerate(components):
         for link_index, link in enumerate(component.get("connects_to", [])):
@@ -226,35 +236,41 @@ def component_problems(doc: dict) -> list[str]:
 # ------------------------------------------- what measurements.json repeats
 
 
-def measurement_problems(doc: dict, measured: dict) -> list[str]:
+def measurement_problems(doc: dict[str, Any], measured: dict[str, Any]) -> list[str]:
     """The fields both files hold must agree."""
     problems: list[str] = []
     identity = doc.get("identity", {})
-    for field in ("vendor", "sku"):
-        if field in identity and field in measured and identity[field] != measured[field]:
-            problems.append(
-                f"$.identity.{field}: {identity[field]!r} but measurements.json "
-                f"says {measured[field]!r}"
-            )
+    problems.extend(
+        f"$.identity.{field}: {identity[field]!r} but measurements.json says {measured[field]!r}"
+        for field in ("vendor", "sku")
+        if field in identity and field in measured and identity[field] != measured[field]
+    )
     display = measured.get("display", {})
     for component in doc.get("components", []):
         if not isinstance(component, dict):
             continue
         role = component.get("role")
-        if role == "display_controller" and "part" in component and display.get("controller"):
-            if component["part"].lower() != str(display["controller"]).lower():
-                problems.append(
-                    f"display controller {component['part']!r} but "
-                    f"measurements.json says {display['controller']!r}"
-                )
+        if (
+            role == "display_controller"
+            and "part" in component
+            and display.get("controller")
+            and component["part"].lower() != str(display["controller"]).lower()
+        ):
+            problems.append(
+                f"display controller {component['part']!r} but "
+                f"measurements.json says {display['controller']!r}"
+            )
         if role == "display_panel":
             resolution = (component.get("specs") or {}).get("resolution_px")
             wanted = (display.get("resolution_w_px"), display.get("resolution_h_px"))
-            if resolution is not None and None not in wanted:
-                if sorted(resolution) != sorted(wanted):
-                    problems.append(
-                        f"panel resolution {resolution} but measurements.json says {list(wanted)}"
-                    )
+            if (
+                resolution is not None
+                and None not in wanted
+                and sorted(resolution) != sorted(wanted)
+            ):
+                problems.append(
+                    f"panel resolution {resolution} but measurements.json says {list(wanted)}"
+                )
     return problems
 
 
@@ -262,15 +278,15 @@ def measurement_problems(doc: dict, measured: dict) -> list[str]:
 
 
 def check_document(
-    doc: dict,
+    doc: dict[str, Any],
     board: str,
-    measured: dict | None,
-    schema: dict | None = None,
+    measured: dict[str, Any] | None,
+    schema: dict[str, Any] | None = None,
     today: _dt.date | None = None,
 ) -> tuple[list[str], list[str]]:
     """(problems, notices) of one board.json already parsed."""
     schema = schema or load_schema()
-    today = today or _dt.date.today()
+    today = today or _dt.datetime.now(_dt.UTC).date()
     problems = validate(doc, schema, schema)
     if doc.get("id") != board:
         problems.append(f"$.id: {doc.get('id')!r} is not the folder name {board!r}")

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # Cardputer-Adv: the ROM's boot line and the latched straps (P06)
 
 - Date: 2026-11-17.

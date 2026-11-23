@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 José M. Requena Plens
+SPDX-License-Identifier: MIT
+-->
+
 # DC-DC1 (VESP_3V3) setpoint (probe P6, register half)
 
 Bench probe of 2026-11-17 on the M5StickC Plus 1.1 (K016-P), USB connected, the case closed. It addresses triage item C6 (`../improvements.md`).

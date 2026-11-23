@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 """The M5StickC Plus SE's back label, drawn in the back frame
 
@@ -40,11 +41,12 @@ from __future__ import annotations
 
 import math
 import sys
+from itertools import pairwise
 from pathlib import Path
-from typing import List, Tuple
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import emit_front_svg as fronts  # noqa: E402  (beside this file; -I leaves it off the path)
+import emit_front_svg as fronts
 
 f = fronts.f
 
@@ -119,7 +121,7 @@ OLIVE = "#9a5a06"  # G32
 #: its baseline and turned ``angle`` degrees about that point (-90 reads
 #: bottom to top). Each is fitted to the ink box of the printed run measured
 #: on the photos: Inter's own ink box of the same string, scaled into it.
-TEXTS: List[Tuple[str, str, int, str, float, float, float, float, float]] = [
+TEXTS: list[tuple[str, str, int, str, float, float, float, float, float]] = [
     ("pin-gnd", "GND", 400, WHITE, 3.766, 6.812, 2.191, 5.125, -90),
     ("pin-5v-in", "5V", 400, WHITE, 6.329, 6.655, 2.136, 2.671, -90),
     ("pin-g26", "G26", 400, BLACK, 8.953, 6.354, 2.209, 4.283, -90),
@@ -206,7 +208,7 @@ def py(y: float) -> float:
     return PAPER_TOP + SY * (y - MEASURED[1])
 
 
-def pts(points: List[Tuple[float, float]]) -> str:
+def pts(points: list[tuple[float, float]]) -> str:
     return " ".join(f"{f(px(x))},{f(py(y))}" for x, y in points)
 
 
@@ -239,17 +241,17 @@ def rect(x0: float, y0: float, x1: float, y1: float, ink: str, r: float = 0.0) -
     return fronts.rounded_rect(px(x0), py(y0), SX * (x1 - x0), SY * (y1 - y0), r=r * K, fill=ink)
 
 
-def circle(cx: float, cy: float, r: float, **style) -> str:
+def circle(cx: float, cy: float, r: float, **style: Any) -> str:
     if "stroke_w" in style:
         style["stroke_w"] *= K
     return fronts.circle(px(cx), py(cy), r * K, **style)
 
 
-def polygon(points: List[Tuple[float, float]], ink: str) -> str:
+def polygon(points: list[tuple[float, float]], ink: str) -> str:
     return f'<polygon points="{pts(points)}" fill="{ink}"/>\n'
 
 
-def line(points: List[Tuple[float, float]], ink: str, width: float, cap: str = "round") -> str:
+def line(points: list[tuple[float, float]], ink: str, width: float, cap: str = "round") -> str:
     d = " L ".join(f"{f(px(x))} {f(py(y))}" for x, y in points)
     return (
         f'<path d="M {d}" fill="none" stroke="{ink}" stroke-width="{f(width * K)}" '
@@ -304,7 +306,7 @@ def ring_c(cx: float, cy: float, outer: float, inner: float, cut_x: float, ink: 
     )
 
 
-def texts(prefix: str) -> List[str]:
+def texts(prefix: str) -> list[str]:
     """The fitted runs whose names start with ``prefix``."""
     return [
         run(t, w, ink, x, y, s, n, a)
@@ -313,7 +315,7 @@ def texts(prefix: str) -> List[str]:
     ]
 
 
-def group(out: List[str], name: str, body: List[str]) -> None:
+def group(out: list[str], name: str, body: list[str]) -> None:
     out.append(fronts.print_open(name, PLANE))
     out.extend(body)
     out.append(fronts.LEGEND_CLOSE)
@@ -348,11 +350,11 @@ PIN_TOP, PIN_BOTTOM = MEASURED[1] + EDGE / SY, 7.19
 PIN_INKS = (BLACK, RED, GRAY_LIGHT, GRAY, GRAY_LIGHT, PINK, YELLOW, RED_LIGHT)
 
 
-def append_pins(out: List[str]) -> None:
+def append_pins(out: list[str]) -> None:
     """The eight header pins, GND at the left as the back is seen."""
     cells = [
         rect(x0, PIN_TOP, x1, PIN_BOTTOM, ink)
-        for x0, x1, ink in zip(PIN_EDGES, PIN_EDGES[1:], PIN_INKS)
+        for (x0, x1), ink in zip(pairwise(PIN_EDGES), PIN_INKS, strict=True)
     ]
     group(out, "pin-cells", cells)
     # 5V in: an arrow up beside the left 5V; 5V out: an arrow down.
@@ -394,7 +396,7 @@ BANNER_R = 0.45
 BANNER_SLANT = ((11.95, 7.63), (12.85, 11.53))
 
 
-def append_banner(out: List[str]) -> None:
+def append_banner(out: list[str]) -> None:
     (tx, ty), (bx, by) = BANNER_SLANT
     # the slanted edge carried out to the frame's outer edges
     k = (bx - tx) / (by - ty)
@@ -438,7 +440,7 @@ FIELDS = (
 FIELD_R = 0.3
 
 
-def append_fields(out: List[str]) -> None:
+def append_fields(out: list[str]) -> None:
     group(
         out,
         "fields",
@@ -462,7 +464,7 @@ def append_fields(out: List[str]) -> None:
 #: its red ring, as the rings of one even-odd shape (measured frame). Traced
 #: on the documentation picture as the half-way isoline between the block's
 #: red and the white, smoothed by 0.025 mm and simplified to 0.006 mm.
-ESPRESSIF_RINGS: List[List[Tuple[float, float]]] = [
+ESPRESSIF_RINGS: list[list[tuple[float, float]]] = [
     [
         (3.888, 15.908),
         (3.712, 15.974),
@@ -689,7 +691,7 @@ ESPRESSIF_RINGS: List[List[Tuple[float, float]]] = [
 # --- end Espressif mark ---
 
 
-def append_esp32(out: List[str]) -> None:
+def append_esp32(out: list[str]) -> None:
     """The ESP32 block: Espressif's mark in white, ESP32 PICO(4M)."""
     d = " ".join(
         "M " + " L ".join(f"{f(px(x))} {f(py(y))}" for x, y in ring) + " Z"
@@ -699,12 +701,12 @@ def append_esp32(out: List[str]) -> None:
     group(out, "esp32", [rect(2.2, 14.99, 12.79, 18.375, RED, 0.35), mark] + texts("esp-"))
 
 
-def append_display_and_mic(out: List[str]) -> None:
+def append_display_and_mic(out: list[str]) -> None:
     group(out, "lcd-mic", texts("lcdmic-"))
     group(out, "lcd-mic-lines", texts("line-"))
 
 
-def append_battery(out: List[str]) -> None:
+def append_battery(out: list[str]) -> None:
     group(
         out,
         "battery",
@@ -716,7 +718,7 @@ def append_battery(out: List[str]) -> None:
     )
 
 
-def append_fcc(out: List[str]) -> None:
+def append_fcc(out: list[str]) -> None:
     """FCC's mark: the F, then the outer C round the inner one, both open to
     the right."""
     group(
@@ -732,11 +734,11 @@ def append_fcc(out: List[str]) -> None:
     )
 
 
-def append_model(out: List[str]) -> None:
+def append_model(out: list[str]) -> None:
     group(out, "model-name", texts("model-"))
 
 
-def append_giteki(out: List[str]) -> None:
+def append_giteki(out: list[str]) -> None:
     """Japan's radio mark: a ring broken on its right by a lightning stroke,
     over a stem with two bars; then the R in its box and the number."""
     cx, cy, r = 4.05, 23.79, 1.025
@@ -752,7 +754,7 @@ def append_giteki(out: List[str]) -> None:
     group(out, "giteki", body + texts("giteki-"))
 
 
-def append_ce_weee(out: List[str]) -> None:
+def append_ce_weee(out: list[str]) -> None:
     group(
         out,
         "ce",
@@ -799,11 +801,11 @@ def append_ce_weee(out: List[str]) -> None:
     )
 
 
-def append_i2c(out: List[str]) -> None:
+def append_i2c(out: list[str]) -> None:
     group(out, "i2c", texts("i2c-"))
 
 
-def append_pmic_rtc(out: List[str]) -> None:
+def append_pmic_rtc(out: list[str]) -> None:
     group(
         out,
         "pmic-rtc",
@@ -817,7 +819,7 @@ def append_pmic_rtc(out: List[str]) -> None:
     )
 
 
-def append_maker(out: List[str]) -> None:
+def append_maker(out: list[str]) -> None:
     """M5Stack's cube with its 5, the M5STACK line, its rule and the
     maker's three lines."""
     top = [(3.42, 32.02), (4.96, 31.42), (6.36, 32.0), (4.98, 32.62)]
@@ -854,7 +856,7 @@ def append_maker(out: List[str]) -> None:
     )
 
 
-def append_bps(out: List[str]) -> None:
+def append_bps(out: list[str]) -> None:
     group(
         out,
         "bps",
@@ -863,7 +865,7 @@ def append_bps(out: List[str]) -> None:
     )
 
 
-def append_port(out: List[str]) -> None:
+def append_port(out: list[str]) -> None:
     """The HY2.0-4P port: its name over four cells, G, V OUT, G32, G33."""
     body = [
         rect(8.01, 33.75, 16.14, 37.31, GRAY, 0.3),
@@ -875,11 +877,11 @@ def append_port(out: List[str]) -> None:
     group(out, "port", body + texts("port-"))
 
 
-def append_power(out: List[str]) -> None:
+def append_power(out: list[str]) -> None:
     group(out, "power", texts("pwr-") + [line([(20.62, 36.95), (21.34, 37.6)], LINE_GRAY, 0.13)])
 
 
-def append_back(out: List[str]) -> None:
+def append_back(out: list[str]) -> None:
     """The label paper, then every print on it, in paint order."""
     out.append(f'<path id="label-paper" d="{paper_path()}" fill="{PAPER_INK}"/>\n')
     for part in (

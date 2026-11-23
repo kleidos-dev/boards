@@ -1,5 +1,7 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
-"""Every board's ``README.md`` is what ``_shared/emit_board_readme.py`` writes from its ``board.json``.
+"""Every board's ``README.md`` is what ``_shared/emit_board_readme.py`` writes from its
+``board.json``.
 
 The page is a reading of the specification and nothing else, one layout for
 all nine boards: a page edited by hand, or a ``board.json`` changed without
