@@ -51,9 +51,15 @@ from pathlib import Path
 import numpy as np
 
 MM = 0.001
-_COMPONENTS = {5120: np.int8, 5121: np.uint8, 5122: np.int16, 5123: np.uint16,
-               5125: np.uint32, 5126: np.float32}
-_WIDTH = {'SCALAR': 1, 'VEC2': 2, 'VEC3': 3, 'VEC4': 4}
+_COMPONENTS = {
+    5120: np.int8,
+    5121: np.uint8,
+    5122: np.int16,
+    5123: np.uint16,
+    5125: np.uint32,
+    5126: np.float32,
+}
+_WIDTH = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4}
 #: Test-card quadrant colors (sRGB 0-1): top-left, top-right, bottom-left, bottom-right.
 CARD_COLORS = ((0.13, 0.31, 0.75), (0.75, 0.19, 0.19), (0.19, 0.63, 0.25), (0.82, 0.75, 0.19))
 #: The ambient light and the key light's share of a lit face's light, before the
@@ -66,6 +72,7 @@ F0 = 0.04
 @dataclass
 class Mesh:
     """One node of a board model, positions in mm in the glTF frame."""
+
     name: str
     positions: np.ndarray
     normals: np.ndarray
@@ -78,7 +85,7 @@ class Mesh:
     unlit: bool
     double: bool
     #: The name of its material (``#<index>`` for one with no name).
-    material: str = ''
+    material: str = ""
 
 
 def linear_to_srgb(c):
@@ -109,37 +116,39 @@ def pbr_neutral(c):
 
 
 def _accessor(js, bin_, index):
-    acc = js['accessors'][index]
-    bv = js['bufferViews'][acc['bufferView']]
-    dt = np.dtype(_COMPONENTS[acc['componentType']])
-    width = _WIDTH[acc['type']]
-    stride = bv.get('byteStride', width * dt.itemsize) // dt.itemsize
-    off = bv.get('byteOffset', 0) + acc.get('byteOffset', 0)
-    arr = np.frombuffer(bin_, dtype=dt, count=acc['count'] * stride, offset=off)
-    arr = arr.reshape(acc['count'], stride)[:, :width].astype(float)
-    if acc.get('normalized'):
+    acc = js["accessors"][index]
+    bv = js["bufferViews"][acc["bufferView"]]
+    dt = np.dtype(_COMPONENTS[acc["componentType"]])
+    width = _WIDTH[acc["type"]]
+    stride = bv.get("byteStride", width * dt.itemsize) // dt.itemsize
+    off = bv.get("byteOffset", 0) + acc.get("byteOffset", 0)
+    arr = np.frombuffer(bin_, dtype=dt, count=acc["count"] * stride, offset=off)
+    arr = arr.reshape(acc["count"], stride)[:, :width].astype(float)
+    if acc.get("normalized"):
         arr = np.clip(arr / float(np.iinfo(dt).max), -1.0, 1.0)
     return arr
 
 
 #: What a node may carry, beside its ``scale``, that places its mesh.
-_PLACING = ('matrix', 'translation', 'rotation')
+_PLACING = ("matrix", "translation", "rotation")
 
 
 def _local(node):
     """A node's own transform as a 4 x 4 matrix: its ``matrix`` (stored by
     columns), or its translation, rotation and scale composed as glTF composes
     them (T R S)."""
-    if 'matrix' in node:
-        return np.array(node['matrix'], dtype=float).reshape(4, 4).T
+    if "matrix" in node:
+        return np.array(node["matrix"], dtype=float).reshape(4, 4).T
     out = np.eye(4)
-    if 'rotation' in node:
-        x, y, z, w = (float(v) for v in node['rotation'])
-        out[:3, :3] = [[1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
-                       [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
-                       [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)]]
-    out[:3, :3] *= np.array(node.get('scale', [1.0, 1.0, 1.0]), dtype=float)
-    out[:3, 3] = node.get('translation', [0.0, 0.0, 0.0])
+    if "rotation" in node:
+        x, y, z, w = (float(v) for v in node["rotation"])
+        out[:3, :3] = [
+            [1 - 2 * (y * y + z * z), 2 * (x * y - z * w), 2 * (x * z + y * w)],
+            [2 * (x * y + z * w), 1 - 2 * (x * x + z * z), 2 * (y * z - x * w)],
+            [2 * (x * z - y * w), 2 * (y * z + x * w), 1 - 2 * (x * x + y * y)],
+        ]
+    out[:3, :3] *= np.array(node.get("scale", [1.0, 1.0, 1.0]), dtype=float)
+    out[:3, 3] = node.get("translation", [0.0, 0.0, 0.0])
     return out
 
 
@@ -154,15 +163,15 @@ def _placements(nodes):
     a glTF reader draws it and a check run on these meshes sees a node moved
     by its transform.
     """
-    above = {child: index for index, node in enumerate(nodes)
-             for child in node.get('children', [])}
+    above = {child: index for index, node in enumerate(nodes) for child in node.get("children", [])}
     out = {}
     for index, node in enumerate(nodes):
         chain = [index]
         while chain[-1] in above and above[chain[-1]] not in chain:
             chain.append(above[chain[-1]])
-        if (not any(key in node for key in _PLACING)
-                and not any(key in nodes[i] for i in chain[1:] for key in (*_PLACING, 'scale'))):
+        if not any(key in node for key in _PLACING) and not any(
+            key in nodes[i] for i in chain[1:] for key in (*_PLACING, "scale")
+        ):
             out[index] = None
             continue
         world = np.eye(4)
@@ -175,22 +184,22 @@ def _placements(nodes):
 def read_glb(path):
     """[Mesh] of a GLB, each mesh where its node and the nodes above it place it."""
     raw = Path(path).read_bytes()
-    if struct.unpack_from('<I', raw, 0)[0] != 0x46546C67:
-        raise ValueError(f'{path}: not a GLB')
-    jlen = struct.unpack_from('<I', raw, 12)[0]
-    js = json.loads(raw[20:20 + jlen])
-    bin_ = raw[20 + jlen + 8:]
-    placed = _placements(js['nodes'])
+    if struct.unpack_from("<I", raw, 0)[0] != 0x46546C67:
+        raise ValueError(f"{path}: not a GLB")
+    jlen = struct.unpack_from("<I", raw, 12)[0]
+    js = json.loads(raw[20 : 20 + jlen])
+    bin_ = raw[20 + jlen + 8 :]
+    placed = _placements(js["nodes"])
     out = []
-    for index, node in enumerate(js['nodes']):
-        if 'mesh' not in node:
+    for index, node in enumerate(js["nodes"]):
+        if "mesh" not in node:
             continue
         world = placed[index]
-        scale = np.array(node.get('scale', [1.0, 1.0, 1.0])) / MM
-        for prim in js['meshes'][node['mesh']]['primitives']:
-            attrs = prim['attributes']
-            pos = _accessor(js, bin_, attrs['POSITION'])
-            nrm = _accessor(js, bin_, attrs['NORMAL'])
+        scale = np.array(node.get("scale", [1.0, 1.0, 1.0])) / MM
+        for prim in js["meshes"][node["mesh"]]["primitives"]:
+            attrs = prim["attributes"]
+            pos = _accessor(js, bin_, attrs["POSITION"])
+            nrm = _accessor(js, bin_, attrs["NORMAL"])
             if world is None:
                 pos = pos * scale
             else:
@@ -198,20 +207,27 @@ def read_glb(path):
                 # a normal turns with the inverse transpose of what moves the points
                 nrm = nrm @ np.linalg.inv(world[:3, :3])
             nrm /= np.maximum(np.linalg.norm(nrm, axis=1, keepdims=True), 1e-12)
-            uv = _accessor(js, bin_, attrs['TEXCOORD_0']) if 'TEXCOORD_0' in attrs else None
-            faces = _accessor(js, bin_, prim['indices']).astype(np.int64).reshape(-1, 3)
-            mat = js['materials'][prim['material']] if 'material' in prim else {}
-            pbr = mat.get('pbrMetallicRoughness', {})
-            f = pbr.get('baseColorFactor', [0.6, 0.6, 0.6, 1.0])
-            out.append(Mesh(
-                name=node.get('name', ''), positions=pos, normals=nrm, faces=faces, uv=uv,
-                color=linear_to_srgb(f[:3]),
-                alpha=f[3] if mat.get('alphaMode') == 'BLEND' else 1.0,
-                metal=float(pbr.get('metallicFactor', 1.0)),
-                rough=float(pbr.get('roughnessFactor', 1.0)),
-                unlit='KHR_materials_unlit' in mat.get('extensions', {}),
-                double=bool(mat.get('doubleSided', False)),
-                material=mat.get('name', f'#{prim.get("material", "")}')))
+            uv = _accessor(js, bin_, attrs["TEXCOORD_0"]) if "TEXCOORD_0" in attrs else None
+            faces = _accessor(js, bin_, prim["indices"]).astype(np.int64).reshape(-1, 3)
+            mat = js["materials"][prim["material"]] if "material" in prim else {}
+            pbr = mat.get("pbrMetallicRoughness", {})
+            f = pbr.get("baseColorFactor", [0.6, 0.6, 0.6, 1.0])
+            out.append(
+                Mesh(
+                    name=node.get("name", ""),
+                    positions=pos,
+                    normals=nrm,
+                    faces=faces,
+                    uv=uv,
+                    color=linear_to_srgb(f[:3]),
+                    alpha=f[3] if mat.get("alphaMode") == "BLEND" else 1.0,
+                    metal=float(pbr.get("metallicFactor", 1.0)),
+                    rough=float(pbr.get("roughnessFactor", 1.0)),
+                    unlit="KHR_materials_unlit" in mat.get("extensions", {}),
+                    double=bool(mat.get("doubleSided", False)),
+                    material=mat.get("name", f"#{prim.get('material', '')}"),
+                )
+            )
     return out
 
 
@@ -220,8 +236,7 @@ def _clip_to_box(points, box):
     (Sutherland-Hodgman, plane by plane, so an upright face clips too)."""
     x0, x1, y0, y1 = box
     poly = [np.asarray(p, dtype=float) for p in points]
-    for axis, bound, keep_above in ((0, x0, True), (0, x1, False), (1, y0, True),
-                                    (1, y1, False)):
+    for axis, bound, keep_above in ((0, x0, True), (0, x1, False), (1, y0, True), (1, y1, False)):
         if not poly:
             break
         out = []
@@ -258,7 +273,7 @@ def screen_clearance(meshes, quant_mm):
     (None when there is none); ``quant_mm``; and ``ok``, true when both are at
     least *quant_mm*.
     """
-    screens = [m for m in meshes if m.name == 'screen']
+    screens = [m for m in meshes if m.name == "screen"]
     if not screens:
         return None
     screen = screens[0]
@@ -267,41 +282,45 @@ def screen_clearance(meshes, quant_mm):
     inset = quant_mm / 2
     box = (lo[0] + inset, hi[0] - inset, lo[1] + inset, hi[1] - inset)
     plane = float(screen.positions[:, 2].min())
-    nearest = {'behind': (None, None), 'in_front': (None, None)}
+    nearest = {"behind": (None, None), "in_front": (None, None)}
     for m in meshes:
         if m is screen or not len(m.faces):
             continue
         tri = m.positions[m.faces]
         t_lo, t_hi = tri.min(axis=1), tri.max(axis=1)
-        near = ((t_hi[:, 0] >= box[0]) & (t_lo[:, 0] <= box[1]) & (t_hi[:, 1] >= box[2])
-                & (t_lo[:, 1] <= box[3]))
+        near = (
+            (t_hi[:, 0] >= box[0])
+            & (t_lo[:, 0] <= box[1])
+            & (t_hi[:, 1] >= box[2])
+            & (t_lo[:, 1] <= box[3])
+        )
         for corners in tri[near]:
             part = _clip_to_box(corners, box)
             if not part:
                 continue
             z = np.array([p[2] for p in part])
             if z.max() <= plane:
-                side, gap = 'behind', plane - float(z.max())
+                side, gap = "behind", plane - float(z.max())
             elif z.min() >= plane:
-                side, gap = 'in_front', float(z.min()) - plane
+                side, gap = "in_front", float(z.min()) - plane
             else:
-                side, gap = ('behind' if plane - z.min() >= z.max() - plane else 'in_front'), 0.0
+                side, gap = ("behind" if plane - z.min() >= z.max() - plane else "in_front"), 0.0
             if nearest[side][0] is None or gap < nearest[side][0]:
                 nearest[side] = (gap, m.name)
-    out = {'screen_z_mm': round(plane, 6)}
+    out = {"screen_z_mm": round(plane, 6)}
     ok = True
-    for side in ('behind', 'in_front'):
+    for side in ("behind", "in_front"):
         gap, name = nearest[side]
-        out[f'{side}_mm'] = None if gap is None else round(gap, 6)
-        out[f'{side}_mesh'] = name
+        out[f"{side}_mm"] = None if gap is None else round(gap, 6)
+        out[f"{side}_mesh"] = name
         # 1e-6 mm absorbs the float32 rounding of the screen's own depth
         ok = ok and (gap is None or gap >= quant_mm - 1e-6)
-    out['quant_mm'] = quant_mm
-    out['ok'] = ok
+    out["quant_mm"] = quant_mm
+    out["ok"] = ok
     return out
 
 
-def legend_clearance(meshes, prefix, quant_mm, steps=2, on=None, face='front'):
+def legend_clearance(meshes, prefix, quant_mm, steps=2, on=None, face="front"):
     """How far over the rest of the model the legends lie, and whether anything covers them.
 
     The legends are the meshes whose names start with *prefix*: flat sheets a
@@ -334,31 +353,40 @@ def legend_clearance(meshes, prefix, quant_mm, steps=2, on=None, face='front'):
     legends = [m for m in meshes if m.name.startswith(prefix) and len(m.faces)]
     if not legends:
         return None
-    if face != 'front':
+    if face != "front":
         import dataclasses
 
         import board_faces
 
-        meshes = [dataclasses.replace(m, positions=board_faces.to_face(m.positions, face))
-                  for m in meshes]
+        meshes = [
+            dataclasses.replace(m, positions=board_faces.to_face(m.positions, face)) for m in meshes
+        ]
         legends = [m for m in meshes if m.name.startswith(prefix) and len(m.faces)]
     cent = np.concatenate([m.positions[m.faces].mean(axis=1) for m in legends])
     lo, hi = cent[:, :2].min(axis=0), cent[:, :2].max(axis=0)
-    nearest = {'under': (None, None), 'over': (None, None)}
+    nearest = {"under": (None, None), "over": (None, None)}
     printed_on = np.zeros(len(cent), dtype=bool)
     for m in meshes:
-        if m.name.startswith(prefix) or m.name == 'glass' or m.alpha < 1.0 or not len(m.faces):
+        if m.name.startswith(prefix) or m.name == "glass" or m.alpha < 1.0 or not len(m.faces):
             continue
         tri = m.positions[m.faces]
         t_lo, t_hi = tri.min(axis=1), tri.max(axis=1)
-        near = ((t_hi[:, 0] >= lo[0]) & (t_lo[:, 0] <= hi[0]) & (t_hi[:, 1] >= lo[1])
-                & (t_lo[:, 1] <= hi[1]))
+        near = (
+            (t_hi[:, 0] >= lo[0])
+            & (t_lo[:, 0] <= hi[0])
+            & (t_hi[:, 1] >= lo[1])
+            & (t_lo[:, 1] <= hi[1])
+        )
         for (a, b, c), b_lo, b_hi in zip(tri[near], t_lo[near], t_hi[near], strict=True):
             den = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
             if abs(den) < 1e-12:
                 continue
-            at = np.flatnonzero((cent[:, 0] >= b_lo[0]) & (cent[:, 0] <= b_hi[0])
-                                & (cent[:, 1] >= b_lo[1]) & (cent[:, 1] <= b_hi[1]))
+            at = np.flatnonzero(
+                (cent[:, 0] >= b_lo[0])
+                & (cent[:, 0] <= b_hi[0])
+                & (cent[:, 1] >= b_lo[1])
+                & (cent[:, 1] <= b_hi[1])
+            )
             if not len(at):
                 continue
             p = cent[at]
@@ -371,20 +399,25 @@ def legend_clearance(meshes, prefix, quant_mm, steps=2, on=None, face='front'):
             gap = p[inside, 2] - (wa[inside] * a[2] + wb[inside] * b[2] + wc[inside] * c[2])
             if m.name == on:
                 printed_on[at[inside][gap >= 0]] = True
-            for side, found in (('under', gap[gap >= 0]), ('over', -gap[gap < 0])):
+            for side, found in (("under", gap[gap >= 0]), ("over", -gap[gap < 0])):
                 if len(found) and (nearest[side][0] is None or found.min() < nearest[side][0]):
                     nearest[side] = (float(found.min()), m.name)
     least = steps * quant_mm
-    under, over = nearest['under'], nearest['over']
+    under, over = nearest["under"], nearest["over"]
     off = 0 if on is None else int((~printed_on).sum())
-    return {'triangles': int(len(cent)),
-            'under_mm': None if under[0] is None else round(under[0], 6), 'under_mesh': under[1],
-            'over_mm': None if over[0] is None else round(over[0], 6), 'over_mesh': over[1],
-            'on': on, 'off': off,
-            'quant_mm': quant_mm, 'least_mm': least,
-            # 1e-6 mm absorbs the rounding of a position read back from its step
-            'ok': (over[0] is None and under[0] is not None and under[0] >= least - 1e-6
-                   and off == 0)}
+    return {
+        "triangles": int(len(cent)),
+        "under_mm": None if under[0] is None else round(under[0], 6),
+        "under_mesh": under[1],
+        "over_mm": None if over[0] is None else round(over[0], 6),
+        "over_mesh": over[1],
+        "on": on,
+        "off": off,
+        "quant_mm": quant_mm,
+        "least_mm": least,
+        # 1e-6 mm absorbs the rounding of a position read back from its step
+        "ok": (over[0] is None and under[0] is not None and under[0] >= least - 1e-6 and off == 0),
+    }
 
 
 #: The normals of two faces that may lie on one plane differ by less than this.
@@ -425,8 +458,15 @@ def _clip_convex(subject, clip):
 
 
 def _polygon_area(points):
-    return abs(sum(p[0] * q[1] - q[0] * p[1]
-                   for p, q in zip(points, points[1:] + points[:1], strict=True))) / 2
+    return (
+        abs(
+            sum(
+                p[0] * q[1] - q[0] * p[1]
+                for p, q in zip(points, points[1:] + points[:1], strict=True)
+            )
+        )
+        / 2
+    )
 
 
 def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
@@ -484,24 +524,29 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
             mirror.append(np.full(len(faces), bool(back)))
             tri.append(faces)
             normal.append(facing)
-            offset.append(np.einsum('ij,ij->i', facing, faces[:, 0]))
+            offset.append(np.einsum("ij,ij->i", facing, faces[:, 0]))
             owner.append(np.full(len(faces), index))
             lo.append(faces.min(axis=1) - quant_mm)
             hi.append(faces.max(axis=1) + quant_mm)
     if not tri:
-        return {'pairs': [], 'least_mm': quant_mm, 'min_area_mm2': min_area, 'ok': True}
+        return {"pairs": [], "least_mm": quant_mm, "min_area_mm2": min_area, "ok": True}
     tri, normal, offset = np.concatenate(tri), np.concatenate(normal), np.concatenate(offset)
     owner, lo, hi = np.concatenate(owner), np.concatenate(lo), np.concatenate(hi)
     mirror = np.concatenate(mirror)
     material = np.array([meshes[i].material for i in owner])
     buckets = {}
-    keys = np.column_stack([np.rint(normal * _BUCKET_TURN).astype(int),
-                            np.floor(offset / (_BUCKET_STEPS * quant_mm)).astype(int)])
+    keys = np.column_stack(
+        [
+            np.rint(normal * _BUCKET_TURN).astype(int),
+            np.floor(offset / (_BUCKET_STEPS * quant_mm)).astype(int),
+        ]
+    )
     for i, key in enumerate(map(tuple, keys)):
         buckets.setdefault(key, []).append(i)
     buckets = {key: np.array(found) for key, found in buckets.items()}
-    steps = [(a, b, c, d) for a in (-1, 0, 1) for b in (-1, 0, 1) for c in (-1, 0, 1)
-             for d in (-1, 0, 1)]
+    steps = [
+        (a, b, c, d) for a in (-1, 0, 1) for b in (-1, 0, 1) for c in (-1, 0, 1) for d in (-1, 0, 1)
+    ]
     found = {}
     for key, here in buckets.items():
         for step in steps:
@@ -510,20 +555,27 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
                 continue
             there = buckets[other]
             for start in range(0, len(here), 256):
-                a = here[start:start + 256]
-                pick = ((material[a][:, None] != material[there][None, :])
-                        & (np.abs(offset[a][:, None] - offset[there][None, :]) < 2 * quant_mm)
-                        & np.all(lo[a][:, None, :] <= hi[there][None, :, :], axis=2)
-                        & np.all(lo[there][None, :, :] <= hi[a][:, None, :], axis=2))
+                a = here[start : start + 256]
+                pick = (
+                    (material[a][:, None] != material[there][None, :])
+                    & (np.abs(offset[a][:, None] - offset[there][None, :]) < 2 * quant_mm)
+                    & np.all(lo[a][:, None, :] <= hi[there][None, :, :], axis=2)
+                    & np.all(lo[there][None, :, :] <= hi[a][:, None, :], axis=2)
+                )
                 if other == key:
                     pick &= a[:, None] < there[None, :]
                 for i, j in zip(*np.nonzero(pick), strict=True):
                     i, j = int(a[i]), int(there[j])
-                    if (owner[i] == owner[j] or (mirror[i] and mirror[j])
-                            or normal[i] @ normal[j] < _PARALLEL):
+                    if (
+                        owner[i] == owner[j]
+                        or (mirror[i] and mirror[j])
+                        or normal[i] @ normal[j] < _PARALLEL
+                    ):
                         continue
-                    gap = max(np.abs(tri[j] @ normal[i] - offset[i]).max(),
-                              np.abs(tri[i] @ normal[j] - offset[j]).max())
+                    gap = max(
+                        np.abs(tri[j] @ normal[i] - offset[i]).max(),
+                        np.abs(tri[i] @ normal[j] - offset[j]).max(),
+                    )
                     if gap >= least:
                         continue
                     u, v = _plane_axes(normal[i])
@@ -535,24 +587,33 @@ def coplanar_overlaps(meshes, quant_mm, min_area_mm2=None):
                     area = _polygon_area(shared)
                     if area <= 0:
                         continue
-                    names = sorted([(meshes[owner[i]].name, material[i]),
-                                    (meshes[owner[j]].name, material[j])])
-                    plane = (tuple(float(c) + 0.0 for c in np.round(normal[i], 3)),
-                             round(float(offset[i]), 2))
-                    entry = found.setdefault((tuple(names), plane), {
-                        'meshes': [names[0][0], names[1][0]],
-                        'materials': [names[0][1], names[1][1]],
-                        'facing': list(plane[0]), 'gap_mm': 0.0, 'area_mm2': 0.0,
-                        'at_mm': [round(float(c), 3) for c in tri[i].mean(axis=0)]})
-                    entry['gap_mm'] = max(entry['gap_mm'], round(float(gap), 6))
-                    entry['area_mm2'] += area
+                    names = sorted(
+                        [(meshes[owner[i]].name, material[i]), (meshes[owner[j]].name, material[j])]
+                    )
+                    plane = (
+                        tuple(float(c) + 0.0 for c in np.round(normal[i], 3)),
+                        round(float(offset[i]), 2),
+                    )
+                    entry = found.setdefault(
+                        (tuple(names), plane),
+                        {
+                            "meshes": [names[0][0], names[1][0]],
+                            "materials": [names[0][1], names[1][1]],
+                            "facing": list(plane[0]),
+                            "gap_mm": 0.0,
+                            "area_mm2": 0.0,
+                            "at_mm": [round(float(c), 3) for c in tri[i].mean(axis=0)],
+                        },
+                    )
+                    entry["gap_mm"] = max(entry["gap_mm"], round(float(gap), 6))
+                    entry["area_mm2"] += area
     pairs = []
     for entry in found.values():
-        if entry['area_mm2'] >= min_area:
-            entry['area_mm2'] = round(entry['area_mm2'], 6)
+        if entry["area_mm2"] >= min_area:
+            entry["area_mm2"] = round(entry["area_mm2"], 6)
             pairs.append(entry)
-    pairs.sort(key=lambda e: (-e['area_mm2'], e['meshes']))
-    return {'pairs': pairs, 'least_mm': quant_mm, 'min_area_mm2': min_area, 'ok': not pairs}
+    pairs.sort(key=lambda e: (-e["area_mm2"], e["meshes"]))
+    return {"pairs": pairs, "least_mm": quant_mm, "min_area_mm2": min_area, "ok": not pairs}
 
 
 def coplanar_selftest(cad_dir=None):
@@ -577,13 +638,17 @@ def coplanar_selftest(cad_dir=None):
     repo = cad
 
     def model(board):
-        record = json.loads((cad / board / 'model' / 'source.json').read_text())
-        return repo / record['model'], record['parameters']['quant_mm']
+        record = json.loads((cad / board / "model" / "source.json").read_text())
+        return repo / record["model"], record["parameters"]["quant_mm"]
 
     def moved(meshes, name, dz):
         assert any(m.name == name for m in meshes), name
-        return [dataclasses.replace(m, positions=m.positions + np.array([0.0, 0.0, dz]))
-                if m.name == name else m for m in meshes]
+        return [
+            dataclasses.replace(m, positions=m.positions + np.array([0.0, 0.0, dz]))
+            if m.name == name
+            else m
+            for m in meshes
+        ]
 
     def rewritten(glb, change, out):
         js, bin_ = glb_legends.read(Path(glb).read_bytes())
@@ -592,55 +657,91 @@ def coplanar_selftest(cad_dir=None):
         return read_glb(out)
 
     def gap_lowered(js):
-        node = next(n for n in js['nodes'] if n.get('name') == 'trackball_gap')
-        node['translation'] = [0.0, 0.0, -0.01 * MM]
+        node = next(n for n in js["nodes"] if n.get("name") == "trackball_gap")
+        node["translation"] = [0.0, 0.0, -0.01 * MM]
 
     def keys_double_sided(js):
-        material = next(m for m in js['materials'] if m.get('name') == 'key')
-        material['doubleSided'] = True
+        material = next(m for m in js["materials"] if m.get("name") == "key")
+        material["doubleSided"] = True
 
-    tdeck, step = model('tdeck-plus')
-    cardputer, card_step = model('cardputer')
+    tdeck, step = model("tdeck-plus")
+    cardputer, card_step = model("cardputer")
     t_meshes, c_meshes = read_glb(tdeck), read_glb(cardputer)
-    clean = {'tdeck-plus': coplanar_overlaps(t_meshes, step),
-             'cardputer': coplanar_overlaps(c_meshes, card_step)}
-    with tempfile.TemporaryDirectory(prefix='coplanar-selftest-') as tmp:
+    clean = {
+        "tdeck-plus": coplanar_overlaps(t_meshes, step),
+        "cardputer": coplanar_overlaps(c_meshes, card_step),
+    }
+    with tempfile.TemporaryDirectory(prefix="coplanar-selftest-") as tmp:
         # what is planted, the meshes, the step, and the two meshes the tie must name
         plants = [
-            ("the round marks' discs laid on the plate they are printed on",
-             moved(t_meshes, 'plate_mark_legends_dcdde2', -8 * step), step,
-             {'keyboard_plate', 'plate_mark_legends_dcdde2'}),
-            ("the trackball's gap lowered a step onto the metal ring (as the round marks of "
-             "an earlier model lay: a light dot on a dark disc, both at one height)",
-             moved(t_meshes, 'trackball_gap', -step), step, {'trackball_gap', 'trackball_metal'}),
-            ("the keys' legends half a step over the caps, off the grid",
-             moved(t_meshes, 'key_legends_f2f3f5', -2.5 * step), step,
-             {'key_legends_f2f3f5', 'keys'}),
-            ('a colored block sunk back into its strip, its sides on the strip\'s',
-             moved(c_meshes, 'legend_gray', -4 * card_step), card_step,
-             {'legend_gray', 'legend_strips'}),
-            ("the trackball's gap lowered a step by its node's translation, in the file",
-             rewritten(tdeck, gap_lowered, Path(tmp) / 'gap.glb'), step,
-             {'trackball_gap', 'trackball_metal'}),
-            ("the keys' material made double-sided, a cap's underside on its rim's top",
-             rewritten(tdeck, keys_double_sided, Path(tmp) / 'double.glb'), step,
-             {'key_rims', 'keys'}),
+            (
+                "the round marks' discs laid on the plate they are printed on",
+                moved(t_meshes, "plate_mark_legends_dcdde2", -8 * step),
+                step,
+                {"keyboard_plate", "plate_mark_legends_dcdde2"},
+            ),
+            (
+                "the trackball's gap lowered a step onto the metal ring (as the round marks of "
+                "an earlier model lay: a light dot on a dark disc, both at one height)",
+                moved(t_meshes, "trackball_gap", -step),
+                step,
+                {"trackball_gap", "trackball_metal"},
+            ),
+            (
+                "the keys' legends half a step over the caps, off the grid",
+                moved(t_meshes, "key_legends_f2f3f5", -2.5 * step),
+                step,
+                {"key_legends_f2f3f5", "keys"},
+            ),
+            (
+                "a colored block sunk back into its strip, its sides on the strip's",
+                moved(c_meshes, "legend_gray", -4 * card_step),
+                card_step,
+                {"legend_gray", "legend_strips"},
+            ),
+            (
+                "the trackball's gap lowered a step by its node's translation, in the file",
+                rewritten(tdeck, gap_lowered, Path(tmp) / "gap.glb"),
+                step,
+                {"trackball_gap", "trackball_metal"},
+            ),
+            (
+                "the keys' material made double-sided, a cap's underside on its rim's top",
+                rewritten(tdeck, keys_double_sided, Path(tmp) / "double.glb"),
+                step,
+                {"key_rims", "keys"},
+            ),
         ]
         results = []
         for what, meshes, quant, pair in plants:
             got = coplanar_overlaps(meshes, quant)
-            named = [p for p in got['pairs'] if set(p['meshes']) == pair]
-            results.append((what, bool(named) and not got['ok'],
-                            f'{named[0]["meshes"]} facing {named[0]["facing"]}, '
-                            f'{named[0]["area_mm2"]:.3f} mm2' if named else
-                            f'no tie between {sorted(pair)}'))
+            named = [p for p in got["pairs"] if set(p["meshes"]) == pair]
+            results.append(
+                (
+                    what,
+                    bool(named) and not got["ok"],
+                    f"{named[0]['meshes']} facing {named[0]['facing']}, "
+                    f"{named[0]['area_mm2']:.3f} mm2"
+                    if named
+                    else f"no tie between {sorted(pair)}",
+                )
+            )
     controls = []
     for what, meshes, quant in (
-            ("the keys' legends lowered to one whole step over the caps",
-             moved(t_meshes, 'key_legends_f2f3f5', -2 * step), step),):
+        (
+            "the keys' legends lowered to one whole step over the caps",
+            moved(t_meshes, "key_legends_f2f3f5", -2 * step),
+            step,
+        ),
+    ):
         got = coplanar_overlaps(meshes, quant)
-        controls.append((what, got['ok'], 'no tie' if got['ok'] else
-                         '; '.join(str(p['meshes']) for p in got['pairs'][:3])))
+        controls.append(
+            (
+                what,
+                got["ok"],
+                "no tie" if got["ok"] else "; ".join(str(p["meshes"]) for p in got["pairs"][:3]),
+            )
+        )
     return clean, results, controls
 
 
@@ -672,8 +773,17 @@ def orthographic(towards, up=(0.0, 1.0, 0.0)):
     return project, d
 
 
-def rasterize(meshes, project, towards, ppm, bounds=None, light=None, screen_card=False,
-              supersample=2, skip=()):
+def rasterize(
+    meshes,
+    project,
+    towards,
+    ppm,
+    bounds=None,
+    light=None,
+    screen_card=False,
+    supersample=2,
+    skip=(),
+):
     """Draw *meshes* through *project* at *ppm* pixels per mm.
 
     *project* maps (N, 3) glTF-frame mm to (h, v, depth); *towards* is the
@@ -692,15 +802,19 @@ def rasterize(meshes, project, towards, ppm, bounds=None, light=None, screen_car
     half /= np.linalg.norm(half)
     # the light a face toward the viewer takes, which the shading divides by
     facing = AMBIENT + KEY * max(float(towards @ light), 0.0)
-    shown = [m for m in meshes if len(m.faces) and m.name not in skip and m.name != 'glass']
+    shown = [m for m in meshes if len(m.faces) and m.name not in skip and m.name != "glass"]
     drawn = [m for m in shown if m.alpha >= 1.0]
     blended = [m for m in shown if m.alpha < 1.0]
     proj = [project(m.positions) for m in drawn]
     blend_proj = [project(m.positions) for m in blended]
     if bounds is None:
         allp = np.concatenate(proj + blend_proj)
-        bounds = (allp[:, 0].min() - 1, allp[:, 0].max() + 1,
-                  allp[:, 1].min() - 1, allp[:, 1].max() + 1)
+        bounds = (
+            allp[:, 0].min() - 1,
+            allp[:, 0].max() + 1,
+            allp[:, 1].min() - 1,
+            allp[:, 1].max() + 1,
+        )
     h0, h1, v0, v1 = bounds
     s = ppm * supersample
     nx, ny = int(np.ceil((h1 - h0) * s)), int(np.ceil((v1 - v0) * s))
@@ -708,8 +822,10 @@ def rasterize(meshes, project, towards, ppm, bounds=None, light=None, screen_car
     rgb = np.zeros((ny, nx, 3))
     cover = np.zeros((ny, nx))
     # farthest first, by the depth of each blended mesh's box's center
-    order = sorted(range(len(blended)), key=lambda i: float(
-        (blend_proj[i][:, 2].min() + blend_proj[i][:, 2].max()) / 2))
+    order = sorted(
+        range(len(blended)),
+        key=lambda i: float((blend_proj[i][:, 2].min() + blend_proj[i][:, 2].max()) / 2),
+    )
     passes = [(m, p, False) for m, p in zip(drawn, proj, strict=True)]
     passes += [(blended[i], blend_proj[i], True) for i in order]
     for m, p, blend in passes:
@@ -721,7 +837,7 @@ def rasterize(meshes, project, towards, ppm, bounds=None, light=None, screen_car
         px = (p[:, 0] - h0) * s
         py = (v1 - p[:, 1]) * s  # row 0 at the top
         dz = p[:, 2]
-        card = screen_card and m.name == 'screen' and m.uv is not None
+        card = screen_card and m.name == "screen" and m.uv is not None
         for fi in np.nonzero(front)[0]:
             a, b, c = m.faces[fi]
             x = px[[a, b, c]]
@@ -741,21 +857,23 @@ def rasterize(meshes, project, towards, ppm, bounds=None, light=None, screen_car
             if not inside.any():
                 continue
             z = wa * dz[a] + wb * dz[b] + wc * dz[c]
-            zsub = zbuf[ya:yb + 1, xa:xb + 1]
+            zsub = zbuf[ya : yb + 1, xa : xb + 1]
             win = inside & (z > zsub)
             if not win.any():
                 continue
             if not blend:
                 zsub[win] = z[win]
             if card:
-                uv = (wa[win, None] * m.uv[a] + wb[win, None] * m.uv[b]
-                      + wc[win, None] * m.uv[c])
+                uv = wa[win, None] * m.uv[a] + wb[win, None] * m.uv[b] + wc[win, None] * m.uv[c]
                 col = test_card(uv)
             elif m.unlit:
                 col = np.broadcast_to(m.color, (int(win.sum()), 3))
             else:
-                n = (wa[win, None] * m.normals[a] + wb[win, None] * m.normals[b]
-                     + wc[win, None] * m.normals[c])
+                n = (
+                    wa[win, None] * m.normals[a]
+                    + wb[win, None] * m.normals[b]
+                    + wc[win, None] * m.normals[c]
+                )
                 n /= np.maximum(np.linalg.norm(n, axis=1, keepdims=True), 1e-12)
                 if m.double and (fn[fi] @ towards) < 0:
                     n = -n
@@ -764,35 +882,40 @@ def rasterize(meshes, project, towards, ppm, bounds=None, light=None, screen_car
                 lobe = 8 + 120 * shine
                 # the highlight where a face turns toward the light further than
                 # a face toward the viewer, which keeps its base color
-                spec = (np.clip(n @ half, 0, 1) ** lobe
-                        - max(float(towards @ half), 0.0) ** lobe).clip(0) * (0.08 + 0.5 * shine)
+                spec = (
+                    np.clip(n @ half, 0, 1) ** lobe - max(float(towards @ half), 0.0) ** lobe
+                ).clip(0) * (0.08 + 0.5 * shine)
                 base = srgb_to_linear(m.color)[None, :]
                 # a dielectric: its base color less the reflection, and the
                 # reflection; a metal: its base color is its reflection
-                lit = ((1.0 - m.metal) * (shade * base * (1.0 - F0) + F0)
-                       + m.metal * shade * base
-                       + spec[:, None] * ((1.0 - m.metal) + m.metal * base))
+                lit = (
+                    (1.0 - m.metal) * (shade * base * (1.0 - F0) + F0)
+                    + m.metal * shade * base
+                    + spec[:, None] * ((1.0 - m.metal) + m.metal * base)
+                )
                 col = linear_to_srgb(pbr_neutral(lit))
             col = np.clip(col, 0, 1)
             if blend:
                 # straight alpha over what is there: a over b, coverage too
                 a = m.alpha
-                under = cover[ya:yb + 1, xa:xb + 1][win]
+                under = cover[ya : yb + 1, xa : xb + 1][win]
                 after = a + under * (1.0 - a)
-                col = (col * a + rgb[ya:yb + 1, xa:xb + 1][win] * (under * (1.0 - a))[:, None]
-                       ) / after[:, None]
-                cover[ya:yb + 1, xa:xb + 1][win] = after
+                col = (
+                    col * a + rgb[ya : yb + 1, xa : xb + 1][win] * (under * (1.0 - a))[:, None]
+                ) / after[:, None]
+                cover[ya : yb + 1, xa : xb + 1][win] = after
             else:
-                cover[ya:yb + 1, xa:xb + 1][win] = 1.0
-            rgb[ya:yb + 1, xa:xb + 1][win] = col
+                cover[ya : yb + 1, xa : xb + 1][win] = 1.0
+            rgb[ya : yb + 1, xa : xb + 1][win] = col
     img = np.concatenate([rgb, cover[..., None]], axis=2)
     if supersample > 1:
         ny2, nx2 = ny // supersample * supersample, nx // supersample * supersample
         img = img[:ny2, :nx2]
         # premultiplied box filter, then back to straight alpha
         img[..., :3] *= img[..., 3:4]
-        img = img.reshape(ny2 // supersample, supersample, nx2 // supersample, supersample,
-                          4).mean(axis=(1, 3))
+        img = img.reshape(ny2 // supersample, supersample, nx2 // supersample, supersample, 4).mean(
+            axis=(1, 3)
+        )
         a = img[..., 3:4]
         img[..., :3] = np.where(a > 0, img[..., :3] / np.maximum(a, 1e-9), 0)
     return img, (h0, h1, v0, v1)

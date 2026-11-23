@@ -49,8 +49,16 @@ from __future__ import annotations
 import math
 from typing import List, Sequence, Tuple
 
-from emit_front_svg import (LEGEND_CLOSE, cardputer_label_up, circle, f, print_open,
-                            stamp_arc, stamp_line, text)
+from emit_front_svg import (
+    LEGEND_CLOSE,
+    cardputer_label_up,
+    circle,
+    f,
+    print_open,
+    stamp_arc,
+    stamp_line,
+    text,
+)
 
 Point = Tuple[float, float]
 
@@ -76,8 +84,10 @@ def _turned(corner: Point) -> str:
 
 def _poly(points: Sequence[Point], ink: str, width: float, closed: bool = False) -> str:
     d = " L ".join(f"{f(x)} {f(y)}" for x, y in points)
-    return (f'<path d="M {d}{" Z" if closed else ""}" fill="none" stroke="{ink}" '
-            f'stroke-width="{f(width)}" stroke-linejoin="round"/>\n')
+    return (
+        f'<path d="M {d}{" Z" if closed else ""}" fill="none" stroke="{ink}" '
+        f'stroke-width="{f(width)}" stroke-linejoin="round"/>\n'
+    )
 
 
 # ------------------------------------------------------------------ the rating label
@@ -109,8 +119,10 @@ def append_weee(out: List[str]) -> None:
 
 def append_fcc(out: List[str]) -> None:
     """FCC's mark: an F whose middle arm runs into two C's, one inside the other, open to the right."""
-    out.append(f'<path d="M 0.28 10.31 V 7.46 H 1.7 V 7.96 H 0.76 V 8.7 H 2.3 V 9.06 H 0.76 '
-               f'V 10.31 Z" fill="{BLACK}"/>\n')
+    out.append(
+        f'<path d="M 0.28 10.31 V 7.46 H 1.7 V 7.96 H 0.76 V 8.7 H 2.3 V 9.06 H 0.76 '
+        f'V 10.31 Z" fill="{BLACK}"/>\n'
+    )
     out.append(stamp_arc(2.95, 8.92, 1.1, -32, 32, BLACK, 0.4))
     out.append(stamp_arc(2.98, 8.95, 0.66, -42, 42, BLACK, 0.32))
 
@@ -120,17 +132,27 @@ def append_giteki(out: List[str]) -> None:
     half, over a stem with two bars) and the boxed R beside it."""
     gx, gy, ring = 5.53, 7.6, 1.04
     start, end = math.radians(-18), math.radians(24)
-    bolt = [(gx - 1.0, gy - 0.29), (gx - 0.03, gy - 0.47), (gx + 0.11, gy - 0.13),
-            (gx + ring * math.cos(start), gy + ring * math.sin(start))]
+    bolt = [
+        (gx - 1.0, gy - 0.29),
+        (gx - 0.03, gy - 0.47),
+        (gx + 0.11, gy - 0.13),
+        (gx + ring * math.cos(start), gy + ring * math.sin(start)),
+    ]
     path = " L ".join(f"{f(px)} {f(py)}" for px, py in bolt)
-    out.append(f'<path d="M {path} A {f(ring)} {f(ring)} 0 1 0 '
-               f'{f(gx + ring * math.cos(end))} {f(gy + ring * math.sin(end))}" fill="none" '
-               f'stroke="{BLACK}" stroke-width="0.13" stroke-linejoin="round"/>\n')
-    out.append(f'<path d="M {f(gx - 0.56)} {f(gy + 0.2)} H {f(gx + 0.6)} M {f(gx - 0.56)} '
-               f'{f(gy + 0.46)} H {f(gx + 0.6)} M {f(gx + 0.03)} {f(gy + 0.46)} V {f(gy + 0.82)}" '
-               f'fill="none" stroke="{BLACK}" stroke-width="0.11"/>\n')
-    out.append(f'<path d="M 6.8 6.94 H 8.21 V 8.24 H 6.8 Z" fill="none" stroke="{BLACK}" '
-               'stroke-width="0.14"/>\n')
+    out.append(
+        f'<path d="M {path} A {f(ring)} {f(ring)} 0 1 0 '
+        f'{f(gx + ring * math.cos(end))} {f(gy + ring * math.sin(end))}" fill="none" '
+        f'stroke="{BLACK}" stroke-width="0.13" stroke-linejoin="round"/>\n'
+    )
+    out.append(
+        f'<path d="M {f(gx - 0.56)} {f(gy + 0.2)} H {f(gx + 0.6)} M {f(gx - 0.56)} '
+        f'{f(gy + 0.46)} H {f(gx + 0.6)} M {f(gx + 0.03)} {f(gy + 0.46)} V {f(gy + 0.82)}" '
+        f'fill="none" stroke="{BLACK}" stroke-width="0.11"/>\n'
+    )
+    out.append(
+        f'<path d="M 6.8 6.94 H 8.21 V 8.24 H 6.8 Z" fill="none" stroke="{BLACK}" '
+        'stroke-width="0.14"/>\n'
+    )
     out.append(text(7.45, 7.98, "R", size=1.06, fill=BLACK, anchor="middle"))
 
 
@@ -143,12 +165,22 @@ def append_label(out: List[str]) -> None:
     append_weee(out)
     append_fcc(out)
     append_giteki(out)
-    out.append(text(4.53, 10.42, "219-239073", size=2.13, fill=BLACK, anchor="start",
-                    length=11.03))
-    out.append(text(0.22, 12.19, "FCC ID: 2AN3WCORES3", size=1.51, fill=BLACK, anchor="start",
-                    weight="500", length=15.56))
-    out.append(cardputer_label_up(15.52, 8.09, "CoreS3", size=2.34, fill=BLACK, weight="700",
-                                  length=7.76))
+    out.append(text(4.53, 10.42, "219-239073", size=2.13, fill=BLACK, anchor="start", length=11.03))
+    out.append(
+        text(
+            0.22,
+            12.19,
+            "FCC ID: 2AN3WCORES3",
+            size=1.51,
+            fill=BLACK,
+            anchor="start",
+            weight="500",
+            length=15.56,
+        )
+    )
+    out.append(
+        cardputer_label_up(15.52, 8.09, "CoreS3", size=2.34, fill=BLACK, weight="700", length=7.76)
+    )
     out.append("</g>\n")
     out.append(LEGEND_CLOSE)
 
@@ -159,8 +191,11 @@ def append_port_tag(out: List[str]) -> None:
     out.append(print_open("port-tag", "port-tag"))
     out.append(_turned(TAG_CORNER))
     out.append(f'<rect x="0" y="1.33" width="7.7" height="2.24" fill="{TAG_BAND}"/>\n')
-    out.append(text(1.547, 1.226, "PORT", size=1.459, fill=BLACK, anchor="start", weight="700",
-                    length=4.706))
+    out.append(
+        text(
+            1.547, 1.226, "PORT", size=1.459, fill=BLACK, anchor="start", weight="700", length=4.706
+        )
+    )
     out.append(text(1.509, 3.317, "C", size=2.356, fill=TAG_BLUE, anchor="start", length=1.849))
     out.append(text(4.434, 3.33, "B", size=2.364, fill=BLACK, anchor="start", length=1.977))
     out.append(f'<polygon points="0.34,2.47 1.13,1.81 1.13,3.13" fill="{TAG_GRAY}"/>\n')

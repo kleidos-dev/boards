@@ -15,6 +15,7 @@ Usage::
 
 Without a board it does every folder that holds a ``board.json``.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -44,37 +45,64 @@ GROUPS = [
 #: enough that its legends read on GitHub, its width following its viewBox.
 FRONT_HEIGHT_PX = 320
 
-KINDS = {"vendor_docs": "vendor docs", "datasheet": "datasheet", "schematic": "schematic",
-         "product_page": "product page", "measured": "measured", "teardown": "teardown"}
+KINDS = {
+    "vendor_docs": "vendor docs",
+    "datasheet": "datasheet",
+    "schematic": "schematic",
+    "product_page": "product page",
+    "measured": "measured",
+    "teardown": "teardown",
+}
 
 #: What a board folder may hold beside board.json, in the order the page lists
 #: it, each with what it is. ``{b}`` is the board's folder name.
 FOLDER = [
-    ("board.json", "every part on the board, each value with its source "
-                   "([`_shared/board.schema.json`](../_shared/board.schema.json)); this page is written from it"),
-    ("measurements.json", "the case, display, button and keyboard geometry the front is drawn against "
-                          "([`_shared/schema.md`](../_shared/schema.md))"),
+    (
+        "board.json",
+        "every part on the board, each value with its source "
+        "([`_shared/board.schema.json`](../_shared/board.schema.json)); this page is written from it",
+    ),
+    (
+        "measurements.json",
+        "the case, display, button and keyboard geometry the front is drawn against "
+        "([`_shared/schema.md`](../_shared/schema.md))",
+    ),
     ("sources.md", "the vendor drawings, photos and CAD files the measurements were taken on"),
     ("icon.svg", "a 64 px pictogram of the board"),
-    ("svg/front.svg", "the front at 1 unit = 1 mm: the screen's active area, a press target for every "
-                      "control and each printed legend as a group of its own"),
+    (
+        "svg/front.svg",
+        "the front at 1 unit = 1 mm: the screen's active area, a press target for every "
+        "control and each printed legend as a group of its own",
+    ),
     ("svg/back.svg", "the back, seen from behind, with what it prints"),
     ("svg/top.svg", "the top face and what it prints"),
     ("svg/left.svg", "the left face and what it prints"),
     ("svg/right.svg", "the right face and what it prints"),
     ("svg/bottom.svg", "the bottom face and what it prints"),
-    ("model/{b}.glb", "the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format "
-                      "for the web and most viewers"),
+    (
+        "model/{b}.glb",
+        "the 3D model, glTF 2.0 binary in metres (glTF's unit), every print kept: the format "
+        "for the web and most viewers",
+    ),
     ("model/{b}-web.glb", "its web level of detail"),
-    ("model/{b}.obj", "the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format "
-                      "for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); "
-                      "written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py)"),
-    ("model/{b}.mtl", "the OBJ's materials: each part's colour, transparency, roughness and metalness"),
+    (
+        "model/{b}.obj",
+        "the same model as Wavefront OBJ, in millimetres, Y up, one object per part: the format "
+        "for most other 3D tools (Blender, FreeCAD, Fusion, MeshLab, slicers); "
+        "written from the master by [`_shared/export_obj.py`](../_shared/export_obj.py)",
+    ),
+    (
+        "model/{b}.mtl",
+        "the OBJ's materials: each part's colour, transparency, roughness and metalness",
+    ),
     ("model/spec.json", "the recipe the master and its web level are built from"),
     ("model/source.json", "the master's provenance"),
     ("model/web.json", "the web level's record"),
     ("schematic/{b}.pdf", "the connectivity schematic, made to be followed by clicking"),
-    ("schematic/README.md", "the schematic's sources, its Kleidos additions and corrections, and its open questions"),
+    (
+        "schematic/README.md",
+        "the schematic's sources, its Kleidos additions and corrections, and its open questions",
+    ),
     ("schematic/netlist.yaml", "every part, pin and net of the schematic with its source"),
     ("schematic/improvements.md", "the triage behind the additions and corrections"),
     ("schematic/bench/", "the bench probe records"),
@@ -137,7 +165,9 @@ class Page:
             return c["part"]
         if c.get("designator"):
             return f"{label(c['role'])} {c['designator']}"
-        return label(c["role"]) if sum(1 for o in self.comps if o["role"] == c["role"]) == 1 else cid
+        return (
+            label(c["role"]) if sum(1 for o in self.comps if o["role"] == c["role"]) == 1 else cid
+        )
 
     def pictures(self) -> str:
         """The icon, and beside it the front drawing linked to the file, sized to read."""
@@ -148,30 +178,37 @@ class Page:
             box = re.search(r'<svg\b[^>]*\bviewBox="([^"]+)"', front.read_text(encoding="utf-8"))
             _x, _y, w, h = (float(v) for v in box.group(1).split())
             width = round(FRONT_HEIGHT_PX * w / h)
-            out += (f' <a href="svg/front.svg"><img src="svg/front.svg" width="{width}" '
-                    f'height="{FRONT_HEIGHT_PX}" alt="{name} front drawing, true to scale: the case, '
-                    f'the screen, the controls and the printed legends"></a>')
+            out += (
+                f' <a href="svg/front.svg"><img src="svg/front.svg" width="{width}" '
+                f'height="{FRONT_HEIGHT_PX}" alt="{name} front drawing, true to scale: the case, '
+                f'the screen, the controls and the printed legends"></a>'
+            )
         return out
 
     def lines(self) -> list[str]:
         d, ident = self.data, self.data["identity"]
-        out = [self.pictures(), "", f'# {ident["name"]}', ""]
-        head = f'{ident["vendor"]} · SKU **{ident["sku"]}**'
+        out = [self.pictures(), "", f"# {ident['name']}", ""]
+        head = f"{ident['vendor']} · SKU **{ident['sku']}**"
         if ident.get("revision"):
-            head += f' · revision {ident["revision"]}'
+            head += f" · revision {ident['revision']}"
         if ident.get("aka"):
             head += " · also sold as " + ", ".join(ident["aka"])
-        out += [head + f' {self.src(ident["src"])}', ""]
-        out += ["Every value below comes from [`board.json`](board.json), where each one carries the id of its "
-                "source; the numbers in brackets point to the sources listed at the end of this page. This page "
-                "is written from that file by [`_shared/emit_board_readme.py`](../_shared/emit_board_readme.py): "
-                "change the file, then run the script.", ""]
+        out += [head + f" {self.src(ident['src'])}", ""]
+        out += [
+            "Every value below comes from [`board.json`](board.json), where each one carries the id of its "
+            "source; the numbers in brackets point to the sources listed at the end of this page. This page "
+            "is written from that file by [`_shared/emit_board_readme.py`](../_shared/emit_board_readme.py): "
+            "change the file, then run the script.",
+            "",
+        ]
         links = ident.get("links") or {}
         if links:
             out += ["Vendor links: " + " · ".join(f"[{k}]({v})" for k, v in links.items()), ""]
         out += self.physical() + self.components() + self.connections() + self.absent()
         if d.get("notes"):
-            out += ["## Notes", ""] + [p.strip() + "\n" for p in str(d["notes"]).split("\n\n") if p.strip()]
+            out += ["## Notes", ""] + [
+                p.strip() + "\n" for p in str(d["notes"]).split("\n\n") if p.strip()
+            ]
             out[-1] = out[-1].rstrip("\n")
             out.append("")
         out += self.sources() + self.folder()
@@ -181,33 +218,63 @@ class Page:
         phys = self.data.get("physical")
         if not phys:
             return []
-        cols = [(t, k, u) for t, k, u in (("Width", "width_mm", "mm"), ("Height", "height_mm", "mm"),
-                                          ("Depth", "depth_mm", "mm"), ("Weight", "weight_g", "g")) if k in phys]
+        cols = [
+            (t, k, u)
+            for t, k, u in (
+                ("Width", "width_mm", "mm"),
+                ("Height", "height_mm", "mm"),
+                ("Depth", "depth_mm", "mm"),
+                ("Weight", "weight_g", "g"),
+            )
+            if k in phys
+        ]
         out = ["## Dimensions", ""]
         if cols:
-            out += ["| " + " | ".join(t for t, _, _ in cols) + " |", "|" + " --- |" * len(cols),
-                    "| " + " | ".join(fmt_number(phys[k], u) for _, k, u in cols) + " |", ""]
-        out += [(cell(phys["notes"]) + " " if phys.get("notes") else "") + self.src(phys["src"]), ""]
+            out += [
+                "| " + " | ".join(t for t, _, _ in cols) + " |",
+                "|" + " --- |" * len(cols),
+                "| " + " | ".join(fmt_number(phys[k], u) for _, k, u in cols) + " |",
+                "",
+            ]
+        out += [
+            (cell(phys["notes"]) + " " if phys.get("notes") else "") + self.src(phys["src"]),
+            "",
+        ]
         return out
 
     def components(self) -> list[str]:
         total = sum(c["quantity"] for c in self.comps)
-        out = ["## Components", "", f"{len(self.comps)} entries ({total} parts counting quantities).", ""]
+        out = [
+            "## Components",
+            "",
+            f"{len(self.comps)} entries ({total} parts counting quantities).",
+            "",
+        ]
         placed = set()
         for title, roles in GROUPS:
             rows = [c for c in self.comps if c["role"] in roles]
             if not rows:
                 continue
-            out += [f"### {title}", "", "| Part | Role | Ref. | Qty | Key facts | Src |",
-                    "| --- | --- | --- | --- | --- | --- |"]
+            out += [
+                f"### {title}",
+                "",
+                "| Part | Role | Ref. | Qty | Key facts | Src |",
+                "| --- | --- | --- | --- | --- | --- |",
+            ]
             for c in rows:
                 placed.add(c["id"])
-                part = c.get("part", "—") + (f' ({c["manufacturer"]})' if c.get("manufacturer") else "")
-                facts = "; ".join(f"{label(k)}: {fmt_value(v)}" for k, v in (c.get("specs") or {}).items())
+                part = c.get("part", "—") + (
+                    f" ({c['manufacturer']})" if c.get("manufacturer") else ""
+                )
+                facts = "; ".join(
+                    f"{label(k)}: {fmt_value(v)}" for k, v in (c.get("specs") or {}).items()
+                )
                 if c.get("notes"):
                     facts += (" — " if facts else "") + c["notes"]
-                out.append(f'| {cell(part)} | {label(c["role"])} | {cell(c.get("designator", "—"))} | '
-                           f'{c["quantity"]} | {cell(facts)} | {self.src(c["src"])} |')
+                out.append(
+                    f"| {cell(part)} | {label(c['role'])} | {cell(c.get('designator', '—'))} | "
+                    f"{c['quantity']} | {cell(facts)} | {self.src(c['src'])} |"
+                )
             out.append("")
         lost = [c["id"] for c in self.comps if c["id"] not in placed]
         if lost:
@@ -218,40 +285,61 @@ class Page:
         rows = []
         for c in self.comps:
             for link in c.get("connects_to") or []:
-                pins = "<br>".join(f"{cell(k)} → {cell(v)}" for k, v in (link.get("pins") or {}).items())
+                pins = "<br>".join(
+                    f"{cell(k)} → {cell(v)}" for k, v in (link.get("pins") or {}).items()
+                )
                 pulls = "<br>".join(
-                    f'{cell(p["signal"])}: {p["direction"]}'
-                    + (f' {ohms(p["ohms"])}' if "ohms" in p else "")
-                    + (f' to {cell(p["to"])}' if p.get("to") else "")
-                    + (f' ({cell(p["designator"])})' if p.get("designator") else "")
-                    for p in link.get("pulls") or [])
-                rows.append(f'| {cell(self.name(c["id"]))} | {cell(self.name(link["to"]))} | '
-                            f'{cell(link.get("bus", ""))} | {cell(link.get("address", ""))} | {pins} | {pulls} | '
-                            f'{cell(link.get("notes", ""))} | {self.src(link.get("src") or c["src"])} |')
+                    f"{cell(p['signal'])}: {p['direction']}"
+                    + (f" {ohms(p['ohms'])}" if "ohms" in p else "")
+                    + (f" to {cell(p['to'])}" if p.get("to") else "")
+                    + (f" ({cell(p['designator'])})" if p.get("designator") else "")
+                    for p in link.get("pulls") or []
+                )
+                rows.append(
+                    f"| {cell(self.name(c['id']))} | {cell(self.name(link['to']))} | "
+                    f"{cell(link.get('bus', ''))} | {cell(link.get('address', ''))} | {pins} | {pulls} | "
+                    f"{cell(link.get('notes', ''))} | {self.src(link.get('src') or c['src'])} |"
+                )
         if not rows:
             return []
-        return ["## Connections", "", "Each row is one fact of wiring, read from the component in the first column; "
-                "a row without sources of its own takes its component's.", "",
+        return (
+            [
+                "## Connections",
+                "",
+                "Each row is one fact of wiring, read from the component in the first column; "
+                "a row without sources of its own takes its component's.",
+                "",
                 "| From | To | Bus | Address | Pins | Pulls | Notes | Src |",
-                "| --- | --- | --- | --- | --- | --- | --- | --- |"] + rows + [""]
+                "| --- | --- | --- | --- | --- | --- | --- | --- |",
+            ]
+            + rows
+            + [""]
+        )
 
     def absent(self) -> list[str]:
         rows = self.data.get("absent") or []
         if not rows:
             return []
-        return (["## Not on this board", "", "| Role | Notes | Src |", "| --- | --- | --- |"]
-                + [f'| {label(a["role"])} | {cell(a.get("notes", ""))} | {self.src(a["src"])} |' for a in rows]
-                + [""])
+        return (
+            ["## Not on this board", "", "| Role | Notes | Src |", "| --- | --- | --- |"]
+            + [
+                f"| {label(a['role'])} | {cell(a.get('notes', ''))} | {self.src(a['src'])} |"
+                for a in rows
+            ]
+            + [""]
+        )
 
     def sources(self) -> list[str]:
         out = ["## Sources", ""]
         for sid, s in self.data["sources"].items():
-            line = f'{self.numbers[sid]}. ' + (f'[{s["title"]}]({s["url"]})' if s.get("url") else s["title"])
-            line += f' — {KINDS.get(s["kind"], label(s["kind"]))}, checked {s["checked"]} (`{sid}`)'
+            line = f"{self.numbers[sid]}. " + (
+                f"[{s['title']}]({s['url']})" if s.get("url") else s["title"]
+            )
+            line += f" — {KINDS.get(s['kind'], label(s['kind']))}, checked {s['checked']} (`{sid}`)"
             if s.get("mirror_of"):
-                line += f'; read at a mirror of <{s["mirror_of"]}>'
+                line += f"; read at a mirror of <{s['mirror_of']}>"
             if s.get("found_via"):
-                line += f'; found through [{self.numbers[s["found_via"]]}]'
+                line += f"; found through [{self.numbers[s['found_via']]}]"
             line += "."
             for key in ("method", "notes"):
                 if s.get(key):
@@ -266,8 +354,11 @@ class Page:
             target = ROOT / self.board / rel
             if target.exists() and (not rel.endswith("/") or any(target.iterdir())):
                 out.append(f"- [`{rel}`]({rel}): {what}.")
-        out += ["", "How the drawings, models and schematics are made, and which script writes each file: "
-                "[`docs/models-and-drawings.md`](../docs/models-and-drawings.md)."]
+        out += [
+            "",
+            "How the drawings, models and schematics are made, and which script writes each file: "
+            "[`docs/models-and-drawings.md`](../docs/models-and-drawings.md).",
+        ]
         return out
 
 
@@ -296,7 +387,9 @@ def main(argv: list[str]) -> int:
             page.write_text(text, encoding="utf-8")
             print(f"wrote {page.relative_to(ROOT)}")
     for board in stale:
-        print(f"FAIL {board}/README.md differs from what board.json writes (run _shared/emit_board_readme.py {board})")
+        print(
+            f"FAIL {board}/README.md differs from what board.json writes (run _shared/emit_board_readme.py {board})"
+        )
     return 1 if stale else 0
 
 

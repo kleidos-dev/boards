@@ -43,14 +43,14 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-SVG = '{http://www.w3.org/2000/svg}'
+SVG = "{http://www.w3.org/2000/svg}"
 #: The plane of a key's group that names none.
-KEYS_PLANE = 'keys'
+KEYS_PLANE = "keys"
 
 
 def is_legend(el):
     """True for a ``<g>`` whose class list holds ``legend``."""
-    return el.tag == SVG + 'g' and 'legend' in (el.get('class') or '').split()
+    return el.tag == SVG + "g" and "legend" in (el.get("class") or "").split()
 
 
 def groups(root):
@@ -75,27 +75,33 @@ def groups(root):
 
 def plane_of(group):
     """The plane a legend group is printed on, as it names it or as a key's defaults."""
-    return group.get('data-plane', KEYS_PLANE)
+    return group.get("data-plane", KEYS_PLANE)
 
 
 def placed(around):
     """(the transforms of the ``<g>`` elements around a group, outermost first; the
     ``font-family`` the group inherits, or None)."""
-    transforms = [el.get('transform') for el in around
-                  if el.tag == SVG + 'g' and el.get('transform') is not None]
+    transforms = [
+        el.get("transform")
+        for el in around
+        if el.tag == SVG + "g" and el.get("transform") is not None
+    ]
     family = None
     for el in around:
-        family = el.get('font-family', family)
+        family = el.get("font-family", family)
     return transforms, family
 
 
 def _described(el):
     """One element of a legend as the reader reads it: tag, attributes, characters, children."""
     tag = el.tag.removeprefix(SVG)
-    out = {'tag': tag, 'attributes': dict(el.attrib),
-           'children': [_described(child) for child in el]}
-    if tag == 'text':
-        out['characters'] = el.text or ''
+    out = {
+        "tag": tag,
+        "attributes": dict(el.attrib),
+        "children": [_described(child) for child in el],
+    }
+    if tag == "text":
+        out["characters"] = el.text or ""
     return out
 
 
@@ -111,28 +117,31 @@ def described(front_svg, plane=None):
         if plane is not None and plane_of(group) != plane:
             continue
         transforms, family = placed(around)
-        out.append({'placed': transforms, 'family': family, 'group': _described(group)})
+        out.append({"placed": transforms, "family": family, "group": _described(group)})
     return out
 
 
 def digest(front_svg, plane=None):
     """The SHA-256 of what a model reads from a front drawing (of one *plane*, or of all)."""
-    text = json.dumps(described(front_svg, plane), sort_keys=True, separators=(',', ':'),
-                      ensure_ascii=True)
-    return hashlib.sha256(text.encode('ascii')).hexdigest()
+    text = json.dumps(
+        described(front_svg, plane), sort_keys=True, separators=(",", ":"), ensure_ascii=True
+    )
+    return hashlib.sha256(text.encode("ascii")).hexdigest()
 
 
 def main(argv=None):
     """Print a drawing's legend digest from the command line; return the exit code."""
-    parser = argparse.ArgumentParser(description=__doc__.split('\n', 1)[0])
-    parser.add_argument('front', type=Path, help='<board>/svg/front.svg')
-    parser.add_argument('--plane', help='only the groups printed on this plane')
+    parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    parser.add_argument("front", type=Path, help="<board>/svg/front.svg")
+    parser.add_argument("--plane", help="only the groups printed on this plane")
     args = parser.parse_args(argv)
     found = described(args.front, args.plane)
-    print(f'{digest(args.front, args.plane)}  {len(found)} legend group(s)'
-          + (f' on the plane {args.plane!r}' if args.plane else ''))
+    print(
+        f"{digest(args.front, args.plane)}  {len(found)} legend group(s)"
+        + (f" on the plane {args.plane!r}" if args.plane else "")
+    )
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -89,33 +89,54 @@ from paths import FONTS  # noqa: E402  (the pinned fonts, fonts/)
 SVG = legend_source.SVG
 #: The pinned faces of each family a legend may be set in, by CSS weight.
 FACES = {
-    'Inter': {400: 'inter/Inter-Regular.ttf', 500: 'inter/Inter-Medium.ttf',
-              700: 'inter/Inter-Bold.ttf'},
+    "Inter": {
+        400: "inter/Inter-Regular.ttf",
+        500: "inter/Inter-Medium.ttf",
+        700: "inter/Inter-Bold.ttf",
+    },
 }
-_NUMBER = r'[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?'
-_PATH_TOKEN = re.compile(rf'[MmLlHhVvQqCcAaZz]|{_NUMBER}')
-_TRANSFORM = re.compile(r'(translate|scale|rotate|matrix)\s*\(([^)]*)\)')
+_NUMBER = r"[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?"
+_PATH_TOKEN = re.compile(rf"[MmLlHhVvQqCcAaZz]|{_NUMBER}")
+_TRANSFORM = re.compile(r"(translate|scale|rotate|matrix)\s*\(([^)]*)\)")
 #: What each drawn element of a legend may carry; anything else is refused.
 _KNOWN = {
-    'text': {'x', 'y', 'transform', 'font-size', 'fill', 'text-anchor', 'font-weight',
-             'textLength', 'lengthAdjust', 'font-family'},
-    'polygon': {'points', 'fill', 'transform'},
-    'rect': {'x', 'y', 'width', 'height', 'rx', 'ry', 'fill', 'transform'},
-    'circle': {'cx', 'cy', 'r', 'fill', 'stroke', 'stroke-width', 'transform'},
-    'path': {'d', 'fill', 'fill-rule', 'stroke', 'stroke-width', 'stroke-linecap',
-             'stroke-linejoin', 'transform'},
-    'g': {'transform'},
+    "text": {
+        "x",
+        "y",
+        "transform",
+        "font-size",
+        "fill",
+        "text-anchor",
+        "font-weight",
+        "textLength",
+        "lengthAdjust",
+        "font-family",
+    },
+    "polygon": {"points", "fill", "transform"},
+    "rect": {"x", "y", "width", "height", "rx", "ry", "fill", "transform"},
+    "circle": {"cx", "cy", "r", "fill", "stroke", "stroke-width", "transform"},
+    "path": {
+        "d",
+        "fill",
+        "fill-rule",
+        "stroke",
+        "stroke-width",
+        "stroke-linecap",
+        "stroke-linejoin",
+        "transform",
+    },
+    "g": {"transform"},
 }
 #: What the legend group itself may carry.
-_GROUP = {'class', 'data-key', 'data-mark', 'data-plane', 'transform'}
-_NAME = re.compile(r'[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*')
+_GROUP = {"class", "data-key", "data-mark", "data-plane", "transform"}
+_NAME = re.compile(r"[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*")
 #: The plane of a key's group that names none.
 KEYS_PLANE = legend_source.KEYS_PLANE
 #: SVG's default ``stroke-miterlimit``: a miter longer than this many stroke
 #: widths is a bevel in a browser, which this module does not draw.
 MITER_LIMIT = 4.0
-_CAPS = {'round': 'round', 'butt': 'flat', 'square': 'square'}
-_JOINS = ('miter', 'round', 'bevel')
+_CAPS = {"round": "round", "butt": "flat", "square": "square"}
+_JOINS = ("miter", "round", "bevel")
 
 
 class LegendError(ValueError):
@@ -125,6 +146,7 @@ class LegendError(ValueError):
 @dataclass
 class Legend:
     """What one legend group prints: its name, its plane and its shapes, in paint order."""
+
     #: The key's slug (``data-key``) or the print's own name (``data-mark``).
     name: str
     #: The surface it is printed on, as the drawing names it (``data-plane``).
@@ -144,8 +166,8 @@ class Legend:
 
 def pinned_digests():
     """{path under fonts: sha256} as ``fonts/VERSIONS.md`` pins them."""
-    text = (FONTS / 'VERSIONS.md').read_text(encoding='utf-8')
-    return dict(re.findall(r'`([\w./\[\],-]+\.ttf)`\s+`([0-9a-f]{64})`', text))
+    text = (FONTS / "VERSIONS.md").read_text(encoding="utf-8")
+    return dict(re.findall(r"`([\w./\[\],-]+\.ttf)`\s+`([0-9a-f]{64})`", text))
 
 
 class Faces:
@@ -161,7 +183,7 @@ class Faces:
         """(path under fonts, TTFont) for a family at a CSS weight."""
         faces = FACES.get(family)
         if faces is None:
-            raise LegendError(f'no pinned face for the family {family!r}; pinned: {sorted(FACES)}')
+            raise LegendError(f"no pinned face for the family {family!r}; pinned: {sorted(FACES)}")
         # CSS font matching: 400 and 500 try each other first; above 500 the
         # heavier faces first, below 400 the lighter ones first
         have = sorted(faces)
@@ -178,8 +200,7 @@ class Faces:
             data = (FONTS / rel).read_bytes()
             digest = sha256(data).hexdigest()
             if self._pins.get(rel) != digest:
-                raise LegendError(f'fonts/{rel} is not the file VERSIONS.md pins '
-                                  f'(sha256 {digest})')
+                raise LegendError(f"fonts/{rel} is not the file VERSIONS.md pins (sha256 {digest})")
             self._fonts[rel] = TTFont(FONTS / rel)
             self.used[rel] = digest
         return rel, self._fonts[rel]
@@ -190,11 +211,10 @@ class Faces:
         if key not in self._glyphs:
             name = font.getBestCmap().get(ord(char))
             if name is None:
-                raise LegendError(f'fonts/{rel} has no glyph for {char!r} '
-                                  f'(U+{ord(char):04X})')
+                raise LegendError(f"fonts/{rel} has no glyph for {char!r} (U+{ord(char):04X})")
             pen = _Outline(font.getGlyphSet(), tolerance)
             font.getGlyphSet()[name].draw(pen)
-            self._glyphs[key] = (font['hmtx'][name][0], _fill(pen.rings))
+            self._glyphs[key] = (font["hmtx"][name][0], _fill(pen.rings))
         return self._glyphs[key]
 
 
@@ -244,15 +264,21 @@ def quadratic(p0, p1, p2, tolerance):
 
 def cubic(p0, p1, p2, p3, tolerance):
     """The points after *p0* of a cubic curve, each chord within *tolerance* of it."""
-    bend = max(math.hypot(p0[0] - 2 * p1[0] + p2[0], p0[1] - 2 * p1[1] + p2[1]),
-               math.hypot(p1[0] - 2 * p2[0] + p3[0], p1[1] - 2 * p2[1] + p3[1]))
+    bend = max(
+        math.hypot(p0[0] - 2 * p1[0] + p2[0], p0[1] - 2 * p1[1] + p2[1]),
+        math.hypot(p1[0] - 2 * p2[0] + p3[0], p1[1] - 2 * p2[1] + p3[1]),
+    )
     n = max(1, math.ceil(math.sqrt(0.75 * bend / tolerance)))
     out = []
     for i in range(1, n + 1):
         t = i / n
-        a, b, c, d = (1 - t) ** 3, 3 * t * (1 - t) ** 2, 3 * t * t * (1 - t), t ** 3
-        out.append((a * p0[0] + b * p1[0] + c * p2[0] + d * p3[0],
-                    a * p0[1] + b * p1[1] + c * p2[1] + d * p3[1]))
+        a, b, c, d = (1 - t) ** 3, 3 * t * (1 - t) ** 2, 3 * t * t * (1 - t), t**3
+        out.append(
+            (
+                a * p0[0] + b * p1[0] + c * p2[0] + d * p3[0],
+                a * p0[1] + b * p1[1] + c * p2[1] + d * p3[1],
+            )
+        )
     return out
 
 
@@ -306,13 +332,13 @@ def _even_odd(rings):
 def _matrix(text):
     """An SVG ``transform`` attribute as a 3 x 3 matrix."""
     m = np.eye(3)
-    for kind, args in _TRANSFORM.findall(text or ''):
+    for kind, args in _TRANSFORM.findall(text or ""):
         v = [float(t) for t in re.findall(_NUMBER, args)]
-        if kind == 'translate':
+        if kind == "translate":
             step = np.array([[1, 0, v[0]], [0, 1, v[1] if len(v) > 1 else 0], [0, 0, 1]])
-        elif kind == 'scale':
+        elif kind == "scale":
             step = np.diag([v[0], v[1] if len(v) > 1 else v[0], 1])
-        elif kind == 'rotate':
+        elif kind == "rotate":
             c, s = math.cos(math.radians(v[0])), math.sin(math.radians(v[0]))
             turn = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
             if len(v) == 3:
@@ -329,7 +355,8 @@ def _matrix(text):
 
 def _apply(geom, m):
     return shapely.affinity.affine_transform(
-        geom, [m[0, 0], m[0, 1], m[1, 0], m[1, 1], m[0, 2], m[1, 2]])
+        geom, [m[0, 0], m[0, 1], m[1, 0], m[1, 1], m[0, 2], m[1, 2]]
+    )
 
 
 def _stretch(m):
@@ -339,11 +366,11 @@ def _stretch(m):
 
 def _color(value, where):
     """A fill as ``rrggbb``; a legend's ink is one flat opaque color."""
-    v = (value or '').strip().lower()
-    if re.fullmatch(r'#[0-9a-f]{3}', v):
-        v = '#' + ''.join(ch * 2 for ch in v[1:])
-    if not re.fullmatch(r'#[0-9a-f]{6}', v):
-        raise LegendError(f'{where}: fill {value!r} is not a flat #rrggbb color')
+    v = (value or "").strip().lower()
+    if re.fullmatch(r"#[0-9a-f]{3}", v):
+        v = "#" + "".join(ch * 2 for ch in v[1:])
+    if not re.fullmatch(r"#[0-9a-f]{6}", v):
+        raise LegendError(f"{where}: fill {value!r} is not a flat #rrggbb color")
     return v[1:]
 
 
@@ -360,8 +387,12 @@ def _rounded(x, y, w, h, r, tolerance):
         return sg.box(x, y, x + w, y + h)
     n = _arc_steps(r, tolerance, math.pi / 2)
     pts = []
-    for cx, cy, start in ((x + w - r, y + r, -90), (x + w - r, y + h - r, 0),
-                          (x + r, y + h - r, 90), (x + r, y + r, 180)):
+    for cx, cy, start in (
+        (x + w - r, y + r, -90),
+        (x + w - r, y + h - r, 0),
+        (x + r, y + h - r, 90),
+        (x + r, y + r, 180),
+    ):
         for i in range(n + 1):
             a = math.radians(start + 90 * i / n)
             pts.append((cx + r * math.cos(a), cy + r * math.sin(a)))
@@ -410,15 +441,15 @@ def _arc(p0, rx, ry, turn_deg, large, sweep, p1, tolerance):
 def _path_rings(d, tolerance, where):
     """(rings, closed flags) of a path's M L H V Q C A Z commands, either case."""
     tokens = _PATH_TOKEN.findall(d)
-    if ''.join(tokens) != re.sub(r'[\s,]+', '', d):
-        raise LegendError(f'{where}: a path command this module does not draw in {d!r}')
+    if "".join(tokens) != re.sub(r"[\s,]+", "", d):
+        raise LegendError(f"{where}: a path command this module does not draw in {d!r}")
     rings, closed, ring = [], [], None
     pos = start = (0.0, 0.0)
     i, cmd = 0, None
 
     def take(n):
         nonlocal i
-        vals = [float(t) for t in tokens[i:i + n]]
+        vals = [float(t) for t in tokens[i : i + n]]
         i += n
         return vals
 
@@ -429,50 +460,51 @@ def _path_rings(d, tolerance, where):
         rel = cmd.islower()
         base = pos if rel else (0.0, 0.0)
         op = cmd.upper()
-        if op == 'M':
+        if op == "M":
             x, y = take(2)
             if ring:
                 rings.append(ring)
                 closed.append(False)
             pos = start = (base[0] + x, base[1] + y)
             ring = [pos]
-            cmd = 'l' if rel else 'L'
-        elif op == 'L':
+            cmd = "l" if rel else "L"
+        elif op == "L":
             x, y = take(2)
             pos = (base[0] + x, base[1] + y)
             ring.append(pos)
-        elif op == 'H':
+        elif op == "H":
             (x,) = take(1)
             pos = (base[0] + x, pos[1])
             ring.append(pos)
-        elif op == 'V':
+        elif op == "V":
             (y,) = take(1)
             pos = (pos[0], base[1] + y)
             ring.append(pos)
-        elif op == 'Q':
+        elif op == "Q":
             x1, y1, x, y = take(4)
             end = (base[0] + x, base[1] + y)
             ring += quadratic(pos, (base[0] + x1, base[1] + y1), end, tolerance)
             pos = end
-        elif op == 'C':
+        elif op == "C":
             x1, y1, x2, y2, x, y = take(6)
             end = (base[0] + x, base[1] + y)
-            ring += cubic(pos, (base[0] + x1, base[1] + y1), (base[0] + x2, base[1] + y2), end,
-                          tolerance)
+            ring += cubic(
+                pos, (base[0] + x1, base[1] + y1), (base[0] + x2, base[1] + y2), end, tolerance
+            )
             pos = end
-        elif op == 'A':
+        elif op == "A":
             rx, ry, turn, large, sweep, x, y = take(7)
             if large not in (0.0, 1.0) or sweep not in (0.0, 1.0):
-                raise LegendError(f'{where}: an arc flag that is not 0 or 1 in {d!r}')
+                raise LegendError(f"{where}: an arc flag that is not 0 or 1 in {d!r}")
             end = (base[0] + x, base[1] + y)
             ring += _arc(pos, rx, ry, turn, bool(large), bool(sweep), end, tolerance)
             pos = end
-        elif op == 'Z':
+        elif op == "Z":
             rings.append(ring)
             closed.append(True)
             ring, pos = None, start
         else:  # pragma: no cover - the token pattern admits no other letter
-            raise LegendError(f'{where}: path command {cmd!r}')
+            raise LegendError(f"{where}: path command {cmd!r}")
     if ring:
         rings.append(ring)
         closed.append(False)
@@ -495,8 +527,12 @@ def _miter_ratio(rings, closed):
         corners = range(len(pts)) if shut else range(1, len(pts) - 1)
         for i in corners:
             a, b, c = pts[i - 1], pts[i], pts[(i + 1) % len(pts)]
-            turn = abs(math.remainder(math.atan2(c[1] - b[1], c[0] - b[0])
-                                      - math.atan2(b[1] - a[1], b[0] - a[0]), 2 * math.pi))
+            turn = abs(
+                math.remainder(
+                    math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(b[1] - a[1], b[0] - a[0]),
+                    2 * math.pi,
+                )
+            )
             half = math.cos(turn / 2)
             worst = max(worst, math.inf if half <= 1e-12 else 1 / half)
     return worst
@@ -504,39 +540,54 @@ def _miter_ratio(rings, closed):
 
 def _stroke(el, rings, closed, tolerance, where):
     """The area a stroke along a set of polylines covers."""
-    half = float(el.get('stroke-width', '0')) / 2
+    half = float(el.get("stroke-width", "0")) / 2
     if half <= 0:
-        raise LegendError(f'{where}: a stroke with no stroke-width')
-    cap, join = el.get('stroke-linecap', 'butt'), el.get('stroke-linejoin', 'miter')
+        raise LegendError(f"{where}: a stroke with no stroke-width")
+    cap, join = el.get("stroke-linecap", "butt"), el.get("stroke-linejoin", "miter")
     if cap not in _CAPS or join not in _JOINS:
-        raise LegendError(f'{where}: stroke-linecap {cap!r} or stroke-linejoin {join!r} '
-                          f'is not one this module draws')
-    lines = [sg.LinearRing(r) if c else sg.LineString(r)
-             for r, c in zip(rings, closed, strict=True)]
+        raise LegendError(
+            f"{where}: stroke-linecap {cap!r} or stroke-linejoin {join!r} "
+            f"is not one this module draws"
+        )
+    lines = [
+        sg.LinearRing(r) if c else sg.LineString(r) for r, c in zip(rings, closed, strict=True)
+    ]
     quad = max(1, _arc_steps(half, tolerance, math.pi / 2))
-    if join == 'miter':
+    if join == "miter":
         ratio = _miter_ratio(rings, closed)
         if ratio > MITER_LIMIT:
-            raise LegendError(f'{where}: a miter {ratio:.2f} stroke widths long, over the '
-                              f'limit of {MITER_LIMIT:g} at which a browser bevels the corner')
-        return shapely.union_all([ln.buffer(half, cap_style=_CAPS[cap], join_style='mitre',
-                                            mitre_limit=MITER_LIMIT, quad_segs=quad)
-                                  for ln in lines])
-    return shapely.union_all([ln.buffer(half, cap_style=_CAPS[cap], join_style=join,
-                                        quad_segs=quad) for ln in lines])
+            raise LegendError(
+                f"{where}: a miter {ratio:.2f} stroke widths long, over the "
+                f"limit of {MITER_LIMIT:g} at which a browser bevels the corner"
+            )
+        return shapely.union_all(
+            [
+                ln.buffer(
+                    half,
+                    cap_style=_CAPS[cap],
+                    join_style="mitre",
+                    mitre_limit=MITER_LIMIT,
+                    quad_segs=quad,
+                )
+                for ln in lines
+            ]
+        )
+    return shapely.union_all(
+        [ln.buffer(half, cap_style=_CAPS[cap], join_style=join, quad_segs=quad) for ln in lines]
+    )
 
 
 def _text(el, m, faces, inherited_family, flatness, where):
-    family = (el.get('font-family') or inherited_family or '').split(',')[0].strip(' \'"')
-    weight = int(el.get('font-weight', '400'))
-    size = float(el.get('font-size'))
+    family = (el.get("font-family") or inherited_family or "").split(",")[0].strip(" '\"")
+    weight = int(el.get("font-weight", "400"))
+    size = float(el.get("font-size"))
     rel, font = faces.font(family, weight)
-    own = _matrix(el.get('transform'))
-    upm = font['head'].unitsPerEm
+    own = _matrix(el.get("transform"))
+    upm = font["head"].unitsPerEm
     scale = size / upm
-    content = el.text or ''
+    content = el.text or ""
     if not content.strip() or len(el):
-        raise LegendError(f'{where}: a legend text is one plain run of characters')
+        raise LegendError(f"{where}: a legend text is one plain run of characters")
     full = m @ own
     tolerance = flatness / (scale * _stretch(full))
     pen, run = 0.0, []
@@ -547,68 +598,80 @@ def _text(el, m, faces, inherited_family, flatness, where):
         pen += advance
     # textLength pins the run's width; spacingAndGlyphs stretches the glyphs to it
     widen = 1.0
-    if el.get('textLength') is not None:
-        if el.get('lengthAdjust') != 'spacingAndGlyphs':
+    if el.get("textLength") is not None:
+        if el.get("lengthAdjust") != "spacingAndGlyphs":
             raise LegendError(f'{where}: textLength without lengthAdjust="spacingAndGlyphs"')
-        widen = float(el.get('textLength')) / (pen * scale)
-    anchor = {'start': 0.0, 'middle': 0.5, 'end': 1.0}[el.get('text-anchor', 'start')]
-    x, y = float(el.get('x', '0')), float(el.get('y', '0'))
+        widen = float(el.get("textLength")) / (pen * scale)
+    anchor = {"start": 0.0, "middle": 0.5, "end": 1.0}[el.get("text-anchor", "start")]
+    x, y = float(el.get("x", "0")), float(el.get("y", "0"))
     # font units, y up -> the text's own user space, y down
-    place = np.array([[scale * widen, 0, x - anchor * pen * scale * widen],
-                      [0, -scale, y], [0, 0, 1]])
+    place = np.array(
+        [[scale * widen, 0, x - anchor * pen * scale * widen], [0, -scale, y], [0, 0, 1]]
+    )
     return _apply(shapely.union_all(run), full @ place), rel
 
 
 def _disc(cx, cy, r, tolerance):
     n = max(8, _arc_steps(r, tolerance))
-    return sg.Polygon([(cx + r * math.cos(2 * math.pi * i / n),
-                        cy + r * math.sin(2 * math.pi * i / n)) for i in range(n)])
+    return sg.Polygon(
+        [
+            (cx + r * math.cos(2 * math.pi * i / n), cy + r * math.sin(2 * math.pi * i / n))
+            for i in range(n)
+        ]
+    )
 
 
 def _shape(el, tag, m, flatness, where):
-    full = m @ _matrix(el.get('transform'))
+    full = m @ _matrix(el.get("transform"))
     tolerance = flatness / _stretch(full)
-    stroked = el.get('stroke', 'none') != 'none'
-    if stroked and el.get('fill') != 'none':
-        raise LegendError(f'{where}: a <{tag}> both filled and stroked (a stroked one says '
-                          f'fill="none")')
-    if tag == 'polygon':
-        v = [float(t) for t in re.findall(_NUMBER, el.get('points'))]
+    stroked = el.get("stroke", "none") != "none"
+    if stroked and el.get("fill") != "none":
+        raise LegendError(
+            f'{where}: a <{tag}> both filled and stroked (a stroked one says fill="none")'
+        )
+    if tag == "polygon":
+        v = [float(t) for t in re.findall(_NUMBER, el.get("points"))]
         if len(v) % 2 or len(v) < 6:
-            raise LegendError(f'{where}: a polygon of {len(v)} numbers')
+            raise LegendError(f"{where}: a polygon of {len(v)} numbers")
         geom = sg.Polygon(list(zip(v[0::2], v[1::2], strict=True)))
-    elif tag == 'rect':
-        rx = float(el.get('rx', el.get('ry', '0')))
-        if float(el.get('ry', rx)) != rx:
-            raise LegendError(f'{where}: a rect with rx unlike ry')
-        geom = _rounded(float(el.get('x', '0')), float(el.get('y', '0')), float(el.get('width')),
-                        float(el.get('height')), rx, tolerance)
-    elif tag == 'circle':
-        r = float(el.get('r'))
-        cx, cy = float(el.get('cx', '0')), float(el.get('cy', '0'))
+    elif tag == "rect":
+        rx = float(el.get("rx", el.get("ry", "0")))
+        if float(el.get("ry", rx)) != rx:
+            raise LegendError(f"{where}: a rect with rx unlike ry")
+        geom = _rounded(
+            float(el.get("x", "0")),
+            float(el.get("y", "0")),
+            float(el.get("width")),
+            float(el.get("height")),
+            rx,
+            tolerance,
+        )
+    elif tag == "circle":
+        r = float(el.get("r"))
+        cx, cy = float(el.get("cx", "0")), float(el.get("cy", "0"))
         if stroked:
             # a ring: the stroke lies half its width either side of the circle
-            half = float(el.get('stroke-width', '0')) / 2
+            half = float(el.get("stroke-width", "0")) / 2
             if half <= 0:
-                raise LegendError(f'{where}: a stroke with no stroke-width')
+                raise LegendError(f"{where}: a stroke with no stroke-width")
             geom = _disc(cx, cy, r + half, tolerance)
             if r > half:
                 geom = geom.difference(_disc(cx, cy, r - half, tolerance))
         else:
             geom = _disc(cx, cy, r, tolerance)
     else:
-        rings, closed = _path_rings(el.get('d'), tolerance, where)
-        rule = el.get('fill-rule', 'nonzero')
-        if rule not in ('nonzero', 'evenodd'):
-            raise LegendError(f'{where}: fill-rule {rule!r}')
+        rings, closed = _path_rings(el.get("d"), tolerance, where)
+        rule = el.get("fill-rule", "nonzero")
+        if rule not in ("nonzero", "evenodd"):
+            raise LegendError(f"{where}: fill-rule {rule!r}")
         if stroked:
-            if 'fill-rule' in el.attrib:
-                raise LegendError(f'{where}: a fill-rule on a stroked path')
+            if "fill-rule" in el.attrib:
+                raise LegendError(f"{where}: a fill-rule on a stroked path")
             geom = _stroke(el, rings, closed, tolerance, where)
         else:
             if not all(closed):
-                raise LegendError(f'{where}: a filled path left open')
-            geom = _even_odd(rings) if rule == 'evenodd' else _fill(rings)
+                raise LegendError(f"{where}: a filled path left open")
+            geom = _even_odd(rings) if rule == "evenodd" else _fill(rings)
     return _apply(shapely.make_valid(geom), full)
 
 
@@ -654,51 +717,54 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
     def draw(el, m, family, legend, where, drawn):
         tag = el.tag.removeprefix(SVG)
         if legend_source.is_legend(el):
-            raise LegendError(f'{where}: a legend group inside a legend group')
+            raise LegendError(f"{where}: a legend group inside a legend group")
         if tag not in _KNOWN:
-            raise LegendError(f'{where}: <{tag}> inside a legend')
+            raise LegendError(f"{where}: <{tag}> inside a legend")
         extra = sorted(set(el.attrib) - _KNOWN[tag])
         if extra:
-            raise LegendError(f'{where}: <{tag}> carries {extra}, which a legend does not draw')
-        family = el.get('font-family', family)
-        if tag == 'g':
-            inner = m @ _matrix(el.get('transform'))
+            raise LegendError(f"{where}: <{tag}> carries {extra}, which a legend does not draw")
+        family = el.get("font-family", family)
+        if tag == "g":
+            inner = m @ _matrix(el.get("transform"))
             for child in el:
                 draw(child, inner, family, legend, where, drawn)
             return
         style = None
-        if tag == 'text':
+        if tag == "text":
             geom, rel = _text(el, m, faces, family, flatness, where)
             legend.fonts.add(rel)
-            fill = _color(el.get('fill'), where)
+            fill = _color(el.get("fill"), where)
             # texts set in one face at one size, as drawn, are kept or left together
-            size = float(el.get('font-size')) * _stretch(m @ _matrix(el.get('transform')))
+            size = float(el.get("font-size")) * _stretch(m @ _matrix(el.get("transform")))
             style = (rel, round(size, 4))
         else:
             geom = _shape(el, tag, m, flatness, where)
-            fill = _color(el.get('stroke') if el.get('fill') == 'none' else el.get('fill'), where)
+            fill = _color(el.get("stroke") if el.get("fill") == "none" else el.get("fill"), where)
         if geom.is_empty:
-            raise LegendError(f'{where}: <{tag}> draws nothing')
+            raise LegendError(f"{where}: <{tag}> draws nothing")
         drawn.append((fill, geom, style))
 
     def group(el):
         """The Legend a group's own attributes describe, with no shape yet."""
         extra = sorted(set(el.attrib) - _GROUP)
         if extra:
-            raise LegendError(f'a legend group carries {extra}; it takes {sorted(_GROUP)}')
-        key, mark = el.get('data-key'), el.get('data-mark')
+            raise LegendError(f"a legend group carries {extra}; it takes {sorted(_GROUP)}")
+        key, mark = el.get("data-key"), el.get("data-mark")
         if (key is None) == (mark is None):
-            raise LegendError('a legend group names one key (data-key) or one other print '
-                              '(data-mark), not both and not neither')
+            raise LegendError(
+                "a legend group names one key (data-key) or one other print "
+                "(data-mark), not both and not neither"
+            )
         name = key if mark is None else mark
-        plane = el.get('data-plane', KEYS_PLANE if mark is None else None)
+        plane = el.get("data-plane", KEYS_PLANE if mark is None else None)
         if plane is None:
-            raise LegendError(f'legend {name!r}: a print that is not a key\'s names its '
-                              f'data-plane')
-        for what, value in (('name', name), ('plane', plane)):
+            raise LegendError(f"legend {name!r}: a print that is not a key's names its data-plane")
+        for what, value in (("name", name), ("plane", plane)):
             if not _NAME.fullmatch(value):
-                raise LegendError(f'legend {name!r}: its {what} {value!r} is not letters '
-                                  f'and digits joined by hyphens')
+                raise LegendError(
+                    f"legend {name!r}: its {what} {value!r} is not letters "
+                    f"and digits joined by hyphens"
+                )
         return Legend(name, plane, mark is None)
 
     # the groups, and of what lies around each only what legend_source digests:
@@ -706,14 +772,14 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
     for el, around in legend_source.groups(root):
         m, family = np.eye(3), None
         for outer in around:
-            family = outer.get('font-family', family)
-            if outer.tag == SVG + 'g':
-                m = m @ _matrix(outer.get('transform'))
+            family = outer.get("font-family", family)
+            if outer.tag == SVG + "g":
+                m = m @ _matrix(outer.get("transform"))
         legend = group(el)
-        inner = m @ _matrix(el.get('transform'))
+        inner = m @ _matrix(el.get("transform"))
         drawn = []
         for child in el:
-            draw(child, inner, family, legend, f'legend {legend.name!r}', drawn)
+            draw(child, inner, family, legend, f"legend {legend.name!r}", drawn)
         if keep is None:
             legend.shapes = [(fill, geom) for fill, geom, _style in drawn]
         else:
@@ -723,20 +789,19 @@ def read_legends(front_svg, flatness, faces=None, keep=None):
             for _fill, geom, style in drawn:
                 if style is not None:
                     alike.setdefault(style, []).append(geom)
-            verdict = {style: keep(max(geoms, key=width_mm))
-                       for style, geoms in alike.items()}
+            verdict = {style: keep(max(geoms, key=width_mm)) for style, geoms in alike.items()}
             for fill, geom, style in drawn:
                 if verdict[style] if style is not None else keep(geom):
                     legend.shapes.append((fill, geom))
                 else:
                     legend.dropped += 1
         if not legend.shapes and not legend.dropped:
-            raise LegendError(f'legend {legend.name!r} draws nothing')
+            raise LegendError(f"legend {legend.name!r} draws nothing")
         out.append(legend)
     names = [legend.name for legend in out]
     if len(set(names)) != len(names):
         twice = sorted(k for k in set(names) if names.count(k) > 1)
-        raise LegendError(f'legend names repeat: {twice}')
+        raise LegendError(f"legend names repeat: {twice}")
     return out
 
 
@@ -752,9 +817,9 @@ def _polygons(geom):
     """The polygons of any geometry, lines and points dropped."""
     if geom.is_empty:
         return []
-    if geom.geom_type == 'Polygon':
+    if geom.geom_type == "Polygon":
         return [geom]
-    return [p for g in getattr(geom, 'geoms', []) for p in _polygons(g)]
+    return [p for g in getattr(geom, "geoms", []) for p in _polygons(g)]
 
 
 def _area(geom):
@@ -780,14 +845,14 @@ def partition(legends, to_model, grid):
             for other in areas:
                 if other != fill and areas[other].intersects(shape):
                     areas[other] = _area(shapely.difference(areas[other], shape, grid_size=grid))
-            areas[fill] = _area(shapely.union(areas.get(fill, sg.Polygon()), shape,
-                                              grid_size=grid))
+            areas[fill] = _area(shapely.union(areas.get(fill, sg.Polygon()), shape, grid_size=grid))
     fills = sorted(areas)
     for fill in fills:
         rest = [areas[other] for other in fills if other != fill and not areas[other].is_empty]
         if rest:
-            areas[fill] = _area(shapely.difference(areas[fill], shapely.union_all(rest),
-                                                   grid_size=grid))
+            areas[fill] = _area(
+                shapely.difference(areas[fill], shapely.union_all(rest), grid_size=grid)
+            )
     return {fill: area for fill, area in areas.items() if not area.is_empty}
 
 
@@ -802,6 +867,7 @@ def _split_at_corners(steps, tri):
     is the same edge on both its sides. *steps* are the corners in whole grid
     steps, so "on the edge" is exact.
     """
+
     def cut(i, j, k):
         for a, b, c in ((i, j, k), (j, k, i), (k, i, j)):
             along = steps[b] - steps[a]
@@ -838,8 +904,9 @@ def triangulate(area, grid):
         tri = mapbox_earcut.triangulate_float64(pts, ends).reshape(-1, 3).astype(np.int64)
         steps = np.rint(pts / grid).astype(np.int64)
         a, b, c = steps[tri[:, 0]], steps[tri[:, 1]], steps[tri[:, 2]]
-        twice = ((b[:, 0] - a[:, 0]) * (c[:, 1] - a[:, 1])
-                 - (b[:, 1] - a[:, 1]) * (c[:, 0] - a[:, 0]))
+        twice = (b[:, 0] - a[:, 0]) * (c[:, 1] - a[:, 1]) - (b[:, 1] - a[:, 1]) * (
+            c[:, 0] - a[:, 0]
+        )
         tri[twice < 0] = tri[twice < 0][:, [0, 2, 1]]
         tri = _split_at_corners(steps, tri[twice != 0])
         used = np.unique(tri)
@@ -890,19 +957,30 @@ def sheets(legends, plane, frame, center, z, grid, faces=None):
         pos = frame.embed(pts, center, z)
         nrm = frame.normals(len(pts))
         out.append((fill, pos, nrm, tri, width))
-        counts.append({'fill': f'#{fill}', 'vertices': int(len(pts)), 'triangles': int(len(tri)),
-                       'area_mm2': round(float(area.area), 3), 'stroke_mm': width})
+        counts.append(
+            {
+                "fill": f"#{fill}",
+                "vertices": int(len(pts)),
+                "triangles": int(len(tri)),
+                "area_mm2": round(float(area.area), 3),
+                "stroke_mm": width,
+            }
+        )
     used = sorted({rel for legend in drawn for rel in legend.fonts})
     digests = faces.used if faces is not None else {}
-    record = {'plane': plane,
-              'groups': [legend.name for legend in drawn],
-              'keys': sum(1 for legend in drawn if legend.key),
-              'shapes': sum(len(legend.shapes) for legend in drawn),
-              'fonts': {f'fonts/{rel}': digests.get(rel) for rel in used},
-              'sheets': counts}
+    record = {
+        "plane": plane,
+        "groups": [legend.name for legend in drawn],
+        "keys": sum(1 for legend in drawn if legend.key),
+        "shapes": sum(len(legend.shapes) for legend in drawn),
+        "fonts": {f"fonts/{rel}": digests.get(rel) for rel in used},
+        "sheets": counts,
+    }
     left = sum(legend.dropped for legend in drawn)
     if left:
         # a reader's keep left these out (read_legends): a lighter model's record
-        record['dropped'] = {'shapes': left,
-                             'groups': [legend.name for legend in drawn if not legend.shapes]}
+        record["dropped"] = {
+            "shapes": left,
+            "groups": [legend.name for legend in drawn if not legend.shapes],
+        }
     return out, record

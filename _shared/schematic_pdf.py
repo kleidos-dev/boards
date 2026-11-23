@@ -34,6 +34,7 @@ schematic) and, with ``pypdf``:
 Usage: ``python3 _shared/schematic_pdf.py <board> <pdf>`` (rewrites the PDF in
 place). ``export_schematic.py`` runs it after kicad-cli.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -43,9 +44,18 @@ import uuid
 from pathlib import Path
 
 from pypdf import PdfReader, PdfWriter
-from pypdf.generic import (ArrayObject, BooleanObject, ByteStringObject, DecodedStreamObject,
-                           DictionaryObject, Fit, FloatObject, NameObject, NumberObject,
-                           TextStringObject)
+from pypdf.generic import (
+    ArrayObject,
+    BooleanObject,
+    ByteStringObject,
+    DecodedStreamObject,
+    DictionaryObject,
+    Fit,
+    FloatObject,
+    NameObject,
+    NumberObject,
+    TextStringObject,
+)
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
@@ -73,8 +83,12 @@ def inside(rect, x, y, slack=0.6) -> bool:
 
 def rect_mm(annot, height_pt: float) -> tuple[float, float, float, float]:
     x0, y0, x1, y1 = (float(v) for v in annot["/Rect"])
-    return (min(x0, x1) / PT, (height_pt - max(y0, y1)) / PT,
-            max(x0, x1) / PT, (height_pt - min(y0, y1)) / PT)
+    return (
+        min(x0, x1) / PT,
+        (height_pt - max(y0, y1)) / PT,
+        max(x0, x1) / PT,
+        (height_pt - min(y0, y1)) / PT,
+    )
 
 
 def strip_scripts(writer: PdfWriter) -> int:
@@ -113,14 +127,16 @@ def strip_scripts(writer: PdfWriter) -> int:
 
 
 def link(rect_pt, dest, alt: str) -> DictionaryObject:
-    return DictionaryObject({
-        NameObject("/Type"): NameObject("/Annot"),
-        NameObject("/Subtype"): NameObject("/Link"),
-        NameObject("/Rect"): ArrayObject([FloatObject(round(v, 3)) for v in rect_pt]),
-        NameObject("/Border"): ArrayObject([NumberObject(0), NumberObject(0), NumberObject(0)]),
-        NameObject("/Dest"): dest,
-        NameObject("/Contents"): TextStringObject(alt),
-    })
+    return DictionaryObject(
+        {
+            NameObject("/Type"): NameObject("/Annot"),
+            NameObject("/Subtype"): NameObject("/Link"),
+            NameObject("/Rect"): ArrayObject([FloatObject(round(v, 3)) for v in rect_pt]),
+            NameObject("/Border"): ArrayObject([NumberObject(0), NumberObject(0), NumberObject(0)]),
+            NameObject("/Dest"): dest,
+            NameObject("/Contents"): TextStringObject(alt),
+        }
+    )
 
 
 def sources_digest(board: str) -> hashlib._Hash:
@@ -143,8 +159,9 @@ def identifiers(board: str, meta: media_meta.MediaMeta) -> tuple[bytes, str, str
     """
     digest = sources_digest(board)
     document = "uuid:" + str(uuid.uuid5(uuid.NAMESPACE_URL, meta.identifier_url))
-    instance = "uuid:" + str(uuid.uuid5(uuid.NAMESPACE_URL,
-                                        f"{meta.identifier_url}#{digest.hexdigest()}"))
+    instance = "uuid:" + str(
+        uuid.uuid5(uuid.NAMESPACE_URL, f"{meta.identifier_url}#{digest.hexdigest()}")
+    )
     return digest.digest()[:16], document, instance
 
 
@@ -152,8 +169,9 @@ def metadata(writer: PdfWriter, board: str) -> None:
     """Write the document's metadata from its record (``media_meta``, the standard's 5.8)."""
     meta = media_meta.record(f"{board}/schematic/{board}.pdf")
     file_id, document, instance = identifiers(board, meta)
-    writer.metadata = {NameObject(k): TextStringObject(v)
-                       for k, v in media_meta.pdf_info(meta).items()}
+    writer.metadata = {
+        NameObject(k): TextStringObject(v) for k, v in media_meta.pdf_info(meta).items()
+    }
     stream = DecodedStreamObject()
     stream.set_data(media_meta.pdf_xmp(meta, document, instance).encode("utf-8"))
     stream[NameObject("/Type")] = NameObject("/Metadata")
@@ -162,7 +180,8 @@ def metadata(writer: PdfWriter, board: str) -> None:
     root[NameObject("/Metadata")] = writer._add_object(stream)
     root[NameObject("/Lang")] = TextStringObject(meta.language)
     root[NameObject("/ViewerPreferences")] = DictionaryObject(
-        {NameObject("/DisplayDocTitle"): BooleanObject(True)})
+        {NameObject("/DisplayDocTitle"): BooleanObject(True)}
+    )
     writer._ID = ArrayObject([ByteStringObject(file_id), ByteStringObject(file_id)])
 
 
@@ -179,8 +198,15 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
 
     def dest(spot: dict) -> ArrayObject:
         left, top, zoom = xyz(spot, view, height)
-        return ArrayObject([pages[spot["page"] - 1].indirect_reference, NameObject("/XYZ"),
-                            FloatObject(left), FloatObject(top), FloatObject(zoom)])
+        return ArrayObject(
+            [
+                pages[spot["page"] - 1].indirect_reference,
+                NameObject("/XYZ"),
+                FloatObject(left),
+                FloatObject(top),
+                FloatObject(zoom),
+            ]
+        )
 
     # KiCad's own links: the page row and the contents boxes keep their page;
     # every one links.json lists goes to its place
@@ -198,7 +224,9 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
             x, y = j["at"]
             hits = [a for r, a in rects if inside(r, x + 0.3, y)]
             if len(hits) != 1:
-                errors.append(f"page {i}: {len(hits)} links at ({x:.1f}, {y:.1f}) mm for {j['alt']!r}")
+                errors.append(
+                    f"page {i}: {len(hits)} links at ({x:.1f}, {y:.1f}) mm for {j['alt']!r}"
+                )
                 continue
             a = hits[0]
             for key in ("/A", "/Dest"):
@@ -206,10 +234,16 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
                     del a[key]
             a[NameObject("/Dest")] = dest(j["to"])
             a[NameObject("/Contents")] = TextStringObject(j["alt"])
-        for r, a in rects:      # the rest go to a page: say which
+        for r, a in rects:  # the rest go to a page: say which
             if "/Contents" not in a and isinstance(a.get("/Dest"), ArrayObject):
-                target = next((k for k, p in enumerate(pages, start=1)
-                               if p.indirect_reference.idnum == a["/Dest"][0].idnum), None)
+                target = next(
+                    (
+                        k
+                        for k, p in enumerate(pages, start=1)
+                        if p.indirect_reference.idnum == a["/Dest"][0].idnum
+                    ),
+                    None,
+                )
                 if target:
                     a[NameObject("/Contents")] = TextStringObject(f"Page {target}")
 
@@ -228,12 +262,17 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
     if "/Outlines" in writer._root_object:
         del writer._root_object["/Outlines"]
     for entry in spec["outline"]:
-        top_item = writer.add_outline_item(title=entry["title"], page_number=entry["page"] - 1,
-                                           fit=Fit.fit(), is_open=False)
+        top_item = writer.add_outline_item(
+            title=entry["title"], page_number=entry["page"] - 1, fit=Fit.fit(), is_open=False
+        )
         for kid in entry["kids"]:
             left, top, zoom = xyz(kid["to"], view, height)
-            writer.add_outline_item(title=kid["title"], page_number=kid["to"]["page"] - 1,
-                                    parent=top_item, fit=Fit.xyz(left, top, zoom))
+            writer.add_outline_item(
+                title=kid["title"],
+                page_number=kid["to"]["page"] - 1,
+                parent=top_item,
+                fit=Fit.xyz(left, top, zoom),
+            )
     writer._root_object[NameObject("/PageMode")] = NameObject("/UseOutlines")
     metadata(writer, board)
     kit.sort_fonts(writer)

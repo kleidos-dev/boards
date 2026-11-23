@@ -84,78 +84,282 @@ SVG_NS = "http://www.w3.org/2000/svg"
 #: ``<face>:<plane>`` (``back:label``).
 BOARDS: dict[str, dict[str, tuple[str, str, set[str]]]] = {
     "sticks3": {
-        "label_legends": ("back:label", "back_label", {
-            "0283cc", "111113", "116d3c", "1d903f", "336594", "3a3a3a", "5b155d", "5d320b",
-            "6464fc", "679667", "940606", "aed9ea", "b3b3b3", "bb3c68", "c88764", "cbcbcb",
-            "cf3101", "e4e4e3", "ed6b96", "ee9c99", "f20461", "f86514", "fb6761", "fd98fc",
-            "fdcd03", "ffffff"}),
+        "label_legends": (
+            "back:label",
+            "back_label",
+            {
+                "0283cc",
+                "111113",
+                "116d3c",
+                "1d903f",
+                "336594",
+                "3a3a3a",
+                "5b155d",
+                "5d320b",
+                "6464fc",
+                "679667",
+                "940606",
+                "aed9ea",
+                "b3b3b3",
+                "bb3c68",
+                "c88764",
+                "cbcbcb",
+                "cf3101",
+                "e4e4e3",
+                "ed6b96",
+                "ee9c99",
+                "f20461",
+                "f86514",
+                "fb6761",
+                "fd98fc",
+                "fdcd03",
+                "ffffff",
+            },
+        ),
         "strip_legends": ("left:strip", "side_strip", {"0283cc", "ffffff"}),
     },
     "m5stickc-plus1": {
-        "label_legends": ("back:label", "back_label", {"003f5f", "0d4f82", "111111", "118cd0",
-                                                       "1d95da", "309963", "3a3a3a", "3d6e8f",
-                                                       "5f5b58", "7ad7ed", "858585", "8a3a3a",
-                                                       "9da09e", "b0402a", "bcca9d", "c33161",
-                                                       "c48c4f", "c8320a", "cbcbc9", "e20e63",
-                                                       "e64824", "e6e7e7", "e8642f", "ef6968",
-                                                       "fa6665", "fcce0f", "ffffff"}),
+        "label_legends": (
+            "back:label",
+            "back_label",
+            {
+                "003f5f",
+                "0d4f82",
+                "111111",
+                "118cd0",
+                "1d95da",
+                "309963",
+                "3a3a3a",
+                "3d6e8f",
+                "5f5b58",
+                "7ad7ed",
+                "858585",
+                "8a3a3a",
+                "9da09e",
+                "b0402a",
+                "bcca9d",
+                "c33161",
+                "c48c4f",
+                "c8320a",
+                "cbcbc9",
+                "e20e63",
+                "e64824",
+                "e6e7e7",
+                "e8642f",
+                "ef6968",
+                "fa6665",
+                "fcce0f",
+                "ffffff",
+            },
+        ),
     },
     "m5stickc-plus2": {
-        "label_legends": ("back:label", "back_label", {"01304d", "049a40", "0594de", "0a4c80",
-                                                       "141413", "3c7fb4", "4a4a48", "63d3e7",
-                                                       "a5ae85", "b8262b", "bd813e", "c1c2bf",
-                                                       "c8300a", "cd1457", "dadcd9", "e3551d",
-                                                       "ec5957", "ecc205", "eeeeea", "f0a247"}),
+        "label_legends": (
+            "back:label",
+            "back_label",
+            {
+                "01304d",
+                "049a40",
+                "0594de",
+                "0a4c80",
+                "141413",
+                "3c7fb4",
+                "4a4a48",
+                "63d3e7",
+                "a5ae85",
+                "b8262b",
+                "bd813e",
+                "c1c2bf",
+                "c8300a",
+                "cd1457",
+                "dadcd9",
+                "e3551d",
+                "ec5957",
+                "ecc205",
+                "eeeeea",
+                "f0a247",
+            },
+        ),
     },
     "m5stickc-plus-se": {
-        "label_legends": ("back:label", "back_label", {"008dd5", "03639b", "04a3e4", "141414",
-                                                        "1f74ad", "302e2c", "309965", "5c5c5c",
-                                                        "5f605f", "7bdaf5", "7c2a33", "7f807f",
-                                                        "9a5a06", "a0a0a0", "bac89b", "c78d52",
-                                                        "cbcbca", "cd3203", "e6e6e6", "e74924",
-                                                        "f3f4f3", "f80464", "f8622f", "fb6662",
-                                                        "fcce02", "fcfcfa", "fd8c26"}),
+        "label_legends": (
+            "back:label",
+            "back_label",
+            {
+                "008dd5",
+                "03639b",
+                "04a3e4",
+                "141414",
+                "1f74ad",
+                "302e2c",
+                "309965",
+                "5c5c5c",
+                "5f605f",
+                "7bdaf5",
+                "7c2a33",
+                "7f807f",
+                "9a5a06",
+                "a0a0a0",
+                "bac89b",
+                "c78d52",
+                "cbcbca",
+                "cd3203",
+                "e6e6e6",
+                "e74924",
+                "f3f4f3",
+                "f80464",
+                "f8622f",
+                "fb6662",
+                "fcce02",
+                "fcfcfa",
+                "fd8c26",
+            },
+        ),
     },
     "coreink": {
-        "label_legends": ("back:label", "back_label", {"125d94", "141414", "18acd2", "20974a",
-                                                   "4f8fbf", "555553", "7a7a7a", "8e4e4d",
-                                                   "980404", "993263", "a3a3a3", "c6c6c6",
-                                                   "c71214", "cc3263", "cdcdcd", "cf3205",
-                                                   "d77c97", "e4e5e5", "f06a3c", "f1075e",
-                                                   "f66662", "fbcd12", "fcfe0e", "ffffff"}),
+        "label_legends": (
+            "back:label",
+            "back_label",
+            {
+                "125d94",
+                "141414",
+                "18acd2",
+                "20974a",
+                "4f8fbf",
+                "555553",
+                "7a7a7a",
+                "8e4e4d",
+                "980404",
+                "993263",
+                "a3a3a3",
+                "c6c6c6",
+                "c71214",
+                "cc3263",
+                "cdcdcd",
+                "cf3205",
+                "d77c97",
+                "e4e5e5",
+                "f06a3c",
+                "f1075e",
+                "f66662",
+                "fbcd12",
+                "fcfe0e",
+                "ffffff",
+            },
+        ),
         "side_legends": ("left:side", "side_label", {"141414", "18acd2"}),
     },
     "cores3-se": {
         "label_legends": ("top:rating", "top_label", {"111111", "969696"}),
-        "port_tag_legends": ("top:port-tag", "base_port_tag",
-                             {"111111", "1a7fc0", "a9a49e", "dbdcdb"}),
+        "port_tag_legends": (
+            "top:port-tag",
+            "base_port_tag",
+            {"111111", "1a7fc0", "a9a49e", "dbdcdb"},
+        ),
     },
     "m5stack-core2-v13": {
-        "back_legends": ("back:sticker", "back_label", {
-            "019630", "0870b8", "0cadd4", "141414", "2f3300", "2f6765", "37cc35", "555555",
-            "650163", "8e9191", "9a0202", "a6dcf4", "c62e60", "c91518", "c9673f", "c9cbca",
-            "d03101", "f06b10", "f59d3a", "fcccc9", "fd6460", "fdcf06", "ffffff"}),
+        "back_legends": (
+            "back:sticker",
+            "back_label",
+            {
+                "019630",
+                "0870b8",
+                "0cadd4",
+                "141414",
+                "2f3300",
+                "2f6765",
+                "37cc35",
+                "555555",
+                "650163",
+                "8e9191",
+                "9a0202",
+                "a6dcf4",
+                "c62e60",
+                "c91518",
+                "c9673f",
+                "c9cbca",
+                "d03101",
+                "f06b10",
+                "f59d3a",
+                "fcccc9",
+                "fd6460",
+                "fdcf06",
+                "ffffff",
+            },
+        ),
         "label_legends": ("top:rating", "label", {"141414", "555555", "8e9191", "c9cbca"}),
     },
     "cardputer": {
         "key_legends": ("keys", "legend_strips", {"111113", "2e6db0", "ff6633", "ffffff"}),
         "panel_legends": ("panel", "sticker", {"111113", "14c8ee", "1a1a1c", "ff6633"}),
-        "stamp_legends": ("stamp", "stamp_label", {"06302d", "111113", "14c8ee", "2176ae",
-                                                   "2e6db0", "2f97cc", "44c294", "6f706e",
-                                                   "78a3f2", "9a1a96", "a8585c", "bcbcb9",
-                                                   "cbcb4a", "d2390c", "dfdfdc", "e22c34",
-                                                   "ea8f8d", "ee2f80", "f3a0ec", "f6cbc6",
-                                                   "f6e08a", "f8cf1d", "ff6633", "ffffff"}),
-        "back_legends": ("back:label", "back_label", {"111113", "14c8ee", "2176ae", "2f97cc",
-                                                      "44c294", "505050", "6f706e", "78a3f2",
-                                                      "9a1a96", "a6e2fb", "a7ac8f", "bcbcb9",
-                                                      "cbcb4a", "d2390c", "dfdfdc", "e22c34",
-                                                      "ea8f8d", "ee2f80", "f8cf1d", "fc659b",
-                                                      "ff6633", "ffffff"}),
-        "top_legends": ("top:strip", "top_label", {"111113", "2f97cc", "e22c34", "ea8f8d",
-                                                   "ee2f80", "ff6633", "ffffff"}),
-        "side_legends": ("left:side", "side_label", {"111113", "d2390c", "dfdfdc", "f8cf1d",
-                                                     "ffffff"}),
+        "stamp_legends": (
+            "stamp",
+            "stamp_label",
+            {
+                "06302d",
+                "111113",
+                "14c8ee",
+                "2176ae",
+                "2e6db0",
+                "2f97cc",
+                "44c294",
+                "6f706e",
+                "78a3f2",
+                "9a1a96",
+                "a8585c",
+                "bcbcb9",
+                "cbcb4a",
+                "d2390c",
+                "dfdfdc",
+                "e22c34",
+                "ea8f8d",
+                "ee2f80",
+                "f3a0ec",
+                "f6cbc6",
+                "f6e08a",
+                "f8cf1d",
+                "ff6633",
+                "ffffff",
+            },
+        ),
+        "back_legends": (
+            "back:label",
+            "back_label",
+            {
+                "111113",
+                "14c8ee",
+                "2176ae",
+                "2f97cc",
+                "44c294",
+                "505050",
+                "6f706e",
+                "78a3f2",
+                "9a1a96",
+                "a6e2fb",
+                "a7ac8f",
+                "bcbcb9",
+                "cbcb4a",
+                "d2390c",
+                "dfdfdc",
+                "e22c34",
+                "ea8f8d",
+                "ee2f80",
+                "f8cf1d",
+                "fc659b",
+                "ff6633",
+                "ffffff",
+            },
+        ),
+        "top_legends": (
+            "top:strip",
+            "top_label",
+            {"111113", "2f97cc", "e22c34", "ea8f8d", "ee2f80", "ff6633", "ffffff"},
+        ),
+        "side_legends": (
+            "left:side",
+            "side_label",
+            {"111113", "d2390c", "dfdfdc", "f8cf1d", "ffffff"},
+        ),
     },
     "tdeck-plus": {
         "glass_legends": ("glass", "face", {"cfd2d8"}),
@@ -173,11 +377,17 @@ PRINTING = [board for board, meshes in BOARDS.items() if meshes]
 #: (``plane_key``). What changes a back's or a side's drawing is held on the
 #: fixture's back (``legend_placement.py --selftest``), and a printing back's
 #: own drawing by the back tests here too.
-FRONT_PRINTING = [board for board, meshes in BOARDS.items()
-                  if any(":" not in plane for plane, _on, _inks in meshes.values())]
+FRONT_PRINTING = [
+    board
+    for board, meshes in BOARDS.items()
+    if any(":" not in plane for plane, _on, _inks in meshes.values())
+]
 #: The boards whose back prints: their records digest each back plane.
-PRINTING_BACK = [board for board, meshes in BOARDS.items()
-                 if any(plane.startswith("back:") for plane, _on, _inks in meshes.values())]
+PRINTING_BACK = [
+    board
+    for board, meshes in BOARDS.items()
+    if any(plane.startswith("back:") for plane, _on, _inks in meshes.values())
+]
 #: How many position steps a legends mesh lies over the highest face under it:
 #: three, but for the T-Deck Plus's round marks, which keep the height of the
 #: plate's print around them (three steps over the trackball's band) and lie
@@ -188,8 +398,12 @@ STEPS_OVER_ITS_OWN = {("tdeck-plus", "plate_mark_legends"): 8}
 #: {the module: the distribution ``requirements.txt`` pins it as}. The pins
 #: are the model builder's (``build_board_glb.py``), which each model's
 #: ``source.json`` records.
-CAD_LIBRARIES = {"numpy": "numpy", "shapely": "shapely", "mapbox_earcut": "mapbox_earcut",
-                 "fontTools": "fonttools"}
+CAD_LIBRARIES = {
+    "numpy": "numpy",
+    "shapely": "shapely",
+    "mapbox_earcut": "mapbox_earcut",
+    "fontTools": "fonttools",
+}
 QA_REQUIREMENTS = ROOT / "requirements.txt"
 #: What installs the checks' stack, the CAD libraries among it.
 QA_INSTALL = "pip install -r requirements.txt"
@@ -205,6 +419,7 @@ def builder_numbers() -> dict[str, int]:
     library it pins. A value is a literal or a sum or difference of names
     already read (``MAX_MATERIALS = READER_SLOTS - READER_OWN``).
     """
+
     def value(node: ast.expr, known: dict[str, int]) -> int | None:
         if isinstance(node, ast.Constant) and type(node.value) is int:
             return node.value
@@ -220,8 +435,11 @@ def builder_numbers() -> dict[str, int]:
     known: dict[str, int] = {}
     tree = ast.parse((SHARED / "build_board_glb.py").read_text(encoding="utf-8"))
     for node in tree.body:
-        if (isinstance(node, ast.Assign) and len(node.targets) == 1
-                and isinstance(node.targets[0], ast.Name)):
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+        ):
             got = value(node.value, known)
             if got is not None:
                 known[node.targets[0].id] = got
@@ -256,17 +474,24 @@ def cad_library(module: str):
     try:
         library = importlib.import_module(module)
         installed = importlib.metadata.version(distribution)
-        short = None if installed == pinned else (
-            f"{distribution} {installed} is installed, requirements.txt pins {pinned}")
+        short = (
+            None
+            if installed == pinned
+            else (f"{distribution} {installed} is installed, requirements.txt pins {pinned}")
+        )
     except ImportError:
         library, short = None, f"{distribution} is not installed"
     if short is None:
         return library
-    reason = (f"{short}: the board-model checks read a drawing and a model with the CAD "
-              f"libraries requirements.txt pins ({QA_INSTALL})")
+    reason = (
+        f"{short}: the board-model checks read a drawing and a model with the CAD "
+        f"libraries requirements.txt pins ({QA_INSTALL})"
+    )
     if os.environ.get("CI"):
-        pytest.fail(f"{reason}; in CI the pins are installed, so this is a broken install "
-                    "and not a reason to skip")
+        pytest.fail(
+            f"{reason}; in CI the pins are installed, so this is a broken install "
+            "and not a reason to skip"
+        )
     pytest.skip(reason)
 
 
@@ -302,10 +527,15 @@ def stale_planes(board: str, front: Path | None = None, face: str = "front") -> 
     drawing (``legend_source.digest``); *front* stands in for the committed
     drawing of *face*.
     """
-    return [entry["plane"] for entry in record(board)["legends"]
-            if legend_source.digest(front if front and entry.get("face", "front") == face
-                                    else ROOT / drawing_of(entry), entry["plane"])
-            != entry["legends_sha256"]]
+    return [
+        entry["plane"]
+        for entry in record(board)["legends"]
+        if legend_source.digest(
+            front if front and entry.get("face", "front") == face else ROOT / drawing_of(entry),
+            entry["plane"],
+        )
+        != entry["legends_sha256"]
+    ]
 
 
 def changed_front(board: str, change, tmp_path: Path, face: str = "front") -> Path:
@@ -325,8 +555,7 @@ def changed_front(board: str, change, tmp_path: Path, face: str = "front") -> Pa
 
 def legend_groups(root: ET.Element) -> list[ET.Element]:
     """A drawing's legend groups, in its order."""
-    return [el for el in root.iter(f"{{{SVG_NS}}}g")
-            if "legend" in (el.get("class") or "").split()]
+    return [el for el in root.iter(f"{{{SVG_NS}}}g") if "legend" in (el.get("class") or "").split()]
 
 
 def planes_of_front(board: str) -> dict[str, int]:
@@ -349,13 +578,18 @@ def planes_of_front(board: str) -> dict[str, int]:
 
 def node_bytes(js: dict, bin_: bytes) -> dict[str, tuple]:
     """{node name: everything its mesh draws}, the accessors as their own bytes."""
+
     def data(index: int) -> tuple:
         accessor = js["accessors"][index]
         view = js["bufferViews"][accessor["bufferView"]]
         start = view.get("byteOffset", 0)
         described = {k: v for k, v in accessor.items() if k != "bufferView"}
-        return (json.dumps(described, sort_keys=True), view.get("byteStride"),
-                view.get("target"), bin_[start:start + view["byteLength"]])
+        return (
+            json.dumps(described, sort_keys=True),
+            view.get("byteStride"),
+            view.get("target"),
+            bin_[start : start + view["byteLength"]],
+        )
 
     out = {}
     for node in js["nodes"]:
@@ -364,10 +598,15 @@ def node_bytes(js: dict, bin_: bytes) -> dict[str, tuple]:
         mesh = js["meshes"][node["mesh"]]
         prims = []
         for prim in mesh["primitives"]:
-            prims.append((
-                tuple((name, data(index)) for name, index in sorted(prim["attributes"].items())),
-                data(prim["indices"]),
-                json.dumps(js["materials"][prim["material"]], sort_keys=True)))
+            prims.append(
+                (
+                    tuple(
+                        (name, data(index)) for name, index in sorted(prim["attributes"].items())
+                    ),
+                    data(prim["indices"]),
+                    json.dumps(js["materials"][prim["material"]], sort_keys=True),
+                )
+            )
         described = {k: v for k, v in node.items() if k != "mesh"}
         out[node["name"]] = (json.dumps(described, sort_keys=True), mesh["name"], tuple(prims))
     return out
@@ -392,12 +631,16 @@ def test_a_model_draws_every_plane_its_front_prints_on(board: str) -> None:
     """
     planes = planes_of_front(board)
     declared = {
-        plane_key(entry["legends"].get("face", "front"), entry["legends"].get("plane", "keys")):
-            entry
-        for entry in spec(board)["meshes"] if "legends" in entry
+        plane_key(
+            entry["legends"].get("face", "front"), entry["legends"].get("plane", "keys")
+        ): entry
+        for entry in spec(board)["meshes"]
+        if "legends" in entry
     }
-    recorded = {plane_key(entry.get("face", "front"), entry["plane"]): entry
-                for entry in record(board).get("legends", [])}
+    recorded = {
+        plane_key(entry.get("face", "front"), entry["plane"]): entry
+        for entry in record(board).get("legends", [])
+    }
     expected = {plane: mesh for mesh, (plane, _on, _inks) in BOARDS[board].items()}
     assert set(planes) == set(declared) == set(recorded) == set(expected), board
     for plane, mesh in expected.items():
@@ -416,10 +659,12 @@ def test_the_model_was_built_from_the_drawing_and_the_spec_as_they_are(board: st
     assert len(data) == rec["model_bytes"]
     spec_path = ROOT / rec["builder"]["spec"]
     assert hashlib.sha256(spec_path.read_bytes()).hexdigest() == rec["builder"]["spec_sha256"], (
-        f"{spec_path.name} changed since {rec['model']} was built: rebuild the model")
+        f"{spec_path.name} changed since {rec['model']} was built: rebuild the model"
+    )
     assert stale_planes(board) == [], (
         f"what {drawing_of(rec['legends'][0])} prints on these planes changed since "
-        f"{rec['model']} was built: rebuild the model")
+        f"{rec['model']} was built: rebuild the model"
+    )
     for entry in rec["legends"]:
         assert "front_sha256" not in entry, "the whole drawing's digest is no longer recorded"
         for font, digest in entry["fonts"].items():
@@ -439,13 +684,17 @@ def _nothing(root: ET.Element, parents: dict) -> None:
 
 
 def _a_new_callout(root: ET.Element, parents: dict) -> None:
-    ET.SubElement(_by_id(root, "annotations"), f"{{{SVG_NS}}}text",
-                  {"x": "0", "y": "0", "font-size": "2"}).text = "new"
+    ET.SubElement(
+        _by_id(root, "annotations"), f"{{{SVG_NS}}}text", {"x": "0", "y": "0", "font-size": "2"}
+    ).text = "new"
 
 
 def _a_new_hotspot(root: ET.Element, parents: dict) -> None:
-    ET.SubElement(_by_id(root, "hotspots"), f"{{{SVG_NS}}}circle",
-                  {"id": "hs-Planted", "cx": "1", "cy": "1", "r": "1", "data-face": "front"})
+    ET.SubElement(
+        _by_id(root, "hotspots"),
+        f"{{{SVG_NS}}}circle",
+        {"id": "hs-Planted", "cx": "1", "cy": "1", "r": "1", "data-face": "front"},
+    )
 
 
 def _the_screen_marker_moved(root: ET.Element, parents: dict) -> None:
@@ -469,14 +718,21 @@ def _other_margins(root: ET.Element, parents: dict) -> None:
 
 
 #: What regenerating a front changes when its legends did not: nothing a model reads.
-OUTSIDE = (_nothing, _a_new_callout, _a_new_hotspot, _the_screen_marker_moved,
-           _every_cap_repainted_and_moved, _other_margins)
+OUTSIDE = (
+    _nothing,
+    _a_new_callout,
+    _a_new_hotspot,
+    _the_screen_marker_moved,
+    _every_cap_repainted_and_moved,
+    _other_margins,
+)
 
 
 @pytest.mark.parametrize("board", FRONT_PRINTING)
 @pytest.mark.parametrize("change", OUTSIDE, ids=lambda change: change.__name__.strip("_"))
 def test_a_front_changed_outside_its_legends_leaves_its_model_as_built(
-        board: str, change, tmp_path: Path) -> None:
+    board: str, change, tmp_path: Path
+) -> None:
     """A new callout, a hotspot, a cap or the screen marker is no reason to rebuild a model.
 
     The record digests what the model reads from the drawing, not the file.
@@ -489,7 +745,8 @@ def test_a_front_changed_outside_its_legends_leaves_its_model_as_built(
     rewritten = changed_front(board, _nothing, tmp_path / "rewritten")
     assert rewritten.read_bytes() != (CAD / board / "svg" / "front.svg").read_bytes()
     assert (front.read_bytes() == rewritten.read_bytes()) == (change is _nothing), (
-        "the change did not change the drawing")
+        "the change did not change the drawing"
+    )
     assert stale_planes(board, front) == []
 
 
@@ -498,8 +755,12 @@ def _first_key(root: ET.Element) -> ET.Element:
 
 
 def _a_character_changed(root: ET.Element, parents: dict) -> set[str]:
-    text = next(el for group in legend_groups(root) if group.get("data-key")
-                for el in group.iter(f"{{{SVG_NS}}}text"))
+    text = next(
+        el
+        for group in legend_groups(root)
+        if group.get("data-key")
+        for el in group.iter(f"{{{SVG_NS}}}text")
+    )
     text.text = "W" if text.text != "W" else "V"
     return {"keys"}
 
@@ -519,8 +780,12 @@ def _an_ink_changed(root: ET.Element, parents: dict) -> set[str]:
 def _shapes_in_a_legend(root: ET.Element, differing: bool = False) -> tuple[ET.Element, ET.Element]:
     """The first legend group holding an element of two or more shapes (the
     group itself, or a group inside it), and that element."""
-    return next((group, el) for group in legend_groups(root) for el in group.iter()
-                if len(el) > 1 and (not differing or ET.tostring(el[0]) != ET.tostring(el[1])))
+    return next(
+        (group, el)
+        for group in legend_groups(root)
+        for el in group.iter()
+        if len(el) > 1 and (not differing or ET.tostring(el[0]) != ET.tostring(el[1]))
+    )
 
 
 def _a_shape_taken_out(root: ET.Element, parents: dict) -> set[str]:
@@ -556,8 +821,11 @@ def _a_group_moved_to_another_plane(root: ET.Element, parents: dict) -> set[str]
 
 def _a_new_group(root: ET.Element, parents: dict) -> set[str]:
     group = ET.SubElement(root, f"{{{SVG_NS}}}g", {"class": "legend", "data-key": "planted"})
-    ET.SubElement(group, f"{{{SVG_NS}}}rect", {"x": "1", "y": "1", "width": "1", "height": "1",
-                                               "fill": "#111113"})
+    ET.SubElement(
+        group,
+        f"{{{SVG_NS}}}rect",
+        {"x": "1", "y": "1", "width": "1", "height": "1", "fill": "#111113"},
+    )
     return {"keys"}
 
 
@@ -578,16 +846,25 @@ def _another_family_handed_down(root: ET.Element, parents: dict) -> None:
 
 #: What a model reads from its drawing: each of these is a model to rebuild. A
 #: change returns the planes it touches, or None for all of them.
-INSIDE = (_a_character_changed, _a_legend_moved, _an_ink_changed, _a_shape_taken_out,
-          _two_shapes_painted_in_the_other_order, _two_groups_painted_in_the_other_order,
-          _a_group_moved_to_another_plane, _a_new_group, _a_transform_around_a_group,
-          _another_family_handed_down)
+INSIDE = (
+    _a_character_changed,
+    _a_legend_moved,
+    _an_ink_changed,
+    _a_shape_taken_out,
+    _two_shapes_painted_in_the_other_order,
+    _two_groups_painted_in_the_other_order,
+    _a_group_moved_to_another_plane,
+    _a_new_group,
+    _a_transform_around_a_group,
+    _another_family_handed_down,
+)
 
 
 @pytest.mark.parametrize("board", FRONT_PRINTING)
 @pytest.mark.parametrize("change", INSIDE, ids=lambda change: change.__name__.strip("_"))
 def test_a_front_changed_inside_its_legends_is_a_model_to_rebuild(
-        board: str, change, tmp_path: Path) -> None:
+    board: str, change, tmp_path: Path
+) -> None:
     """A legend's characters, place, ink or paint order, or what places its group.
 
     Each change is caught on the plane it touches and on no other, so the
@@ -595,13 +872,17 @@ def test_a_front_changed_inside_its_legends_is_a_model_to_rebuild(
     """
     record(board)
     touched: list[set[str] | None] = []
-    front = changed_front(board, lambda root, parents: touched.append(change(root, parents)),
-                          tmp_path)
+    front = changed_front(
+        board, lambda root, parents: touched.append(change(root, parents)), tmp_path
+    )
     (tmp_path / "rewritten").mkdir()
     rewritten = changed_front(board, _nothing, tmp_path / "rewritten")
     assert front.read_bytes() != rewritten.read_bytes(), "the change did not change the drawing"
-    every = {entry["plane"] for entry in record(board)["legends"]
-             if entry.get("face", "front") == "front"}
+    every = {
+        entry["plane"]
+        for entry in record(board)["legends"]
+        if entry.get("face", "front") == "front"
+    }
     expected = every if touched[0] is None else touched[0] & every
     assert expected, "the change touches no plane this model draws"
     assert set(stale_planes(board, front)) == expected
@@ -619,9 +900,12 @@ def changed_back(board: str, change, tmp_path: Path) -> Path:
 
 def stale_back_planes(board: str, back: Path) -> list[str]:
     """The back planes of a board's model that *back* no longer prints as built."""
-    return [entry["plane"] for entry in record(board)["legends"]
-            if entry.get("face") == "back"
-            and legend_source.digest(back, entry["plane"]) != entry["legends_sha256"]]
+    return [
+        entry["plane"]
+        for entry in record(board)["legends"]
+        if entry.get("face") == "back"
+        and legend_source.digest(back, entry["plane"]) != entry["legends_sha256"]
+    ]
 
 
 def _a_mark_inked_otherwise(root: ET.Element, parents: dict) -> set[str]:
@@ -632,24 +916,35 @@ def _a_mark_inked_otherwise(root: ET.Element, parents: dict) -> set[str]:
 
 
 @pytest.mark.parametrize("board", PRINTING_BACK)
-@pytest.mark.parametrize("change", (_nothing, _a_new_callout),
-                         ids=lambda change: change.__name__.strip("_"))
+@pytest.mark.parametrize(
+    "change", (_nothing, _a_new_callout), ids=lambda change: change.__name__.strip("_")
+)
 def test_a_back_changed_outside_its_legends_leaves_its_model_as_built(
-        board: str, change, tmp_path: Path) -> None:
+    board: str, change, tmp_path: Path
+) -> None:
     """The back's record digests its prints, not the file: a callout is no reason to rebuild."""
     assert stale_back_planes(board, changed_back(board, change, tmp_path)) == []
 
 
 @pytest.mark.parametrize("board", PRINTING_BACK)
-@pytest.mark.parametrize("change", (_a_shape_taken_out, _two_shapes_painted_in_the_other_order,
-                                    _a_mark_inked_otherwise, _another_family_handed_down),
-                         ids=lambda change: change.__name__.strip("_"))
+@pytest.mark.parametrize(
+    "change",
+    (
+        _a_shape_taken_out,
+        _two_shapes_painted_in_the_other_order,
+        _a_mark_inked_otherwise,
+        _another_family_handed_down,
+    ),
+    ids=lambda change: change.__name__.strip("_"),
+)
 def test_a_back_changed_inside_its_legends_is_a_model_to_rebuild(
-        board: str, change, tmp_path: Path) -> None:
+    board: str, change, tmp_path: Path
+) -> None:
     """A back print taken out, repainted, reordered or set in another face: caught on its plane."""
     touched: list[set[str] | None] = []
-    back = changed_back(board, lambda root, parents: touched.append(change(root, parents)),
-                        tmp_path)
+    back = changed_back(
+        board, lambda root, parents: touched.append(change(root, parents)), tmp_path
+    )
     every = {entry["plane"] for entry in record(board)["legends"] if entry.get("face") == "back"}
     expected = every if touched[0] is None else touched[0] & every
     assert expected, "the change touches no back plane this model draws"
@@ -667,11 +962,17 @@ def test_the_legend_meshes_are_named_and_described_as_the_contract_says(board: s
     assert len(js["materials"]) <= builder_numbers()["MAX_MATERIALS"]
     found = glb_legends.legends(js)
     names = {node["name"] for node in js["nodes"] if "mesh" in node}
-    expected = {f"{mesh}_{ink}": (mesh, on) for mesh, (_plane, on, inks) in BOARDS[board].items()
-                for ink in inks}
+    expected = {
+        f"{mesh}_{ink}": (mesh, on)
+        for mesh, (_plane, on, inks) in BOARDS[board].items()
+        for ink in inks
+    }
     assert {entry["name"] for entry in found} == set(expected), board
-    recorded = {sheet["mesh"]: sheet for entry in record(board).get("legends", [])
-                for sheet in entry["sheets"]}
+    recorded = {
+        sheet["mesh"]: sheet
+        for entry in record(board).get("legends", [])
+        for sheet in entry["sheets"]
+    }
     assert set(recorded) == set(expected)
     for entry in found:
         mesh, on = expected[entry["name"]]
@@ -697,15 +998,24 @@ def test_the_legend_meshes_are_named_and_described_as_the_contract_says(board: s
         assert not node["name"].endswith("legends"), node["name"]
         for prim in js["meshes"][node["mesh"]]["primitives"]:
             assert not js["materials"][prim["material"]]["name"].startswith(
-                glb_legends.INK_PREFIX), f"{node['name']} wears an ink"
+                glb_legends.INK_PREFIX
+            ), f"{node['name']} wears an ink"
 
 
 def test_a_name_is_a_legend_meshs_only_when_it_ends_as_one() -> None:
     """The colored grounds under the Cardputer's legends are not legends."""
     assert glb_legends.is_legend("key_legends_111113")
     assert glb_legends.is_legend("panel_legends_ff6633")
-    for name in ("legend_orange", "legend_strips", "key_legends", "key_legends_11111",
-                 "key_legends_1111134", "key_legends_GGGGGG", "legends_111113_top", ""):
+    for name in (
+        "legend_orange",
+        "legend_strips",
+        "key_legends",
+        "key_legends_11111",
+        "key_legends_1111134",
+        "key_legends_GGGGGG",
+        "legends_111113_top",
+        "",
+    ):
         assert not glb_legends.is_legend(name), name
 
 
@@ -748,8 +1058,11 @@ def test_a_model_without_its_legends_is_the_rest_of_it_byte_for_byte(board: str)
     weighed = record(board)["without_legends"]
     assert weighed["sha256"] == hashlib.sha256(bare).hexdigest(), "source.json weighs another file"
     assert weighed["bytes"] == len(bare) < len(data)
-    assert weighed["meshes"] == len(bare_js["meshes"]) == len(js["meshes"]) - len(
-        glb_legends.legends(js))
+    assert (
+        weighed["meshes"]
+        == len(bare_js["meshes"])
+        == len(js["meshes"]) - len(glb_legends.legends(js))
+    )
     assert weighed["materials"] == len(bare_js["materials"])
     packed = len(gzip.compress(bare, compresslevel=9, mtime=0))
     assert abs(weighed["gzip_bytes"] - packed) <= packed // 50
@@ -771,13 +1084,15 @@ def test_a_reader_leaves_out_only_the_legends_too_thin_to_draw() -> None:
     cut = glb_legends.strip(data, lambda entry: glb_legends.too_thin(entry["stroke_mm"], 1.0))
     cut_js, cut_bin = glb_legends.read(cut)
     kept = [entry["name"] for entry in glb_legends.legends(cut_js)]
-    assert kept == ["plate_legends_bcbfc5", "frame_legends_767b7f"], \
+    assert kept == ["plate_legends_bcbfc5", "frame_legends_767b7f"], (
         "only the chevrons and the back's large T-DECK are over a pixel thick"
+    )
     whole, left = node_bytes(js, bin_), node_bytes(cut_js, cut_bin)
     for name, drawn in left.items():
         assert drawn == whole[name], name
-    assert [m["name"] for m in cut_js["materials"]
-            if m["name"].startswith(glb_legends.INK_PREFIX)] == ["ink_bcbfc5", "ink_767b7f"]
+    assert [
+        m["name"] for m in cut_js["materials"] if m["name"].startswith(glb_legends.INK_PREFIX)
+    ] == ["ink_bcbfc5", "ink_767b7f"]
     # the board 183 px wide, multisampled: the hairlines go, and with them the
     # rings of the two round marks, but not the marks' 2 mm discs, which are
     # meshes of their own that say how thin they are, not how thin the traces are;
@@ -786,15 +1101,21 @@ def test_a_reader_leaves_out_only_the_legends_too_thin_to_draw() -> None:
     cut = glb_legends.strip(data, lambda entry: glb_legends.too_thin(entry["stroke_mm"], 2.5))
     cut_js, cut_bin = glb_legends.read(cut)
     assert [entry["name"] for entry in glb_legends.legends(cut_js)] == [
-        "plate_legends_bcbfc5", "plate_mark_legends_dcdde2", "frame_legends_767b7f",
-        "badge_legends_767b7f", "base_legends_767b7f"]
+        "plate_legends_bcbfc5",
+        "plate_mark_legends_dcdde2",
+        "frame_legends_767b7f",
+        "badge_legends_767b7f",
+        "base_legends_767b7f",
+    ]
     left = node_bytes(cut_js, cut_bin)
     assert left["plate_mark_legends_dcdde2"] == whole["plate_mark_legends_dcdde2"]
     strokes = {entry["name"]: entry["stroke_mm"] for entry in glb_legends.legends(js)}
     assert strokes["plate_mark_legends_dcdde2"] > 1.5 * strokes["plate_legends_dcdde2"]
     # drawn large, nothing goes and the file is the model itself
-    assert glb_legends.strip(data, lambda entry: glb_legends.too_thin(
-        entry["stroke_mm"], 20.0)) == data
+    assert (
+        glb_legends.strip(data, lambda entry: glb_legends.too_thin(entry["stroke_mm"], 20.0))
+        == data
+    )
 
 
 # --- Two levels of detail: the master and the web's ------------------------------
@@ -809,9 +1130,13 @@ def builder_float(name: str) -> float:
     """A number ``build_board_glb.py`` names at its top level, read from its source."""
     tree = ast.parse((SHARED / "build_board_glb.py").read_text(encoding="utf-8"))
     for node in tree.body:
-        if (isinstance(node, ast.Assign) and len(node.targets) == 1
-                and isinstance(node.targets[0], ast.Name) and node.targets[0].id == name
-                and isinstance(node.value, ast.Constant)):
+        if (
+            isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and node.targets[0].id == name
+            and isinstance(node.value, ast.Constant)
+        ):
             return float(node.value.value)
     raise AssertionError(f"build_board_glb.py names no number {name}")
 
@@ -840,9 +1165,10 @@ def test_a_board_has_two_levels_of_detail_the_master_and_the_webs(board: str) ->
     """
     web, master_record = web_record(board), record(board)
     assert web["level"] == "web" and web["board"] == board
-    assert web["master"] == {"model": master_record["model"],
-                             "model_sha256": master_record["model_sha256"]}, \
-        "the web level was built beside another master: build it again"
+    assert web["master"] == {
+        "model": master_record["model"],
+        "model_sha256": master_record["model_sha256"],
+    }, "the web level was built beside another master: build it again"
     assert web["model"] == f"{board}/model/{board}-web.glb"
     lighter = (ROOT / web["model"]).read_bytes()
     assert hashlib.sha256(lighter).hexdigest() == web["model_sha256"]
@@ -851,15 +1177,17 @@ def test_a_board_has_two_levels_of_detail_the_master_and_the_webs(board: str) ->
     assert web["flatness_px"] == builder_float("WEB_FLATNESS_PX") == 0.25
     assert web["px_per_mm"] > 0
     master = model_bytes(board)
-    assert content(glb_legends.strip(lighter)) == content(glb_legends.strip(master)), \
+    assert content(glb_legends.strip(lighter)) == content(glb_legends.strip(master)), (
         "the web level differs from its master in more than its prints"
+    )
     js, _ = glb_legends.read(master)
     web_js, _ = glb_legends.read(lighter)
     kept, whole = glb_legends.legends(web_js), glb_legends.legends(js)
     assert {e["name"] for e in kept} <= {e["name"] for e in whole}
     inks = {m["name"] for m in js["materials"] if m["name"].startswith(glb_legends.INK_PREFIX)}
-    assert {m["name"] for m in web_js["materials"]
-            if m["name"].startswith(glb_legends.INK_PREFIX)} <= inks
+    assert {
+        m["name"] for m in web_js["materials"] if m["name"].startswith(glb_legends.INK_PREFIX)
+    } <= inks
     assert sum(e["triangles"] for e in kept) <= sum(e["triangles"] for e in whole)
     assert web["triangles"] <= master_record["triangles"]
 
@@ -887,8 +1215,10 @@ def test_the_web_level_drops_the_prints_its_rule_says_and_keeps_the_rest() -> No
     assert legend_mesh.width_mm(ring) == pytest.approx(0.2, rel=0.05)
     two = shapely.geometry.MultiPolygon([box(0, 0, 0.1, 5), box(1, 0, 1.4, 0.4)])
     assert 0.1 < legend_mesh.width_mm(two) < 0.4
-    dropped = {entry["mesh"]: entry.get("dropped", {}).get("shapes", 0)
-               for entry in web_record("cardputer")["legends"]}
+    dropped = {
+        entry["mesh"]: entry.get("dropped", {}).get("shapes", 0)
+        for entry in web_record("cardputer")["legends"]
+    }
     assert dropped["stamp_legends"] > 100, "the StampS3A's micro-print is the web level's to leave"
     assert all(not entry.get("dropped") for entry in web_record("tdeck-plus")["legends"])
 
@@ -932,18 +1262,25 @@ def test_the_legends_lie_three_steps_over_the_mesh_they_are_printed_on(board: st
         assert gap["under_mm"] == pytest.approx(steps * step, abs=1e-6), (board, entry["mesh"])
         assert entry["clearance"]["under_mm"] == pytest.approx(gap["under_mm"], abs=1e-6)
 
-        def moved(across: float = 0.0, down: float = 0.0, prefix: str = prefix,
-                  face: str = face) -> list:
+        def moved(
+            across: float = 0.0, down: float = 0.0, prefix: str = prefix, face: str = face
+        ) -> list:
             # along the face's u and in along its normal, in the build frame
             shift = across * board_faces.basis(face)[0] - down * board_faces.basis(face)[2]
-            return [dataclasses.replace(m, positions=m.positions + shift)
-                    if m.name.startswith(prefix) else m for m in meshes]
+            return [
+                dataclasses.replace(m, positions=m.positions + shift)
+                if m.name.startswith(prefix)
+                else m
+                for m in meshes
+            ]
 
-        low = model_raster.legend_clearance(moved(down=(steps - 1) * step), prefix, step,
-                                            on=entry["on"], face=face)
+        low = model_raster.legend_clearance(
+            moved(down=(steps - 1) * step), prefix, step, on=entry["on"], face=face
+        )
         assert not low["ok"] and low["under_mm"] == pytest.approx(step, abs=1e-6)
-        off = model_raster.legend_clearance(moved(across=200.0), prefix, step, on=entry["on"],
-                                            face=face)
+        off = model_raster.legend_clearance(
+            moved(across=200.0), prefix, step, on=entry["on"], face=face
+        )
         assert not off["ok"] and off["off"] == off["triangles"]
 
 
@@ -966,8 +1303,11 @@ def test_the_model_reader_places_a_mesh_where_its_nodes_place_it(tmp_path: Path)
 
     def read(change) -> dict:
         js, bin_ = glb_legends.read(data)
-        change(js, next(node for node in js["nodes"] if node.get("name") == legend),
-               js["nodes"][js["scenes"][0]["nodes"][0]])
+        change(
+            js,
+            next(node for node in js["nodes"] if node.get("name") == legend),
+            js["nodes"][js["scenes"][0]["nodes"][0]],
+        )
         path = tmp_path / "planted.glb"
         path.write_bytes(glb_legends.write(js, bin_))
         return {mesh.name: mesh for mesh in model_raster.read_glb(path)}
@@ -978,14 +1318,17 @@ def test_the_model_reader_places_a_mesh_where_its_nodes_place_it(tmp_path: Path)
     # the legend's own node, 0.06 mm across: that mesh moves and no other
     got = read(lambda js, node, root: node.update(translation=[0.06e-3, 0.0, 0.0]))
     assert np.allclose(moved(got, legend), [0.06, 0.0, 0.0], atol=1e-9)
-    assert all(np.array_equal(mesh.positions, plain[name].positions)
-               for name, mesh in got.items() if name != legend)
+    assert all(
+        np.array_equal(mesh.positions, plain[name].positions)
+        for name, mesh in got.items()
+        if name != legend
+    )
     # the root, up and out: every mesh moves, its normals as they were
     got = read(lambda js, node, root: root.update(translation=[0.0, 1e-3, 2e-3]))
     assert all(np.allclose(moved(got, name), [0.0, 1.0, 2.0], atol=1e-9) for name in plain)
     assert np.allclose(got[legend].normals, plain[legend].normals, atol=1e-12)
     # the root turned a quarter about +Z: x goes to y, y to -x, and the normals turn with it
-    half = 0.5 ** 0.5
+    half = 0.5**0.5
     got = read(lambda js, node, root: root.update(rotation=[0.0, 0.0, half, half]))
     was = plain["screen"]
     assert np.allclose(got["screen"].positions[:, 0], -was.positions[:, 1], atol=1e-9)
@@ -994,13 +1337,36 @@ def test_the_model_reader_places_a_mesh_where_its_nodes_place_it(tmp_path: Path)
     side = next(mesh for mesh in plain.values() if abs(mesh.normals[:, 0]).max() > 0.9)
     assert np.allclose(got[side.name].normals[:, 1], side.normals[:, 0], atol=1e-6)
     # the same turn and a shift written as a matrix (stored by columns) read the same
-    turned = read(lambda js, node, root: root.update(rotation=[0.0, 0.0, half, half],
-                                                     translation=[1e-3, 0.0, 0.0]))
-    as_matrix = read(lambda js, node, root: root.update(
-        matrix=[0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
-                1e-3, 0.0, 0.0, 1.0]))
-    assert all(np.allclose(as_matrix[name].positions, turned[name].positions, atol=1e-9)
-               for name in plain)
+    turned = read(
+        lambda js, node, root: root.update(
+            rotation=[0.0, 0.0, half, half], translation=[1e-3, 0.0, 0.0]
+        )
+    )
+    as_matrix = read(
+        lambda js, node, root: root.update(
+            matrix=[
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                -1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                1e-3,
+                0.0,
+                0.0,
+                1.0,
+            ]
+        )
+    )
+    assert all(
+        np.allclose(as_matrix[name].positions, turned[name].positions, atol=1e-9) for name in plain
+    )
     # a node's own scale twice over: its mesh twice as large, about the origin
     got = read(lambda js, node, root: node.update(scale=[v * 2 for v in node["scale"]]))
     assert np.allclose(got[legend].positions, plain[legend].positions * 2, atol=1e-9)
@@ -1025,10 +1391,10 @@ def test_no_two_materials_cover_one_place_at_one_depth(board: str) -> None:
     import model_raster
 
     rec = record(board)
-    got = model_raster.coplanar_overlaps(model_raster.read_glb(ROOT / rec["model"]),
-                                         rec["parameters"]["quant_mm"])
-    assert got["ok"], [(pair["meshes"], pair["facing"], pair["area_mm2"])
-                       for pair in got["pairs"]]
+    got = model_raster.coplanar_overlaps(
+        model_raster.read_glb(ROOT / rec["model"]), rec["parameters"]["quant_mm"]
+    )
+    assert got["ok"], [(pair["meshes"], pair["facing"], pair["area_mm2"]) for pair in got["pairs"]]
 
 
 @pytest.mark.selftest
@@ -1051,8 +1417,13 @@ def test_the_depth_check_catches_what_is_planted() -> None:
     for what, caught, how in results:
         assert caught, f"{what}: {how}"
     planted = " | ".join(what for what, _caught, _how in results)
-    for words in ("an earlier model lay", "off the grid", "its sides on the strip's", "in the file",
-                  "double-sided"):
+    for words in (
+        "an earlier model lay",
+        "off the grid",
+        "its sides on the strip's",
+        "in the file",
+        "double-sided",
+    ):
         assert words in planted, f"the selftest no longer plants: {words}"
     assert controls
     for what, passed, how in controls:
@@ -1075,10 +1446,15 @@ def test_the_cardputers_slanted_grounds_are_the_drawings() -> None:
     for points, fill in re.findall(r'<polygon points="([^"]+)" fill="(#[0-9a-f]{6})"/>', front):
         corners = [tuple(float(v) for v in pair.split(",")) for pair in points.split()]
         drawn.setdefault(fill, []).append(corners)
-    grounds = {entry["name"]: [shape["prism"]["profile"]["polygon"] for shape in entry["shapes"]
-                               if "polygon" in shape["prism"]["profile"]]
-               for entry in spec("cardputer")["meshes"]
-               if entry["name"] in ("legend_orange", "legend_black")}
+    grounds = {
+        entry["name"]: [
+            shape["prism"]["profile"]["polygon"]
+            for shape in entry["shapes"]
+            if "polygon" in shape["prism"]["profile"]
+        ]
+        for entry in spec("cardputer")["meshes"]
+        if entry["name"] in ("legend_orange", "legend_black")
+    }
     flag, upper = ([tuple(corner) for corner in poly] for poly in grounds["legend_orange"])
     (lower,) = ([tuple(corner) for corner in poly] for poly in grounds["legend_black"])
     assert flag in drawn["#ff6633"], "the esc flag is not the drawing's polygon"
@@ -1119,23 +1495,28 @@ def test_the_check_stack_installs_the_pinned_libraries() -> None:
         assert distribution in required, f"requirements.txt does not pin {distribution}"
     install = (ROOT / ".github" / "workflows" / "check.yml").read_text(encoding="utf-8")
     assert f"run: {QA_INSTALL}" in install, (
-        "the check job no longer installs the stack from requirements.txt")
+        "the check job no longer installs the stack from requirements.txt"
+    )
 
 
 @pytest.mark.parametrize("board", PRINTING)
 def test_requirements_pin_the_libraries_the_models_were_built_with(board: str) -> None:
     """A builder moved to another version moves these pins with the rebuilt models."""
     required = pins(QA_REQUIREMENTS)
-    built_with = {re.sub(r"[-.]", "_", name.lower()): version
-                  for name, version in record(board)["builder"]["packages"].items()}
+    built_with = {
+        re.sub(r"[-.]", "_", name.lower()): version
+        for name, version in record(board)["builder"]["packages"].items()
+    }
     for distribution in CAD_LIBRARIES.values():
         assert required.get(distribution) == built_with[distribution], (
             f"requirements.txt pins {distribution} at {required.get(distribution)}; "
-            f"the {board} model was built with {built_with[distribution]}")
+            f"the {board} model was built with {built_with[distribution]}"
+        )
 
 
 def test_a_missing_cad_library_fails_in_ci_and_skips_anywhere_else(
-        monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """A skip is for a developer's machine; CI installed the pins, so there it is a failure."""
     monkeypatch.setitem(CAD_LIBRARIES, "no_such_cad_library", "numpy")
     monkeypatch.delenv("CI", raising=False)
@@ -1147,7 +1528,9 @@ def test_a_missing_cad_library_fails_in_ci_and_skips_anywhere_else(
     # installed, but not at the pin: the same two answers
     monkeypatch.setitem(CAD_LIBRARIES, "json", "numpy")
     monkeypatch.setattr(importlib.metadata, "version", lambda distribution: "0.0.1")
-    with pytest.raises(pytest.fail.Exception, match="numpy 0.0.1 is installed, requirements.txt pins"):
+    with pytest.raises(
+        pytest.fail.Exception, match="numpy 0.0.1 is installed, requirements.txt pins"
+    ):
         cad_library("json")
     monkeypatch.delenv("CI")
     with pytest.raises(pytest.skip.Exception, match="numpy 0.0.1 is installed"):
@@ -1178,8 +1561,12 @@ def test_the_placement_check_catches_what_is_planted() -> None:
         assert caught, f"{what}: {how}"
     # the two a review found the check blind to, written into the file itself, are among them
     planted = " | ".join(what for what, _caught, _how in results)
-    for words in ("by its node's translation", "by its root node's translation",
-                  "material turned red", "in the drawing after the build"):
+    for words in (
+        "by its node's translation",
+        "by its root node's translation",
+        "material turned red",
+        "in the drawing after the build",
+    ):
         assert words in planted, f"the selftest no longer plants: {words}"
     # and what is no defect passes: a drawing changed only where no model reads
     assert controls
@@ -1213,7 +1600,9 @@ def test_every_face_lays_its_drawing_as_its_viewer_reads_it() -> None:
         basis = board_faces.basis(face)
         assert np.allclose(np.cross(basis[0], basis[1]), basis[2]), face
         assert len(keys) == 2 and board_faces.height_key(face) not in (
-            board_faces.AXES[u_axis], board_faces.AXES[up_axis]), face
+            board_faces.AXES[u_axis],
+            board_faces.AXES[up_axis],
+        ), face
         frame = board_faces.FaceFrame(face, 3.0, 40.0)
         center = np.array([10.0, 20.0, -5.0])
         du, dv = frame.offsets(center)
@@ -1248,8 +1637,10 @@ def test_the_face_fixture_model_is_built_from_both_files_and_both_drawings() -> 
     rec = fixture_record()
     data = (ROOT / rec["model"]).read_bytes()
     assert hashlib.sha256(data).hexdigest() == rec["model_sha256"], "rebuild the fixture"
-    assert hashlib.sha256((ROOT / rec["builder"]["spec"]).read_bytes()).hexdigest() == (
-        rec["builder"]["spec_sha256"]), "the fixture's spec changed since its model was built"
+    assert (
+        hashlib.sha256((ROOT / rec["builder"]["spec"]).read_bytes()).hexdigest()
+        == (rec["builder"]["spec_sha256"])
+    ), "the fixture's spec changed since its model was built"
     for unit in [rec["source"], *(m["source"] for m in rec["modules"])]:
         vendor = ROOT / unit["url"]
         assert hashlib.sha256(vendor.read_bytes()).hexdigest() == unit["sha256"], vendor.name
@@ -1261,8 +1652,10 @@ def test_the_face_fixture_model_is_built_from_both_files_and_both_drawings() -> 
     assert faces["back"]["drawing"].endswith("svg/back.svg") and "front" not in faces["back"]
     assert rec["parameters"]["face_frames"] == {"back": {"right_x": 20.0, "top_y": 30.0}}
     for entry in rec["legends"]:
-        assert legend_source.digest(ROOT / drawing_of(entry), entry["plane"]) == (
-            entry["legends_sha256"]), entry["mesh"]
+        assert (
+            legend_source.digest(ROOT / drawing_of(entry), entry["plane"])
+            == (entry["legends_sha256"])
+        ), entry["mesh"]
 
 
 def test_a_back_print_faces_out_of_the_back_three_steps_out_of_its_mesh() -> None:
@@ -1282,8 +1675,9 @@ def test_a_back_print_faces_out_of_the_back_three_steps_out_of_its_mesh() -> Non
         turn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])[:, 2]
         assert (turn < 0).all(), f"{sheet.name}: a triangle wound towards the front"
         assert np.allclose(sheet.positions[:, 2], back["z_mm"] - rec["parameters"]["center_mm"][2])
-    gap = model_raster.legend_clearance(meshes, back["mesh"] + "_", step, on=back["on"],
-                                        face="back")
+    gap = model_raster.legend_clearance(
+        meshes, back["mesh"] + "_", step, on=back["on"], face="back"
+    )
     assert gap["ok"] and gap["under_mm"] == pytest.approx(3 * step, abs=1e-6)
     assert gap["under_mesh"] == "base"
     assert model_raster.coplanar_overlaps(meshes, step)["ok"]
@@ -1303,9 +1697,14 @@ def test_the_placement_check_catches_what_is_planted_on_a_back() -> None:
     clean, results, controls = placement_module().faces_selftest()
     assert clean["ok"], clean["problems"]
     planted = " | ".join(what for what, _caught, _how in results)
-    for words in ("mirrored across the case", "wound to face into the case",
-                  "normals turned to the front", "laid on the face it is printed on",
-                  "looked for from the front", "back drawing moved"):
+    for words in (
+        "mirrored across the case",
+        "wound to face into the case",
+        "normals turned to the front",
+        "laid on the face it is printed on",
+        "looked for from the front",
+        "back drawing moved",
+    ):
         assert words in planted, f"the selftest no longer plants: {words}"
     for what, caught, how in results:
         assert caught, f"{what}: {how}"
@@ -1331,8 +1730,12 @@ def test_the_face_fixture_rebuilds_byte_for_byte(tmp_path: Path) -> None:
     spec_ = builder.load_spec(FIXTURE / "model" / "spec.json")
     vendor = FIXTURE / "vendor"
     out = tmp_path / "faces.glb"
-    builder.build(spec_, vendor / "body.stl", out, modules=builder.module_paths(
-        spec_, given={"base": vendor / "base.stl"}))
+    builder.build(
+        spec_,
+        vendor / "body.stl",
+        out,
+        modules=builder.module_paths(spec_, given={"base": vendor / "base.stl"}),
+    )
     assert out.read_bytes() == (ROOT / fixture_record()["model"]).read_bytes()
     # a module's file is pinned like the spec's own
     with pytest.raises(builder.SpecError, match="not the pinned vendor file"):
@@ -1342,8 +1745,12 @@ def test_the_face_fixture_rebuilds_byte_for_byte(tmp_path: Path) -> None:
 
 
 def _back_read_as_the_front_too(s: dict) -> None:
-    s["meshes"].append({"name": "other_legends", "legends": {
-        "drawing": "../svg/back.svg", "plane": "other", "on": "case", "z": 0.03}})
+    s["meshes"].append(
+        {
+            "name": "other_legends",
+            "legends": {"drawing": "../svg/back.svg", "plane": "other", "on": "case", "z": 0.03},
+        }
+    )
 
 
 def _back_height_on_y(s: dict) -> None:
@@ -1379,17 +1786,21 @@ def _front_given_as_a_face_frame(s: dict) -> None:
     s["face_frames"] = {"front": {"left_x": 0, "top_y": 0}}
 
 
-@pytest.mark.parametrize(("change", "words"), [
-    (_back_read_as_the_front_too, "a drawing draws one face"),
-    (_back_height_on_y, "lie at a height along z"),
-    (_front_named_on_the_back, "given as drawing"),
-    (_no_such_face, "is not one of"),
-    (_drawing_named_twice, "names its drawing once"),
-    (_part_named_twice, "part names repeat"),
-    (_module_named_twice, "module names repeat"),
-    (_top_frame_short_of_a_key, "the top frame takes"),
-    (_front_given_as_a_face_frame, "front_frame"),
-], ids=lambda value: value.__name__.strip("_") if callable(value) else None)
+@pytest.mark.parametrize(
+    ("change", "words"),
+    [
+        (_back_read_as_the_front_too, "a drawing draws one face"),
+        (_back_height_on_y, "lie at a height along z"),
+        (_front_named_on_the_back, "given as drawing"),
+        (_no_such_face, "is not one of"),
+        (_drawing_named_twice, "names its drawing once"),
+        (_part_named_twice, "part names repeat"),
+        (_module_named_twice, "module names repeat"),
+        (_top_frame_short_of_a_key, "the top frame takes"),
+        (_front_given_as_a_face_frame, "front_frame"),
+    ],
+    ids=lambda value: value.__name__.strip("_") if callable(value) else None,
+)
 def test_the_builder_refuses_a_face_or_a_module_it_cannot_place(change, words) -> None:
     """A print on an unnamed face, at a height on the wrong axis, or a part named twice."""
     builder = builder_module()

@@ -64,22 +64,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import emit_front_svg as fronts  # noqa: E402
 from paths import ROOT  # noqa: E402
 
-SPEC = ROOT / 'tdeck-plus' / 'model' / 'spec.json'
-MEAS = json.loads((ROOT / 'tdeck-plus' / 'measurements.json').read_text())
-W = float(MEAS['case']['width'])      # 73.14
-H = float(MEAS['case']['height'])     # 114.98
-DEPTH = float(MEAS['case']['depth'])  # 20.4
+SPEC = ROOT / "tdeck-plus" / "model" / "spec.json"
+MEAS = json.loads((ROOT / "tdeck-plus" / "measurements.json").read_text())
+W = float(MEAS["case"]["width"])  # 73.14
+H = float(MEAS["case"]["height"])  # 114.98
+DEPTH = float(MEAS["case"]["depth"])  # 20.4
 
 #: One position step (the spec's quant_mm): a dark mark lies one step proud
 #: of the face it marks, so no two materials share a depth.
 STEP = 0.01
 #: Depths (z), from the frame's top at 0.
-Z_TOP_CHAMFER = -0.35   # the frame's top edge: a 0.35 mm chamfer
-Z_FRAME_BOTTOM = -2.2   # the frame's opening runs down to the body, under the plate (-2.0)
-Z_BACK_EDGE = -14.0     # where the sides end and the back's slope begins
-Z_BACK = -19.0          # the back's flat face, which the back drawing prints on
+Z_TOP_CHAMFER = -0.35  # the frame's top edge: a 0.35 mm chamfer
+Z_FRAME_BOTTOM = -2.2  # the frame's opening runs down to the body, under the plate (-2.0)
+Z_BACK_EDGE = -14.0  # where the sides end and the back's slope begins
+Z_BACK = -19.0  # the back's flat face, which the back drawing prints on
 Z_BOSS = -DEPTH + STEP  # the nut's boss: its dark marks one step out reach the 20.4 mm
-RAIL_Z = (-4.4, -0.6)   # the side rails of the front frame
+RAIL_Z = (-4.4, -0.6)  # the side rails of the front frame
 SEAM_Z = (-8.85, -8.55)  # the seam round the sides, 0.25 mm deep
 SEAM_DEPTH = 0.25
 #: The back's slope: how far in the flat face starts from the sides, the top
@@ -116,13 +116,13 @@ def holes(poly) -> list:
     return [[[r3(x), r3(y)] for x, y in list(h.coords)[:-1]] for h in poly.interiors]
 
 
-def prism(poly, z0, z1, faces=None, axis='z') -> dict:
-    p = {'axis': axis, 'range': [r3(z0), r3(z1)], 'profile': {'polygon': ring(poly)}}
+def prism(poly, z0, z1, faces=None, axis="z") -> dict:
+    p = {"axis": axis, "range": [r3(z0), r3(z1)], "profile": {"polygon": ring(poly)}}
     if poly.interiors:
-        p['profile']['holes'] = holes(poly)
+        p["profile"]["holes"] = holes(poly)
     if faces:
-        p['faces'] = faces
-    return {'prism': p}
+        p["faces"] = faces
+    return {"prism": p}
 
 
 def simple(points) -> sg.Polygon:
@@ -137,6 +137,7 @@ def front_poly(points) -> sg.Polygon:
 
 
 # ---------------------------------------------------------------- the plan
+
 
 def body_points() -> list:
     """The body's outline (the drawing's, without the rails), front drawing frame."""
@@ -159,8 +160,10 @@ def opening() -> sg.Polygon:
     # it meets the plate's narrower one lies on no face of the plate's edge
     glass = fronts.tdeck_plus_clip_y(inset(2.0 + 0.4, 2.15 + 0.4, 2.35), glass_y + 0.3, True)
     plate = fronts.tdeck_plus_clip_y(
-        fronts.tdeck_plus_shift_x(inset(2.33 + 0.4, 2.0, 1.7 + 0.4),
-                                  fronts.TDECK_PLUS_PLATE_DX), glass_y, False)
+        fronts.tdeck_plus_shift_x(inset(2.33 + 0.4, 2.0, 1.7 + 0.4), fronts.TDECK_PLUS_PLATE_DX),
+        glass_y,
+        False,
+    )
     return unary_union([front_poly(glass), front_poly(plate)]).buffer(0)
 
 
@@ -170,10 +173,14 @@ def rails() -> list:
     y0, y1, y2, y3 = fronts.TDECK_PLUS_RAIL_ENDS
     lx, rx = fronts.TDECK_PLUS_RAIL_X, W
     over = 0.1  # into the body, so no gap shows
-    return [front_poly([(left + over, y0), (left, y0), (lx, y1), (lx, y2), (left, y3),
-                        (left + over, y3)]),
-            front_poly([(right - over, y0), (right, y0), (rx, y1), (rx, y2), (right, y3),
-                        (right - over, y3)])]
+    return [
+        front_poly(
+            [(left + over, y0), (left, y0), (lx, y1), (lx, y2), (left, y3), (left + over, y3)]
+        ),
+        front_poly(
+            [(right - over, y0), (right, y0), (rx, y1), (rx, y2), (right, y3), (right - over, y3)]
+        ),
+    ]
 
 
 # ---------------------------------------------------------------- side and end openings
@@ -184,13 +191,13 @@ def rails() -> list:
 LEFT, RIGHT = fronts.TDECK_PLUS_BODY_SIDES
 NOTCHES = [
     # the left face's 12.3 x 5.3 mm opening (the GPS's Grove seat shows through it)
-    ('grove', LEFT - 1, LEFT + 1.6, 23.0, 35.3, -13.15, -7.85),
+    ("grove", LEFT - 1, LEFT + 1.6, 23.0, 35.3, -13.15, -7.85),
     # the right face's microSD slot (specification sheet's right side view)
-    ('microsd', RIGHT - 1.2, RIGHT + 1, 27.0, 40.2, -9.3, -7.9),
+    ("microsd", RIGHT - 1.2, RIGHT + 1, 27.0, 40.2, -9.3, -7.9),
     # the power slide's slot
-    ('power', RIGHT - 1.0, RIGHT + 1, 61.5, 67.0, -12.0, -6.0),
+    ("power", RIGHT - 1.0, RIGHT + 1, 61.5, 67.0, -12.0, -6.0),
     # the USB-C opening in the bottom end
-    ('usb', 32.49, 41.73, 107.3, H + 1, -10.7, -6.7),
+    ("usb", 32.49, 41.73, 107.3, H + 1, -10.7, -6.7),
 ]
 #: The six holes of the bottom end (2 mm, as recorded; their places read on
 #: the specification sheet's bottom view), each three bands deep so it reads
@@ -205,7 +212,7 @@ def bottom_y_at(x: float) -> float:
     """The body's bottom edge at x (front drawing frame, y down)."""
     line = sg.LineString([front_pt(x, -1), front_pt(x, H + 1)])
     hit = body().exterior.intersection(line)
-    ys = [p.y for p in getattr(hit, 'geoms', [hit])]
+    ys = [p.y for p in getattr(hit, "geoms", [hit])]
     return H - min(ys)
 
 
@@ -217,8 +224,17 @@ def hole_notches() -> list:
     for i, x in enumerate(BOTTOM_HOLES_X):
         floor = bottom_y_at(x) - BOTTOM_HOLE_DEPTH
         for j, (dz0, dz1, half) in enumerate(bands):
-            out.append((f'hole{i}{j}', x - half, x + half, floor, H + 1,
-                        BOTTOM_HOLE_Z + dz0, BOTTOM_HOLE_Z + dz1))
+            out.append(
+                (
+                    f"hole{i}{j}",
+                    x - half,
+                    x + half,
+                    floor,
+                    H + 1,
+                    BOTTOM_HOLE_Z + dz0,
+                    BOTTOM_HOLE_Z + dz1,
+                )
+            )
     return out
 
 
@@ -236,7 +252,7 @@ def bands() -> list:
     cuts = sorted(round(c, 4) for c in cuts if Z_BACK_EDGE <= c <= Z_FRAME_BOTTOM)
     out = []
     base = body()
-    seam = base.buffer(-SEAM_DEPTH, join_style='mitre')
+    seam = base.buffer(-SEAM_DEPTH, join_style="mitre")
     for z0, z1 in zip(cuts, cuts[1:]):
         mid = (z0 + z1) / 2
         poly = seam if SEAM_Z[0] <= mid <= SEAM_Z[1] else base
@@ -253,32 +269,33 @@ def floors() -> list:
     out = []
     for n in NOTCHES + hole_notches():
         name, x0, x1, y0, y1, z0, z1 = n
-        if name == 'usb':
+        if name == "usb":
             continue  # the receptacle fills it
-        if name in ('grove', 'microsd', 'power'):
-            left = name == 'grove'
+        if name in ("grove", "microsd", "power"):
+            left = name == "grove"
             fx = x1 if left else x0  # the floor's x (front drawing frame)
             a, b = (fx - STEP, fx) if left else (fx, fx + STEP)
             # a slab whose outer face is one step out of the floor
-            out.append({'box': [r3(a), r3(b), r3(H - y1), r3(H - y0), r3(z0), r3(z1)]})
+            out.append({"box": [r3(a), r3(b), r3(H - y1), r3(H - y0), r3(z0), r3(z1)]})
         else:  # a bottom hole: its floor faces the bottom end
-            out.append({'box': [r3(x0), r3(x1), r3(H - y0 - STEP), r3(H - y0), r3(z0),
-                                r3(z1)]})
+            out.append({"box": [r3(x0), r3(x1), r3(H - y0 - STEP), r3(H - y0), r3(z0), r3(z1)]})
     return out
 
 
 # ---------------------------------------------------------------- the back
 
+
 def back_line(points, width=RIDGE_W) -> sg.Polygon:
     """A relief line through *points* of the back drawing, *width* wide."""
     return sg.LineString([back_pt(x, y) for x, y in points]).buffer(
-        width / 2, cap_style='flat', join_style='mitre')
+        width / 2, cap_style="flat", join_style="mitre"
+    )
 
 
 def back_closed(points, width=RIDGE_W) -> sg.Polygon:
     pts = [back_pt(x, y) for x, y in points]
-    outer = sg.Polygon(pts).buffer(width / 2, join_style='mitre')
-    inner = sg.Polygon(pts).buffer(-width / 2, join_style='mitre')
+    outer = sg.Polygon(pts).buffer(width / 2, join_style="mitre")
+    inner = sg.Polygon(pts).buffer(-width / 2, join_style="mitre")
     return outer.difference(inner)
 
 
@@ -292,8 +309,7 @@ BADGE_OUTER = ((27.3, 63.4), (45.6, 63.4), (52.6, 91.4), (20.9, 91.4))
 BADGE_INNER = ((31.7, 68.3), (40.8, 68.3), (46.4, 87.6), (27.4, 87.6))
 BADGE_RINGS = 5
 #: The pocket the rings sit in.
-BADGE_POCKET = ((24.6, 60.9), (47.0, 60.9), (56.3, 92.0), (54.5, 96.3), (19.5, 96.3),
-                (17.2, 92.0))
+BADGE_POCKET = ((24.6, 60.9), (47.0, 60.9), (56.3, 92.0), (54.5, 96.3), (19.5, 96.3), (17.2, 92.0))
 #: The top frame's lower edge, and the two lines from the badge's foot to the sides.
 FRAME_EDGE = ((5.8, 16.2), (16.2, 26.4), (55.3, 26.4), (65.7, 16.2))
 FOOT_LINES = (((5.6, 95.3), (17.6, 89.6)), ((55.6, 89.6), (67.5, 95.3)))
@@ -334,29 +350,34 @@ KNOCKOUT_SLOTS = (2.0, 2.8)
 def knockout_marks(cx: float) -> list:
     """The knock-out's dark ring and slots, in the top face's (x, z) plane."""
     cz = KNOCKOUT_Z
-    out = [sg.Point(cx, cz).buffer(KNOCKOUT_RING[1], quad_segs=16).difference(
-        sg.Point(cx, cz).buffer(KNOCKOUT_RING[0], quad_segs=16))]
+    out = [
+        sg.Point(cx, cz)
+        .buffer(KNOCKOUT_RING[1], quad_segs=16)
+        .difference(sg.Point(cx, cz).buffer(KNOCKOUT_RING[0], quad_segs=16))
+    ]
     r0, r1 = KNOCKOUT_SLOTS
     for k in range(4):
         a0 = math.radians(45 + 90 * k - 30)
         a1 = math.radians(45 + 90 * k + 30)
         arc = [a0 + (a1 - a0) * i / 8 for i in range(9)]
-        pts = ([(cx + r1 * math.cos(a), cz + r1 * math.sin(a)) for a in arc]
-               + [(cx + r0 * math.cos(a), cz + r0 * math.sin(a)) for a in reversed(arc)])
+        pts = [(cx + r1 * math.cos(a), cz + r1 * math.sin(a)) for a in arc] + [
+            (cx + r0 * math.cos(a), cz + r0 * math.sin(a)) for a in reversed(arc)
+        ]
         out.append(sg.Polygon(pts))
     return out
 
 
 def xz_prism(poly, y0, y1, faces) -> dict:
     """A prism along y from a polygon in (x, z)."""
-    p = {'axis': 'y', 'range': [r3(y0), r3(y1)], 'profile': {'polygon': ring(poly)}}
+    p = {"axis": "y", "range": [r3(y0), r3(y1)], "profile": {"polygon": ring(poly)}}
     if poly.interiors:
-        p['profile']['holes'] = holes(poly)
-    p['faces'] = faces
-    return {'prism': p}
+        p["profile"]["holes"] = holes(poly)
+    p["faces"] = faces
+    return {"prism": p}
 
 
 # ---------------------------------------------------------------- the meshes
+
 
 def loft_ring(points) -> list:
     return [[r3(x), r3(H - y)] for x, y in points]
@@ -369,26 +390,52 @@ def case_meshes() -> list:
     hole = opening()
     frame_top = front_poly(top_pts).difference(hole)
     frame_wall = body().difference(hole)
-    shell = [prism(poly, z0, z1, ['outer', 'top', 'bottom']) for z0, z1, poly in bands()]
-    shell.append({'loft': {'axis': 'z', 'caps': ['last'], 'sections': [
-        {'at': Z_BACK_EDGE, 'polygon': loft_ring(base_pts)},
-        {'at': Z_BACK, 'polygon': loft_ring(back_pts)}]}})
-    boss = unary_union([disc(*BOSS), disc(*LOBE),
-                        sg.LineString([back_pt(*BOSS[0]), back_pt(*LOBE[0])]).buffer(1.6)])
-    shell.append(prism(boss, Z_BOSS, Z_BACK, ['bottom', 'outer']))
-    relief = unary_union(badge_rings() + [back_closed(BADGE_POCKET), back_line(FRAME_EDGE)]
-                         + [back_line(line) for line in FOOT_LINES])
-    lines = [prism(poly, Z_BACK - RIDGE_H, Z_BACK, ['bottom', 'outer'])
-             for poly in getattr(relief, 'geoms', [relief])]
+    shell = [prism(poly, z0, z1, ["outer", "top", "bottom"]) for z0, z1, poly in bands()]
+    shell.append(
+        {
+            "loft": {
+                "axis": "z",
+                "caps": ["last"],
+                "sections": [
+                    {"at": Z_BACK_EDGE, "polygon": loft_ring(base_pts)},
+                    {"at": Z_BACK, "polygon": loft_ring(back_pts)},
+                ],
+            }
+        }
+    )
+    boss = unary_union(
+        [
+            disc(*BOSS),
+            disc(*LOBE),
+            sg.LineString([back_pt(*BOSS[0]), back_pt(*LOBE[0])]).buffer(1.6),
+        ]
+    )
+    shell.append(prism(boss, Z_BOSS, Z_BACK, ["bottom", "outer"]))
+    relief = unary_union(
+        badge_rings()
+        + [back_closed(BADGE_POCKET), back_line(FRAME_EDGE)]
+        + [back_line(line) for line in FOOT_LINES]
+    )
+    lines = [
+        prism(poly, Z_BACK - RIDGE_H, Z_BACK, ["bottom", "outer"])
+        for poly in getattr(relief, "geoms", [relief])
+    ]
     # the groove the picture shows round the boss's foot
-    lines.append(prism(boss.buffer(0.3, quad_segs=12).difference(boss), Z_BACK - STEP, Z_BACK,
-                       ['bottom']))
+    lines.append(
+        prism(boss.buffer(0.3, quad_segs=12).difference(boss), Z_BACK - STEP, Z_BACK, ["bottom"])
+    )
     frame = [
-        {'loft': {'axis': 'z', 'sections': [
-            {'at': Z_TOP_CHAMFER, 'polygon': loft_ring(base_pts)},
-            {'at': 0.0, 'polygon': loft_ring(top_pts)}]}},
-        prism(frame_top, Z_TOP_CHAMFER, 0.0, ['top', 'inner']),
-        prism(frame_wall, Z_FRAME_BOTTOM, Z_TOP_CHAMFER, ['outer', 'inner']),
+        {
+            "loft": {
+                "axis": "z",
+                "sections": [
+                    {"at": Z_TOP_CHAMFER, "polygon": loft_ring(base_pts)},
+                    {"at": 0.0, "polygon": loft_ring(top_pts)},
+                ],
+            }
+        },
+        prism(frame_top, Z_TOP_CHAMFER, 0.0, ["top", "inner"]),
+        prism(frame_wall, Z_FRAME_BOTTOM, Z_TOP_CHAMFER, ["outer", "inner"]),
     ] + [prism(r, RAIL_Z[0], RAIL_Z[1]) for r in rails()]
     # the dark marks: the openings' floors, the screw holes, the nut's ring and
     # the lobe's hole, each one step out of the face under it; the knock-outs'
@@ -396,85 +443,160 @@ def case_meshes() -> list:
     marks = floors()
     insert = disc(BOSS[0], INSERT_RING_R).difference(disc(BOSS[0], INSERT_R))
     for poly in [disc(c, r) for c, r in SCREWS]:
-        marks.append(prism(poly, Z_BACK - STEP, Z_BACK, ['bottom']))
+        marks.append(prism(poly, Z_BACK - STEP, Z_BACK, ["bottom"]))
     for poly in (insert, disc(LOBE[0], LOBE_HOLE_R)):
-        marks.append(prism(poly, Z_BOSS - STEP, Z_BOSS, ['bottom']))
+        marks.append(prism(poly, Z_BOSS - STEP, Z_BOSS, ["bottom"]))
     for cx in KNOCKOUTS_X:
         for poly in knockout_marks(cx):
-            marks.append(xz_prism(poly, H, H + STEP, ['top']))
+            marks.append(xz_prism(poly, H, H + STEP, ["top"]))
     left, right = fronts.TDECK_PLUS_BODY_SIDES
     return [
-        {'name': 'case_shell', 'note': 'Written by _shared/tdeck_plus_case.py: the walls from '
-         'the back\'s edge to the front frame, cut where the openings are, the back\'s slope '
-         'and its flat face (z -19.0, which the back prints on), the nut\'s boss and the '
-         'back\'s relief lines.', 'material': 'case', 'smooth_deg': 40, 'shapes': shell},
-        {'name': 'case_relief', 'note': 'Written by _shared/tdeck_plus_case.py: the back\'s '
-         'relief lines, which the picture shows dark, 0.2 mm proud of the flat face: the top '
-         'frame\'s lower edge, the badge\'s pocket and five rings, the two lines from its foot '
-         'to the sides, and the groove round the nut\'s boss, one step out.',
-         'material': 'relief', 'shapes': lines},
-        {'name': 'case_frame', 'note': 'Written by _shared/tdeck_plus_case.py: the front '
-         'frame round the face, its top chamfered, its opening the glass\'s and the plate\'s '
-         'outlines 0.4 mm in, and its two side rails.', 'material': 'case', 'smooth_deg': 40,
-         'shapes': frame},
-        {'name': 'key_left', 'note': 'The left face\'s key, 6.4 x 3.8 mm, as proud as the '
-         'rails.', 'material': 'black_plastic', 'smooth_deg': 40, 'shapes': [
-             {'prism': {'axis': 'x', 'range': [0.0, r3(left + 0.1)], 'profile': {
-                 'rounded_rect': [r3(H - 48.2), r3(H - 41.8), -10.2, -6.4], 'r': 0.9,
-                 'res': 4}}}]},
-        {'name': 'key_right', 'note': 'The power slide\'s knob in its slot, 0.45 mm proud.',
-         'material': 'black_plastic', 'smooth_deg': 40, 'shapes': [
-             {'prism': {'axis': 'x', 'range': [r3(right - 1.0 + STEP), r3(right + 0.45)],
-                        'profile': {
-                 'rounded_rect': [r3(H - 66.1), r3(H - 62.4), -11.3, -6.7], 'r': 0.6,
-                 'res': 4}}}]},
-        {'name': 'case_marks', 'note': 'Written by _shared/tdeck_plus_case.py: what shows dark '
-         'on the case, each one position step out of the face under it: the openings\' floors, '
-         'the bottom holes, the screw holes, the nut\'s ring and the lobe\'s hole, the '
-         'knock-outs\' rings and slots.', 'material': 'hole', 'shapes': marks},
-        {'name': 'nut_insert', 'note': 'The brass 1/4-inch nut in its boss, one position step '
-         'out of the boss.', 'material': 'brass', 'smooth_deg': 40, 'shapes': [
-             prism(disc(BOSS[0], INSERT_R), Z_BOSS - STEP, Z_BOSS, ['bottom'])]},
-        {'name': 'grove_socket', 'note': 'The Grove connector seen through the left opening: '
-         'its white housing standing on the opening\'s floor.', 'material': 'ring_white',
-         'shapes': [{'box': [r3(LEFT + 0.9), r3(LEFT + 1.6 - STEP), r3(H - 33.7), r3(H - 24.6),
-                             -12.6, -8.4]}]},
+        {
+            "name": "case_shell",
+            "note": "Written by _shared/tdeck_plus_case.py: the walls from "
+            "the back's edge to the front frame, cut where the openings are, the back's slope "
+            "and its flat face (z -19.0, which the back prints on), the nut's boss and the "
+            "back's relief lines.",
+            "material": "case",
+            "smooth_deg": 40,
+            "shapes": shell,
+        },
+        {
+            "name": "case_relief",
+            "note": "Written by _shared/tdeck_plus_case.py: the back's "
+            "relief lines, which the picture shows dark, 0.2 mm proud of the flat face: the top "
+            "frame's lower edge, the badge's pocket and five rings, the two lines from its foot "
+            "to the sides, and the groove round the nut's boss, one step out.",
+            "material": "relief",
+            "shapes": lines,
+        },
+        {
+            "name": "case_frame",
+            "note": "Written by _shared/tdeck_plus_case.py: the front "
+            "frame round the face, its top chamfered, its opening the glass's and the plate's "
+            "outlines 0.4 mm in, and its two side rails.",
+            "material": "case",
+            "smooth_deg": 40,
+            "shapes": frame,
+        },
+        {
+            "name": "key_left",
+            "note": "The left face's key, 6.4 x 3.8 mm, as proud as the rails.",
+            "material": "black_plastic",
+            "smooth_deg": 40,
+            "shapes": [
+                {
+                    "prism": {
+                        "axis": "x",
+                        "range": [0.0, r3(left + 0.1)],
+                        "profile": {
+                            "rounded_rect": [r3(H - 48.2), r3(H - 41.8), -10.2, -6.4],
+                            "r": 0.9,
+                            "res": 4,
+                        },
+                    }
+                }
+            ],
+        },
+        {
+            "name": "key_right",
+            "note": "The power slide's knob in its slot, 0.45 mm proud.",
+            "material": "black_plastic",
+            "smooth_deg": 40,
+            "shapes": [
+                {
+                    "prism": {
+                        "axis": "x",
+                        "range": [r3(right - 1.0 + STEP), r3(right + 0.45)],
+                        "profile": {
+                            "rounded_rect": [r3(H - 66.1), r3(H - 62.4), -11.3, -6.7],
+                            "r": 0.6,
+                            "res": 4,
+                        },
+                    }
+                }
+            ],
+        },
+        {
+            "name": "case_marks",
+            "note": "Written by _shared/tdeck_plus_case.py: what shows dark "
+            "on the case, each one position step out of the face under it: the openings' floors, "
+            "the bottom holes, the screw holes, the nut's ring and the lobe's hole, the "
+            "knock-outs' rings and slots.",
+            "material": "hole",
+            "shapes": marks,
+        },
+        {
+            "name": "nut_insert",
+            "note": "The brass 1/4-inch nut in its boss, one position step out of the boss.",
+            "material": "brass",
+            "smooth_deg": 40,
+            "shapes": [prism(disc(BOSS[0], INSERT_R), Z_BOSS - STEP, Z_BOSS, ["bottom"])],
+        },
+        {
+            "name": "grove_socket",
+            "note": "The Grove connector seen through the left opening: "
+            "its white housing standing on the opening's floor.",
+            "material": "ring_white",
+            "shapes": [
+                {
+                    "box": [
+                        r3(LEFT + 0.9),
+                        r3(LEFT + 1.6 - STEP),
+                        r3(H - 33.7),
+                        r3(H - 24.6),
+                        -12.6,
+                        -8.4,
+                    ]
+                }
+            ],
+        },
     ]
 
 
-CASE = ('case_shell', 'case_relief', 'case_frame', 'key_left', 'key_right', 'case_marks', 'nut_insert',
-        'grove_socket')
+CASE = (
+    "case_shell",
+    "case_relief",
+    "case_frame",
+    "key_left",
+    "key_right",
+    "case_marks",
+    "nut_insert",
+    "grove_socket",
+)
 
 
 def dump(obj, indent=0) -> str:
     """JSON with objects one key a line and lists of numbers on one line."""
-    pad = '  ' * indent
+    pad = "  " * indent
     if isinstance(obj, dict):
         if not obj:
-            return '{}'
-        inner = ',\n'.join(f'{pad}  {json.dumps(k)}: {dump(v, indent + 1)}'
-                           for k, v in obj.items())
-        return '{\n' + inner + '\n' + pad + '}'
+            return "{}"
+        inner = ",\n".join(f"{pad}  {json.dumps(k)}: {dump(v, indent + 1)}" for k, v in obj.items())
+        return "{\n" + inner + "\n" + pad + "}"
     if isinstance(obj, list):
         if all(not isinstance(v, (dict, list)) for v in obj) or (
-                obj and all(isinstance(v, list) and all(not isinstance(w, (dict, list))
-                                                        for w in v) for v in obj)):
+            obj
+            and all(
+                isinstance(v, list) and all(not isinstance(w, (dict, list)) for w in v) for v in obj
+            )
+        ):
             return json.dumps(obj, ensure_ascii=False)
-        inner = ',\n'.join(f'{pad}  {dump(v, indent + 1)}' for v in obj)
-        return '[\n' + inner + '\n' + pad + ']'
+        inner = ",\n".join(f"{pad}  {dump(v, indent + 1)}" for v in obj)
+        return "[\n" + inner + "\n" + pad + "]"
     return json.dumps(obj, ensure_ascii=False)
 
 
 def main() -> int:
     spec = json.loads(SPEC.read_text())
-    meshes = [m for m in spec['meshes'] if m['name'] not in CASE + ('internal',)]
-    spec['meshes'] = case_meshes() + meshes
-    for key in ('volumes', 'cull', 'parts', 'transform', 'tessellation'):
+    meshes = [m for m in spec["meshes"] if m["name"] not in CASE + ("internal",)]
+    spec["meshes"] = case_meshes() + meshes
+    for key in ("volumes", "cull", "parts", "transform", "tessellation"):
         spec.pop(key, None)
-    SPEC.write_text(dump(spec) + '\n')
-    print(f'wrote the case of {SPEC.relative_to(ROOT)}')
+    SPEC.write_text(dump(spec) + "\n")
+    print(f"wrote the case of {SPEC.relative_to(ROOT)}")
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

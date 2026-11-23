@@ -119,16 +119,18 @@ def render_with_rsvg(svg_path: Path, output_path: Path, scale: float) -> bool:
     executable = shutil.which("rsvg-convert")
     if not executable:
         return False
-    run_checked([
-        executable,
-        "--format",
-        "png",
-        "--zoom",
-        f"{scale:.6g}",
-        "--output",
-        str(output_path),
-        str(svg_path),
-    ])
+    run_checked(
+        [
+            executable,
+            "--format",
+            "png",
+            "--zoom",
+            f"{scale:.6g}",
+            "--output",
+            str(output_path),
+            str(svg_path),
+        ]
+    )
     return True
 
 
@@ -138,13 +140,15 @@ def render_with_inkscape(svg_path: Path, output_path: Path, scale: float) -> boo
     if not executable or not viewbox:
         return False
     output_width = max(1, round(viewbox[2] * scale))
-    run_checked([
-        executable,
-        str(svg_path),
-        "--export-type=png",
-        f"--export-filename={output_path}",
-        f"--export-width={output_width}",
-    ])
+    run_checked(
+        [
+            executable,
+            str(svg_path),
+            "--export-type=png",
+            f"--export-filename={output_path}",
+            f"--export-width={output_width}",
+        ]
+    )
     return True
 
 
@@ -156,9 +160,7 @@ def render_svg(svg_path: Path, output_path: Path, scale: float) -> None:
         return
     if render_with_inkscape(svg_path, output_path, scale):
         return
-    raise SystemExit(
-        "No SVG renderer found. Install cairosvg, rsvg-convert, or inkscape."
-    )
+    raise SystemExit("No SVG renderer found. Install cairosvg, rsvg-convert, or inkscape.")
 
 
 def trim_transparent_png(png_path: Path, padding: int) -> None:
@@ -471,7 +473,9 @@ def add_crop_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentPars
 
 
 def add_validate_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
-    parser = subparsers.add_parser("validate-svg", help="parse SVG files and check basic portability")
+    parser = subparsers.add_parser(
+        "validate-svg", help="parse SVG files and check basic portability"
+    )
     parser.add_argument("svg", nargs="+", type=Path)
     parser.add_argument("--require-viewbox", action="store_true")
     parser.add_argument("--reject-images", action="store_true")

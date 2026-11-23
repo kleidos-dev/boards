@@ -69,11 +69,11 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent / '_shared'))
+sys.path.insert(0, str(HERE.parent / "_shared"))
 
 import build_board_glb  # noqa: E402  (the path above makes it importable)
 
-SPEC = HERE / 'model' / 'spec.json'
+SPEC = HERE / "model" / "spec.json"
 
 
 def main(argv=None):
@@ -82,8 +82,8 @@ def main(argv=None):
     parser.add_argument("stl", type=Path, help="M5Stack's StickS3.stl at 48baa75a")
     parser.add_argument("out", type=Path, help="the .glb to write")
     args = parser.parse_args(argv)
-    return build_board_glb.main([str(SPEC), '--source', str(args.stl), '--out', str(args.out)])
+    return build_board_glb.main([str(SPEC), "--source", str(args.stl), "--out", str(args.out)])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

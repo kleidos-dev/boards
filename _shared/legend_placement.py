@@ -80,6 +80,7 @@ import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
 
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
+
 #: How far a group's ink may lie from where the drawing puts it, in mm.
 TOLERANCE_MM = 0.02
 #: The grid the drawing's own shapes are overlaid on: far under the model's.
@@ -92,48 +93,54 @@ REACH_MM = 1.0
 def _polygons(geom):
     if geom.is_empty:
         return []
-    if geom.geom_type == 'Polygon':
+    if geom.geom_type == "Polygon":
         return [geom]
-    return [p for g in getattr(geom, 'geoms', []) for p in _polygons(g)]
+    return [p for g in getattr(geom, "geoms", []) for p in _polygons(g)]
 
 
-def frame_of(record, face='front'):
+def frame_of(record, face="front"):
     """How glTF-frame mm map to the frame of one face's drawing (``board_faces.py``).
 
     For the front: x + dx across, dy - y down. For another face, the frame
     ``source.json`` records under ``parameters.face_frames``; with ``frame``,
     a ``board_faces.FaceFrame`` that places any face.
     """
-    params = record.get('parameters', {})
-    center, front = params.get('center_mm'), params.get('front_frame')
+    params = record.get("parameters", {})
+    center, front = params.get("center_mm"), params.get("front_frame")
     if not center or not front:
-        raise ValueError('source.json records no center_mm and front_frame')
-    if face == 'front':
-        frame = board_faces.FaceFrame('front', front['left_x'], front['top_y'])
+        raise ValueError("source.json records no center_mm and front_frame")
+    if face == "front":
+        frame = board_faces.FaceFrame("front", front["left_x"], front["top_y"])
     else:
-        numbers = (params.get('face_frames') or {}).get(face)
+        numbers = (params.get("face_frames") or {}).get(face)
         if numbers is None:
-            raise ValueError(f'source.json records no frame for the {face} face')
+            raise ValueError(f"source.json records no frame for the {face} face")
         frame = board_faces.face_frame(face, numbers)
-    return {'dx': center[0] - front['left_x'], 'dy': front['top_y'] - center[1],
-            'center_z': center[2], 'center': list(center), 'face': face, 'frame': frame,
-            'quant_mm': params.get('quant_mm', 0.01)}
+    return {
+        "dx": center[0] - front["left_x"],
+        "dy": front["top_y"] - center[1],
+        "center_z": center[2],
+        "center": list(center),
+        "face": face,
+        "frame": frame,
+        "quant_mm": params.get("quant_mm", 0.01),
+    }
 
 
 def drawing_of(entry):
     """The drawing a legends record was read from, relative to the repository."""
-    return entry.get('drawing', entry.get('front'))
+    return entry.get("drawing", entry.get("front"))
 
 
 def height_of(entry):
     """(the build-frame axis a legends record's sheets lie at a height on, that height)."""
-    key = board_faces.height_key(entry.get('face', 'front'))
-    return board_faces.AXES.index(key), entry[f'{key}_mm']
+    key = board_faces.height_key(entry.get("face", "front"))
+    return board_faces.AXES.index(key), entry[f"{key}_mm"]
 
 
 def ink_of(mesh):
     """The color a mesh is drawn in, as ``rrggbb`` (sRGB)."""
-    return ''.join(f'{round(float(c) * 255):02x}' for c in mesh.color)
+    return "".join(f"{round(float(c) * 255):02x}" for c in mesh.color)
 
 
 def model_areas(meshes, place, prefix=None):
@@ -149,13 +156,13 @@ def model_areas(meshes, place, prefix=None):
     fixed-precision overlay: on a grid as coarse as the corners' own it folds
     away the thinnest triangles and splits what they hold together.)
     """
-    step = place['quant_mm']
-    face = place.get('face', 'front')
+    step = place["quant_mm"]
+    face = place.get("face", "front")
     axis = board_faces.normal(face)[0]
-    if face == 'front':
-        across, down = place['dx'], place['dy']
+    if face == "front":
+        across, down = place["dx"], place["dy"]
     else:
-        du, dv = place['frame'].offsets(place['center'])
+        du, dv = place["frame"].offsets(place["center"])
         across, down = -du, dv
     out = {}
     for mesh in meshes:
@@ -167,8 +174,11 @@ def model_areas(meshes, place, prefix=None):
         tri = np.rint(flat[mesh.faces][..., :2] / step)
         area = shapely.union_all(shapely.polygons(tri))
         area = shapely.affinity.affine_transform(area, [step, 0, 0, -step, across, down])
-        out[mesh.name] = (area, float(mesh.positions[:, axis].min()),
-                          float(mesh.positions[:, axis].max()))
+        out[mesh.name] = (
+            area,
+            float(mesh.positions[:, axis].min()),
+            float(mesh.positions[:, axis].max()),
+        )
     return out
 
 
@@ -182,13 +192,15 @@ def facing_problems(mesh, face):
     want = board_faces.basis(face)[2]
     out = []
     if len(mesh.normals) and not np.allclose(mesh.normals, want, atol=0.02):
-        out.append(f'{mesh.name}: its normals are not {want.tolist()}, the {face} face\'s')
+        out.append(f"{mesh.name}: its normals are not {want.tolist()}, the {face} face's")
     if len(mesh.faces):
         tri = mesh.positions[mesh.faces]
         turn = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]) @ want
         if (turn <= 0).any():
-            out.append(f'{mesh.name}: {int((turn <= 0).sum())} of its {len(turn)} triangles are '
-                       f'wound to face away from the {face} face\'s viewer')
+            out.append(
+                f"{mesh.name}: {int((turn <= 0).sum())} of its {len(turn)} triangles are "
+                f"wound to face away from the {face} face's viewer"
+            )
     return out
 
 
@@ -209,8 +221,9 @@ def drawn_areas(legends, plane):
         groups[legend.name] = {}
         for fill, shapes in own.items():
             cover = shapely.set_precision(shapely.union_all(shapes), DRAWING_GRID_MM)
-            part = shapely.intersection(whole.get(fill, sg.Polygon()), cover,
-                                        grid_size=DRAWING_GRID_MM)
+            part = shapely.intersection(
+                whole.get(fill, sg.Polygon()), cover, grid_size=DRAWING_GRID_MM
+            )
             part = shapely.union_all(_polygons(part))
             if not part.is_empty:
                 groups[legend.name][fill] = part
@@ -262,36 +275,37 @@ def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
     """
     place = frame_of(record)
     problems = []
-    listed = record.get('legends') or []
-    said = {entry['name']: entry for entry in extras}
+    listed = record.get("legends") or []
+    said = {entry["name"]: entry for entry in extras}
     drawn_as = {mesh.name: mesh for mesh in meshes if glb_legends.is_legend(mesh.name)}
     # each legend mesh in the frame of the face its record says it is printed on
-    places = {'front': place}
+    places = {"front": place}
     areas = model_areas(meshes, place)
     for entry in listed:
-        face = entry.get('face', 'front')
+        face = entry.get("face", "front")
         if face not in places:
             try:
                 places[face] = frame_of(record, face)
             except ValueError as exc:
-                problems.append(f'{entry["mesh"]}: {exc}')
+                problems.append(f"{entry['mesh']}: {exc}")
                 continue
-        if face != 'front':
-            areas.update(model_areas(meshes, places[face], entry['mesh'] + '_'))
-    report = {'tolerance_mm': tolerance_mm, 'front': None, 'meshes': {}, 'per_group': {}}
+        if face != "front":
+            areas.update(model_areas(meshes, places[face], entry["mesh"] + "_"))
+    report = {"tolerance_mm": tolerance_mm, "front": None, "meshes": {}, "per_group": {}}
     if not listed:
         if areas:
-            problems.append('the model holds legend meshes its source.json does not record')
+            problems.append("the model holds legend meshes its source.json does not record")
         report.update(ok=not problems, problems=problems, groups=0, keys=0)
         return report
-    known = {f'{entry["mesh"]}_{sheet["fill"][1:]}' for entry in listed
-             for sheet in entry['sheets']}
+    known = {
+        f"{entry['mesh']}_{sheet['fill'][1:]}" for entry in listed for sheet in entry["sheets"]
+    }
     for name in sorted(set(areas) - known):
-        problems.append(f'{name}: a legend mesh its source.json does not record')
+        problems.append(f"{name}: a legend mesh its source.json does not record")
     drawings = {}
     planes_read = {}  # (drawing, flatness) -> the planes of it a legends mesh draws
     for entry in listed:
-        face = entry.get('face', 'front')
+        face = entry.get("face", "front")
         if face not in places:
             continue
         if front_svg is None:
@@ -299,147 +313,180 @@ def placement(meshes, extras, front_svg, record, tolerance_mm=TOLERANCE_MM):
         elif isinstance(front_svg, dict):
             front = Path(front_svg.get(face, REPO / drawing_of(entry)))
         else:
-            front = Path(front_svg) if face == 'front' else REPO / drawing_of(entry)
-        key = (front, entry.get('flatness_mm', 0.004))
+            front = Path(front_svg) if face == "front" else REPO / drawing_of(entry)
+        key = (front, entry.get("flatness_mm", 0.004))
         if key not in drawings:
             drawings[key] = legend_mesh.read_legends(front, key[1])
-        planes_read.setdefault(key, set()).add(entry['plane'])
-        digest = legend_source.digest(front, entry['plane'])
-        if digest != entry.get('legends_sha256'):
-            problems.append(f'{drawing_of(entry)} no longer prints on the plane '
-                            f'{entry["plane"]!r} what the model was built from (its legends '
-                            f'digest to {digest[:12]}, recorded '
-                            f'{str(entry.get("legends_sha256"))[:12]}): rebuild the model')
+        planes_read.setdefault(key, set()).add(entry["plane"])
+        digest = legend_source.digest(front, entry["plane"])
+        if digest != entry.get("legends_sha256"):
+            problems.append(
+                f"{drawing_of(entry)} no longer prints on the plane "
+                f"{entry['plane']!r} what the model was built from (its legends "
+                f"digest to {digest[:12]}, recorded "
+                f"{str(entry.get('legends_sha256'))[:12]}): rebuild the model"
+            )
         legends = drawings[key]
-        if face == 'front':
-            report['front'] = entry['front']
+        if face == "front":
+            report["front"] = entry["front"]
         else:
-            report.setdefault('drawings', {})[face] = drawing_of(entry)
-        whole, groups = drawn_areas(legends, entry['plane'])
-        inks = {sheet['fill'][1:] for sheet in entry['sheets']}
+            report.setdefault("drawings", {})[face] = drawing_of(entry)
+        whole, groups = drawn_areas(legends, entry["plane"])
+        inks = {sheet["fill"][1:] for sheet in entry["sheets"]}
         if inks != set(whole):
-            problems.append(f'{entry["mesh"]}: inks {sorted(inks)} against the drawing\'s '
-                            f'{sorted(whole)} on the plane {entry["plane"]!r}')
+            problems.append(
+                f"{entry['mesh']}: inks {sorted(inks)} against the drawing's "
+                f"{sorted(whole)} on the plane {entry['plane']!r}"
+            )
         axis, at = height_of(entry)
-        key_mm = f'{board_faces.AXES[axis]}_mm'
-        height = at - place['center'][axis] if 'center' in place else at - place['center_z']
-        report['meshes'][entry['mesh']] = {'plane': entry['plane'], 'on': entry['on'],
-                                           key_mm: at, 'groups': len(groups),
-                                           'inks': sorted(f'#{ink}' for ink in inks)}
-        if face != 'front':
-            report['meshes'][entry['mesh']]['face'] = face
+        key_mm = f"{board_faces.AXES[axis]}_mm"
+        height = at - place["center"][axis] if "center" in place else at - place["center_z"]
+        report["meshes"][entry["mesh"]] = {
+            "plane": entry["plane"],
+            "on": entry["on"],
+            key_mm: at,
+            "groups": len(groups),
+            "inks": sorted(f"#{ink}" for ink in inks),
+        }
+        if face != "front":
+            report["meshes"][entry["mesh"]]["face"] = face
         for fill in sorted(inks | set(whole)):
-            name = f'{entry["mesh"]}_{fill}'
+            name = f"{entry['mesh']}_{fill}"
             if name not in areas:
-                problems.append(f'{name}: the model has no such mesh')
+                problems.append(f"{name}: the model has no such mesh")
                 continue
             area, low, high = areas[name]
             if abs(low - height) > 1e-6 or abs(high - height) > 1e-6:
-                problems.append(f'{name}: lies at {board_faces.AXES[axis]} '
-                                f'{low + at - height:.4f} to {high + at - height:.4f} mm, not '
-                                f'flat at {at:g}')
+                problems.append(
+                    f"{name}: lies at {board_faces.AXES[axis]} "
+                    f"{low + at - height:.4f} to {high + at - height:.4f} mm, not "
+                    f"flat at {at:g}"
+                )
             problems += facing_problems(drawn_as[name], face)
-            carried = (said.get(name) or {}).get('stroke_mm')
+            carried = (said.get(name) or {}).get("stroke_mm")
             width = legend_mesh.stroke_mm(area)
             if carried is None or abs(carried - width) > 0.0015:
-                problems.append(f'{name}: carries stroke_mm {carried}, its area gives '
-                                f'{width:.3f}')
-            if (said.get(name) or {}).get('on') != entry['on']:
-                problems.append(f'{name}: carries on {(said.get(name) or {}).get("on")!r}, '
-                                f'recorded {entry["on"]!r}')
+                problems.append(f"{name}: carries stroke_mm {carried}, its area gives {width:.3f}")
+            if (said.get(name) or {}).get("on") != entry["on"]:
+                problems.append(
+                    f"{name}: carries on {(said.get(name) or {}).get('on')!r}, "
+                    f"recorded {entry['on']!r}"
+                )
             # the ink: the color the mesh is drawn in, the material's name, what it says
-            worn, material = drawn_as[name], (said.get(name) or {}).get('material')
+            worn, material = drawn_as[name], (said.get(name) or {}).get("material")
             if ink_of(worn) != fill or worn.alpha != 1.0:
-                problems.append(f'{name}: is drawn in #{ink_of(worn)}'
-                                + ('' if worn.alpha == 1.0 else f' at alpha {worn.alpha:g}')
-                                + f' by its material {material!r}, not in its ink #{fill}')
-            if material != f'{glb_legends.INK_PREFIX}{fill}':
-                problems.append(f'{name}: wears the material {material!r}, not '
-                                f'{glb_legends.INK_PREFIX + fill!r}')
-            if (said.get(name) or {}).get('fill') != f'#{fill}':
-                problems.append(f'{name}: carries fill {(said.get(name) or {}).get("fill")!r}, '
-                                f'not #{fill}')
+                problems.append(
+                    f"{name}: is drawn in #{ink_of(worn)}"
+                    + ("" if worn.alpha == 1.0 else f" at alpha {worn.alpha:g}")
+                    + f" by its material {material!r}, not in its ink #{fill}"
+                )
+            if material != f"{glb_legends.INK_PREFIX}{fill}":
+                problems.append(
+                    f"{name}: wears the material {material!r}, not "
+                    f"{glb_legends.INK_PREFIX + fill!r}"
+                )
+            if (said.get(name) or {}).get("fill") != f"#{fill}":
+                problems.append(
+                    f"{name}: carries fill {(said.get(name) or {}).get('fill')!r}, not #{fill}"
+                )
             drawn = {group: inks_[fill] for group, inks_ in groups.items() if fill in inks_}
             taken, stray = assign(area, drawn)
             if stray:
                 at = stray[0].representative_point()
-                problems.append(f'{name}: {len(stray)} piece(s) of ink on no legend of the '
-                                f'drawing, one at {face} ({at.x:.2f}, {at.y:.2f}) mm')
+                problems.append(
+                    f"{name}: {len(stray)} piece(s) of ink on no legend of the "
+                    f"drawing, one at {face} ({at.x:.2f}, {at.y:.2f}) mm"
+                )
             for group, want in drawn.items():
-                row = report['per_group'].setdefault(
-                    group, {'plane': entry['plane'], 'outline_mm': 0.0, 'shift_mm': 0.0})
+                row = report["per_group"].setdefault(
+                    group, {"plane": entry["plane"], "outline_mm": 0.0, "shift_mm": 0.0}
+                )
                 got = taken.get(group)
                 if got is None:
-                    row['outline_mm'] = None
-                    problems.append(f'{name}: nothing printed for {group!r}')
+                    row["outline_mm"] = None
+                    problems.append(f"{name}: nothing printed for {group!r}")
                     continue
-                if row['outline_mm'] is not None:
-                    row['outline_mm'] = round(max(row['outline_mm'],
-                                                  outline_distance(want, got)), 4)
+                if row["outline_mm"] is not None:
+                    row["outline_mm"] = round(
+                        max(row["outline_mm"], outline_distance(want, got)), 4
+                    )
                 a, b = want.bounds, got.bounds
-                shift = float(np.hypot((b[0] + b[2] - a[0] - a[2]) / 2,
-                                       (b[1] + b[3] - a[1] - a[3]) / 2))
-                row['shift_mm'] = round(max(row['shift_mm'], shift), 4)
+                shift = float(
+                    np.hypot((b[0] + b[2] - a[0] - a[2]) / 2, (b[1] + b[3] - a[1] - a[3]) / 2)
+                )
+                row["shift_mm"] = round(max(row["shift_mm"], shift), 4)
         for legend in legends:
-            if legend.plane == entry['plane']:
-                report['per_group'].setdefault(legend.name, {'plane': legend.plane,
-                                                             'outline_mm': None,
-                                                             'shift_mm': None})
+            if legend.plane == entry["plane"]:
+                report["per_group"].setdefault(
+                    legend.name, {"plane": legend.plane, "outline_mm": None, "shift_mm": None}
+                )
     for key, legends in drawings.items():
         for plane in legend_mesh.planes(legends):
             if plane not in planes_read[key]:
-                problems.append(f'the drawing prints on the plane {plane!r}, which no legends '
-                                f'mesh of the model draws')
-    measured = {g: row for g, row in report['per_group'].items() if row['outline_mm'] is not None}
-    for group, row in sorted(report['per_group'].items()):
-        if row['outline_mm'] is not None and row['outline_mm'] > tolerance_mm:
-            problems.append(f'{group!r}: its print lies {row["outline_mm"]:.3f} mm from the '
-                            f'drawing\'s, over {tolerance_mm:g} mm')
+                problems.append(
+                    f"the drawing prints on the plane {plane!r}, which no legends "
+                    f"mesh of the model draws"
+                )
+    measured = {g: row for g, row in report["per_group"].items() if row["outline_mm"] is not None}
+    for group, row in sorted(report["per_group"].items()):
+        if row["outline_mm"] is not None and row["outline_mm"] > tolerance_mm:
+            problems.append(
+                f"{group!r}: its print lies {row['outline_mm']:.3f} mm from the "
+                f"drawing's, over {tolerance_mm:g} mm"
+            )
     keys = {legend.name for legends in drawings.values() for legend in legends if legend.key}
-    worst = max(measured, key=lambda g: measured[g]['outline_mm'], default=None)
+    worst = max(measured, key=lambda g: measured[g]["outline_mm"], default=None)
     report.update(
-        ok=not problems, problems=problems, groups=len(report['per_group']),
-        keys=len(keys & set(report['per_group'])),
+        ok=not problems,
+        problems=problems,
+        groups=len(report["per_group"]),
+        keys=len(keys & set(report["per_group"])),
         worst_group=worst,
-        worst_mm=None if worst is None else measured[worst]['outline_mm'],
-        mean_mm=round(float(np.mean([r['outline_mm'] for r in measured.values()])), 4)
-        if measured else None,
-        shift_worst_mm=max((r['shift_mm'] for r in measured.values()), default=None),
-        shift_mean_mm=round(float(np.mean([r['shift_mm'] for r in measured.values()])), 4)
-        if measured else None)
+        worst_mm=None if worst is None else measured[worst]["outline_mm"],
+        mean_mm=round(float(np.mean([r["outline_mm"] for r in measured.values()])), 4)
+        if measured
+        else None,
+        shift_worst_mm=max((r["shift_mm"] for r in measured.values()), default=None),
+        shift_mean_mm=round(float(np.mean([r["shift_mm"] for r in measured.values()])), 4)
+        if measured
+        else None,
+    )
     return report
 
 
 def check(board_dir, glb=None, tolerance_mm=TOLERANCE_MM):
     """The placement report of a board directory's model (None when it prints nothing)."""
     board_dir = Path(board_dir)
-    record = json.loads((board_dir / 'model' / 'source.json').read_text())
-    glb = Path(glb) if glb else REPO / record['model']
+    record = json.loads((board_dir / "model" / "source.json").read_text())
+    glb = Path(glb) if glb else REPO / record["model"]
     data = glb.read_bytes()
     extras = glb_legends.legends(glb_legends.read(data)[0])
-    if not extras and not record.get('legends'):
+    if not extras and not record.get("legends"):
         return None
     return placement(model_raster.read_glb(glb), extras, None, record, tolerance_mm)
 
 
-def outlines(board_dir, face='front'):
+def outlines(board_dir, face="front"):
     """[(plane, fill, rings)] of what a board's drawing of one face prints, for a picture.
 
     Each ring is an (N, 2) array in that drawing's frame, mm.
     """
-    record = json.loads((Path(board_dir) / 'model' / 'source.json').read_text())
+    record = json.loads((Path(board_dir) / "model" / "source.json").read_text())
     out, read = [], {}
-    for entry in record.get('legends') or []:
-        if entry.get('face', 'front') != face:
+    for entry in record.get("legends") or []:
+        if entry.get("face", "front") != face:
             continue
-        key = (drawing_of(entry), entry.get('flatness_mm', 0.004))
+        key = (drawing_of(entry), entry.get("flatness_mm", 0.004))
         if key not in read:
             read[key] = legend_mesh.read_legends(REPO / key[0], key[1])
-        whole, _ = drawn_areas(read[key], entry['plane'])
+        whole, _ = drawn_areas(read[key], entry["plane"])
         for fill, area in sorted(whole.items()):
-            rings = [np.asarray(ring.coords) for poly in _polygons(area)
-                     for ring in [poly.exterior, *poly.interiors]]
-            out.append((entry['plane'], fill, rings))
+            rings = [
+                np.asarray(ring.coords)
+                for poly in _polygons(area)
+                for ring in [poly.exterior, *poly.interiors]
+            ]
+            out.append((entry["plane"], fill, rings))
     return out
 
 
@@ -461,24 +508,32 @@ def _drawing_plants(drawing):
     """
     moved, done = re.subn(
         r'(<g class="legend" data-key="Q">\s*<text x=")([0-9.]+)',
-        lambda m: f'{m.group(1)}{float(m.group(2)) + 0.05:.2f}', drawing, count=1)
+        lambda m: f"{m.group(1)}{float(m.group(2)) + 0.05:.2f}",
+        drawing,
+        count=1,
+    )
     if not done:
-        raise ValueError('the drawing has no Q key whose legend is a text')
+        raise ValueError("the drawing has no Q key whose legend is a text")
     elsewhere = drawing
     for mark, added in (
-            ('<g id="annotations">',
-             '<text x="0" y="0" font-size="2" fill="#000000">a new callout</text>'),
-            ('<g id="hotspots" display="none">',
-             '<circle id="hs-Planted" cx="1" cy="1" r="1" data-face="front" data-w="2" '
-             'data-h="2"/>')):
+        (
+            '<g id="annotations">',
+            '<text x="0" y="0" font-size="2" fill="#000000">a new callout</text>',
+        ),
+        (
+            '<g id="hotspots" display="none">',
+            '<circle id="hs-Planted" cx="1" cy="1" r="1" data-face="front" data-w="2" data-h="2"/>',
+        ),
+    ):
         if elsewhere.count(mark) != 1:
-            raise ValueError(f'the drawing does not hold {mark} once')
-        elsewhere = elsewhere.replace(mark, f'{mark}\n{added}')
+            raise ValueError(f"the drawing does not hold {mark} once")
+        elsewhere = elsewhere.replace(mark, f"{mark}\n{added}")
     # the first cap the drawing fills, outside every legend group
-    elsewhere, done = re.subn(r'(<rect [^>]*fill=")#171719(")', r'\g<1>#27272a\g<2>', elsewhere,
-                              count=1)
+    elsewhere, done = re.subn(
+        r'(<rect [^>]*fill=")#171719(")', r"\g<1>#27272a\g<2>", elsewhere, count=1
+    )
     if not done:
-        raise ValueError('the drawing has no cap of the color this plant repaints')
+        raise ValueError("the drawing has no cap of the color this plant repaints")
     return moved, elsewhere
 
 
@@ -490,7 +545,7 @@ def _rewritten(glb, change, out):
     return model_raster.read_glb(out), glb_legends.legends(js)
 
 
-def selftest(board='cardputer'):
+def selftest(board="cardputer"):
     """Plant defects in a board's committed model: (the clean report, the plants, the controls).
 
     The plants are ``[(what, caught, how)]``, each of which the check must
@@ -498,99 +553,156 @@ def selftest(board='cardputer'):
     and that it must pass, as it passes the model as committed.
     """
     board_dir = HERE.parent / board
-    record = json.loads((board_dir / 'model' / 'source.json').read_text())
-    glb = REPO / record['model']
+    record = json.loads((board_dir / "model" / "source.json").read_text())
+    glb = REPO / record["model"]
     extras = glb_legends.legends(glb_legends.read(glb.read_bytes())[0])
     meshes = model_raster.read_glb(glb)
     names = [m.name for m in meshes if glb_legends.is_legend(m.name)]
     first, second = names[0], names[1]
     place = frame_of(record)
-    legends = legend_mesh.read_legends(REPO / record['legends'][0]['front'],
-                                       record['legends'][0].get('flatness_mm', 0.004))
-    key = next(legend for legend in legends if legend.key and legend.name == 'Q')
+    legends = legend_mesh.read_legends(
+        REPO / record["legends"][0]["front"], record["legends"][0].get("flatness_mm", 0.004)
+    )
+    key = next(legend for legend in legends if legend.key and legend.name == "Q")
     box = shapely.union_all([geom for _, geom in key.shapes]).buffer(0.2)
 
     def without_key(mesh):
         tri = mesh.positions[mesh.faces].mean(axis=1)
-        inside = shapely.contains_xy(box, tri[:, 0] + place['dx'], place['dy'] - tri[:, 1])
+        inside = shapely.contains_xy(box, tri[:, 0] + place["dx"], place["dy"] - tri[:, 1])
         return dataclasses.replace(mesh, faces=mesh.faces[~inside])
 
     def swap(mesh):
-        return dataclasses.replace(mesh, name={first: second, second: first}.get(mesh.name,
-                                                                               mesh.name))
+        return dataclasses.replace(
+            mesh, name={first: second, second: first}.get(mesh.name, mesh.name)
+        )
 
     def each(change, only=None):
-        return [change(m) if glb_legends.is_legend(m.name) and only in (None, m.name) else m
-                for m in meshes]
+        return [
+            change(m) if glb_legends.is_legend(m.name) and only in (None, m.name) else m
+            for m in meshes
+        ]
 
-    thin = [dict(entry, stroke_mm=(entry['stroke_mm'] or 0) + 0.05) if entry['name'] == first
-            else entry for entry in extras]
-    drawing = (REPO / record['legends'][0]['front']).read_text(encoding='utf-8')
-    with tempfile.TemporaryDirectory(prefix='legend-selftest-') as tmp:
-        moved_front, elsewhere_front = Path(tmp) / 'moved.svg', Path(tmp) / 'elsewhere.svg'
-        for path, text in zip((moved_front, elsewhere_front), _drawing_plants(drawing),
-                              strict=True):
-            path.write_text(text, encoding='utf-8')
+    thin = [
+        dict(entry, stroke_mm=(entry["stroke_mm"] or 0) + 0.05) if entry["name"] == first else entry
+        for entry in extras
+    ]
+    drawing = (REPO / record["legends"][0]["front"]).read_text(encoding="utf-8")
+    with tempfile.TemporaryDirectory(prefix="legend-selftest-") as tmp:
+        moved_front, elsewhere_front = Path(tmp) / "moved.svg", Path(tmp) / "elsewhere.svg"
+        for path, text in zip(
+            (moved_front, elsewhere_front), _drawing_plants(drawing), strict=True
+        ):
+            path.write_text(text, encoding="utf-8")
 
         # planted in the file itself, where a reader of the model meets them
         def node_moved(js, name=first):
-            node = next(n for n in js['nodes'] if n.get('name') == name)
-            node['translation'] = [0.06 * model_raster.MM, 0.0, 0.0]
+            node = next(n for n in js["nodes"] if n.get("name") == name)
+            node["translation"] = [0.06 * model_raster.MM, 0.0, 0.0]
 
         def root_moved(js):
-            js['nodes'][js['scenes'][0]['nodes'][0]]['translation'] = [0.06 * model_raster.MM,
-                                                                       0.0, 0.0]
+            js["nodes"][js["scenes"][0]["nodes"][0]]["translation"] = [
+                0.06 * model_raster.MM,
+                0.0,
+                0.0,
+            ]
 
         def ink_turned_red(js, name=first):
-            node = next(n for n in js['nodes'] if n.get('name') == name)
-            material = js['meshes'][node['mesh']]['primitives'][0]['material']
-            js['materials'][material]['pbrMetallicRoughness']['baseColorFactor'] = [1.0, 0.0,
-                                                                                    0.0, 1.0]
+            node = next(n for n in js["nodes"] if n.get("name") == name)
+            material = js["meshes"][node["mesh"]]["primitives"][0]["material"]
+            js["materials"][material]["pbrMetallicRoughness"]["baseColorFactor"] = [
+                1.0,
+                0.0,
+                0.0,
+                1.0,
+            ]
 
-        files = {change.__name__: _rewritten(glb, change, Path(tmp) / f'{change.__name__}.glb')
-                 for change in (node_moved, root_moved, ink_turned_red)}
+        files = {
+            change.__name__: _rewritten(glb, change, Path(tmp) / f"{change.__name__}.glb")
+            for change in (node_moved, root_moved, ink_turned_red)
+        }
         # what is planted, the model, its extras, its drawing (None: the committed one), and
         # words of the problem it must raise
         plants = [
-            ('one legend mesh moved 0.05 mm across', each(lambda m: _moved(m, dx=0.05), first),
-             extras, None, 'its print lies'),
-            ("the Q key's legend taken out", each(without_key), extras, None,
-             "nothing printed for 'Q'"),
-            ('two inks swapped', each(swap), extras, None, 'nothing printed for'),
-            ('the legends scaled by 0.2 %', each(lambda m: _moved(m, scale=1.002)), extras, None,
-             'its print lies'),
-            ('one legend mesh lifted 0.01 mm off its plane',
-             each(lambda m: _moved(m, dz=0.01), first), extras, None, 'not flat at'),
-            ("the Q key's legend moved 0.05 mm in the drawing after the build", meshes, extras,
-             moved_front, 'what the model was built from'),
-            ('a stroke_mm that is not the mesh\'s', meshes, thin, None, 'carries stroke_mm'),
-            ('one legend mesh moved 0.06 mm by its node\'s translation', *files['node_moved'],
-             None, 'its print lies'),
-            ('the whole model moved 0.06 mm by its root node\'s translation',
-             *files['root_moved'], None, 'its print lies'),
-            ('an ink\'s material turned red', *files['ink_turned_red'], None,
-             'not in its ink'),
+            (
+                "one legend mesh moved 0.05 mm across",
+                each(lambda m: _moved(m, dx=0.05), first),
+                extras,
+                None,
+                "its print lies",
+            ),
+            (
+                "the Q key's legend taken out",
+                each(without_key),
+                extras,
+                None,
+                "nothing printed for 'Q'",
+            ),
+            ("two inks swapped", each(swap), extras, None, "nothing printed for"),
+            (
+                "the legends scaled by 0.2 %",
+                each(lambda m: _moved(m, scale=1.002)),
+                extras,
+                None,
+                "its print lies",
+            ),
+            (
+                "one legend mesh lifted 0.01 mm off its plane",
+                each(lambda m: _moved(m, dz=0.01), first),
+                extras,
+                None,
+                "not flat at",
+            ),
+            (
+                "the Q key's legend moved 0.05 mm in the drawing after the build",
+                meshes,
+                extras,
+                moved_front,
+                "what the model was built from",
+            ),
+            ("a stroke_mm that is not the mesh's", meshes, thin, None, "carries stroke_mm"),
+            (
+                "one legend mesh moved 0.06 mm by its node's translation",
+                *files["node_moved"],
+                None,
+                "its print lies",
+            ),
+            (
+                "the whole model moved 0.06 mm by its root node's translation",
+                *files["root_moved"],
+                None,
+                "its print lies",
+            ),
+            ("an ink's material turned red", *files["ink_turned_red"], None, "not in its ink"),
         ]
         clean = placement(meshes, extras, None, record)
         results = []
         for what, planted, said, front, words in plants:
             got = placement(planted, said, front, record)
-            raised = [problem for problem in got['problems'] if words in problem]
-            results.append((what, bool(raised) and not got['ok'],
-                            raised[0] if raised else f'no problem saying {words!r}'))
+            raised = [problem for problem in got["problems"] if words in problem]
+            results.append(
+                (
+                    what,
+                    bool(raised) and not got["ok"],
+                    raised[0] if raised else f"no problem saying {words!r}",
+                )
+            )
         # what is no defect: the check must pass it
         controls = []
         for what, front in (
-                ('the drawing changed where no model reads (a callout, a hotspot, a cap)',
-                 elsewhere_front),):
+            (
+                "the drawing changed where no model reads (a callout, a hotspot, a cap)",
+                elsewhere_front,
+            ),
+        ):
             got = placement(meshes, extras, front, record)
-            controls.append((what, got['ok'],
-                             'no problem' if got['ok'] else '; '.join(got['problems'][:2])))
+            controls.append(
+                (what, got["ok"], "no problem" if got["ok"] else "; ".join(got["problems"][:2]))
+            )
     return clean, results, controls
 
 
 #: The board of two boxes that prints on its front and its back (``face_fixture.py``).
-FACE_FIXTURE = HERE / 'fixtures' / 'faces'
+FACE_FIXTURE = HERE / "fixtures" / "faces"
 
 
 def faces_selftest(board_dir=FACE_FIXTURE):
@@ -605,13 +717,13 @@ def faces_selftest(board_dir=FACE_FIXTURE):
     the clearance check must find the back print laid on the base's face it
     is printed on, and must not take the front's way of looking for the back's.
     """
-    record = json.loads((board_dir / 'model' / 'source.json').read_text())
-    glb = REPO / record['model']
+    record = json.loads((board_dir / "model" / "source.json").read_text())
+    glb = REPO / record["model"]
     extras = glb_legends.legends(glb_legends.read(glb.read_bytes())[0])
     meshes = model_raster.read_glb(glb)
-    back = next(entry for entry in record['legends'] if entry.get('face') == 'back')
-    prefix = back['mesh'] + '_'
-    step = record['parameters']['quant_mm']
+    back = next(entry for entry in record["legends"] if entry.get("face") == "back")
+    prefix = back["mesh"] + "_"
+    step = record["parameters"]["quant_mm"]
 
     def each(change):
         return [change(m) if m.name.startswith(prefix) else m for m in meshes]
@@ -627,86 +739,140 @@ def faces_selftest(board_dir=FACE_FIXTURE):
     def turned(mesh):
         return dataclasses.replace(mesh, normals=-mesh.normals)
 
-    drawing = (REPO / back['drawing']).read_text(encoding='utf-8')
+    drawing = (REPO / back["drawing"]).read_text(encoding="utf-8")
     moved_drawing, done = re.subn(r'points="3,3 ', 'points="3.05,3 ', drawing, count=1)
     if not done:
-        raise ValueError('the fixture\'s back drawing has no F where this plant moves it')
-    with tempfile.TemporaryDirectory(prefix='faces-selftest-') as tmp:
-        moved_back = Path(tmp) / 'back.svg'
-        moved_back.write_text(moved_drawing, encoding='utf-8')
+        raise ValueError("the fixture's back drawing has no F where this plant moves it")
+    with tempfile.TemporaryDirectory(prefix="faces-selftest-") as tmp:
+        moved_back = Path(tmp) / "back.svg"
+        moved_back.write_text(moved_drawing, encoding="utf-8")
         plants = [
-            ('the back print laid mirrored across the case', each(mirrored), None,
-             'on no legend of the drawing'),
-            ('the back print moved 0.05 mm across', each(lambda m: _moved(m, dx=0.05)), None,
-             'its print lies'),
-            ('the back print lifted 0.01 mm off its plane', each(lambda m: _moved(m, dz=0.01)),
-             None, 'not flat at'),
-            ('the back print wound to face into the case', each(rewound), None,
-             'wound to face away'),
-            ("the back print's normals turned to the front", each(turned), None,
-             'its normals are not'),
-            ('the back drawing moved 0.05 mm after the build', meshes, {'back': moved_back},
-             'what the model was built from'),
+            (
+                "the back print laid mirrored across the case",
+                each(mirrored),
+                None,
+                "on no legend of the drawing",
+            ),
+            (
+                "the back print moved 0.05 mm across",
+                each(lambda m: _moved(m, dx=0.05)),
+                None,
+                "its print lies",
+            ),
+            (
+                "the back print lifted 0.01 mm off its plane",
+                each(lambda m: _moved(m, dz=0.01)),
+                None,
+                "not flat at",
+            ),
+            (
+                "the back print wound to face into the case",
+                each(rewound),
+                None,
+                "wound to face away",
+            ),
+            (
+                "the back print's normals turned to the front",
+                each(turned),
+                None,
+                "its normals are not",
+            ),
+            (
+                "the back drawing moved 0.05 mm after the build",
+                meshes,
+                {"back": moved_back},
+                "what the model was built from",
+            ),
         ]
         clean = placement(meshes, extras, None, record)
         results = []
         for what, planted, drawings, words in plants:
             got = placement(planted, extras, drawings, record)
-            raised = [problem for problem in got['problems'] if words in problem]
-            results.append((what, bool(raised) and not got['ok'],
-                            raised[0] if raised else f'no problem saying {words!r}'))
-    gap = model_raster.legend_clearance(meshes, prefix, step, on=back['on'], face='back')
-    sunk = model_raster.legend_clearance(each(lambda m: _moved(m, dz=3 * step)), prefix, step,
-                                         on=back['on'], face='back')
-    results.append(('the back print laid on the face it is printed on', not sunk['ok'],
-                    f'{sunk["under_mm"]} mm over {sunk["under_mesh"]}'))
-    as_front = model_raster.legend_clearance(meshes, prefix, step, on=back['on'])
-    results.append(('the back print looked for from the front', not as_front['ok'],
-                    f'over: {as_front["over_mesh"]}, under: {as_front["under_mesh"]}'))
-    controls = [('the back print as built, from the back', gap['ok'],
-                 f'{gap["under_mm"]} mm over {gap["under_mesh"]}')]
+            raised = [problem for problem in got["problems"] if words in problem]
+            results.append(
+                (
+                    what,
+                    bool(raised) and not got["ok"],
+                    raised[0] if raised else f"no problem saying {words!r}",
+                )
+            )
+    gap = model_raster.legend_clearance(meshes, prefix, step, on=back["on"], face="back")
+    sunk = model_raster.legend_clearance(
+        each(lambda m: _moved(m, dz=3 * step)), prefix, step, on=back["on"], face="back"
+    )
+    results.append(
+        (
+            "the back print laid on the face it is printed on",
+            not sunk["ok"],
+            f"{sunk['under_mm']} mm over {sunk['under_mesh']}",
+        )
+    )
+    as_front = model_raster.legend_clearance(meshes, prefix, step, on=back["on"])
+    results.append(
+        (
+            "the back print looked for from the front",
+            not as_front["ok"],
+            f"over: {as_front['over_mesh']}, under: {as_front['under_mesh']}",
+        )
+    )
+    controls = [
+        (
+            "the back print as built, from the back",
+            gap["ok"],
+            f"{gap['under_mm']} mm over {gap['under_mesh']}",
+        )
+    ]
     return clean, results, controls
 
 
 def main(argv=None):
     """Check a board's legends from the command line; return the exit code."""
-    parser = argparse.ArgumentParser(description=__doc__.split('\n', 1)[0])
-    parser.add_argument('board_dir', type=Path, nargs='?',
-                        help='<board>')
-    parser.add_argument('--glb', type=Path, help="the model (default: source.json's)")
-    parser.add_argument('--tolerance-mm', type=float, default=TOLERANCE_MM)
-    parser.add_argument('--json', type=Path, help='write the report here')
-    parser.add_argument('--selftest', action='store_true',
-                        help='plant defects in the Cardputer ADV model and in the back print of '
-                             'the two-face fixture, and expect each caught')
+    parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    parser.add_argument("board_dir", type=Path, nargs="?", help="<board>")
+    parser.add_argument("--glb", type=Path, help="the model (default: source.json's)")
+    parser.add_argument("--tolerance-mm", type=float, default=TOLERANCE_MM)
+    parser.add_argument("--json", type=Path, help="write the report here")
+    parser.add_argument(
+        "--selftest",
+        action="store_true",
+        help="plant defects in the Cardputer ADV model and in the back print of "
+        "the two-face fixture, and expect each caught",
+    )
     args = parser.parse_args(argv)
     if args.selftest:
         good = True
-        for label, (clean, results, controls) in (('the Cardputer ADV', selftest()),
-                                                  ('the two-face fixture', faces_selftest())):
-            print(f'{label} as committed: {"passes" if clean["ok"] else "FAILS"} '
-                  f'({clean["groups"]} groups, worst {clean["worst_mm"]} mm)')
-            for problem in clean['problems']:
-                print(f'  {problem}')
+        for label, (clean, results, controls) in (
+            ("the Cardputer ADV", selftest()),
+            ("the two-face fixture", faces_selftest()),
+        ):
+            print(
+                f"{label} as committed: {'passes' if clean['ok'] else 'FAILS'} "
+                f"({clean['groups']} groups, worst {clean['worst_mm']} mm)"
+            )
+            for problem in clean["problems"]:
+                print(f"  {problem}")
             for what, caught, how in results:
-                print(f'{"caught" if caught else "MISSED"}: {what} -> {how}')
+                print(f"{'caught' if caught else 'MISSED'}: {what} -> {how}")
             for what, passed, how in controls:
-                print(f'{"passed" if passed else "FAILED"}: {what} -> {how}')
-            good = good and (clean['ok'] and all(caught for _, caught, _ in results)
-                             and all(passed for _, passed, _ in controls))
-        print('selftest ' + ('passed' if good else 'FAILED'))
+                print(f"{'passed' if passed else 'FAILED'}: {what} -> {how}")
+            good = good and (
+                clean["ok"]
+                and all(caught for _, caught, _ in results)
+                and all(passed for _, passed, _ in controls)
+            )
+        print("selftest " + ("passed" if good else "FAILED"))
         return 0 if good else 1
     if args.board_dir is None:
-        parser.error('give a board directory, or --selftest')
+        parser.error("give a board directory, or --selftest")
     report = check(args.board_dir.resolve(), args.glb, args.tolerance_mm)
     if report is None:
-        print(f'{args.board_dir.name}: the model prints nothing')
+        print(f"{args.board_dir.name}: the model prints nothing")
         return 0
     if args.json:
-        args.json.write_text(json.dumps(report, indent=2) + '\n')
-    print(json.dumps({k: v for k, v in report.items() if k != 'per_group'}, indent=2))
-    return 0 if report['ok'] else 1
+        args.json.write_text(json.dumps(report, indent=2) + "\n")
+    print(json.dumps({k: v for k, v in report.items() if k != "per_group"}, indent=2))
+    return 0 if report["ok"] else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

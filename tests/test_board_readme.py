@@ -5,6 +5,7 @@ The page is a reading of the specification and nothing else, one layout for
 all nine boards: a page edited by hand, or a ``board.json`` changed without
 the page being written again, fails here.
 """
+
 from __future__ import annotations
 
 import json
@@ -32,7 +33,8 @@ def test_the_page_is_what_board_json_writes(board: str) -> None:
     page = (ROOT / board / "README.md").read_text(encoding="utf-8")
     assert page == emit_board_readme.render(board), (
         f"{board}/README.md differs from what its board.json writes: "
-        f"run python3 _shared/emit_board_readme.py {board}")
+        f"run python3 _shared/emit_board_readme.py {board}"
+    )
 
 
 @pytest.mark.parametrize("board", BOARDS)

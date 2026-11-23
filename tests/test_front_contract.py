@@ -55,14 +55,30 @@ EXPECTED: dict[str, tuple[set[str], int]] = {
 #: "Legends"). No other front prints anything: every front is held to this.
 LEGEND_GROUPS: dict[str, tuple[int, dict[str, set[str]]]] = {
     "cardputer": (56, {"panel": {"brand-panel"}, "stamp": {"stamp-label"}}),
-    "tdeck-plus": (35, {"glass": {"lilygo-glass"}, "plate": {"band-print", "bottom-print"},
-                        "plate-marks": {"round-marks"}}),
+    "tdeck-plus": (
+        35,
+        {
+            "glass": {"lilygo-glass"},
+            "plate": {"band-print", "bottom-print"},
+            "plate-marks": {"round-marks"},
+        },
+    ),
 }
 SVG_NS = "http://www.w3.org/2000/svg"
 #: What a keyboard board's ``keyboard`` block in ``measurements.json`` holds:
 #: its grid and its wiring (``_shared/schema.md``, "Field rules"). No legend.
-KEYBOARD_FIELDS = {"rows", "cols", "origin_x_mm", "origin_y_mm", "key_w_mm", "key_h_mm",
-                   "gap_mm", "controller", "i2c_addr", "notes"}
+KEYBOARD_FIELDS = {
+    "rows",
+    "cols",
+    "origin_x_mm",
+    "origin_y_mm",
+    "key_w_mm",
+    "key_h_mm",
+    "gap_mm",
+    "controller",
+    "i2c_addr",
+    "notes",
+}
 
 #: The FT6x36 boards: the sensor's rows below the display and the columns a
 #: contact there is split into (the Kleidos firmware's
@@ -85,9 +101,7 @@ def group(root: ET.Element, group_id: str) -> ET.Element:
 
 def case_box(device_id: str) -> tuple[float, float]:
     """The device's case, in mm, from the file the front is drawn against."""
-    measured = json.loads(
-        (CAD / device_id / "measurements.json").read_text(encoding="utf-8")
-    )
+    measured = json.loads((CAD / device_id / "measurements.json").read_text(encoding="utf-8"))
     return float(measured["case"]["width"]), float(measured["case"]["height"])
 
 
@@ -164,7 +178,7 @@ def test_every_target_names_a_face_and_sits_on_the_case(devices):
 def test_each_front_names_the_controls_it_has(devices):
     """A front that lost a control, or grew one, has to say so here."""
     for device_id in devices:
-        ids = [spot.get("id", "")[len("hs-"):] for spot in group(front(device_id), "hotspots")]
+        ids = [spot.get("id", "")[len("hs-") :] for spot in group(front(device_id), "hotspots")]
         named, keys = EXPECTED[device_id]
         assert len(ids) == len(set(ids)), device_id
         assert {name for name in ids if not name.startswith("key-")} == named, device_id
@@ -190,8 +204,7 @@ def test_a_key_id_is_addressable(devices):
 
 def legend_groups(root: ET.Element) -> list[ET.Element]:
     """Every ``<g class="legend">`` of a front, in the drawing's order."""
-    return [g for g in root.iter(f"{{{SVG_NS}}}g")
-            if "legend" in (g.get("class") or "").split()]
+    return [g for g in root.iter(f"{{{SVG_NS}}}g") if "legend" in (g.get("class") or "").split()]
 
 
 def test_a_front_with_legend_groups_has_one_for_each_key(devices):
@@ -211,7 +224,7 @@ def test_a_front_with_legend_groups_has_one_for_each_key(devices):
         keys = [g.get("data-key") for g in groups if g.get("data-key") is not None]
         assert len(keys) == count, device_id
         spots = {
-            spot.get("id", "")[len("hs-key-"):]
+            spot.get("id", "")[len("hs-key-") :]
             for spot in group(root, "hotspots")
             if spot.get("id", "").startswith("hs-key-")
         }
@@ -253,16 +266,17 @@ def test_a_keyboards_legends_are_listed_in_its_front_and_nowhere_else(devices):
     back unnoticed.
     """
     for device_id in devices:
-        measured = json.loads(
-            (CAD / device_id / "measurements.json").read_text(encoding="utf-8")
-        )
+        measured = json.loads((CAD / device_id / "measurements.json").read_text(encoding="utf-8"))
         keys, _prints = LEGEND_GROUPS.get(device_id, (0, {}))
         assert ("keyboard" in measured) == bool(keys), device_id
         if not keys:
             continue
         assert set(measured["keyboard"]) == KEYBOARD_FIELDS, device_id
-        labeled = [spot for spot in group(front(device_id), "hotspots")
-                   if spot.get("id", "").startswith("hs-key-") and spot.get("data-label")]
+        labeled = [
+            spot
+            for spot in group(front(device_id), "hotspots")
+            if spot.get("id", "").startswith("hs-key-") and spot.get("data-label")
+        ]
         assert len(labeled) == keys, f"{device_id}: a key whose hotspot carries no legend"
 
 
@@ -316,9 +330,7 @@ def test_the_coreink_plain_keys_sit_where_they_are_measured():
     (``tests/test_back_contract.py``). ``measurements.json`` places each from
     the vendor's case file; the drawings' targets are held to it here.
     """
-    measured = json.loads(
-        (CAD / "coreink" / "measurements.json").read_text(encoding="utf-8")
-    )
+    measured = json.loads((CAD / "coreink" / "measurements.json").read_text(encoding="utf-8"))
     keys = {b["id"]: b for b in measured["buttons"]}
     assert "PowerSwitch" not in keys, "the power key is a push key"
     case_w = measured["case"]["width"]
@@ -356,7 +368,10 @@ def test_the_generator_writes_what_is_committed(tmp_path, devices):
     sheet = (CAD / "fronts-contact-sheet.svg").read_bytes()
     result = subprocess.run(
         [sys.executable, str(GENERATOR), "--contact-sheet"],
-        cwd=GENERATOR.parent, capture_output=True, text=True, check=False,
+        cwd=GENERATOR.parent,
+        capture_output=True,
+        text=True,
+        check=False,
     )
     assert result.returncode == 0, result.stderr
     for name, data in before.items():

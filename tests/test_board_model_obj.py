@@ -57,14 +57,17 @@ def record(board: str) -> dict:
 
 def glb_json(path: Path) -> dict:
     data = path.read_bytes()
-    return json.loads(data[20:20 + struct.unpack_from("<I", data, 12)[0]])
+    return json.loads(data[20 : 20 + struct.unpack_from("<I", data, 12)[0]])
 
 
 def lines(path: Path, key: str) -> list[str]:
     """The argument of every line of *path* that starts with *key*."""
     prefix = key + " "
-    return [line[len(prefix):] for line in path.read_text(encoding="utf-8").splitlines()
-            if line.startswith(prefix)]
+    return [
+        line[len(prefix) :]
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.startswith(prefix)
+    ]
 
 
 @pytest.mark.parametrize("board", BOARDS)
@@ -82,7 +85,7 @@ def test_the_obj_and_mtl_are_what_the_glb_gives(board: str) -> None:
         assert b"\r" not in data and data.endswith(b"\n")
     # the leading comments: the metadata block, then the exporter's header
     lines = (ROOT / obj["obj"]).read_text(encoding="utf-8").splitlines()
-    header = lines[:next(i for i, line in enumerate(lines) if not line.startswith("#"))]
+    header = lines[: next(i for i, line in enumerate(lines) if not line.startswith("#"))]
     assert f"# Source: {board}.glb, sha256 {rec['model_sha256']}" in header
     assert any(line.startswith("# Units: millimetres") for line in header)
     assert obj["triangles"] == rec["triangles"] and obj["materials"] == rec["materials"]
@@ -127,13 +130,16 @@ def test_one_object_per_mesh_and_every_material_in_the_mtl(board: str) -> None:
         pbr = mat["pbrMetallicRoughness"]
         kd = [float(v) for v in values["Kd"].split()]
         assert kd == pytest.approx(list(to_srgb(pbr["baseColorFactor"][:3])), abs=1e-4), (
-            board, mat["name"])
+            board,
+            mat["name"],
+        )
         assert float(values["Pr"]) == pytest.approx(pbr.get("roughnessFactor", 1.0), abs=1e-4)
         assert float(values["Pm"]) == pytest.approx(pbr.get("metallicFactor", 1.0), abs=1e-4)
         alpha = mat["pbrMetallicRoughness"]["baseColorFactor"][3]
         expected = alpha if mat.get("alphaMode") == "BLEND" else 1.0
         assert float(next(x for x in block if x.startswith("d "))[2:]) == pytest.approx(
-            expected, abs=1e-4), (board, index)
+            expected, abs=1e-4
+        ), (board, index)
         unlit = "KHR_materials_unlit" in mat.get("extensions", {})
         assert ("illum 0" if unlit else "illum 2") in block, (board, mat["name"])
 

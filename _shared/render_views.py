@@ -5,6 +5,7 @@
 silhouettes with the board's drawings through ``silhouette_polygon``. The
 views are named as a person looking at the board sees them.
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -16,12 +17,12 @@ from shapely.ops import unary_union
 #: Views of a mesh in a CAD frame (mm, +Z up): view -> (plot_x_dim,
 #: plot_x_sign, plot_y_dim, plot_y_sign), with dims 0 = X, 1 = Y, 2 = Z.
 _VIEW_AXES = {
-    "front":  (0, +1, 2, +1),   # look along -Y
-    "back":   (0, -1, 2, +1),   # look along +Y
-    "top":    (0, +1, 1, +1),   # look along -Z
-    "bottom": (0, +1, 1, -1),   # look along +Z
-    "left":   (1, +1, 2, +1),   # look along +X
-    "right":  (1, -1, 2, +1),   # look along -X
+    "front": (0, +1, 2, +1),  # look along -Y
+    "back": (0, -1, 2, +1),  # look along +Y
+    "top": (0, +1, 1, +1),  # look along -Z
+    "bottom": (0, +1, 1, -1),  # look along +Z
+    "left": (1, +1, 2, +1),  # look along +X
+    "right": (1, -1, 2, +1),  # look along -X
 }
 
 
@@ -31,9 +32,9 @@ _VIEW_AXES = {
 #: the top from +Y (the front face down).
 MODEL_VIEW_AXES = {
     "front": (0, +1, 1, +1),
-    "left":  (2, +1, 1, +1),
-    "top":   (0, +1, 2, -1),
-    "back":  (0, -1, 1, +1),
+    "left": (2, +1, 1, +1),
+    "top": (0, +1, 2, -1),
+    "back": (0, -1, 1, +1),
 }
 
 
