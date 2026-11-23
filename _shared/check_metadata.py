@@ -126,7 +126,7 @@ def tracked() -> list[str]:
             ["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, check=True
         ).stdout
         return [n for n in out.decode("utf-8").split("\0") if n]
-    except (OSError, subprocess.CalledProcessError):
+    except OSError, subprocess.CalledProcessError:
         return [
             p.relative_to(ROOT).as_posix()
             for p in ROOT.rglob("*")

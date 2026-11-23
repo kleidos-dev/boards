@@ -93,7 +93,7 @@ The deviation is `check_board_model.py`'s `worst_mm`: the front silhouette again
 
 ### Rebuilding
 
-The builder's Python libraries are pinned in its docstring (`numpy==2.5.5 shapely==2.2.0 trimesh==5.2.1 mapbox_earcut==2.1.0 scipy==1.18.1 networkx==3.7 rtree==1.4.1`, plus `cascadio==0.1.1` for a STEP (no model reads one now; `check_board_model.py` still imports it), `fast-simplification==0.2.0` for the specs that decimate and `fonttools==4.68.0` for a spec with printed legends); with them, the same spec and source build the same bytes. To rebuild one model, or check it against the committed file without writing it:
+The builder's Python libraries are pinned in its docstring (`numpy==2.5.5 shapely==2.2.0 trimesh==5.2.2 mapbox_earcut==2.1.0 scipy==1.18.1 networkx==3.7 rtree==1.4.1`, plus `cascadio==0.1.1` for a STEP (no model reads one now; `check_board_model.py` still imports it), `fast-simplification==0.2.0` for the specs that decimate and `fonttools==4.68.0` for a spec with printed legends); with them, the same spec and source build the same bytes. To rebuild one model, or check it against the committed file without writing it:
 
 ```bash
 python -I _shared/build_board_glb.py \

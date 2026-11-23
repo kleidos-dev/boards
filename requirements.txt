@@ -11,7 +11,7 @@
 # check_board_model.py, legend_placement.py, model_raster.py, legend_mesh.py)
 numpy==2.5.5
 shapely==2.2.0
-trimesh==5.2.1
+trimesh==5.2.2
 mapbox_earcut==2.1.0
 scipy==1.18.1
 networkx==3.7
@@ -27,9 +27,12 @@ pillow==13.0.0
 # Schematic generator and checks (_shared/kicad_schematic.py,
 # check_schematic.py, export_schematic.py); exporting also needs KiCad's
 # kicad-cli, which pip does not install (no KiCad library is read)
-pyyaml==6.0.3
+pyyaml==6.0.4
 # check_schematic_links.py reads the PDF's links and bookmarks with it
 pypdf==7.1.1
+# the schematic job installs the Python .python-version names with it in
+# KiCad's image, whose own Python is older (.github/workflows/check.yml)
+uv==0.13.9
 
 # Checks
 pytest==9.2.0
@@ -43,4 +46,4 @@ pytest-cov==7.1.0
 coverage==7.17.4
 reuse==6.3.0
 # reuse needs one module that detects a file's encoding
-charset-normalizer==3.5.2
+charset-normalizer==3.5.3
