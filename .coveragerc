@@ -11,15 +11,14 @@ branch = True
 # The whole checkout, so every path in the report is the path from the root
 # and a file no test runs is reported at 0 %; then the same code roots as
 # sonar.sources, by leaving out what is not code of this repository (the
-# virtual environment, the tests, the KiCad kit copied from brand, the face
-# fixture's data and the commit-message gate synced from kleidos-dev/agents).
+# virtual environment, the tests, the KiCad kit copied from brand and the
+# face fixture's data).
 source = .
 omit =
     .venv/*
     tests/*
     _shared/kicad/*
     _shared/fixtures/*
-    .github/*
 
 [report]
 # The code folders hold scripts, not packages (no __init__.py): look for
