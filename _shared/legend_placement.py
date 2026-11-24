@@ -928,7 +928,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{board_dir.name}: the model prints nothing")
         return 0
     if out is not None:
-        out.write_text(json.dumps(report, indent=2) + "\n")
+        with open(out, "w", encoding="utf-8") as fh:
+            fh.write(json.dumps(report, indent=2) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k != "per_group"}, indent=2))
     return 0 if report["ok"] else 1
 

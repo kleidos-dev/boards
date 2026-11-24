@@ -293,7 +293,8 @@ def main(argv: list[str] | None = None) -> int:
             return too_thin(entry["stroke_mm"], args.px_per_mm, not args.no_antialias)
 
     out = strip(data, drop)
-    out_path.write_bytes(out)
+    with open(out_path, "wb") as fh:
+        fh.write(out)
     left = legends(read(out)[0])
     print(
         f"wrote {args.out}: {len(out)} bytes ({len(data)} with every legend), "

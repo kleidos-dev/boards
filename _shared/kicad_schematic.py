@@ -210,7 +210,8 @@ def natural(ref: str) -> tuple[Any, ...]:
 
 def part_references(text: str) -> set[str]:
     """The parts a text names ("U1, Q3"): capital letters, then a number."""
-    return set(re.findall(r"(?<![A-Z])[A-Z]+\d+", text))
+    runs = re.findall(r"[A-Z]+|\d+|[^A-Z\d]+", text)
+    return {a + b for a, b in pairwise(runs) if "A" <= a[0] <= "Z" and b[0].isdecimal()}
 
 
 def not_fitted(value: object) -> bool:

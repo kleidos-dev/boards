@@ -256,7 +256,7 @@ spec's output less its legend meshes (``glb_legends.strip``).
 A file it is given lies in the repository, in the folder the command runs in
 or in the folder for temporary files (``paths.work_path``), and a vendor file
 may also lie in the cache; a spec's ``output`` lies in the repository. A vendor
-file is downloaded from ``VENDOR_HOSTS`` alone.
+file is downloaded from ``VENDOR_ADDRESSES`` alone.
 """
 
 import argparse
@@ -274,7 +274,6 @@ import shutil
 import struct
 import sys
 import tempfile
-import urllib.parse
 import urllib.request
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from http.client import HTTPMessage
@@ -368,8 +367,9 @@ from paths import OutsideError, in_tree, inside, work_folders, work_path  # noqa
 
 MM = 0.001
 DEFAULT_CACHE = Path(os.environ.get("KLEIDOS_CAD_CACHE", Path.home() / ".cache" / "kleidos-cad"))
-#: Where a vendor file is downloaded from; a spec that names one elsewhere adds its host here.
-VENDOR_HOSTS = ("raw.githubusercontent.com",)
+#: Where a vendor file is downloaded from, each host with the slash that ends it; a spec that
+#: names one elsewhere adds its host here.
+VENDOR_ADDRESSES = ("https://raw.githubusercontent.com/",)
 #: What a spec may name a vendor file, and how it pins one.
 _FILE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]*")
 _SHA256 = re.compile(r"[0-9a-f]{64}")
@@ -1378,14 +1378,13 @@ def sha256_file(path: str | Path) -> str:
 
 
 def vendor_address(url: object) -> str:
-    """*url*, refused unless it is an https address on one of ``VENDOR_HOSTS``."""
-    parts = urllib.parse.urlsplit(str(url))
-    for host in VENDOR_HOSTS:
-        if parts.scheme == "https" and parts.netloc == host:
-            return urllib.parse.urlunsplit(("https", host, parts.path, parts.query, ""))
-    raise SpecError(
-        f"{url}: a vendor file is fetched over https from {' or '.join(VENDOR_HOSTS)} only"
-    )
+    """*url*, refused unless it begins as one of ``VENDOR_ADDRESSES`` does."""
+    address = str(url)
+    if not address.startswith(VENDOR_ADDRESSES):
+        raise SpecError(
+            f"{url}: a vendor file is fetched from {' or '.join(VENDOR_ADDRESSES)} only"
+        )
+    return address
 
 
 class VendorRedirects(urllib.request.HTTPRedirectHandler):

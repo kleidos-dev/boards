@@ -120,7 +120,7 @@ def test_a_models_path_stays_in_the_repository(tmp_path: Path) -> None:
     ],
 )
 def test_a_vendor_file_is_fetched_from_its_hosts_alone(url: str) -> None:
-    with pytest.raises(builder.SpecError, match="over https from raw.githubusercontent.com only"):
+    with pytest.raises(builder.SpecError, match="from https://raw.githubusercontent.com/ only"):
         builder.vendor_address(url)
 
 
@@ -693,7 +693,7 @@ def test_the_command_takes_only_the_pinned_vendor_file(
     assert builder.main([spec, "--cache", str(board / "cache")]) == 1
     assert "no such file" in capsys.readouterr().err
     assert builder.main([spec, "--cache", str(board / "cache"), "--fetch"]) == 1
-    assert "a vendor file is fetched over https" in capsys.readouterr().err
+    assert "a vendor file is fetched from https" in capsys.readouterr().err
 
 
 # --- a model of no vendor file ------------------------------------------------------
