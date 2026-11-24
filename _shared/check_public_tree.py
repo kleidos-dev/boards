@@ -23,7 +23,7 @@ every file under the root) and fails on:
 - an SVG that embeds an image (``<image``, ``data:image``) or draws a vendor
   demo screen (``id="screen-demo"``). The README banner, which carries the
   Kleidos firmware's own unlock screens on these fronts, is not in this tree:
-  the README reads it from the social repository by its address;
+  the README reads it from brand's social pack by its address;
 - a text file (prose, data, code, KiCad sources) that names something private
   (``AGENTS.md``, "Nothing private"): a serial-port device path, a MAC
   address, a private IPv4 address, a home-directory path, or an e-mail address

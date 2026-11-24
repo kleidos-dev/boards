@@ -113,8 +113,8 @@ def test_a_board_model_obj_and_mtl_pass_only_beside_its_own_glb(tmp_path: Path) 
 
 
 def test_a_banner_copy_with_embedded_screens_is_refused(tmp_path: Path) -> None:
-    """The README banner is read from social by its address: a copy in the tree that embeds pictures
-    is refused, wherever it lands."""
+    """The README banner is read from brand's social pack by its address: a copy in the tree that
+    embeds pictures is refused, wherever it lands."""
     readme = tmp_path / ".github" / "readme"
     readme.mkdir(parents=True)
     (readme / "banner-dark.svg").write_text(
