@@ -37,3 +37,22 @@ updates:
     groups:
       python:
         patterns: ["*"]
+  # The hook revisions of .pre-commit-config.yaml, the kit's and third parties'.
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      exclude:
+        - "https://github.com/kleidos-dev/.github"
+    ignore:
+      # The kit's next major is taken by hand, with the fixes it asks for.
+      - dependency-name: "https://github.com/kleidos-dev/.github"
+        update-types: ["version-update:semver-major"]
+      # crate-ci/typos also tags its sub-crates, which read as typos 5.x.
+      - dependency-name: "https://github.com/crate-ci/typos"
+        versions: [">= 2"]
+    groups:
+      hooks:
+        patterns: ["*"]

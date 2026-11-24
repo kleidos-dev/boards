@@ -35,17 +35,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: "🧹 Lint (quality kit)"
-    uses: kleidos-dev/.github/.github/workflows/reusable-lint.yml@f3cb9fc380dea5a33c4539f013c0b1dab8ca6b1d # quality-v2.3.0
+  quick:
+    name: "⚡ Quick"
+    uses: kleidos-dev/.github/.github/workflows/quick.yml@v3
     permissions:
       contents: read
 
-  reuse:
-    name: "⚖️ Licensing (REUSE)"
-    uses: kleidos-dev/.github/.github/workflows/reusable-reuse.yml@f3cb9fc380dea5a33c4539f013c0b1dab8ca6b1d # quality-v2.3.0
+  check:
+    name: "🧪 Check"
+    needs: quick
+    uses: kleidos-dev/.github/.github/workflows/check.yml@v3
+    with:
+      install: "python -m pip install --require-hashes -r requirements.txt"
+      tests: "python -m pytest -rs -m \"not models\" --cov --cov-report=xml:coverage.xml tests"
+      timeout-minutes: 20
     permissions:
       contents: read
+
+  sonar:
+    name: "📊 Sonar"
+    needs: [check, tree]
+    if: github.event_name != 'schedule'
+    uses: kleidos-dev/.github/.github/workflows/sonar.yml@v3
+    permissions:
+      contents: read
+      id-token: write
 
   # What a push or a pull request touched, for the three heavy jobs below. A
   # scheduled or manual run, a push that opens a branch and anything git cannot
@@ -102,7 +116,7 @@ jobs:
   # and the embedded metadata. The heavy jobs below wait for them.
   tree:
     name: "🧪 Tree checks"
-    needs: [lint, reuse]
+    needs: [quick]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -128,44 +142,6 @@ jobs:
           KLEIDOS_DENY_EXTRA: ${{ secrets.KLEIDOS_DENY_EXTRA }}
         run: python3 _shared/check_metadata.py
 
-  # The tests but the models', on every push and pull request, so their
-  # coverage (.coveragerc) is the report SonarCloud reads: the model jobs are
-  # skipped on some pushes, and a report from them would make main's coverage
-  # depend on which jobs ran.
-  tests:
-    name: "🧪 Tests"
-    needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-python-tests.yml@f3cb9fc380dea5a33c4539f013c0b1dab8ca6b1d # quality-v2.3.0
-    with:
-      install: python -m pip install --require-hashes -r requirements.txt
-      run: python -m pytest -rs -m "not models" --cov --cov-report=xml:coverage.xml tests
-      timeout-minutes: 20
-    permissions:
-      contents: read
-
-  types:
-    name: "🔎 Types (mypy)"
-    needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-mypy.yml@f3cb9fc380dea5a33c4539f013c0b1dab8ca6b1d # quality-v2.3.0
-    with:
-      install: python -m pip install --require-hashes -r requirements.txt
-    permissions:
-      contents: read
-
-  osv:
-    name: "🛡️ Dependency vulnerabilities (OSV)"
-    needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-osv.yml@f3cb9fc380dea5a33c4539f013c0b1dab8ca6b1d # quality-v2.3.0
-    permissions:
-      contents: read
-
-  secrets:
-    name: "🔐 Secrets and MAC scan (gitleaks)"
-    needs: [lint, reuse]
-    uses: kleidos-dev/.github/.github/workflows/reusable-secrets.yml@f3cb9fc380dea5a33c4539f013c0b1dab8ca6b1d # quality-v2.3.0
-    permissions:
-      contents: read
-
   # Every model held to what builds it as it is now: built from its drawings
   # and spec as they are, its legends where its drawings print them, its
   # materials at separate depths and within the readers' table, and its web
@@ -174,7 +150,7 @@ jobs:
   # 22 minutes in a Linux container on a developer's machine (2026-11-17).
   models:
     name: "🔨 Board models"
-    needs: [changes, tree, tests]
+    needs: [changes, tree, check]
     if: needs.changes.outputs.models == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -198,7 +174,7 @@ jobs:
   # a checker or its fixtures change, weekly and on demand.
   selftests:
     name: "🧪 Checker selftests"
-    needs: [changes, tree, tests]
+    needs: [changes, tree, check]
     if: needs.changes.outputs.checkers == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -230,7 +206,7 @@ jobs:
   # pins and hashes.
   schematic:
     name: "🧫 Schematics (KiCad ERC, netlist, export)"
-    needs: [changes, tree, tests]
+    needs: [changes, tree, check]
     if: needs.changes.outputs.schematics == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -299,16 +275,29 @@ jobs:
       - name: Schematic tests, the generator and the KiCad kit included
         run: python3 -m pytest -rs tests/test_schematic.py tests/test_kicad_kit.py
 
-  # Every push to main and every pull request against it analyzed on
-  # SonarQube Cloud (sonar-project.properties), with the tests' coverage.
-  # Secretless: the kit's job trades its GitHub OIDC token for a short-lived
-  # token scoped to this project; a pull request with no OIDC token (a fork,
-  # Dependabot) ends green with a notice.
-  sonarcloud:
-    name: "📊 SonarCloud"
-    needs: [tests, tree]
-    if: github.event_name != 'schedule'
-    uses: kleidos-dev/.github/.github/workflows/reusable-sonarcloud.yml@f3cb9fc380dea5a33c4539f013c0b1dab8ca6b1d # quality-v2.3.0
-    permissions:
-      contents: read
-      id-token: write
+  done:
+    name: "✅ Check"
+    needs: [quick, check, changes, tree, models, selftests, schematic, sonar]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Every job of this file succeeded
+        # -p: no BASH_ENV, no function and no option from the environment; and
+        # both variables are always set here, so nothing outside the step steers it.
+        shell: /bin/bash --noprofile --norc -p -e -o pipefail {0}
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+          MAY_SKIP: models selftests schematic sonar
+        run: |
+          set -euo pipefail
+          export PATH=/usr/bin:/bin HOME=/nonexistent
+          echo "${NEEDS}" | jq -r 'to_entries[] | "\(.key): \(.value.result)"' | tee -a "${GITHUB_STEP_SUMMARY}"
+          echo "${NEEDS}" | jq -e --arg may " ${MAY_SKIP} " '
+            length > 0 and all(to_entries[];
+              .value.result == "success"
+              or (.value.result == "skipped" and (.key as $job | $may | contains(" \($job) "))))' > /dev/null || {
+            echo "::error title=Not every job succeeded::a job that failed, was cancelled or was skipped without leave is listed above"
+            exit 1
+          }
