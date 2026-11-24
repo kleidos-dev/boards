@@ -52,6 +52,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import media_meta as mm
+import svg_read
 
 ROOT = mm.ROOT
 MEDIA = {
@@ -183,8 +184,9 @@ def check_svg(
         found.add("M003", f"its SPDX comment says {m.group(1)}, REUSE {meta.spdx}")
     if meta.digital_source_type and mm.DST_BASE not in text[:20000]:
         found.add("M012", "no IPTC digital source type")
-    head = re.search(r"<title\b[^>]*>(.*?)</title>.*?<desc\b[^>]*>(.*?)</desc>", text, re.S)
-    values = list(blocks) + (list(head.groups()) if head else [])
+    title = svg_read.element_text(text, "title")
+    desc = svg_read.element_text(text, "desc", title[1]) if title else None
+    values = list(blocks) + ([title[0], desc[0]] if title and desc else [])
     deny(found, "its metadata", values, identity)
     if meta.language == "es" and any(
         ES_BANNED.search(v) or any(m.group(0) != "LILYGO" for m in VENDOR_ANY_CASE.finditer(v))

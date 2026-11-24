@@ -690,7 +690,8 @@ def coplanar_selftest(
     ) -> list[Mesh]:
         js, bin_ = glb_legends.read(Path(glb).read_bytes())
         change(js)
-        Path(out).write_bytes(glb_legends.write(js, bin_))
+        with open(out, "wb") as fh:
+            fh.write(glb_legends.write(js, bin_))
         return read_glb(out)
 
     def gap_lowered(js: dict[str, Any]) -> None:

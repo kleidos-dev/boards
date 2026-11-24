@@ -35,9 +35,10 @@ junctions) must have the one width the project sets.
 
 Usage::
 
-    python3 _shared/export_schematic.py <board> [--kicad-cli PATH] [--no-export] [--out DIR]
+    python3 _shared/export_schematic.py <board> [--no-export] [--out DIR]
 
-``KICAD_CLI`` also names kicad-cli. ``--out`` writes the PDF and the SVGs to
+``KICAD_CLI`` in the environment names kicad-cli, the one on the ``PATH``
+otherwise; the command line never does. ``--out`` writes the PDF and the SVGs to
 another folder instead of the board's. Exit status 0 when every check passes.
 """
 
@@ -45,7 +46,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -60,7 +60,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
 import kleidos_kicad as kit
 from check_schematic import additions, compare, index_pages
-from paths import ROOT
+from paths import ROOT, OutsideError, board_id, work_path
 
 GROUND = "dark"  # what is published and committed
 THEME = kit.theme_name(GROUND)  # the name kicad-cli is given: the theme file's name in colors/
@@ -73,10 +73,8 @@ def theme_colors() -> dict[str, str]:
     return kit.theme_colors(GROUND)
 
 
-def run(
-    cli: str, args: list[str], cwd: Path, env: dict[str, Any]
-) -> subprocess.CompletedProcess[str]:
-    return kit.run(args, cwd, env, cli)
+def run(args: list[str], cwd: Path, env: dict[str, Any]) -> subprocess.CompletedProcess[str]:
+    return kit.run(args, cwd, env)
 
 
 def line_mil(folder: Path, board: str) -> float:
@@ -104,20 +102,23 @@ def check_svg(svg: Path, colors: dict[str, str], width_mm: float, wires: bool = 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("board")
-    ap.add_argument("--kicad-cli", default=os.environ.get("KICAD_CLI", "kicad-cli"))
     ap.add_argument("--no-export", action="store_true", help="check only, write no PDF or SVG")
     ap.add_argument(
         "--out", type=Path, help="write the PDF and svg/ here instead of the board's folder"
     )
     args = ap.parse_args(argv)
-    folder = ROOT / args.board / "schematic"
-    out_dir = (args.out or folder).resolve()
-    sch = f"{args.board}.kicad_sch"
+    try:
+        board = board_id(args.board)
+        folder = ROOT / board / "schematic"
+        out_dir = folder if args.out is None else work_path(args.out)
+    except OutsideError as exc:
+        ap.error(str(exc))
+    sch = f"{board}.kicad_sch"
     env = kit.environment()
     tmp = Path(tempfile.mkdtemp())
 
     erc = tmp / "erc.rpt"
-    run(args.kicad_cli, ["sch", "erc", "--severity-all", "-o", str(erc), sch], folder, env)
+    run(["sch", "erc", "--severity-all", "-o", str(erc), sch], folder, env)
     report = erc.read_text(encoding="utf-8") if erc.exists() else ""
     m = re.search(r"ERC messages: (\d+)\s+Errors (\d+)\s+Warnings (\d+)", report)
     if not m:
@@ -130,12 +131,11 @@ def main(argv: list[str]) -> int:
 
     xml = tmp / "netlist.xml"
     run(
-        args.kicad_cli,
         ["sch", "export", "netlist", "--format", "kicadxml", "-o", str(xml), sch],
         folder,
         env,
     )
-    errors = compare(args.board, xml) + additions(args.board) + index_pages(args.board)
+    errors = compare(board, xml) + additions(board) + index_pages(board)
     for e in errors:
         print(f"FAIL {e}")
     if errors:
@@ -157,8 +157,8 @@ def main(argv: list[str]) -> int:
         return 0
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    pdf = out_dir / f"{args.board}.pdf"
-    out = kit.export_pdf(folder / sch, pdf, env, GROUND, args.kicad_cli)
+    pdf = out_dir / f"{board}.pdf"
+    out = kit.export_pdf(folder / sch, pdf, env, GROUND)
     if out.returncode:
         print(out.stdout, out.stderr)
         return 1
@@ -171,25 +171,25 @@ def main(argv: list[str]) -> int:
         return 1
     import schematic_pdf
 
-    errors = schematic_pdf.finish(args.board, pdf)
+    errors = schematic_pdf.finish(board, pdf)
     for e in errors:
         print(f"FAIL {e}")
     if errors:
         return 1
     svg_tmp = tmp / "svg"
     svg_tmp.mkdir()
-    out = kit.export_svg(folder / sch, svg_tmp, env, GROUND, args.kicad_cli)
+    out = kit.export_svg(folder / sch, svg_tmp, env, GROUND)
     if out.returncode:
         print(out.stdout, out.stderr)
         return 1
     # page order: the root first, then the sheets as layout.yaml lists them
     layout = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
-    names = [(f"{args.board}.svg", "contents")] + [
-        (f"{args.board}-{sh['name']}.svg", sh["file"].removesuffix(".kicad_sch"))
+    names = [(f"{board}.svg", "contents")] + [
+        (f"{board}-{sh['name']}.svg", sh["file"].removesuffix(".kicad_sch"))
         for sh in layout["sheets"]
     ]
     colors = theme_colors()
-    width_mm = line_mil(folder, args.board) * 0.0254
+    width_mm = line_mil(folder, board) * 0.0254
     errors = []
     for page, (got, _) in enumerate(names, start=1):
         src = svg_tmp / got
@@ -212,12 +212,12 @@ def main(argv: list[str]) -> int:
         shutil.rmtree(dest)
     dest.mkdir()
     for page, (got, slug) in enumerate(names, start=1):
-        shutil.copyfile(svg_tmp / got, dest / f"{args.board}-{page}-{slug.replace('_', '-')}.svg")
+        shutil.copyfile(svg_tmp / got, dest / f"{board}-{page}-{slug.replace('_', '-')}.svg")
     print(f"wrote {pdf.name} and {len(names)} SVGs in {dest}")
 
     import check_schematic_links
 
-    return check_schematic_links.main([args.board, "--pdf", str(pdf)])
+    return check_schematic_links.main([board, "--pdf", str(pdf)])
 
 
 if __name__ == "__main__":

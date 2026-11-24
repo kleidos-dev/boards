@@ -97,6 +97,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import media_meta
+import svg_read
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -256,7 +257,7 @@ def text(
     glyphs about the anchor point, for faces narrower or taller than any
     installed one.
     """
-    if scale_x != 1.0 or scale_y != 1.0:
+    if not (math.isclose(scale_x, 1.0) and math.isclose(scale_y, 1.0)):
         attrs = [
             'x="0"',
             'y="0"',
@@ -4584,7 +4585,6 @@ SHEET_FIT_H = SHEET_TILE_H - 2 * SHEET_TILE_PAD_Y
 SHEET_PIXEL_W = 1600
 
 _SVG_ROOT_RE = re.compile(r"\A\s*<svg\b([^>]*)>\n?(.*)</svg>\s*\Z", re.S)
-_ATTR_RE = re.compile(r'([\w:-]+)="([^"]*)"')
 _ID_RE = re.compile(r'(?<![\w:-])id="([^"]+)"')
 _URL_REF_RE = re.compile(r"url\(#([^)\s]+)\)")
 _HREF_REF_RE = re.compile(r'((?:xlink:)?href)="#([^"]+)"')
@@ -4625,7 +4625,7 @@ def contact_sheet_tile(device_id: str, front_svg: str, tile_x: float, tile_y: fl
     match = _SVG_ROOT_RE.match(front_svg)
     if not match:
         raise ValueError(f"{device_id}: front.svg has no <svg> root")
-    attrs = dict(_ATTR_RE.findall(match.group(1)))
+    attrs = svg_read.attributes(match.group(1))
     min_x, min_y, vb_w, vb_h = (float(v) for v in attrs["viewBox"].split())
     scale = min(SHEET_FIT_W / vb_w, SHEET_FIT_H / vb_h)
     tx = tile_x + SHEET_TILE_PAD_X + (SHEET_FIT_W - vb_w * scale) / 2

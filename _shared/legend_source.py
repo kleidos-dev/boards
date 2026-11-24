@@ -46,6 +46,9 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from paths import OutsideError, work_path
+
 SVG = "{http://www.w3.org/2000/svg}"
 #: The plane of a key's group that names none.
 KEYS_PLANE = "keys"
@@ -138,9 +141,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("front", type=Path, help="<board>/svg/front.svg")
     parser.add_argument("--plane", help="only the groups printed on this plane")
     args = parser.parse_args(argv)
-    found = described(args.front, args.plane)
+    try:
+        front = work_path(args.front)
+    except OutsideError as exc:
+        parser.error(str(exc))
+    found = described(front, args.plane)
     print(
-        f"{digest(args.front, args.plane)}  {len(found)} legend group(s)"
+        f"{digest(front, args.plane)}  {len(found)} legend group(s)"
         + (f" on the plane {args.plane!r}" if args.plane else "")
     )
     return 0

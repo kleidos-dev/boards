@@ -400,8 +400,12 @@ def main(argv: list[str]) -> int:
     ap.add_argument("boards", nargs="*")
     ap.add_argument("--check", action="store_true", help="write nothing; exit 1 if a page differs")
     args = ap.parse_args(argv)
+    known = boards()
+    unknown = [board for board in args.boards if board not in known]
+    if unknown:
+        ap.error(f"no board of this repository: {', '.join(unknown)}")
     stale = []
-    for board in args.boards or boards():
+    for board in args.boards or known:
         page, text = ROOT / board / "README.md", render(board)
         if page.exists() and page.read_text(encoding="utf-8") == text:
             continue

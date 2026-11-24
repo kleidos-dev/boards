@@ -21,6 +21,7 @@ Host-only: no build, no hardware, no network.
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import io
 import json
@@ -30,6 +31,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 from collections.abc import Callable, Iterable
 from pathlib import Path
 from types import ModuleType
@@ -42,6 +44,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
 import check_metadata  # noqa: E402  after the sys.path set-up above
 import media_meta as mm  # noqa: E402  after the sys.path set-up above
+import stamp_icon_meta  # noqa: E402  after the sys.path set-up above
 from paths import BOARDS  # noqa: E402  after the sys.path set-up above
 
 GOLDEN = ROOT / "tests" / "fixtures" / "meta"
@@ -120,6 +123,108 @@ def test_the_records_state_what_reuse_states() -> None:
         licenses, holders = spdx[rel]
         assert set(mm.license_ids(meta.spdx)) == licenses, rel
         assert set(meta.holders) == holders, f"{rel}: REUSE reads {holders}"
+
+
+def test_the_vocabularies_are_named_as_they_publish_themselves() -> None:
+    """A namespace name is compared byte by byte, so every byte of it counts."""
+    assert mm.XMP_NS == {
+        "dc": "http://purl.org/dc/elements/1.1/",
+        "photoshop": "http://ns.adobe.com/photoshop/1.0/",
+        "Iptc4xmpCore": "http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/",
+        "Iptc4xmpExt": "http://iptc.org/std/Iptc4xmpExt/2008-02-29/",
+        "plus": "http://ns.useplus.org/ldf/xmp/1.0/",
+        "xmpRights": "http://ns.adobe.com/xap/1.0/rights/",
+        "cc": "http://creativecommons.org/ns#",
+        "pdf": "http://ns.adobe.com/pdf/1.3/",
+        "xmp": "http://ns.adobe.com/xap/1.0/",
+        "xmpMM": "http://ns.adobe.com/xap/1.0/mm/",
+        "digsrctype": "http://cv.iptc.org/newscodes/digitalsourcetype/",
+    }
+    assert mm.XMP_NS["digsrctype"] == mm.DST_BASE
+
+
+def test_the_vocabularies_are_declared_as_xml_declares_them() -> None:
+    """An XML parser reads from each declaration the name the module uses."""
+    for declaration in mm.NAMESPACE_DECLARATIONS:
+        prefix = declaration.partition("=")[0].removeprefix("xmlns:")
+        element = ET.fromstring(f"<{prefix}:x {declaration}/>")  # noqa: S314  the module's own constants
+        assert element.tag == f"{{{mm.namespace_names([declaration])[prefix]}}}x"
+
+
+def test_no_string_of_the_scripts_is_a_cleartext_address() -> None:
+    """A string that is an http address reads as one to fetch: the scripts fetch
+    vendor files over https alone, and name a vocabulary only in a declaration."""
+    for path in sorted((ROOT / "_shared").glob("*.py")):
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                assert not node.value.startswith(("http://", "ftp://", "telnet://")) or (
+                    node.value.startswith("http://www.w3.org/")
+                ), f"{path.name}:{node.lineno}"
+
+
+@pytest.mark.parametrize(
+    ("text", "left"),
+    [
+        ("2026 A B <a(at)b.example>", "2026 A B"),
+        ("2026 A B", "2026 A B"),
+        (" A <a(at)b.example> B  <c(at)d.example> ", "A B"),
+        ("<a(at)b.example>", ""),
+        ("A <b <c> D", "A D"),
+        ("A > B <c>> D", "A > B> D"),
+        ("A <never closed", "A <never closed"),
+    ],
+)
+def test_a_holders_address_is_left_out(text: str, left: str) -> None:
+    # written with "(at)" so that this file holds no address
+    assert mm._without_email(text.replace("(at)", "@")) == left
+
+
+@pytest.mark.parametrize(
+    ("line", "stated"),
+    [
+        ("# {} MIT", "MIT"),
+        ("/* {}  MIT OR Apache-2.0  */", "MIT OR Apache-2.0"),
+        ("<!-- {} MIT -->", "MIT"),
+        ("<!-- {}MIT-->", "MIT"),
+        ("# {}", None),
+        ("/* {} */", None),
+        ("# no tag", None),
+    ],
+)
+def test_a_files_own_tag_is_read_without_the_mark_that_closes_its_comment(
+    line: str, stated: str | None, tmp_path: Path
+) -> None:
+    path = tmp_path / "file.txt"
+    tags = (mm.TAG_LICENSE, mm.TAG_COPYRIGHT)
+    path.write_text("\n".join(line.format(f"{tag}:") for tag in tags), encoding="utf-8")
+    found = [] if stated is None else [stated]
+    assert mm.in_file_tags(path) == (found, found)
+    ignored = f"{mm.REUSE_START}\n{path.read_text(encoding='utf-8')}\n{mm.REUSE_END}\n"
+    path.write_text(ignored, encoding="utf-8")
+    assert mm.in_file_tags(path) == ([], [])
+
+
+def test_an_address_is_found_wherever_it_stands() -> None:
+    at = "@"
+    for value in (f"a{at}b.example", f"by <a.b+c{at}d-e.example>", f"x{at}y z{at}w.example"):
+        assert mm.deny_hits(value) == ["an e-mail address"], value
+    for value in (f"{at}kleidos-dev", f"a{at}b", f"a {at}b.example"):
+        assert mm.deny_hits(value) == [], value
+
+
+def test_an_icons_metadata_is_stamped_and_checked(
+    tmp_path: Path, monkeypatch: MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    icon = tmp_path / "sticks3" / "icon.svg"
+    icon.parent.mkdir()
+    committed = (ROOT / "sticks3" / "icon.svg").read_text(encoding="utf-8")
+    icon.write_text(mm.unstamp_svg(committed), encoding="utf-8")
+    monkeypatch.setattr(stamp_icon_meta, "ROOT", tmp_path)
+    assert stamp_icon_meta.main(["--check", "sticks3"]) == 1
+    assert "FAIL sticks3/icon.svg" in capsys.readouterr().out
+    assert stamp_icon_meta.main(["sticks3"]) == 0
+    assert icon.read_text(encoding="utf-8") == committed
+    assert stamp_icon_meta.main(["--check", "sticks3"]) == 0
 
 
 # --- the writers --------------------------------------------------------------------

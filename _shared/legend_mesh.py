@@ -88,6 +88,7 @@ from shapely.geometry.base import BaseGeometry
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import legend_source
+import svg_read
 
 if TYPE_CHECKING:
     import board_faces
@@ -102,8 +103,7 @@ FACES = {
         700: "inter/Inter-Bold.ttf",
     },
 }
-_NUMBER = r"[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?"
-_PATH_TOKEN = re.compile(rf"[MmLlHhVvQqCcAaZz]|{_NUMBER}")
+_PATH_TOKEN = re.compile(rf"[MmLlHhVvQqCcAaZz]|{svg_read.NUMBER}")
 _TRANSFORM = re.compile(r"(translate|scale|rotate|matrix)\s*\(([^)]*)\)")
 #: What each drawn element of a legend may carry; anything else is refused.
 _KNOWN = {
@@ -365,7 +365,7 @@ def _matrix(text: str | None) -> npt.NDArray[np.float64]:
     """An SVG ``transform`` attribute as a 3 x 3 matrix."""
     m = np.eye(3)
     for kind, args in _TRANSFORM.findall(text or ""):
-        v = [float(t) for t in re.findall(_NUMBER, args)]
+        v = svg_read.numbers(args)
         if kind == "translate":
             step = np.array([[1, 0, v[0]], [0, 1, v[1] if len(v) > 1 else 0], [0, 0, 1]])
         elif kind == "scale":
@@ -701,7 +701,7 @@ def _shape(
         )
     geom: BaseGeometry
     if tag == "polygon":
-        v = [float(t) for t in re.findall(_NUMBER, el.get("points", ""))]
+        v = svg_read.numbers(el.get("points", ""))
         if len(v) % 2 or len(v) < 6:
             raise LegendError(f"{where}: a polygon of {len(v)} numbers")
         geom = sg.Polygon(list(zip(v[0::2], v[1::2], strict=True)))

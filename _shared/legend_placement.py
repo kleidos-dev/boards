@@ -86,7 +86,7 @@ import numpy as np  # noqa: E402
 import shapely  # noqa: E402
 import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
-from paths import ROOT as REPO  # noqa: E402  (the repository root)
+from paths import OutsideError, in_tree, work_path  # noqa: E402
 
 #: How far a group's ink may lie from where the drawing puts it, in mm.
 TOLERANCE_MM = 0.02
@@ -337,11 +337,11 @@ def placement(
         if face not in places:
             continue
         if front_svg is None:
-            front = REPO / drawing_of(entry)
+            front = in_tree(drawing_of(entry))
         elif isinstance(front_svg, Mapping):
-            front = Path(front_svg.get(face, REPO / drawing_of(entry)))
+            front = Path(front_svg.get(face, in_tree(drawing_of(entry))))
         else:
-            front = Path(front_svg) if face == "front" else REPO / drawing_of(entry)
+            front = Path(front_svg) if face == "front" else in_tree(drawing_of(entry))
         key = (front, entry.get("flatness_mm", 0.004))
         if key not in drawings:
             drawings[key] = legend_mesh.read_legends(front, key[1])
@@ -402,10 +402,10 @@ def placement(
                 )
             # the ink: the color the mesh is drawn in, the material's name, what it says
             worn, material = drawn_as[name], (said.get(name) or {}).get("material")
-            if ink_of(worn) != fill or worn.alpha != 1.0:
+            if ink_of(worn) != fill or worn.alpha < 1.0:
                 problems.append(
                     f"{name}: is drawn in #{ink_of(worn)}"
-                    + ("" if worn.alpha == 1.0 else f" at alpha {worn.alpha:g}")
+                    + (f" at alpha {worn.alpha:g}" if worn.alpha < 1.0 else "")
                     + f" by its material {material!r}, not in its ink #{fill}"
                 )
             if material != f"{glb_legends.INK_PREFIX}{fill}":
@@ -488,7 +488,7 @@ def check(
     """The placement report of a board directory's model (None when it prints nothing)."""
     board_dir = Path(board_dir)
     record = json.loads((Path(board_dir) / "model" / "source.json").read_text())
-    glb = Path(glb) if glb else REPO / record["model"]
+    glb = Path(glb) if glb else in_tree(record["model"])
     data = glb.read_bytes()
     extras = glb_legends.legends(glb_legends.read(data)[0])
     if not extras and not record.get("legends"):
@@ -510,7 +510,7 @@ def outlines(
             continue
         key = (drawing_of(entry), entry.get("flatness_mm", 0.004))
         if key not in read:
-            read[key] = legend_mesh.read_legends(REPO / key[0], key[1])
+            read[key] = legend_mesh.read_legends(in_tree(key[0]), key[1])
         whole, _ = drawn_areas(read[key], entry["plane"])
         for fill, area in sorted(whole.items()):
             rings = [
@@ -577,7 +577,8 @@ def _rewritten(
     """A copy of a model with *change* made to its JSON chunk: (its meshes, its legends' extras)."""
     js, bin_ = glb_legends.read(Path(glb).read_bytes())
     change(js)
-    Path(out).write_bytes(glb_legends.write(js, bin_))
+    with open(out, "wb") as fh:
+        fh.write(glb_legends.write(js, bin_))
     return model_raster.read_glb(out), glb_legends.legends(js)
 
 
@@ -592,14 +593,14 @@ def selftest(
     """
     board_dir = HERE.parent / board
     record = json.loads((Path(board_dir) / "model" / "source.json").read_text())
-    glb = REPO / record["model"]
+    glb = in_tree(record["model"])
     extras = glb_legends.legends(glb_legends.read(glb.read_bytes())[0])
     meshes = model_raster.read_glb(glb)
     names = [m.name for m in meshes if glb_legends.is_legend(m.name)]
     first, second = names[0], names[1]
     place = frame_of(record)
     legends = legend_mesh.read_legends(
-        REPO / record["legends"][0]["front"], record["legends"][0].get("flatness_mm", 0.004)
+        in_tree(record["legends"][0]["front"]), record["legends"][0].get("flatness_mm", 0.004)
     )
     key = next(legend for legend in legends if legend.key and legend.name == "Q")
     box = shapely.union_all([geom for _, geom in key.shapes]).buffer(0.2)
@@ -626,7 +627,7 @@ def selftest(
         dict(entry, stroke_mm=(entry["stroke_mm"] or 0) + 0.05) if entry["name"] == first else entry
         for entry in extras
     ]
-    drawing = (REPO / record["legends"][0]["front"]).read_text(encoding="utf-8")
+    drawing = in_tree(record["legends"][0]["front"]).read_text(encoding="utf-8")
     with tempfile.TemporaryDirectory(prefix="legend-selftest-") as tmp:
         moved_front, elsewhere_front = Path(tmp) / "moved.svg", Path(tmp) / "elsewhere.svg"
         for path, text in zip(
@@ -771,7 +772,7 @@ def faces_selftest(
     is printed on, and must not take the front's way of looking for the back's.
     """
     record = json.loads((Path(board_dir) / "model" / "source.json").read_text())
-    glb = REPO / record["model"]
+    glb = in_tree(record["model"])
     extras = glb_legends.legends(glb_legends.read(glb.read_bytes())[0])
     meshes = model_raster.read_glb(glb)
     back = next(entry for entry in record["legends"] if entry.get("face") == "back")
@@ -792,7 +793,7 @@ def faces_selftest(
     def turned(mesh: model_raster.Mesh) -> model_raster.Mesh:
         return dataclasses.replace(mesh, normals=-mesh.normals)
 
-    drawing = (REPO / back["drawing"]).read_text(encoding="utf-8")
+    drawing = in_tree(back["drawing"]).read_text(encoding="utf-8")
     moved_drawing, done = re.subn(r'points="3,3 ', 'points="3.05,3 ', drawing, count=1)
     if not done:
         raise ValueError("the fixture's back drawing has no F where this plant moves it")
@@ -881,11 +882,12 @@ def faces_selftest(
 def main(argv: list[str] | None = None) -> int:
     """Check a board's legends from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    parser.add_argument("board_dir", type=Path, nargs="?", help="<board>")
+    subject = parser.add_mutually_exclusive_group(required=True)
+    subject.add_argument("board_dir", type=Path, nargs="?", help="<board>")
     parser.add_argument("--glb", type=Path, help="the model (default: source.json's)")
     parser.add_argument("--tolerance-mm", type=float, default=TOLERANCE_MM)
     parser.add_argument("--json", type=Path, help="write the report here")
-    parser.add_argument(
+    subject.add_argument(
         "--selftest",
         action="store_true",
         help="plant defects in the Cardputer ADV model and in the back print of "
@@ -915,14 +917,18 @@ def main(argv: list[str] | None = None) -> int:
             )
         print("selftest " + ("passed" if good else "FAILED"))
         return 0 if good else 1
-    if args.board_dir is None:
-        parser.error("give a board directory, or --selftest")
-    report = check(args.board_dir.resolve(), args.glb, args.tolerance_mm)
+    try:
+        board_dir = work_path(args.board_dir)
+        glb = None if args.glb is None else work_path(args.glb)
+        out = None if args.json is None else work_path(args.json)
+    except OutsideError as exc:
+        parser.error(str(exc))
+    report = check(board_dir, glb, args.tolerance_mm)
     if report is None:
-        print(f"{args.board_dir.name}: the model prints nothing")
+        print(f"{board_dir.name}: the model prints nothing")
         return 0
-    if args.json:
-        args.json.write_text(json.dumps(report, indent=2) + "\n")
+    if out is not None:
+        out.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k != "per_group"}, indent=2))
     return 0 if report["ok"] else 1
 

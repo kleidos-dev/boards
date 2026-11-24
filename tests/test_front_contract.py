@@ -22,7 +22,6 @@ Host-only: no build, no hardware, no network.
 from __future__ import annotations
 
 import json
-import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -31,7 +30,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 CAD = ROOT
-GENERATOR = CAD / "_shared" / "emit_front_svg.py"
+sys.path.insert(0, str(CAD / "_shared"))
+import emit_front_svg  # noqa: E402  after the sys.path set-up above
 
 #: Every face a hotspot may name, from ``_shared/schema.md``.
 FACES = {"front", "left", "right", "top", "bottom"}
@@ -363,18 +363,22 @@ def test_the_coreink_plain_keys_sit_where_they_are_measured() -> None:
     assert float(reset_spot.attrib["data-h"]) == pytest.approx(reset["height_mm"], abs=0.01)
 
 
-def test_the_generator_writes_what_is_committed(tmp_path: Path, devices: list[str]) -> None:
+def test_a_text_is_stretched_only_when_its_scale_is_not_one() -> None:
+    plain = '<text x="1" y="2" font-size="2"'
+    assert emit_front_svg.text(1, 2, "a").startswith(plain)
+    assert emit_front_svg.text(1, 2, "a", scale_x=1.0, scale_y=1.0).startswith(plain)
+    # what arithmetic gives for one is one
+    assert emit_front_svg.text(1, 2, "a", scale_x=0.1 * 3 / 0.3).startswith(plain)
+    for x, y in ((1.09, 1.0), (1.0, 0.88), (0.999, 1.0)):
+        stretched = emit_front_svg.text(1, 2, "a", scale_x=x, scale_y=y)
+        assert "translate(1 2) scale(" in stretched
+
+
+def test_the_generator_writes_what_is_committed(devices: list[str]) -> None:
     """Running it again changes nothing: the fronts in git are its output."""
     before = {name: (CAD / name / "svg" / "front.svg").read_bytes() for name in devices}
     sheet = (CAD / "fronts-contact-sheet.svg").read_bytes()
-    result = subprocess.run(
-        [sys.executable, str(GENERATOR), "--contact-sheet"],
-        cwd=GENERATOR.parent,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert result.returncode == 0, result.stderr
+    assert emit_front_svg.main(["--contact-sheet"]) == 0
     for name, data in before.items():
         assert (CAD / name / "svg" / "front.svg").read_bytes() == data, name
     assert (CAD / "fronts-contact-sheet.svg").read_bytes() == sheet

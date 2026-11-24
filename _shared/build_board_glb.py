@@ -39,10 +39,11 @@ What the spec says, in the order the builder uses it (all lengths in mm):
     ``clean``, the default for a STEP, drops zero-area and repeated faces). A
     component outside ``select`` is dropped; each other one goes to the first
     ``parts`` rule it matches, and a rule's components are joined in order.
-    Match keys (``null`` skips an axis): ``name`` (regex on a STEP part's
-    names), ``min_ge`` / ``min_le`` / ``max_ge`` / ``max_le`` (the bounds),
-    ``extent_gt`` / ``extent_lt``, ``faces_gt`` / ``faces_lt``. A rule may carry
-    ``ops``, applied in order: ``{"slice": {"normal", "origin", "cap"}}`` (keeps
+    Match keys (``null`` skips an axis): ``name`` (a STEP part's names, whole:
+    ``*`` stands for any text and ``?`` for any one character), ``min_ge`` /
+    ``min_le`` / ``max_ge`` / ``max_le`` (the bounds), ``extent_gt`` /
+    ``extent_lt``, ``faces_gt`` / ``faces_lt``. A rule may carry ``ops``,
+    applied in order: ``{"slice": {"normal", "origin", "cap"}}`` (keeps
     the side the normal points to), ``{"decimate": {"face_count": n}}`` and
     ``{"cull": {"volumes", "margin", "same_box"}}`` (the cull below, on this part
     alone and at that point, so a part can lose its hidden faces before it is
@@ -251,10 +252,16 @@ Usage::
 that shows the board too small to print on: with ``--out`` it writes that
 lighter model, and with ``--check`` it compares it, byte for byte, with the
 spec's output less its legend meshes (``glb_legends.strip``).
+
+A file it is given lies in the repository, in the folder the command runs in
+or in the folder for temporary files (``paths.work_path``), and a vendor file
+may also lie in the cache; a spec's ``output`` lies in the repository. A vendor
+file is downloaded from ``VENDOR_HOSTS`` alone.
 """
 
 import argparse
 import ast
+import fnmatch
 import gzip
 import hashlib
 import importlib.metadata
@@ -267,10 +274,12 @@ import shutil
 import struct
 import sys
 import tempfile
+import urllib.parse
 import urllib.request
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from http.client import HTTPMessage
 from pathlib import Path
-from typing import Any, cast
+from typing import IO, Any, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -355,9 +364,23 @@ WEB_MIN_STROKE_PX = 1.5
 WEB_FLATNESS_PX = 0.25
 
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
+from paths import OutsideError, in_tree, inside, work_folders, work_path  # noqa: E402  (its checks)
 
 MM = 0.001
 DEFAULT_CACHE = Path(os.environ.get("KLEIDOS_CAD_CACHE", Path.home() / ".cache" / "kleidos-cad"))
+#: Where a vendor file is downloaded from; a spec that names one elsewhere adds its host here.
+VENDOR_HOSTS = ("raw.githubusercontent.com",)
+#: What a spec may name a vendor file, and how it pins one.
+_FILE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]*")
+_SHA256 = re.compile(r"[0-9a-f]{64}")
+#: The least and the most of each thing a shape of a spec may ask for.
+COUNTS = {
+    "cols": (1, 100),
+    "rows": (1, 100),
+    "res": (1, 200),
+    "sections": (3, 2000),
+    "subdivisions": (0, 7),
+}
 PINNED = {
     "numpy": "2.5.5",
     "shapely": "2.2.0",
@@ -551,7 +574,12 @@ def _validate_own(spec: dict[str, Any]) -> None:
 
 
 def _validate_unit(unit: dict[str, Any], where: str) -> None:
-    keys(unit["source"], "source", f"{where}source")
+    src = unit["source"]
+    keys(src, "source", f"{where}source")
+    if not _FILE_NAME.fullmatch(str(src.get("file") or "")):
+        raise SpecError(f"{where}source: file {src.get('file')!r} is not the name of a file")
+    if not _SHA256.fullmatch(str(src.get("sha256") or "")):
+        raise SpecError(f"{where}source: sha256 {src.get('sha256')!r} is not a SHA-256")
     if "tessellation" in unit:
         keys(unit["tessellation"], "tessellation", f"{where}tessellation")
     if "select" in unit:
@@ -1349,25 +1377,51 @@ def sha256_file(path: str | Path) -> str:
     return h.hexdigest()
 
 
+def vendor_address(url: object) -> str:
+    """*url*, refused unless it is an https address on one of ``VENDOR_HOSTS``."""
+    parts = urllib.parse.urlsplit(str(url))
+    for host in VENDOR_HOSTS:
+        if parts.scheme == "https" and parts.netloc == host:
+            return urllib.parse.urlunsplit(("https", host, parts.path, parts.query, ""))
+    raise SpecError(
+        f"{url}: a vendor file is fetched over https from {' or '.join(VENDOR_HOSTS)} only"
+    )
+
+
+class VendorRedirects(urllib.request.HTTPRedirectHandler):
+    """Follows a redirect only to an address a vendor file may be fetched from."""
+
+    def redirect_request(
+        self,
+        req: urllib.request.Request,
+        fp: IO[bytes],
+        code: int,
+        msg: str,
+        headers: HTTPMessage,
+        newurl: str,
+    ) -> urllib.request.Request | None:
+        return super().redirect_request(req, fp, code, msg, headers, vendor_address(newurl))
+
+
+def download(url: object, dest: Path) -> None:
+    """Write what *url* serves to *dest*."""
+    opener = urllib.request.build_opener(VendorRedirects)
+    with opener.open(vendor_address(url), timeout=120) as resp, open(dest, "wb") as fh:
+        while chunk := resp.read(1 << 20):
+            fh.write(chunk)
+
+
 def cached_source(unit: dict[str, Any], cache: str | Path, fetch: bool) -> Path:
     """A vendor file from the cache, downloaded first when *fetch* is set.
 
     *unit* is the spec, for its own file, or one of its ``modules``."""
     src = unit["source"]
-    path: Path = Path(cache) / src["sha256"][:12] / src["file"]
+    path = inside(Path(cache) / src["sha256"][:12] / src["file"], cache)
     if not path.is_file() and fetch:
         path.parent.mkdir(parents=True, exist_ok=True)
         tmp = path.with_suffix(path.suffix + ".part")
-        if not str(src["url"]).startswith("https://"):
-            raise SpecError(f"{src['url']}: a vendor file is fetched over https only")
         print(f"fetching {src['url']}")
-        # S310 asks for a checked scheme: it is checked just above (https only).
-        with (
-            urllib.request.urlopen(src["url"], timeout=120) as resp,  # noqa: S310
-            open(tmp, "wb") as fh,
-        ):
-            while chunk := resp.read(1 << 20):
-                fh.write(chunk)
+        download(src["url"], tmp)
         digest = sha256_file(tmp)
         if digest != src["sha256"]:
             tmp.unlink()
@@ -1398,7 +1452,7 @@ def step_mesh_dir(spec: dict[str, Any], src_path: str | Path, cache: str | Path)
 
     tes = spec.get("tessellation", {})
     tl, ta = num(tes.get("tol_linear", 0.01)), num(tes.get("tol_angular", 0.5))
-    out: Path = Path(cache) / spec["source"]["sha256"][:12] / f"step-{tl:g}-{ta:g}.glb"
+    out = inside(Path(cache) / spec["source"]["sha256"][:12] / f"step-{tl:g}-{ta:g}.glb", cache)
     if not out.is_file():
         out.parent.mkdir(parents=True, exist_ok=True)
         rc = cascadio.step_to_glb(
@@ -1468,7 +1522,7 @@ def matches(name: str, mesh: trimesh.Trimesh, rule: dict[str, Any]) -> bool:
             return True
         return all(lim[i] is None or test(values[i], num(lim[i])) for i in range(3))
 
-    if "name" in rule and not re.search(rule["name"], name):
+    if "name" in rule and not fnmatch.fnmatchcase(name, str(rule["name"])):
         return False
     if "faces_gt" in rule and not len(mesh.faces) > rule["faces_gt"]:
         return False
@@ -1652,6 +1706,14 @@ def cull_boxes(volumes: dict[str, list[list[float]]], names: Sequence[str]) -> l
         raise SpecError(f"cull: no volume {exc.args[0]!r}") from None
 
 
+def count(what: str, value: Any) -> int:
+    """How many of *what* a shape asks for, refused outside its ``COUNTS``."""
+    asked, (least, most) = int(value), COUNTS[what]
+    if asked < least or asked > most:
+        raise SpecError(f"{what} {value!r}: a shape asks for {least} to {most}")
+    return asked
+
+
 def _polygon(geom: BaseGeometry) -> sg.Polygon:
     """A profile as the one polygon a prism is extruded from."""
     if not isinstance(geom, sg.Polygon):
@@ -1697,7 +1759,8 @@ def shape_meshes(
             v0, v1 = (b[i] for i in span[uv[1]])
             a0, a1 = (b[i] for i in span[axis])
             if "rounded" in prof:
-                poly = rounded_rect(u0, u1, v0, v1, num(prof["rounded"]), int(prof.get("res", 6)))
+                res = count("res", prof.get("res", 6))
+                poly = rounded_rect(u0, u1, v0, v1, num(prof["rounded"]), res)
             else:
                 poly = sg.box(u0, v0, u1, v1)
             solid = _polygon(poly)
@@ -1714,12 +1777,12 @@ def shape_meshes(
             u0, u1, v0, v1 = nums(prof["rounded_rect"], 4)
             if front:
                 (u0, u1), (v0, v1) = _front(frame).u(axis, u0, u1), _front(frame).v(axis, v0, v1)
-            poly = rounded_rect(u0, u1, v0, v1, num(prof["r"]), int(prof.get("res", 6)))
+            poly = rounded_rect(u0, u1, v0, v1, num(prof["r"]), count("res", prof.get("res", 6)))
         elif "stadium" in prof:
             cu, cv, w, h = nums(prof["stadium"], 4)
             if front:
                 cu, cv = _front(frame).cu(axis, cu), _front(frame).cv(axis, cv)
-            res = int(prof.get("res", 10))
+            res = count("res", prof.get("res", 10))
             poly = stadium(cu, cv, w, h, res)
             if "inner" in prof:
                 iw, ih = nums(prof["inner"], 2)
@@ -1743,7 +1806,7 @@ def shape_meshes(
         if front:
             cx, cy = _front(frame).x(cx), _front(frame).y(cy)
         sph = trimesh.creation.icosphere(
-            subdivisions=int(s.get("subdivisions", 2)), radius=num(s["r"])
+            subdivisions=count("subdivisions", s.get("subdivisions", 2)), radius=num(s["r"])
         )
         sph.apply_translation([cx, cy, cz])
         if "z_min" in s:
@@ -1759,7 +1822,9 @@ def shape_meshes(
         if front:
             cu, cv = _front(frame).cu(axis, cu), _front(frame).cv(axis, cv)
             a0, a1 = _front(frame).a(axis, a0, a1)
-        return [cylinder(axis, cu, cv, num(c["r"]), a0, a1, int(c.get("sections", 20)))]
+        return [
+            cylinder(axis, cu, cv, num(c["r"]), a0, a1, count("sections", c.get("sections", 20)))
+        ]
     if "loft" in shape:
         lf = shape["loft"]
         axis = lf["axis"]
@@ -1787,8 +1852,8 @@ def shape_meshes(
             int(q.get("facing", 1)),
             uc,
             vc,
-            int(q["cols"]),
-            int(q["rows"]),
+            count("cols", q["cols"]),
+            count("rows", q["rows"]),
             num(q["pitch"]),
             num(q["size"]),
         )
@@ -1807,11 +1872,16 @@ def load_spec(spec_path: str | Path) -> dict[str, Any]:
     return out
 
 
+def output_path(spec: dict[str, Any]) -> Path:
+    """Where a spec's model goes: its ``output``, in the repository."""
+    return in_tree(spec["output"])
+
+
 def measurements(spec: dict[str, Any]) -> dict[str, Any] | None:
     rel = spec.get("measurements")
     if not rel:
         return None
-    meas: dict[str, Any] = json.loads((spec["_dir"] / rel).read_text())
+    meas: dict[str, Any] = json.loads(work_path(spec["_dir"] / rel).read_text())
     return meas
 
 
@@ -1889,6 +1959,11 @@ def pinned_file(unit: dict[str, Any], path: str | Path) -> Path:
             f"{src['sha256']}); the model's copyright names that file"
         )
     return Path(path)
+
+
+def vendor_path(given: str | Path, cache: str | Path) -> Path:
+    """A vendor file given by its path, refused outside the work folders and the cache."""
+    return inside(given, *work_folders(), cache)
 
 
 def module_paths(
@@ -2149,7 +2224,7 @@ def build(
             z = num(leg[height])
             if abs(round((z - center[axis]) / quant_mm) * quant_mm - (z - center[axis])) > 1e-9:
                 raise SpecError(f"{name}: {height} {z} is not on the model's {quant_mm} mm grid")
-            front = (spec["_dir"] / drawing).resolve()
+            front = work_path(spec["_dir"] / drawing)
             flatness = num(leg.get("flatness", 0.004))
             legible: Callable[[BaseGeometry], bool] | None = None
             if web_ppm is not None:
@@ -2535,7 +2610,7 @@ def source_json(
 
 def web_path(spec: dict[str, Any]) -> Path:
     """Where a board's web level of detail is written: beside its spec, named after its model."""
-    return Path(spec["_dir"]) / f"{Path(spec['output']).stem}-web.glb"
+    return work_path(Path(spec["_dir"]) / f"{Path(spec['output']).stem}-web.glb")
 
 
 def web_json(
@@ -2548,7 +2623,7 @@ def web_json(
     two rules, and, for each legends mesh, what was kept and what left out.
     """
     data = Path(out_path).read_bytes()
-    master = REPO / spec["output"]
+    master = output_path(spec)
     return {
         "board": spec["board"],
         "level": "web",
@@ -2726,16 +2801,22 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--record is for the whole model")
 
     try:
-        spec = load_spec(args.spec)
+        spec = load_spec(work_path(args.spec))
+        cache = inside(args.cache, *work_folders(), DEFAULT_CACHE)
+        chosen = None if args.out is None else work_path(args.out)
         if own_model(spec):
             if args.source:
                 parser.error("--source: this spec builds from no vendor file (format none)")
             src_path = None
         else:
-            src_path = args.source or cached_source(spec, args.cache, args.fetch)
+            src_path = (
+                cached_source(spec, cache, args.fetch)
+                if args.source is None
+                else vendor_path(args.source, cache)
+            )
         if src_path is None:
             pass
-        elif not Path(src_path).is_file():
+        elif not src_path.is_file():
             print(
                 f"FAILED: {src_path}: no such file (pass --source, or --fetch to download "
                 f"{spec['source']['url']})",
@@ -2755,9 +2836,9 @@ def main(argv: list[str] | None = None) -> int:
             name, sep, path = item.partition("=")
             if not sep or not name or not path:
                 parser.error(f"--module-source {item!r}: give NAME=FILE")
-            given[name] = Path(path)
-        modules = module_paths(spec, args.cache, args.fetch, given)
-        target = REPO / spec["output"]
+            given[name] = vendor_path(path, cache)
+        modules = module_paths(spec, cache, args.fetch, given)
+        target = output_path(spec)
 
         def record(model: str | Path, summary: dict[str, Any]) -> None:
             # a board's master is also written as OBJ and MTL, from the GLB itself
@@ -2778,7 +2859,7 @@ def main(argv: list[str] | None = None) -> int:
             web = web_path(spec)
             with tempfile.TemporaryDirectory() as tmp:
                 out = Path(tmp) / web.name
-                summary = build(spec, src_path, out, args.cache, modules=modules, web_ppm=ppm)
+                summary = build(spec, src_path, out, cache, modules=modules, web_ppm=ppm)
                 if args.check:
                     return 0 if compare_glb(out, web, 0.0) else 1
                 shutil.copyfile(out, web)
@@ -2792,24 +2873,25 @@ def main(argv: list[str] | None = None) -> int:
             )
             return 0
         if args.check:
-            reference = args.out or target
+            reference = chosen or target
             with tempfile.TemporaryDirectory() as tmp:
                 out = Path(tmp) / target.name
                 if args.without_legends:
                     # the model built with nothing printed on it, against the
                     # whole model less its legend meshes
                     stripped = Path(tmp) / f"{target.stem}-stripped.glb"
-                    stripped.write_bytes(glb_legends.strip(Path(reference).read_bytes()))
-                    build(spec, src_path, out, args.cache, with_legends=False, modules=modules)
+                    with open(stripped, "wb") as fh:
+                        fh.write(glb_legends.strip(reference.read_bytes()))
+                    build(spec, src_path, out, cache, with_legends=False, modules=modules)
                     return 0 if compare_glb(out, stripped, 0.0) else 1
-                summary = build(spec, src_path, out, args.cache, modules=modules)
+                summary = build(spec, src_path, out, cache, modules=modules)
                 same = compare_glb(out, reference, args.tolerance_mm)
-                identical = Path(out).read_bytes() == Path(reference).read_bytes()
-            if identical and args.record and Path(reference).resolve() == target.resolve():
+                identical = out.read_bytes() == reference.read_bytes()
+            if identical and args.record and reference == target:
                 record(target, summary)
             return 0 if same else 1
-        out = args.out or target
-        if args.without_legends and Path(out).resolve() == target.resolve():
+        out = chosen or target
+        if args.without_legends and out == target:
             print(
                 f"FAILED: {out} is the spec's output, the whole model; give the lighter "
                 f"one another name",
@@ -2818,15 +2900,15 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         out.parent.mkdir(parents=True, exist_ok=True)
         summary = build(
-            spec, src_path, out, args.cache, with_legends=not args.without_legends, modules=modules
+            spec, src_path, out, cache, with_legends=not args.without_legends, modules=modules
         )
         if args.no_source_json or args.without_legends:
             pass
-        elif Path(out).resolve() == target.resolve():
+        elif out == target:
             record(out, summary)
         else:
             print(f"source.json not written: {out} is not the spec's output {spec['output']}")
-    except SpecError as exc:
+    except (SpecError, OutsideError) as exc:
         print(f"FAILED: {exc}", file=sys.stderr)
         return 1
     return 0
