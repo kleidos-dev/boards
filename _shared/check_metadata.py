@@ -53,6 +53,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import media_meta as mm
 import svg_read
+from paths import OutsideError, inside
 
 ROOT = mm.ROOT
 MEDIA = {
@@ -161,15 +162,13 @@ def deny(
 
 # ---------------------------------------------------------------- SVG
 
-_BLOCK = re.compile(rf"<!-- {mm.REUSE_START} -->\n(.*?)<!-- {mm.REUSE_END} -->", re.S)
-
 
 def check_svg(
     rel: str, data: bytes, meta: mm.MediaMeta, identity: Sequence[re.Pattern[str]] | None
 ) -> Findings:
     found = Findings()
     text = data.decode("utf-8")
-    blocks = _BLOCK.findall(text)
+    blocks = svg_read.between(text, f"<!-- {mm.REUSE_START} -->\n", f"<!-- {mm.REUSE_END} -->")
     inside = sum(b.count("<metadata") for b in blocks)
     if text.count("<metadata") != inside:
         found.add("M011", "a <metadata> block outside the REUSE ignore markers")
@@ -468,7 +467,11 @@ def main(argv: list[str] | None = None) -> int:
             "checking the generic classes only",
             file=sys.stderr,
         )
-    files = [Path(p).resolve().relative_to(ROOT).as_posix() for p in args.paths] or tracked()
+    try:
+        given = [inside(p, ROOT).relative_to(ROOT).as_posix() for p in args.paths]
+    except OutsideError as exc:
+        parser.error(str(exc))
+    files = given or tracked()
     results = []
     checked = 0
     try:

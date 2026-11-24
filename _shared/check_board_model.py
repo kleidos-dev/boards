@@ -102,7 +102,7 @@ import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
 import svg_read  # noqa: E402
 import trimesh  # noqa: E402
-from paths import OutsideError, in_tree, work_path  # noqa: E402
+from paths import OutsideError, in_tree, work_path, write_file  # noqa: E402
 from shapely.ops import unary_union  # noqa: E402
 
 #: How far a legend may lie from where the drawing prints it, in mm.
@@ -325,7 +325,7 @@ def svg_outline(
 ) -> tuple[sg.Polygon, tuple[float, float, float, float] | None]:
     """(case outline polygon, screen-active box) of a front.svg, front-frame mm."""
     text = Path(svg_path).read_text()
-    body = re.sub(r"<defs>.*?</defs>", "", text, flags=re.S)
+    body = svg_read.without(text, "<defs>", "</defs>")
     shape = next(svg_read.tags(body, "rect", "path", "polygon"), None)
     if shape is None:
         raise ValueError(f"{svg_path}: no case outline")
@@ -747,8 +747,7 @@ def check(
     if "screen" in report:
         worst += [abs(v) for v in report["screen"]["vs_measurements_mm"].values()]
     report["worst_mm"] = round(max(worst), 3) if worst else 0.0
-    with open(out_dir / f"{board}-check.json", "w", encoding="utf-8") as fh:
-        fh.write(json.dumps(report, indent=2) + "\n")
+    write_file(out_dir / f"{board}-check.json", json.dumps(report, indent=2) + "\n")
     return report
 
 

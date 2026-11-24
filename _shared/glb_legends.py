@@ -40,7 +40,7 @@ from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from paths import OutsideError, work_path
+from paths import OutsideError, work_path, write_file
 
 GLB_MAGIC, JSON_CHUNK, BIN_CHUNK = 0x46546C67, 0x4E4F534A, 0x004E4942
 #: A legend mesh's node name ends so; no other node's does.
@@ -293,8 +293,7 @@ def main(argv: list[str] | None = None) -> int:
             return too_thin(entry["stroke_mm"], args.px_per_mm, not args.no_antialias)
 
     out = strip(data, drop)
-    with open(out_path, "wb") as fh:
-        fh.write(out)
+    write_file(out_path, out)
     left = legends(read(out)[0])
     print(
         f"wrote {args.out}: {len(out)} bytes ({len(data)} with every legend), "

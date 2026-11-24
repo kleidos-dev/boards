@@ -84,11 +84,10 @@ PRIVATE = (
         ),
     ),
     ("a home-directory path", re.compile(r"/(?:Users|home)/[\w.-]+|[A-Za-z]:\\Users\\")),
-    (
-        "an e-mail address other than the project's",
-        re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b"),
-    ),
 )
+#: An e-mail address from its ``@`` on, and what may stand before that.
+_DOMAIN = re.compile(r"@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b")
+_MAILBOX = re.compile(r"[\w.+-]")
 
 
 def tracked(root: Path) -> list[Path]:
@@ -164,6 +163,23 @@ def own_fixture_stl(root: Path, rel: Path) -> bool:
     return data is not None and (root / rel).read_bytes() == data
 
 
+def addresses(line: str) -> list[str]:
+    """Every e-mail address of *line*.
+
+    Found from its ``@`` and read back from there, so a long run of letters
+    with no ``@`` behind it is read once.
+    """
+    found, end = [], 0
+    for domain in _DOMAIN.finditer(line):
+        start = domain.start()
+        while start > end and _MAILBOX.match(line, start - 1):
+            start -= 1
+        if start < domain.start():
+            found.append(line[start : domain.end()])
+            end = domain.end()
+    return found
+
+
 def private_lines(rel: Path, text: str) -> list[str]:
     """Every line of *text* that names something private, as ``path:line: what``.
 
@@ -172,8 +188,10 @@ def private_lines(rel: Path, text: str) -> list[str]:
     found = []
     for number, line in enumerate(text.splitlines(), start=1):
         for what, pattern in PRIVATE:
-            if any(match.group(0) != PROJECT_EMAIL for match in pattern.finditer(line)):
+            if pattern.search(line):
                 found.append(f"{rel}:{number}: {what}")
+        if any(address != PROJECT_EMAIL for address in addresses(line)):
+            found.append(f"{rel}:{number}: an e-mail address other than the project's")
     return found
 
 

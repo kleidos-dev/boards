@@ -15,7 +15,12 @@ spec, a record) is checked once, where it comes in, and used as checked:
 - ``in_tree`` is ``inside`` the repository, for a path recorded in one of its
   files;
 - ``work_path`` is ``inside`` the repository, the folder the command runs in
-  or the folder for temporary files, for a file that a command is given;
+  or the folder for temporary files, for a file that a command is given. The
+  folder a command runs in is trusted: whoever starts it there means its
+  files, and a command started in ``/`` or in a home folder takes any file
+  under it. What a data file names is never looked for there;
+- ``beside`` is ``inside`` the repository or the board a data file belongs to,
+  for a file that it names from its own folder;
 - ``board_id`` is one of ``BOARDS``, for a board named on a command line.
 """
 
@@ -71,6 +76,29 @@ def work_folders() -> tuple[Path, ...]:
 def work_path(path: str | os.PathLike[str]) -> Path:
     """*path* as a command is given it, refused outside ``work_folders``."""
     return inside(path, *work_folders())
+
+
+def beside(file: str | os.PathLike[str], path: str | os.PathLike[str]) -> Path:
+    """*path* as the data file *file* names it from its own folder.
+
+    Refused outside the repository and the folder of the board *file* belongs
+    to: the one that holds ``model/`` when *file* lies in there, its own
+    folder otherwise.
+    """
+    folder = Path(file).parent
+    return inside(folder / path, ROOT, folder.parent if folder.name == "model" else folder)
+
+
+def write_file(path: str | os.PathLike[str], content: bytes | str) -> None:
+    """Write *content* to *path*, a path already checked; a text as UTF-8.
+
+    Through an open file, not ``Path.write_bytes`` or ``Path.write_text``:
+    SonarCloud's S2083 takes the argument of those two for a path, and what
+    was read from a checked model for an unchecked one.
+    """
+    data = content.encode("utf-8") if isinstance(content, str) else content
+    with open(path, "wb") as fh:
+        fh.write(data)
 
 
 def board_id(name: str) -> str:

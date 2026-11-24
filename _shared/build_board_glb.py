@@ -255,8 +255,9 @@ spec's output less its legend meshes (``glb_legends.strip``).
 
 A file it is given lies in the repository, in the folder the command runs in
 or in the folder for temporary files (``paths.work_path``), and a vendor file
-may also lie in the cache; a spec's ``output`` lies in the repository. A vendor
-file is downloaded from ``VENDOR_ADDRESSES`` alone.
+may also lie in the cache; a spec's ``output`` lies in the repository, and the
+measurements and the drawings a spec names lie there or in its board's folder
+(``paths.beside``). A vendor file is downloaded from ``VENDOR_ADDRESSES`` alone.
 """
 
 import argparse
@@ -363,7 +364,15 @@ WEB_MIN_STROKE_PX = 1.5
 WEB_FLATNESS_PX = 0.25
 
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
-from paths import OutsideError, in_tree, inside, work_folders, work_path  # noqa: E402  (its checks)
+from paths import (  # noqa: E402  (its checks)
+    OutsideError,
+    beside,
+    in_tree,
+    inside,
+    work_folders,
+    work_path,
+    write_file,
+)
 
 MM = 0.001
 DEFAULT_CACHE = Path(os.environ.get("KLEIDOS_CAD_CACHE", Path.home() / ".cache" / "kleidos-cad"))
@@ -1882,7 +1891,7 @@ def measurements(spec: dict[str, Any]) -> dict[str, Any] | None:
     rel = spec.get("measurements")
     if not rel:
         return None
-    meas: dict[str, Any] = json.loads(work_path(spec["_dir"] / rel).read_text())
+    meas: dict[str, Any] = json.loads(beside(spec["_path"], rel).read_text())
     return meas
 
 
@@ -2225,7 +2234,7 @@ def build(
             z = num(leg[height])
             if abs(round((z - center[axis]) / quant_mm) * quant_mm - (z - center[axis])) > 1e-9:
                 raise SpecError(f"{name}: {height} {z} is not on the model's {quant_mm} mm grid")
-            front = work_path(spec["_dir"] / drawing)
+            front = beside(spec["_path"], drawing)
             flatness = num(leg.get("flatness", 0.004))
             legible: Callable[[BaseGeometry], bool] | None = None
             if web_ppm is not None:
@@ -2611,7 +2620,7 @@ def source_json(
 
 def web_path(spec: dict[str, Any]) -> Path:
     """Where a board's web level of detail is written: beside its spec, named after its model."""
-    return work_path(Path(spec["_dir"]) / f"{Path(spec['output']).stem}-web.glb")
+    return beside(spec["_path"], f"{Path(spec['output']).stem}-web.glb")
 
 
 def web_json(
@@ -2881,8 +2890,7 @@ def main(argv: list[str] | None = None) -> int:
                     # the model built with nothing printed on it, against the
                     # whole model less its legend meshes
                     stripped = Path(tmp) / f"{target.stem}-stripped.glb"
-                    with open(stripped, "wb") as fh:
-                        fh.write(glb_legends.strip(reference.read_bytes()))
+                    write_file(stripped, glb_legends.strip(reference.read_bytes()))
                     build(spec, src_path, out, cache, with_legends=False, modules=modules)
                     return 0 if compare_glb(out, stripped, 0.0) else 1
                 summary = build(spec, src_path, out, cache, modules=modules)

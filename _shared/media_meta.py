@@ -665,13 +665,23 @@ def _boards() -> tuple[str, ...]:
     return BOARDS
 
 
+_DATE = re.compile(r'\(date "(\d{4}-\d{2}-\d{2})"\)')
+
+
+def title_date(schematic: str) -> str | None:
+    """The first date a schematic's text states from its title block on, or None."""
+    block = schematic.find("(title_block")
+    found = _DATE.search(schematic, block) if block >= 0 else None
+    return found.group(1) if found else None
+
+
 def schematic_date(board: str) -> str:
     """The date a board's schematic title block states (``YYYY-MM-DD``): its only date."""
     text = (ROOT / board / "schematic" / f"{board}.kicad_sch").read_text(encoding="utf-8")
-    m = re.search(r'\(title_block.*?\(date "(\d{4}-\d{2}-\d{2})"\)', text, re.S)
-    if not m:
+    date = title_date(text)
+    if date is None:
         raise MetaError(f"{board}: the schematic title block states no date")
-    return m.group(1)
+    return date
 
 
 # ---------------------------------------------------------------- escaping
@@ -831,7 +841,7 @@ def svg_block(meta: MediaMeta) -> str:
 
 
 _SVG_SPDX = re.compile(r"\A<!-- " + TAG_LICENSE + r": [^>]*-->\n")
-_SVG_ROOT = re.compile(r"<svg\b[^>]*>\n?")
+_SVG_ROOT = re.compile(r"<svg\b[^<>]*>\n?")
 _ROOT_A11Y = re.compile(r'\s(?:role|aria-labelledby|lang)="[^"]*"')
 _SVG_META = re.compile(
     r"(?:<title\b[^>]*>[^<]*</title>\n?)?(?:<desc\b[^>]*>[^<]*</desc>\n?)?"

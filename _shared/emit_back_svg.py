@@ -188,7 +188,7 @@ def mirror_points(points: str, width: float) -> str:
 
 def front_outline(svg: str) -> str:
     """The case outline of a front: its first shape outside ``<defs>``."""
-    body = re.sub(r"<defs>.*?</defs>", "", svg, flags=re.S)
+    body = svg_read.without(svg, "<defs>", "</defs>")
     found = next(svg_read.tags(body, "rect", "path", "polygon"), None)
     if found is None:
         raise ValueError("the front has no case outline")

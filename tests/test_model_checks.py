@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -218,6 +219,42 @@ def test_the_placement_check_fails_a_print_planted_elsewhere(
     glb = planted(tmp_path, change)
     assert legend_placement.main([str(FIXTURE), "--glb", str(glb)]) == 1
     assert json.loads(capsys.readouterr().out)["problems"]
+
+
+@pytest.mark.parametrize(
+    ("plane", "key", "given"),
+    [
+        ("name", "front", None),
+        ("label", "drawing", None),
+        ("label", "drawing", {"front": FIXTURE / "svg" / "front.svg"}),
+        ("label", "drawing", FIXTURE / "svg" / "front.svg"),
+    ],
+)
+def test_a_record_names_a_drawing_of_the_repository(
+    plane: str, key: str, given: Any, tmp_path: Path
+) -> None:
+    """The drawing as it is, but out of the repository: whole paths and ones that climb out."""
+    copy = tmp_path / "copy"
+    shutil.copytree(FIXTURE, copy)
+    path = copy / "model" / "source.json"
+    written = json.loads(path.read_text(encoding="utf-8"))
+    extras = glb_legends.legends(glb_legends.read(MODEL.read_bytes())[0])
+    meshes = model_raster.read_glb(MODEL)
+    for outside in (
+        str(copy / "svg" / f"{'front' if plane == 'name' else 'back'}.svg"),
+        os.path.relpath(copy / "svg" / f"{'front' if plane == 'name' else 'back'}.svg", ROOT),
+    ):
+        record = json.loads(json.dumps(written))
+        (entry,) = (e for e in record["legends"] if e["plane"] == plane)
+        entry[key] = outside
+        with pytest.raises(paths.OutsideError):
+            legend_placement.placement(meshes, extras, given, record, 0.02)
+        path.write_text(json.dumps(record), encoding="utf-8")
+        with pytest.raises(paths.OutsideError):
+            legend_placement.outlines(copy, entry.get("face", "front"))
+        if given is None:
+            with pytest.raises(paths.OutsideError):
+                legend_placement.main([str(copy), "--glb", str(MODEL)])
 
 
 def test_a_print_is_in_its_ink_and_opaque(tmp_path: Path) -> None:

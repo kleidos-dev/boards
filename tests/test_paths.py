@@ -80,6 +80,35 @@ def test_a_command_works_in_the_repository_its_folder_and_the_temporary_one(
         paths.work_path(OUTSIDE)
 
 
+def test_what_a_data_file_names_lies_in_the_repository_or_with_its_board(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Not in the folder the command runs in, and not anywhere under the temporary one."""
+    monkeypatch.chdir(tmp_path)
+    board = tmp_path.resolve() / "board"
+    spec = board / "model" / "spec.json"
+    assert paths.beside(spec, "../svg/front.svg") == board / "svg" / "front.svg"
+    assert paths.beside(spec, "faces-web.glb") == board / "model" / "faces-web.glb"
+    assert paths.beside(spec, ROOT / "README.md") == ROOT / "README.md"
+    assert paths.beside(board / "spec.json", "a.json") == board / "a.json"
+    for file, path in (
+        (spec, "../../front.svg"),
+        (spec, tmp_path / "front.svg"),
+        (spec, OUTSIDE),
+        (board / "spec.json", "../front.svg"),
+    ):
+        with pytest.raises(paths.OutsideError):
+            paths.beside(file, path)
+
+
+def test_a_checked_path_is_written_as_given(tmp_path: Path) -> None:
+    out = tmp_path / "out"
+    paths.write_file(out, b"\x00\r\n")
+    assert out.read_bytes() == b"\x00\r\n"
+    paths.write_file(out, "José\n")
+    assert out.read_bytes() == "José\n".encode()
+
+
 def test_a_board_is_one_of_the_boards() -> None:
     for board in paths.BOARDS:
         assert paths.board_id(board) == board
@@ -91,6 +120,7 @@ def test_a_board_is_one_of_the_boards() -> None:
 @pytest.mark.parametrize(
     ("module", "argv"),
     [
+        ("check_metadata", ["OUT"]),
         ("build_board_glb", ["OUT"]),
         ("build_board_glb", ["SPEC", "--source", "OUT"]),
         ("build_board_glb", ["SPEC", "--module-source", "base=OUT", "--source", "STL"]),

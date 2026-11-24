@@ -97,6 +97,11 @@ def test_a_models_path_stays_in_the_repository(tmp_path: Path) -> None:
             builder.output_path({**spec, "output": output})
     loaded = builder.load_spec(FIXTURE / "model" / "spec.json")
     assert builder.web_path(loaded) == FIXTURE / "model" / "faces-web.glb"
+    web = tmp_path / "board" / "model" / "faces-web.glb"
+    web.parent.mkdir(parents=True)
+    web.symlink_to(tmp_path / "elsewhere.glb")
+    with pytest.raises(paths.OutsideError):
+        builder.web_path({**loaded, "_path": web.with_name("spec.json")})
     assert builder.measurements({**loaded, "measurements": None}) is None
     with pytest.raises(paths.OutsideError):
         builder.measurements({**loaded, "measurements": "/etc/hosts"})
@@ -189,6 +194,34 @@ def test_a_fetched_file_is_kept_only_with_its_pinned_bytes(
     unit["source"]["file"] = "../../body.stl"
     with pytest.raises(paths.OutsideError):
         builder.cached_source(unit, tmp_path, fetch=True)
+
+
+def test_a_tessellation_is_kept_in_the_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """One per file and tolerance, made once, and nowhere else."""
+    cascadio = pytest.importorskip("cascadio")
+    made: list[str] = []
+
+    def step_to_glb(step: str, glb: str, **options: object) -> int:
+        made.append(step)
+        Path(glb).write_bytes(b"glTF")
+        return 0
+
+    monkeypatch.setattr(cascadio, "step_to_glb", step_to_glb)
+    cache = tmp_path / "cache"
+    spec: dict[str, Any] = {"source": {"sha256": "a" * 64}}
+    where = cache.resolve() / ("a" * 12) / "step-0.01-0.5.glb"
+    assert builder.step_mesh_dir(spec, "a.step", cache) == where
+    assert builder.step_mesh_dir(spec, "a.step", cache) == where and made == ["a.step"]
+    (cache / ("b" * 12)).symlink_to(tmp_path)
+    for digest in ("../../elsewhere", "b" * 64):
+        with pytest.raises(paths.OutsideError):
+            builder.step_mesh_dir({"source": {"sha256": digest}}, "a.step", cache)
+    assert made == ["a.step"]
+    monkeypatch.setattr(cascadio, "step_to_glb", lambda *a, **k: 1)
+    with pytest.raises(builder.SpecError, match="could not tessellate"):
+        builder.step_mesh_dir({"source": {"sha256": "c" * 64}}, "a.step", cache)
 
 
 def test_a_vendor_file_given_by_its_path_holds_the_pinned_bytes(tmp_path: Path) -> None:
@@ -379,18 +412,18 @@ def test_a_grid_of_squares_has_the_rows_and_columns_it_asks_for() -> None:
 @pytest.mark.parametrize(
     ("shape", "words"),
     [
-        (_grid(cols=10**9), "cols 1000000000: a shape asks for 1 to 100"),
-        (_grid(rows=10**9), "rows 1000000000: a shape asks for 1 to 100"),
+        (_grid(cols=101), "cols 101: a shape asks for 1 to 100"),
+        (_grid(rows=101), "rows 101: a shape asks for 1 to 100"),
         (_grid(cols=0), "cols 0"),
         (_grid(rows=-1), "rows -1"),
-        ({"sphere": {"c": [0, 0, 0], "r": 1, "subdivisions": 30}}, "subdivisions 30"),
+        ({"sphere": {"c": [0, 0, 0], "r": 1, "subdivisions": 8}}, "subdivisions 8"),
         (
-            {"cylinder": {"axis": "z", "c": [0, 0], "r": 1, "range": [0, 1], "sections": 10**9}},
-            "sections",
+            {"cylinder": {"axis": "z", "c": [0, 0], "r": 1, "range": [0, 1], "sections": 2001}},
+            "sections 2001",
         ),
         (
-            {"prism": {"axis": "z", "volume": "one", "profile": {"rounded": 0.5, "res": 10**9}}},
-            "res",
+            {"prism": {"axis": "z", "volume": "one", "profile": {"rounded": 0.5, "res": 201}}},
+            "res 201",
         ),
         (
             {
@@ -407,16 +440,17 @@ def test_a_grid_of_squares_has_the_rows_and_columns_it_asks_for() -> None:
                 "prism": {
                     "axis": "z",
                     "range": [0, 1],
-                    "profile": {"stadium": [0, 0, 2, 1], "res": 10**9},
+                    "profile": {"stadium": [0, 0, 2, 1], "res": 201},
                 }
             },
-            "res",
+            "res 201",
         ),
         ({"prism": {"axis": "z", "range": [0, 1], "profile": {}}}, "unknown profile"),
         ({"torus": {}}, "unknown shape"),
     ],
 )
 def test_a_shape_that_asks_for_too_much_is_refused(shape: dict[str, Any], words: str) -> None:
+    """Each count one past its bound: a builder that did not look would make the shape."""
     with pytest.raises(builder.SpecError, match=words):
         builder.shape_meshes(shape, {"one": [[0, 2, 0, 3, 0, 4]]}, None)
 
@@ -687,6 +721,38 @@ def test_the_command_refuses_options_that_do_not_go_together(
         builder.main(command(board, *options))
     assert stop.value.code == 2
     assert words in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("key", ["front", "drawing", "measurements"])
+@pytest.mark.parametrize("planted", ["beside the board", "in the folder the command runs in"])
+def test_the_command_reads_no_file_a_spec_names_outside_its_board(
+    key: str,
+    planted: str,
+    board: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A drawing or the measurements, as they are but out of the repository, by a whole path."""
+    source = {"front": "svg/front.svg", "drawing": "svg/back.svg"}.get(key, "measurements.json")
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    shutil.copy(board / source, outside)
+    if planted == "in the folder the command runs in":
+        monkeypatch.chdir(outside)
+    path = board / "model" / "spec.json"
+    spec = json.loads(path.read_text(encoding="utf-8"))
+    given = str(outside / Path(source).name)
+    if key == "measurements":
+        spec[key] = given
+    else:
+        (entry,) = (m["legends"] for m in spec["meshes"] if key in m.get("legends", {}))
+        entry[key] = given
+    path.write_text(json.dumps(spec), encoding="utf-8")
+    before = (board / "model" / "faces.glb").read_bytes()
+    assert builder.main(command(board, "--no-source-json")) == 1
+    assert f"{given}: leads to" in capsys.readouterr().err
+    assert (board / "model" / "faces.glb").read_bytes() == before
 
 
 def test_the_command_takes_only_the_pinned_vendor_file(

@@ -620,7 +620,7 @@ def outward(pin_angle: int, sym_angle: int) -> int:
 
 
 def text_w(s: str, size: float = FONT) -> float:
-    s = re.sub(r"~\{([^}]*)\}", r"\1", s)
+    s = re.sub(r"~\{([^{}]*)\}", r"\1", s)
     return len(s) * CHAR_W * size / FONT
 
 

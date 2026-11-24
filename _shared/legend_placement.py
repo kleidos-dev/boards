@@ -86,7 +86,7 @@ import numpy as np  # noqa: E402
 import shapely  # noqa: E402
 import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
-from paths import OutsideError, in_tree, work_path  # noqa: E402
+from paths import OutsideError, in_tree, work_path, write_file  # noqa: E402
 
 #: How far a group's ink may lie from where the drawing puts it, in mm.
 TOLERANCE_MM = 0.02
@@ -534,6 +534,10 @@ def _moved(
     return dataclasses.replace(mesh, positions=positions)
 
 
+#: The fill of a cap the drawing plants below repaint.
+_CAP_FILL = re.compile(r'(<rect [^<>]*fill=")#171719(")')
+
+
 def _drawing_plants(drawing: str) -> tuple[str, str]:
     """(a front with the Q key's legend moved 0.05 mm, a front changed where no model reads).
 
@@ -563,9 +567,7 @@ def _drawing_plants(drawing: str) -> tuple[str, str]:
             raise ValueError(f"the drawing does not hold {mark} once")
         elsewhere = elsewhere.replace(mark, f"{mark}\n{added}")
     # the first cap the drawing fills, outside every legend group
-    elsewhere, done = re.subn(
-        r'(<rect [^>]*fill=")#171719(")', r"\g<1>#27272a\g<2>", elsewhere, count=1
-    )
+    elsewhere, done = _CAP_FILL.subn(r"\g<1>#27272a\g<2>", elsewhere, count=1)
     if not done:
         raise ValueError("the drawing has no cap of the color this plant repaints")
     return moved, elsewhere
@@ -577,8 +579,7 @@ def _rewritten(
     """A copy of a model with *change* made to its JSON chunk: (its meshes, its legends' extras)."""
     js, bin_ = glb_legends.read(Path(glb).read_bytes())
     change(js)
-    with open(out, "wb") as fh:
-        fh.write(glb_legends.write(js, bin_))
+    write_file(out, glb_legends.write(js, bin_))
     return model_raster.read_glb(out), glb_legends.legends(js)
 
 
@@ -928,8 +929,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{board_dir.name}: the model prints nothing")
         return 0
     if out is not None:
-        with open(out, "w", encoding="utf-8") as fh:
-            fh.write(json.dumps(report, indent=2) + "\n")
+        write_file(out, json.dumps(report, indent=2) + "\n")
     print(json.dumps({k: v for k, v in report.items() if k != "per_group"}, indent=2))
     return 0 if report["ok"] else 1
 

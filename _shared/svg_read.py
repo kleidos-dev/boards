@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
-"""What the scripts read out of a drawing's text: its numbers, its tags, their attributes
+"""What the scripts read out of a drawing's text: its numbers, its tags, what lies between marks
 
 Every reader here takes time in proportion to the text it is given, whatever
 the text holds.
@@ -43,6 +43,34 @@ def attributes(tag: str) -> dict[str, str]:
             raise ValueError(f"a tag that holds {head[-60:]!r} where an attribute's name goes")
         found[words[-1]] = value
     return found
+
+
+def _spans(text: str, opening: str, closing: str) -> Iterator[tuple[int, int]]:
+    """Where each piece of *text* from *opening* to the next *closing* starts and ends."""
+    end = 0
+    while (start := text.find(opening, end)) >= 0:
+        end = text.find(closing, start + len(opening))
+        if end < 0:
+            return
+        end += len(closing)
+        yield start, end
+
+
+def between(text: str, opening: str, closing: str) -> list[str]:
+    """What lies from each *opening* to the next *closing* after it, the two left out."""
+    return [
+        text[start + len(opening) : end - len(closing)]
+        for start, end in _spans(text, opening, closing)
+    ]
+
+
+def without(text: str, opening: str, closing: str) -> str:
+    """*text* less every piece from *opening* to the next *closing* after it."""
+    kept, done = [], 0
+    for start, end in _spans(text, opening, closing):
+        kept.append(text[done:start])
+        done = end
+    return "".join(kept) + text[done:]
 
 
 def element_text(text: str, name: str, start: int = 0) -> tuple[str, int] | None:

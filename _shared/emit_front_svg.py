@@ -4586,7 +4586,7 @@ SHEET_PIXEL_W = 1600
 
 _SVG_ROOT_RE = re.compile(r"\A\s*<svg\b([^>]*)>\n?(.*)</svg>\s*\Z", re.S)
 _ID_RE = re.compile(r'(?<![\w:-])id="([^"]+)"')
-_URL_REF_RE = re.compile(r"url\(#([^)\s]+)\)")
+_URL_REF_RE = re.compile(r"url\(#([^()\s]+)\)")
 _HREF_REF_RE = re.compile(r'((?:xlink:)?href)="#([^"]+)"')
 
 
@@ -4613,11 +4613,11 @@ def contact_sheet_tile(device_id: str, front_svg: str, tile_x: float, tile_y: fl
     The front's own metadata (its SPDX comment, description and RDF block)
     stays in its file: the tile keeps only its title, the sheet has its own.
     """
-    title = re.search(r"<title\b[^>]*>([^<]*)</title>", front_svg)
+    title = re.search(r"<title\b[^<>]*>([^<]*)</title>", front_svg)
     front_svg = media_meta.unstamp_svg(front_svg)
     if title:
         front_svg = re.sub(
-            r"(<svg\b[^>]*>\n)",
+            r"(<svg\b[^<>]*>\n)",
             lambda m: m.group(1) + f"<title>{title.group(1)}</title>\n",
             front_svg,
             count=1,

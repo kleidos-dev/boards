@@ -104,7 +104,7 @@ FACES = {
     },
 }
 _PATH_TOKEN = re.compile(rf"[MmLlHhVvQqCcAaZz]|{svg_read.NUMBER}")
-_TRANSFORM = re.compile(r"(translate|scale|rotate|matrix)\s*\(([^)]*)\)")
+_TRANSFORM = re.compile(r"(translate|scale|rotate|matrix)\s*\(([^()]*)\)")
 #: What each drawn element of a legend may carry; anything else is refused.
 _KNOWN = {
     "text": {
@@ -364,7 +364,10 @@ def _number(el: ET.Element, name: str) -> float:
 def _matrix(text: str | None) -> npt.NDArray[np.float64]:
     """An SVG ``transform`` attribute as a 3 x 3 matrix."""
     m = np.eye(3)
-    for kind, args in _TRANSFORM.findall(text or ""):
+    text = text or ""
+    if _TRANSFORM.sub("", text).replace(",", " ").strip():
+        raise LegendError(f"a transform this module does not draw in {text!r}")
+    for kind, args in _TRANSFORM.findall(text):
         v = svg_read.numbers(args)
         if kind == "translate":
             step = np.array([[1, 0, v[0]], [0, 1, v[1] if len(v) > 1 else 0], [0, 0, 1]])

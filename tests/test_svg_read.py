@@ -5,13 +5,17 @@
 ``_shared/svg_read.py`` reads the numbers, the start tags and the attributes
 that the generators and the model's checks take from a drawing. What it must
 give is pinned here, and that a text holding a long run which never becomes
-what is looked for is read once, not once from each of its characters.
+what is looked for is read once, not once from each of its characters. The
+same is held of every other pattern a script reads a file's text with.
 
 Host-only: no build, no hardware, no network.
 """
 
 from __future__ import annotations
 
+import contextlib
+import random
+import re
 import sys
 import time
 from collections.abc import Callable
@@ -22,16 +26,23 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "_shared"))
 import check_board_model  # noqa: E402  after the sys.path set-up above
+import check_metadata  # noqa: E402  after the sys.path set-up above
+import check_public_tree  # noqa: E402  after the sys.path set-up above
 import emit_back_svg  # noqa: E402  after the sys.path set-up above
+import emit_board_readme  # noqa: E402  after the sys.path set-up above
+import emit_front_svg  # noqa: E402  after the sys.path set-up above
 import kicad_schematic  # noqa: E402  after the sys.path set-up above
 import legend_mesh  # noqa: E402  after the sys.path set-up above
+import legend_placement  # noqa: E402  after the sys.path set-up above
 import media_meta  # noqa: E402  after the sys.path set-up above
 import svg_read  # noqa: E402  after the sys.path set-up above
 
 #: How long a hostile text is, and the seconds that reading it may take:
 #: linear code needs milliseconds, a pattern tried again from each character
-#: far more than the bound.
+#: (from each mark, in the longer text) several times the bound, and less than
+#: a minute.
 LONG = 50_000
+LONGER = 400_000
 SECONDS = 2.0
 
 
@@ -136,6 +147,41 @@ def test_the_parts_a_rail_names_are_found() -> None:
     assert kicad_schematic.part_references("battery, 12 V") == set()
 
 
+def test_what_lies_between_two_marks_is_read_and_left_out() -> None:
+    text = "a<defs>1</defs>b<defs>2<defs>3</defs>c</defs>d<defs>4"
+    assert svg_read.between(text, "<defs>", "</defs>") == ["1", "2<defs>3"]
+    assert svg_read.without(text, "<defs>", "</defs>") == "abc</defs>d<defs>4"
+    assert svg_read.between("", "<defs>", "</defs>") == []
+    assert svg_read.without("no mark", "<defs>", "</defs>") == "no mark"
+
+
+def test_a_legends_transform_is_read_whole_or_refused() -> None:
+    turned = legend_mesh._matrix("translate(1 2) , rotate(90)\n scale(2)")
+    assert turned.round(9).tolist() == [[0, -2, 1], [2, 0, 2], [0, 0, 1]]
+    for text in ("skewX(10)", "translate(rotate(4))", "translate(1 2", "none"):
+        with pytest.raises(legend_mesh.LegendError, match="does not draw"):
+            legend_mesh._matrix(text)
+
+
+def test_a_schematics_date_is_its_title_blocks() -> None:
+    sheet = '(kicad_sch (date "2020-01-01") (title_block (title "A") {}) (text "x"))'
+    assert media_meta.title_date(sheet.format('(date "2026-11-17")')) == "2026-11-17"
+    assert media_meta.title_date(sheet.format('(date "today")')) is None
+    assert media_meta.title_date('(date "2020-01-01")') is None
+
+
+def test_the_addresses_of_a_line_are_the_ones_one_pattern_finds() -> None:
+    """Read back from each ``@``, and the same as by the pattern that says what an address is."""
+    whole = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b")
+    draw = random.Random(21)  # noqa: S311  (the same lines on every run, nothing secret)
+    # written without their "@", since nothing in this tree holds another's address
+    written = ("a%b.org-c%d.org", "%a.org%b.org", "a%b.org%c.org", "a%b%c.org.")
+    lines = [line.replace("%", "@") for line in written]
+    lines += ["".join(draw.choices("ab@@..-_+ 1", k=draw.randrange(1, 24))) for _ in range(20_000)]
+    for line in lines:
+        assert check_public_tree.addresses(line) == whole.findall(line), line
+
+
 def test_a_back_mirrors_each_shape_a_front_may_be_outlined_with() -> None:
     svg = '<svg><defs><rect x="9"/></defs><polygon points="0,0 4,0 4,2"/><rect/></svg>'
     assert emit_back_svg.front_outline(svg) == '<polygon points="0,0 4,0 4,2"/>'
@@ -169,13 +215,42 @@ HOSTILE: dict[str, Callable[[], object]] = {
     "part references, capitals": lambda: kicad_schematic.part_references("A" * LONG),
     "an address, spaces": lambda: media_meta._without_email("A" + " " * LONG + "B"),
     "an address, brackets": lambda: media_meta._without_email("A" + "<" * LONG),
-    "a tag of a file, spaces": lambda: media_meta._tag_of(f"{_TAG} A{' ' * LONG}B"),
+    # shorter: what the pattern it replaced took grew with the cube of the length
+    "a tag of a file, spaces": lambda: media_meta._tag_of(f"{_TAG} A{' ' * 1_500}B"),
     "an e-mail address, letters": lambda: media_meta.deny_hits("a" * LONG),
+    "a line's addresses, letters": lambda: check_public_tree.addresses("a" * LONG),
+    "a front's defs, never closed": lambda: emit_back_svg.front_outline("<defs>" * (LONG // 3)),
+    "a transform, never closed": lambda: legend_mesh._TRANSFORM.findall("translate(" * (LONG // 5)),
+    "a title block, no date": lambda: media_meta.title_date("(title_block" * (LONG // 6)),
+    "metadata marks, never closed": lambda: check_metadata.check_svg(
+        "a.svg",
+        f"<!-- {media_meta.REUSE_START} -->\n".encode() * (LONG // 7),
+        media_meta.record("sticks3/svg/front.svg"),
+        None,
+    ),
+    "a root, never closed": lambda: media_meta.unstamp_svg("<svg " * (LONGER // 5)),
+    "a tile's title, never closed": lambda: emit_front_svg.contact_sheet_tile(
+        "sticks3", "<title " * (LONGER // 7), 0, 0
+    ),
+    "references, never closed": lambda: emit_front_svg.namespace_ids("url(#" * (LONG // 5), "p-"),
+    "a viewBox, never reached": lambda: emit_board_readme._VIEW_BOX.search("<svg " * (LONG // 5)),
+    "an overlined name, never closed": lambda: kicad_schematic.text_w("~{" * (LONG // 2)),
+    "a cap, never filled": lambda: legend_placement._CAP_FILL.search("<rect " * (LONGER // 6)),
 }
 
 
 @pytest.mark.parametrize("name", HOSTILE)
 def test_a_long_run_that_never_matches_is_read_once(name: str) -> None:
     start = time.perf_counter()
-    HOSTILE[name]()
+    with contextlib.suppress(ValueError):  # a text that holds nothing to read may be refused
+        HOSTILE[name]()
+    assert time.perf_counter() - start < SECONDS
+
+
+def test_a_front_whose_defs_never_close_is_read_once(tmp_path: Path) -> None:
+    path = tmp_path / "front.svg"
+    path.write_text("<defs>" * (LONG // 3), encoding="utf-8")
+    start = time.perf_counter()
+    with pytest.raises(ValueError, match="no case outline"):
+        check_board_model.svg_outline(path)
     assert time.perf_counter() - start < SECONDS
