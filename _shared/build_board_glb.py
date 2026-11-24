@@ -370,6 +370,8 @@ DEFAULT_CACHE = Path(os.environ.get("KLEIDOS_CAD_CACHE", Path.home() / ".cache" 
 #: Where a vendor file is downloaded from, each host with the slash that ends it; a spec that
 #: names one elsewhere adds its host here.
 VENDOR_ADDRESSES = ("https://raw.githubusercontent.com/",)
+#: A host and the names of folders and of a file: no ``.`` or ``..``, no query, nothing escaped.
+_PLAIN_ADDRESS = re.compile(r"https://[a-z.]+(?:/[A-Za-z0-9_-][A-Za-z0-9_.-]*)+")
 #: What a spec may name a vendor file, and how it pins one.
 _FILE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+-]*")
 _SHA256 = re.compile(r"[0-9a-f]{64}")
@@ -1378,9 +1380,9 @@ def sha256_file(path: str | Path) -> str:
 
 
 def vendor_address(url: object) -> str:
-    """*url*, refused unless it begins as one of ``VENDOR_ADDRESSES`` does."""
+    """*url*, refused unless it is the plain address of a file on one of ``VENDOR_ADDRESSES``."""
     address = str(url)
-    if not address.startswith(VENDOR_ADDRESSES):
+    if not address.startswith(VENDOR_ADDRESSES) or not _PLAIN_ADDRESS.fullmatch(address):
         raise SpecError(
             f"{url}: a vendor file is fetched from {' or '.join(VENDOR_ADDRESSES)} only"
         )
