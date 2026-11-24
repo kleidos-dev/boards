@@ -279,8 +279,6 @@ def reuse_truth(path: str | Path) -> tuple[str, tuple[str, ...]]:
         if any(_glob(p).match(rel) for p in paths):
             found = ann
     file_licenses, file_holders = in_file_tags(ROOT / rel)
-    if "" in file_licenses or "" in file_holders:
-        raise MetaError(f"{rel}: states an empty SPDX tag, which REUSE refuses")
     toml_licenses, toml_holders = [], []
     precedence = "closest"
     if found is not None:
@@ -289,6 +287,15 @@ def reuse_truth(path: str | Path) -> tuple[str, tuple[str, ...]]:
         toml_licenses = [lic] if isinstance(lic, str) else list(lic or [])
         cop = found.get("SPDX-FileCopyrightText")
         toml_holders = [cop] if isinstance(cop, str) else list(cop or [])
+    # An override annotation's file is never read for its own tags, by REUSE
+    # or here. Elsewhere an empty license is an invalid expression REUSE
+    # refuses, and an empty holder, which REUSE takes as stated, is refused
+    # here too: neither is replaced by the annotation's values.
+    if precedence != "override":
+        if "" in file_licenses:
+            raise MetaError(f"{rel}: states an empty SPDX tag (license), which REUSE refuses")
+        if "" in file_holders:
+            raise MetaError(f"{rel}: states an empty SPDX tag (copyright holder)")
     if precedence == "override":
         licenses, holders = toml_licenses, toml_holders
     elif precedence == "closest" and (file_licenses or file_holders):

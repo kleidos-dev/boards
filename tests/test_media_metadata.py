@@ -223,6 +223,24 @@ def test_an_empty_tag_of_a_file_is_refused_not_replaced_by_reuse_toml(
     assert mm.reuse_truth("file.py") == ("MIT", ("2026 José M. Requena Plens",))
 
 
+@pytest.mark.parametrize("tag", ["TAG_LICENSE", "TAG_COPYRIGHT"])
+def test_an_empty_tag_under_an_override_annotation_is_not_read(
+    tag: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # REUSE never reads a file's own tags where an annotation overrides
+    # them: reuse 6.3.0 lints such a file compliant and states the
+    # annotation's values for it.
+    (tmp_path / "REUSE.toml").write_text(
+        'version = 1\n[[annotations]]\npath = "**"\nprecedence = "override"\n'
+        'SPDX-FileCopyrightText = "2026 José M. Requena Plens"\n'
+        'SPDX-License-Identifier = "MIT"\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "file.py").write_text(f"# {getattr(mm, tag)}:\nx = 1\n", encoding="utf-8")
+    monkeypatch.setattr(mm, "ROOT", tmp_path)
+    assert mm.reuse_truth("file.py") == ("MIT", ("2026 José M. Requena Plens",))
+
+
 def test_an_address_is_found_wherever_it_stands() -> None:
     at = "@"
     for value in (f"a{at}b.example", f"by <a.b+c{at}d-e.example>", f"x{at}y z{at}w.example"):
