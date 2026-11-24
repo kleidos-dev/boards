@@ -141,7 +141,10 @@ def test_a_command_refuses_a_path_or_a_board_that_leads_out(
     except SystemExit as stop:
         code = stop.code
     assert code in (1, 2)
-    said = capsys.readouterr()
+    said = "".join(capsys.readouterr())
     planted = next(given.get(arg, arg).removeprefix("base=") for arg in argv if arg in _PLANTED)
-    assert planted in said.out + said.err
+    assert planted in said
+    # refused for where it leads, before anything looks for the file
+    words = ["which is not in"] if planted == OUTSIDE else ["board", "device id"]
+    assert any(word in said for word in words), said
     assert not Path(OUTSIDE).parent.exists()

@@ -162,7 +162,7 @@ HOSTILE: dict[str, Callable[[], object]] = {
     "a path, digits": lambda: check_board_model._TOKEN.findall("1" * LONG + "!"),
     "a legend's path, digits": lambda: legend_mesh._PATH_TOKEN.findall("1" * LONG + "x"),
     "a mirrored path, digits": lambda: emit_back_svg._PATH_TOKEN.findall("1" * LONG + "!"),
-    "tags, never closed": lambda: list(svg_read.tags("<rect " * (LONG // 6), "rect")),
+    "tags, never closed": lambda: list(svg_read.tags("<rect " * LONG, "rect")),
     "attributes, one long name": lambda: svg_read.attributes("<rect " + "a" * LONG + '="1">'),
     "attributes, a long value": lambda: svg_read.attributes('<rect a="' + "b" * LONG + '">'),
     "an element, never closed": lambda: svg_read.element_text("<title>" * (LONG // 7), "title"),
