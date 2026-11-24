@@ -217,7 +217,12 @@ _COMMENT_ENDS = ("-->", "*/")
 
 
 def _tag_of(line: str) -> tuple[str, str] | None:
-    """(the SPDX tag a line states, its value without the mark that closes its comment)."""
+    """(the SPDX tag a line states, its value without the mark that closes its comment).
+
+    A tag with nothing after it is stated all the same, with an empty value:
+    REUSE reads it as the file's own (``reuse lint`` refuses the empty
+    expression) and so never falls back to ``REUSE.toml`` for it.
+    """
     found = _TAG.search(line)
     if found is None:
         return None
@@ -226,7 +231,7 @@ def _tag_of(line: str) -> tuple[str, str] | None:
         if value.endswith(mark):
             value = value.removesuffix(mark).rstrip()
             break
-    return (found.group(1), value) if value else None
+    return found.group(1), value
 
 
 def in_file_tags(path: Path) -> tuple[list[str], list[str]]:
@@ -274,6 +279,8 @@ def reuse_truth(path: str | Path) -> tuple[str, tuple[str, ...]]:
         if any(_glob(p).match(rel) for p in paths):
             found = ann
     file_licenses, file_holders = in_file_tags(ROOT / rel)
+    if "" in file_licenses or "" in file_holders:
+        raise MetaError(f"{rel}: states an empty SPDX tag, which REUSE refuses")
     toml_licenses, toml_holders = [], []
     precedence = "closest"
     if found is not None:

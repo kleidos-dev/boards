@@ -186,8 +186,9 @@ def test_a_holders_address_is_left_out(text: str, left: str) -> None:
         ("/* {}  MIT OR Apache-2.0  */", "MIT OR Apache-2.0"),
         ("<!-- {} MIT -->", "MIT"),
         ("<!-- {}MIT-->", "MIT"),
-        ("# {}", None),
-        ("/* {} */", None),
+        ("# {}", ""),
+        ("/* {} */", ""),
+        ("<!-- {} -->", ""),
         ("# no tag", None),
     ],
 )
@@ -202,6 +203,24 @@ def test_a_files_own_tag_is_read_without_the_mark_that_closes_its_comment(
     ignored = f"{mm.REUSE_START}\n{path.read_text(encoding='utf-8')}\n{mm.REUSE_END}\n"
     path.write_text(ignored, encoding="utf-8")
     assert mm.in_file_tags(path) == ([], [])
+
+
+@pytest.mark.parametrize("tag", ["TAG_LICENSE", "TAG_COPYRIGHT"])
+def test_an_empty_tag_of_a_file_is_refused_not_replaced_by_reuse_toml(
+    tag: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    (tmp_path / "REUSE.toml").write_text(
+        'version = 1\n[[annotations]]\npath = "**"\n'
+        'SPDX-FileCopyrightText = "2026 José M. Requena Plens"\n'
+        'SPDX-License-Identifier = "MIT"\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "file.py").write_text(f"# {getattr(mm, tag)}:\nx = 1\n", encoding="utf-8")
+    monkeypatch.setattr(mm, "ROOT", tmp_path)
+    with pytest.raises(mm.MetaError, match="empty SPDX tag"):
+        mm.reuse_truth("file.py")
+    (tmp_path / "file.py").write_text("x = 1\n", encoding="utf-8")
+    assert mm.reuse_truth("file.py") == ("MIT", ("2026 José M. Requena Plens",))
 
 
 def test_an_address_is_found_wherever_it_stands() -> None:

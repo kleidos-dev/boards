@@ -52,4 +52,4 @@ Local only, never in CI:
 - rebuilding a model from the vendor's CAD file (`build_board_glb.py --fetch --check`): it downloads a vendor file, which CI does not do; CI holds each model to its drawings, spec and records instead;
 - `check_board_model.py` and `models_contact_sheet.py`, which draw views.
 
-`.github/workflows/commit-check.yml` checks the commit messages of every pull request (72 columns, imperative subject, no attribution lines) with `.github/commit-check/check_commit_msg.py`; the same script is the `commit-msg` hook of `.pre-commit-config.yaml` (`pre-commit install --hook-type commit-msg`). Both are copies kept by `kleidos-dev/agents`: change them there.
+The quality kit's `quick.yml`, which `.github/workflows/check.yml` calls at `@v3`, checks the commit messages of every pull request (72 columns, imperative subject, no attribution lines); the same checker is the kit's `kleidos-commit-msg` hook in `.pre-commit-config.yaml` (`pre-commit install --hook-type commit-msg`). Both are the kit's (`kleidos-dev/.github`, `hooks/check_commit_msg.py`): change them there.

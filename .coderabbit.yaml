@@ -87,7 +87,7 @@ reviews:
       enabled: false
 
   # These never edit the title or description, but each posts a verdict on
-  # them. Commit messages are already gated by commit-check.yml.
+  # them. Commit messages are already gated by the quality kit's quick.yml.
   pre_merge_checks:
     title:
       mode: "off"
@@ -138,8 +138,6 @@ reviews:
     # The Kleidos KiCad kit, byte copies of the brand repository's kicad/
     # (tests/test_kicad_kit.py holds them to KIT.json): reviewed in brand.
     - "!_shared/kicad/**"
-    # The commit-message gate, synced from kleidos-dev/agents: reviewed there.
-    - "!.github/commit-check/**"
     # Inter, unmodified, and the license texts, verbatim.
     - "!fonts/inter/**"
     - "!LICENSES/**"
