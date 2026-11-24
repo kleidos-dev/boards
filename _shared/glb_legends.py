@@ -39,6 +39,9 @@ from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from paths import OutsideError, work_path, write_file
+
 GLB_MAGIC, JSON_CHUNK, BIN_CHUNK = 0x46546C67, 0x4E4F534A, 0x004E4942
 #: A legend mesh's node name ends so; no other node's does.
 LEGEND_NODE = re.compile(r"_legends_[0-9a-f]{6}$")
@@ -250,10 +253,15 @@ def main(argv: list[str] | None = None) -> int:
         help="with --px-per-mm: the frame is not multisampled",
     )
     args = parser.parse_args(argv)
-    data = args.model.read_bytes()
+    try:
+        model = work_path(args.model)
+        out_path = work_path(args.out) if args.command == "strip" else None
+    except OutsideError as exc:
+        parser.error(str(exc))
+    data = model.read_bytes()
     js, _ = read(data)
     found = legends(js)
-    if args.command == "list":
+    if out_path is None:
         for entry in found:
             width = entry["stroke_mm"]
             reach = (
@@ -268,7 +276,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         print(f"{len(found)} legend meshes, {sum(e['triangles'] for e in found)} triangles")
         return 0
-    if args.out.resolve() == args.model.resolve():
+    if out_path == model:
         print("FAILED: the output is the model itself", file=sys.stderr)
         return 1
     drop = None
@@ -285,7 +293,7 @@ def main(argv: list[str] | None = None) -> int:
             return too_thin(entry["stroke_mm"], args.px_per_mm, not args.no_antialias)
 
     out = strip(data, drop)
-    args.out.write_bytes(out)
+    write_file(out_path, out)
     left = legends(read(out)[0])
     print(
         f"wrote {args.out}: {len(out)} bytes ({len(data)} with every legend), "

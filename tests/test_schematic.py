@@ -1232,3 +1232,161 @@ def test_a_pdf_whose_additions_do_not_lead_both_ways_fails(
     monkeypatch.setattr(csl, "ROOT", root)
     errors, _ = csl.check(ADD_BOARD, pdf)
     assert any(message in e for e in errors), errors
+
+
+# The commands around kicad-cli, run without it: a stand-in that KICAD_CLI
+# names gives what KiCad would export of a board drawn as it should be.
+
+#: The board whose commands are run: the one with the fewest pages.
+RUN_BOARD = "coreink"
+_STAND_IN = """\
+#!{python}
+import os, shutil, sys
+from pathlib import Path
+
+given, out = Path(os.environ["STAND_IN"]), Path(sys.argv[sys.argv.index("-o") + 1])
+with open(given / "calls", "a") as fh:
+    fh.write(" ".join(sys.argv[1:4]) + "\\n")
+kind = "erc" if sys.argv[2] == "erc" else sys.argv[3]
+if kind == "svg":
+    for page in (given / "svg").iterdir():
+        shutil.copy(page, out / page.name)
+else:
+    shutil.copy(given / kind, out)
+"""
+
+
+@pytest.fixture
+def stand_in(tmp_path: Path, monkeypatch: MonkeyPatch) -> Path:
+    """A folder of what the stand-in for kicad-cli gives, one file per kind of output."""
+    import kleidos_kicad as kit
+
+    given = tmp_path / "given"
+    (given / "svg").mkdir(parents=True)
+    (given / "erc").write_text("ERC messages: 0  Errors 0  Warnings 0\n", encoding="utf-8")
+    write_xml(faithful_nodes(RUN_BOARD), given / "netlist")
+    folder = ROOT / RUN_BOARD / "schematic"
+    shutil.copy(folder / f"{RUN_BOARD}.pdf", given / "pdf")
+    palette = kit.theme_colors("dark")
+    page = (
+        f'<svg><g style="fill:{palette["background"]}; stroke:none">\n'
+        '<rect x="0.0000" y="0.0000"/></g><g style="fill:none; '
+        f'stroke:{palette["wire"]}; stroke-width:{kit.connection_mm():.4f}"></g></svg>'
+    )
+    layout = yaml.safe_load((folder / "layout.yaml").read_text(encoding="utf-8"))
+    for name in [RUN_BOARD, *(f"{RUN_BOARD}-{sheet['name']}" for sheet in layout["sheets"])]:
+        (given / "svg" / f"{name}.svg").write_text(page, encoding="utf-8")
+    cli = tmp_path / "kicad-cli"
+    cli.write_text(_STAND_IN.format(python=sys.executable), encoding="utf-8")
+    cli.chmod(0o700)
+    monkeypatch.setenv("KICAD_CLI", str(cli))
+    monkeypatch.setenv("STAND_IN", str(given))
+    return given
+
+
+def test_the_check_exports_the_netlist_it_compares(
+    stand_in: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert cs.main([RUN_BOARD]) == 0
+    assert f"ok   {RUN_BOARD}: the drawing matches netlist.yaml" in capsys.readouterr().out
+    assert (stand_in / "calls").read_text(encoding="utf-8") == "sch export netlist\n"
+    # a netlist given by its path runs nothing
+    nets = faithful_nodes(RUN_BOARD)
+    a, b = _first_signal_pins(nets)
+    nets[b].append(nets[a].pop())
+    planted = write_xml(nets, tmp_path / "planted.xml")
+    assert cs.main([RUN_BOARD, "--netlist", str(planted)]) == 1
+    assert "FAIL" in capsys.readouterr().out
+    assert (stand_in / "calls").read_text(encoding="utf-8") == "sch export netlist\n"
+
+
+@pytest.mark.parametrize("module", ["check_schematic", "export_schematic"])
+def test_no_argument_names_the_program_that_is_run(
+    module: str, stand_in: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import importlib
+
+    command = importlib.import_module(module)
+    for option in ("--kicad-cli", "--kicad-cli=/bin/false"):
+        with pytest.raises(SystemExit) as stop:
+            command.main([RUN_BOARD, option, "/bin/false"])
+        assert stop.value.code == 2
+        assert "unrecognized arguments" in capsys.readouterr().err
+    assert not (stand_in / "calls").exists()
+
+
+def test_the_export_checks_and_writes_the_pdf_and_every_page(
+    stand_in: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import export_schematic
+
+    out = tmp_path / "out"
+    assert export_schematic.main([RUN_BOARD, "--no-export", "--out", str(out)]) == 0
+    assert not out.exists()
+    assert export_schematic.main([RUN_BOARD, "--out", str(out)]) == 0
+    said = capsys.readouterr().out
+    assert "ERC: 0 messages" in said and "lands where it should" in said
+    assert (out / f"{RUN_BOARD}.pdf").read_bytes().startswith(b"%PDF")
+    pages = sorted(p.name for p in (out / "svg").iterdir())
+    assert len(pages) == len(list((stand_in / "svg").iterdir()))
+    assert f"{RUN_BOARD}-1-contents.svg" in pages
+    # again over the first: the pages of before are gone, not left beside
+    (out / "svg" / "stale.svg").write_text("", encoding="utf-8")
+    assert export_schematic.main([RUN_BOARD, "--out", str(out)]) == 0
+    assert sorted(p.name for p in (out / "svg").iterdir()) == pages
+
+
+@pytest.mark.parametrize(
+    ("plant", "words"),
+    [
+        ("erc", "ERC: 1 messages"),
+        ("no-erc", "ERC did not run"),
+        ("netlist", "FAIL"),
+        ("pdf", "FAIL the mark"),
+        ("page", "kicad-cli wrote no"),
+        ("theme", "background"),
+    ],
+)
+def test_an_export_with_a_defect_planted_fails(
+    plant: str, words: str, stand_in: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import export_schematic
+    import pypdf
+
+    page = stand_in / "svg" / f"{RUN_BOARD}.svg"
+    if plant == "erc":
+        (stand_in / "erc").write_text("ERC messages: 1  Errors 1  Warnings 0\n", encoding="utf-8")
+    elif plant == "no-erc":
+        (stand_in / "erc").write_text("", encoding="utf-8")
+    elif plant == "netlist":
+        nets = faithful_nodes(RUN_BOARD)
+        nets[_first_signal_pins(nets)[0]].pop()
+        write_xml(nets, stand_in / "netlist")
+    elif plant == "pdf":
+        blank = pypdf.PdfWriter()
+        blank.add_blank_page(width=100, height=100)
+        with open(stand_in / "pdf", "wb") as fh:
+            blank.write(fh)
+    elif plant == "page":
+        page.unlink()
+    else:
+        page.write_text("<svg/>", encoding="utf-8")
+    assert export_schematic.main([RUN_BOARD, "--out", str(tmp_path / "out")]) == 1
+    assert words in capsys.readouterr().out
+
+
+def test_a_pdf_is_finished_in_place(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Finishing writes the same bytes each time, and the links of what it wrote all land."""
+    import check_schematic_links
+    import schematic_pdf
+
+    pdf = tmp_path / "copy.pdf"
+    shutil.copy(ROOT / RUN_BOARD / "schematic" / f"{RUN_BOARD}.pdf", pdf)
+    assert schematic_pdf.main([RUN_BOARD, str(pdf)]) == 0
+    once = pdf.read_bytes()
+    assert check_schematic_links.main([RUN_BOARD, "--pdf", str(pdf)]) == 0
+    shutil.copy(ROOT / RUN_BOARD / "schematic" / f"{RUN_BOARD}.pdf", pdf)
+    assert schematic_pdf.main([RUN_BOARD, str(pdf)]) == 0
+    assert pdf.read_bytes() == once
+    assert schematic_pdf.main([RUN_BOARD]) == 2
+    assert "Usage" in capsys.readouterr().out

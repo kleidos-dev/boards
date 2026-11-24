@@ -74,7 +74,39 @@ PDF_PRODUCER = "kleidos-boards schematic_pdf.py"
 #: The KiCad the schematics are exported with (``.github/workflows/check.yml``).
 PDF_CREATOR = "KiCad 10.0.8 Eeschema"
 
-DST_BASE = "http://cv.iptc.org/newscodes/digitalsourcetype/"
+#: The vocabularies the metadata names, as XML declares them: a prefix bound to
+#: a namespace name. A namespace name is an identifier compared character by
+#: character (Namespaces in XML 1.0, section 2.3), never an address that is
+#: fetched, so each is spelled as its vocabulary spells it.
+NAMESPACE_DECLARATIONS = (
+    'xmlns:dc="http://purl.org/dc/elements/1.1/"',
+    'xmlns:photoshop="http://ns.adobe.com/photoshop/1.0/"',
+    'xmlns:Iptc4xmpCore="http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/"',
+    'xmlns:Iptc4xmpExt="http://iptc.org/std/Iptc4xmpExt/2008-02-29/"',
+    'xmlns:plus="http://ns.useplus.org/ldf/xmp/1.0/"',
+    'xmlns:xmpRights="http://ns.adobe.com/xap/1.0/rights/"',
+    'xmlns:cc="http://creativecommons.org/ns#"',
+    'xmlns:pdf="http://ns.adobe.com/pdf/1.3/"',
+    'xmlns:xmp="http://ns.adobe.com/xap/1.0/"',
+    'xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"',
+    'xmlns:digsrctype="http://cv.iptc.org/newscodes/digitalsourcetype/"',
+)
+
+
+def namespace_names(declarations: Sequence[str]) -> dict[str, str]:
+    """The namespace name each declaration binds its prefix to."""
+    names = {}
+    for declaration in declarations:
+        attribute, _, name = declaration.partition("=")
+        names[attribute.removeprefix("xmlns:")] = name.strip('"')
+    return names
+
+
+#: Every namespace name by its prefix.
+XMP_NS = namespace_names(NAMESPACE_DECLARATIONS)
+#: IPTC's vocabulary of digital source types (``digsrctype`` is its own alias
+#: for it): a term's identifier is this name with the term after it.
+DST_BASE = XMP_NS["digsrctype"]
 #: The IPTC digital source types a picture may state (the standard, 3.5).
 DIGITAL_SOURCE_TYPES = (
     "digitalCapture",
@@ -154,7 +186,13 @@ def _glob(pattern: str) -> re.Pattern[str]:
 
 
 def _without_email(text: str) -> str:
-    return re.sub(r"\s*<[^>]*>", "", text).strip()
+    """*text* with any ``<address>``, and the space before it, left out."""
+    *closed, tail = text.split(">")
+    kept = []
+    for piece in closed:
+        before, opened, _ = piece.partition("<")
+        kept.append(before.rstrip() if opened else f"{piece}>")
+    return ("".join(kept) + tail).strip()
 
 
 BINARY = {
@@ -173,7 +211,22 @@ BINARY = {
     ".gif",
     ".ico",
 }
-_TAG = re.compile(r"SPDX-(FileCopyrightText|License-Identifier)" r":\s*(.+?)\s*(?:-->|\*/)?\s*$")
+#: The two SPDX tags a file may state, and the marks that close a comment.
+_TAG = re.compile(r"SPDX-(FileCopyrightText|License-Identifier)" r":")
+_COMMENT_ENDS = ("-->", "*/")
+
+
+def _tag_of(line: str) -> tuple[str, str] | None:
+    """(the SPDX tag a line states, its value without the mark that closes its comment)."""
+    found = _TAG.search(line)
+    if found is None:
+        return None
+    value = line[found.end() :].strip()
+    for mark in _COMMENT_ENDS:
+        if value.endswith(mark):
+            value = value.removesuffix(mark).rstrip()
+            break
+    return (found.group(1), value) if value else None
 
 
 def in_file_tags(path: Path) -> tuple[list[str], list[str]]:
@@ -184,16 +237,17 @@ def in_file_tags(path: Path) -> tuple[list[str], list[str]]:
         text = path.read_text(encoding="utf-8")
     except UnicodeDecodeError:
         return [], []
-    licenses, holders, ignoring = [], [], False
+    licenses: list[str] = []
+    holders: list[str] = []
+    ignoring = False
     for line in text.splitlines():
         if REUSE_START in line:
             ignoring = True
         if not ignoring:
-            m = _TAG.search(line)
-            if m and m.group(1) == "License-Identifier":
-                licenses.append(m.group(2))
-            elif m:
-                holders.append(m.group(2))
+            stated = _tag_of(line)
+            if stated is not None:
+                name, value = stated
+                (licenses if name == "License-Identifier" else holders).append(value)
         if REUSE_END in line:
             ignoring = False
     return licenses, holders
@@ -611,13 +665,23 @@ def _boards() -> tuple[str, ...]:
     return BOARDS
 
 
+_DATE = re.compile(r'\(date "(\d{4}-\d{2}-\d{2})"\)')
+
+
+def title_date(schematic: str) -> str | None:
+    """The first date a schematic's text states from its title block on, or None."""
+    block = schematic.find("(title_block")
+    found = _DATE.search(schematic, block) if block >= 0 else None
+    return found.group(1) if found else None
+
+
 def schematic_date(board: str) -> str:
     """The date a board's schematic title block states (``YYYY-MM-DD``): its only date."""
     text = (ROOT / board / "schematic" / f"{board}.kicad_sch").read_text(encoding="utf-8")
-    m = re.search(r'\(title_block.*?\(date "(\d{4}-\d{2}-\d{2})"\)', text, re.S)
-    if not m:
+    date = title_date(text)
+    if date is None:
         raise MetaError(f"{board}: the schematic title block states no date")
-    return m.group(1)
+    return date
 
 
 # ---------------------------------------------------------------- escaping
@@ -633,18 +697,6 @@ def xml_text(text: str) -> str:
 # ---------------------------------------------------------------- XMP
 
 
-XMP_NS = {
-    "dc": "http://purl.org/dc/elements/1.1/",
-    "photoshop": "http://ns.adobe.com/photoshop/1.0/",
-    "Iptc4xmpCore": "http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/",
-    "Iptc4xmpExt": "http://iptc.org/std/Iptc4xmpExt/2008-02-29/",
-    "plus": "http://ns.useplus.org/ldf/xmp/1.0/",
-    "xmpRights": "http://ns.adobe.com/xap/1.0/rights/",
-    "cc": "http://creativecommons.org/ns#",
-    "pdf": "http://ns.adobe.com/pdf/1.3/",
-    "xmp": "http://ns.adobe.com/xap/1.0/",
-    "xmpMM": "http://ns.adobe.com/xap/1.0/mm/",
-}
 XPACKET_BEGIN = '<?xpacket begin="﻿" id="W5M0MpCehiHzreSzNTczkc9d"?>'
 XPACKET_END = '<?xpacket end="r"?>'
 
@@ -789,7 +841,7 @@ def svg_block(meta: MediaMeta) -> str:
 
 
 _SVG_SPDX = re.compile(r"\A<!-- " + TAG_LICENSE + r": [^>]*-->\n")
-_SVG_ROOT = re.compile(r"<svg\b[^>]*>\n?")
+_SVG_ROOT = re.compile(r"<svg\b[^<>]*>\n?")
 _ROOT_A11Y = re.compile(r'\s(?:role|aria-labelledby|lang)="[^"]*"')
 _SVG_META = re.compile(
     r"(?:<title\b[^>]*>[^<]*</title>\n?)?(?:<desc\b[^>]*>[^<]*</desc>\n?)?"
@@ -1083,8 +1135,11 @@ def pdf_xmp(meta: MediaMeta, document_id: str, instance_id: str) -> str:
 # ---------------------------------------------------------------- privacy
 
 
+#: The lookbehind starts a match only where a run of address characters
+#: starts, so a run that holds no "@" is read once.
+_EMAIL = re.compile(r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 DENY = (
-    ("an e-mail address", re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")),
+    ("an e-mail address", _EMAIL),
     (
         "a local path",
         re.compile(

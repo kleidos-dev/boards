@@ -64,7 +64,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
 import kleidos_kicad as kit
 import media_meta
-from paths import ROOT
+from paths import ROOT, OutsideError, board_id, work_path
 
 #: What the PDF is drawn with besides its sheets, the sources its identifier is derived from too:
 #: the kit's theme, drawing sheet and style.
@@ -291,9 +291,14 @@ def finish(board: str, pdf: Path, links_file: Path | None = None) -> list[str]:
 
 def main(argv: list[str]) -> int:
     if len(argv) != 2:
-        print(__doc__.split("\n\n")[-2])
+        print(__doc__.split("\n\n")[-1].strip())
         return 2
-    errors = finish(argv[0], Path(argv[1]))
+    try:
+        board, pdf = board_id(argv[0]), work_path(argv[1])
+    except OutsideError as exc:
+        print(f"FAIL {exc}")
+        return 2
+    errors = finish(board, pdf)
     for e in errors:
         print(f"FAIL {e}")
     return 1 if errors else 0

@@ -66,6 +66,7 @@ import cores3_prints
 import emit_front_svg as fronts
 import media_meta
 import sticks3_back
+import svg_read
 
 ROOT = fronts.ROOT
 #: The boards that have a model, and so a back drawing.
@@ -119,8 +120,7 @@ FACE_PRINTS: dict[tuple[str, str], Callable[[list[str]], None]] = {
 FACE_EXTENT: dict[tuple[str, str], tuple[float, float]] = {
     ("cores3-se", "top"): (54.0, 23.5),
 }
-_NUMBER = r"[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?"
-_PATH_TOKEN = re.compile(rf"[A-Za-z]|{_NUMBER}")
+_PATH_TOKEN = re.compile(rf"[A-Za-z]|{svg_read.NUMBER}")
 #: How many numbers each path command takes, and which of them are x (0) or
 #: y (1) coordinates, an arc's radii and angle (r), or its flags (f).
 _PATH_ARGS = {
@@ -180,7 +180,7 @@ def mirror_path(d: str, width: float) -> str:
 
 def mirror_points(points: str, width: float) -> str:
     """A polygon's points mirrored across x = width / 2."""
-    v = [float(t) for t in re.findall(_NUMBER, points)]
+    v = svg_read.numbers(points)
     return " ".join(
         f"{fronts.f(width - x)},{fronts.f(y)}" for x, y in zip(v[0::2], v[1::2], strict=True)
     )
@@ -188,11 +188,11 @@ def mirror_points(points: str, width: float) -> str:
 
 def front_outline(svg: str) -> str:
     """The case outline of a front: its first shape outside ``<defs>``."""
-    body = re.sub(r"<defs>.*?</defs>", "", svg, flags=re.S)
-    found = re.search(r"<(rect|path|polygon)\b[^>]*>", body)
-    if not found:
+    body = svg_read.without(svg, "<defs>", "</defs>")
+    found = next(svg_read.tags(body, "rect", "path", "polygon"), None)
+    if found is None:
         raise ValueError("the front has no case outline")
-    return found.group(0)
+    return found
 
 
 def back_outline(outline: str, width: float, fill: str) -> str:
@@ -205,7 +205,7 @@ def back_outline(outline: str, width: float, fill: str) -> str:
     if opening is None:
         raise ValueError(f"not an element: {outline[:40]!r}")
     tag = opening.group(1)
-    attrs = dict(re.findall(r'([\w:-]+)="([^"]*)"', outline))
+    attrs = svg_read.attributes(outline)
     stroke = (
         f' stroke="{attrs["stroke"]}" stroke-width="{attrs["stroke-width"]}"'
         if "stroke" in attrs and "stroke-width" in attrs

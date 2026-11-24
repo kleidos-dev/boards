@@ -74,7 +74,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
 import kleidos_kicad as kit
-from paths import ROOT
+from paths import ROOT, OutsideError, board_id
 
 # The style's numbers come from the kit (kicad/style.json): the grid, the pin
 # pitch and length, the stub, the text sizes, the one line width, the zone
@@ -206,6 +206,12 @@ def natural(ref: str) -> tuple[Any, ...]:
     """Sort key: C2 before C10, then by prefix."""
     m = re.match(r"([A-Z]+)(\d+)", ref)
     return (m.group(1), int(m.group(2))) if m else (ref, 0)
+
+
+def part_references(text: str) -> set[str]:
+    """The parts a text names ("U1, Q3"): capital letters, then a number."""
+    runs = re.findall(r"[A-Z]+|\d+|[^A-Z\d]+", text)
+    return {a + b for a, b in pairwise(runs) if "A" <= a[0] <= "Z" and b[0].isdecimal()}
 
 
 def not_fitted(value: object) -> bool:
@@ -614,7 +620,7 @@ def outward(pin_angle: int, sym_angle: int) -> int:
 
 
 def text_w(s: str, size: float = FONT) -> float:
-    s = re.sub(r"~\{([^}]*)\}", r"\1", s)
+    s = re.sub(r"~\{([^{}]*)\}", r"\1", s)
     return len(s) * CHAR_W * size / FONT
 
 
@@ -1446,7 +1452,7 @@ class Builder:
         if not cands:
             raise SystemExit(f"{net}: no label on page {page}")
         rail = (self.net.get("rails") or {}).get(net)
-        feeders = set(re.findall(r"[A-Z]+\d+", str(rail.get("from", "")))) if rail else set()
+        feeders = part_references(str(rail.get("from", ""))) if rail else set()
         pool = [lab for lab in cands if lab["ref"] in feeders] or cands
         return min(pool, key=lambda lab: (float(lab["at"][2]), float(lab["at"][1])))
 
@@ -2787,7 +2793,7 @@ class Builder:
     def rail_page(self, net: str) -> int:
         """The page a rail is made on: where the part that feeds it is drawn."""
         rail = (self.net.get("rails") or {}).get(net, {})
-        feeders = set(re.findall(r"[A-Z]+\d+", str(rail.get("from", ""))))
+        feeders = part_references(str(rail.get("from", "")))
         for p in self.net_pages[net]:
             if self.target_label(net, p)["ref"] in feeders:
                 return p
@@ -3301,10 +3307,14 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("board")
     args = ap.parse_args(argv)
-    b = Builder(args.board)
+    try:
+        board = board_id(args.board)
+    except OutsideError as exc:
+        ap.error(str(exc))
+    b = Builder(board)
     files = b.build()
     for name, doc in files.items():
-        if name.endswith(".kicad_sch") and name != f"{args.board}.kicad_sch":
+        if name.endswith(".kicad_sch") and name != f"{board}.kicad_sch":
             used = sorted({n[1][1] for n in doc if isinstance(n, list) and n and n[0] == "symbol"})
             lib = next(n for n in doc if isinstance(n, list) and n and n[0] == "lib_symbols")
             lib += [renamed(b.lib[u].node, u) for u in used]
@@ -3313,8 +3323,8 @@ def main(argv: list[str]) -> int:
     (b.dir / "links.json").write_text(json.dumps(b.link_map(), indent=1) + "\n", encoding="utf-8")
     (b.dir / "sym-lib-table").write_text(
         "(sym_lib_table\n\t(version 7)\n"
-        f'\t(lib (name "{args.board}") (type "KiCad") (uri "${{KIPRJMOD}}/{args.board}.kicad_sym") '
-        f'(options "") (descr "Kleidos boards: {args.board} symbols"))\n'
+        f'\t(lib (name "{board}") (type "KiCad") (uri "${{KIPRJMOD}}/{board}.kicad_sym") '
+        f'(options "") (descr "Kleidos boards: {board} symbols"))\n'
         f'\t(lib (name "{GENERIC_LIB}") (type "KiCad") (uri '
         f'"${{KIPRJMOD}}/{GENERIC_LIB}.kicad_sym") '
         f'(options "") (descr "Kleidos boards: the generic symbols"))\n)\n',
@@ -3323,8 +3333,8 @@ def main(argv: list[str]) -> int:
     # a board may switch off more ERC checks, each named in layout.yaml's erc_ignore (its README
     # says why)
     extra = "".join(f',\n      "{rule}": "ignore"' for rule in b.lay.get("erc_ignore") or [])
-    (b.dir / f"{args.board}.kicad_pro").write_text(
-        PRO_TEMPLATE.replace("@BOARD@", args.board)
+    (b.dir / f"{board}.kicad_pro").write_text(
+        PRO_TEMPLATE.replace("@BOARD@", board)
         .replace("@ERC_EXTRA@", extra)
         .replace("@LINE_MIL@", str(LINE_MIL))
         .replace("@BUS_MIL@", str(BUS_MIL))

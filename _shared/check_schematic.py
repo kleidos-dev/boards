@@ -33,16 +33,16 @@ continuation a board's layout may add (``index: additions``).
 
 Usage::
 
-    python3 _shared/check_schematic.py <board> [--netlist FILE.xml] [--kicad-cli PATH]
+    python3 _shared/check_schematic.py <board> [--netlist FILE.xml]
 
-Without ``--netlist`` it runs ``kicad-cli`` itself (``KICAD_CLI`` or
-``kicad-cli`` on the ``PATH``). Exit status 0 on a match, 1 otherwise.
+Without ``--netlist`` it runs ``kicad-cli`` itself: the one ``KICAD_CLI`` names
+in the environment or the one on the ``PATH``, never one named on the command
+line. Exit status 0 on a match, 1 otherwise.
 """
 
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 import sys
 import tempfile
@@ -53,15 +53,18 @@ from typing import Any
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from paths import ROOT
+sys.path.insert(0, str(Path(__file__).resolve().parent / "kicad"))
+import kleidos_kicad as kit
+from paths import ROOT, OutsideError, board_id, work_path
 
 
-def export(board: str, cli: str) -> Path:
+def export(board: str) -> Path:
+    """The netlist kicad-cli exports of a board's schematic, in a folder of its own."""
     folder = ROOT / board / "schematic"
     out = Path(tempfile.mkdtemp()) / f"{board}.xml"
     subprocess.run(
         [
-            cli,
+            kit.kicad_cli(),
             "sch",
             "export",
             "netlist",
@@ -500,19 +503,20 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("board")
     ap.add_argument("--netlist", type=Path)
-    ap.add_argument("--kicad-cli", default=os.environ.get("KICAD_CLI", "kicad-cli"))
     args = ap.parse_args(argv)
-    xml = args.netlist or export(args.board, args.kicad_cli)
-    errors = compare(args.board, xml) + additions(args.board) + index_pages(args.board)
+    try:
+        board = board_id(args.board)
+        xml = export(board) if args.netlist is None else work_path(args.netlist)
+    except OutsideError as exc:
+        ap.error(str(exc))
+    errors = compare(board, xml) + additions(board) + index_pages(board)
     for e in errors:
         print(f"FAIL {e}")
     if not errors:
         n = len(
-            yaml.safe_load((ROOT / args.board / "schematic" / "netlist.yaml").read_text())[
-                "components"
-            ]
+            yaml.safe_load((ROOT / board / "schematic" / "netlist.yaml").read_text())["components"]
         )
-        print(f"ok   {args.board}: the drawing matches netlist.yaml, {n} components, pin for pin")
+        print(f"ok   {board}: the drawing matches netlist.yaml, {n} components, pin for pin")
     return 1 if errors else 0
 
 

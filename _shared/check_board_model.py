@@ -100,8 +100,9 @@ import numpy as np  # noqa: E402
 import render_views  # noqa: E402
 import shapely.affinity  # noqa: E402
 import shapely.geometry as sg  # noqa: E402
+import svg_read  # noqa: E402
 import trimesh  # noqa: E402
-from paths import ROOT as REPO  # noqa: E402  (the repository root)
+from paths import OutsideError, in_tree, work_path, write_file  # noqa: E402
 from shapely.ops import unary_union  # noqa: E402
 
 #: How far a legend may lie from where the drawing prints it, in mm.
@@ -179,7 +180,7 @@ def concat(meshes: list[trimesh.Trimesh]) -> trimesh.Trimesh:
 # ---------------------------------------------------------------- front.svg
 
 
-_TOKEN = re.compile(r"[MmLlHhVvAaCcQqZz]|[-+]?(?:\d*\.\d+|\d+\.?)(?:[eE][-+]?\d+)?")
+_TOKEN = re.compile(rf"[A-Za-z]|{svg_read.NUMBER}")
 
 
 def _arc(
@@ -319,21 +320,17 @@ def path_rings(d: str) -> list[list[tuple[float, float]]]:
     return rings
 
 
-def _attrs(tag: str) -> dict[str, str]:
-    return dict(re.findall(r'([\w:-]+)="([^"]*)"', tag))
-
-
 def svg_outline(
     svg_path: str | Path,
 ) -> tuple[sg.Polygon, tuple[float, float, float, float] | None]:
     """(case outline polygon, screen-active box) of a front.svg, front-frame mm."""
     text = Path(svg_path).read_text()
-    body = re.sub(r"<defs>.*?</defs>", "", text, flags=re.S)
-    m = re.search(r"<(rect|path|polygon)\b[^>]*>", body)
-    if not m:
+    body = svg_read.without(text, "<defs>", "</defs>")
+    shape = next(svg_read.tags(body, "rect", "path", "polygon"), None)
+    if shape is None:
         raise ValueError(f"{svg_path}: no case outline")
-    tag, a = m.group(1), _attrs(m.group(0))
-    if tag == "rect":
+    a = svg_read.attributes(shape)
+    if shape.startswith("<rect"):
         x, y = float(a.get("x", 0)), float(a.get("y", 0))
         w, h = float(a["width"]), float(a["height"])
         r = float(a.get("rx", a.get("ry", 0)))
@@ -342,22 +339,23 @@ def svg_outline(
             if r > 0
             else sg.box(x, y, x + w, y + h)
         )
-    elif tag == "polygon":
+    elif shape.startswith("<polygon"):
         v = [float(t) for t in re.split(r"[\s,]+", a["points"].strip())]
         outline = sg.Polygon(list(zip(v[0::2], v[1::2], strict=True)))
     else:
         rings = path_rings(a["d"])
         outline = sg.Polygon(rings[0], [r for r in rings[1:] if len(r) >= 3])
-    sa = re.search(r'<rect\b[^>]*id="screen-active"[^>]*>', text)
     screen = None
-    if sa:
-        s = _attrs(sa.group(0))
-        screen = (
-            float(s["x"]),
-            float(s["y"]),
-            float(s["x"]) + float(s["width"]),
-            float(s["y"]) + float(s["height"]),
-        )
+    for rect in svg_read.tags(text, "rect"):
+        s = svg_read.attributes(rect)
+        if s.get("id") == "screen-active":
+            screen = (
+                float(s["x"]),
+                float(s["y"]),
+                float(s["x"]) + float(s["width"]),
+                float(s["y"]) + float(s["height"]),
+            )
+            break
     return outline, screen
 
 
@@ -749,8 +747,16 @@ def check(
     if "screen" in report:
         worst += [abs(v) for v in report["screen"]["vs_measurements_mm"].values()]
     report["worst_mm"] = round(max(worst), 3) if worst else 0.0
-    (out_dir / f"{board}-check.json").write_text(json.dumps(report, indent=2) + "\n")
+    write_file(out_dir / f"{board}-check.json", json.dumps(report, indent=2) + "\n")
     return report
+
+
+def model_of(board_dir: Path) -> Path:
+    """The model of a board's directory: its spec's output, or ``model/<board>.glb``."""
+    spec = board_dir / "model" / "spec.json"
+    if spec.is_file():
+        return in_tree(json.loads(spec.read_text())["output"])
+    return board_dir / "model" / f"{board_dir.name}.glb"
 
 
 def depth_selftest() -> bool:
@@ -779,7 +785,8 @@ def depth_selftest() -> bool:
 def main(argv: list[str] | None = None) -> int:
     """Run the check from the command line; return the exit code."""
     parser = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
-    parser.add_argument("board_dir", type=Path, nargs="?", help="<board>")
+    subject = parser.add_mutually_exclusive_group(required=True)
+    subject.add_argument("board_dir", type=Path, nargs="?", help="<board>")
     parser.add_argument(
         "--glb", type=Path, help="the model (default: the spec's output, or model/<board>.glb)"
     )
@@ -800,7 +807,7 @@ def main(argv: list[str] | None = None) -> int:
         help="how far a legend may lie from where front.svg prints it "
         f"(default {LEGEND_TOLERANCE_MM})",
     )
-    parser.add_argument(
+    subject.add_argument(
         "--selftest",
         action="store_true",
         help="run the checks' own tests: defects planted in the Cardputer "
@@ -813,18 +820,14 @@ def main(argv: list[str] | None = None) -> int:
 
         legends_ok = legend_placement.main(["--selftest"]) == 0
         return 0 if depth_selftest() and legends_ok else 1
-    if args.board_dir is None:
-        parser.error("give a board directory, or --selftest")
-    board_dir = args.board_dir.resolve()
-    glb = args.glb
-    if glb is None:
-        spec = board_dir / "model" / "spec.json"
-        glb = (
-            REPO / json.loads(spec.read_text())["output"]
-            if spec.is_file()
-            else board_dir / "model" / f"{board_dir.name}.glb"
-        )
-    out = args.out or Path(tempfile.mkdtemp(prefix=f"{board_dir.name}-check-"))
+    try:
+        board_dir = work_path(args.board_dir)
+        glb = model_of(board_dir) if args.glb is None else work_path(args.glb)
+        out = None if args.out is None else work_path(args.out)
+    except OutsideError as exc:
+        parser.error(str(exc))
+    if out is None:
+        out = Path(tempfile.mkdtemp(prefix=f"{board_dir.name}-check-"))
     report = check(board_dir, glb, out, args.max_dev_mm, args.legend_tolerance_mm)
     shown = dict(report)
     if "legends" in shown:

@@ -667,6 +667,7 @@ def coplanar_selftest(
     import tempfile
 
     import glb_legends
+    from paths import write_file
 
     cad = Path(cad_dir) if cad_dir else Path(__file__).resolve().parent.parent
     repo = cad
@@ -690,7 +691,7 @@ def coplanar_selftest(
     ) -> list[Mesh]:
         js, bin_ = glb_legends.read(Path(glb).read_bytes())
         change(js)
-        Path(out).write_bytes(glb_legends.write(js, bin_))
+        write_file(out, glb_legends.write(js, bin_))
         return read_glb(out)
 
     def gap_lowered(js: dict[str, Any]) -> None:

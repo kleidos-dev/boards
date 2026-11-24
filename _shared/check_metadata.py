@@ -52,6 +52,8 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import media_meta as mm
+import svg_read
+from paths import OutsideError, inside
 
 ROOT = mm.ROOT
 MEDIA = {
@@ -160,15 +162,13 @@ def deny(
 
 # ---------------------------------------------------------------- SVG
 
-_BLOCK = re.compile(rf"<!-- {mm.REUSE_START} -->\n(.*?)<!-- {mm.REUSE_END} -->", re.S)
-
 
 def check_svg(
     rel: str, data: bytes, meta: mm.MediaMeta, identity: Sequence[re.Pattern[str]] | None
 ) -> Findings:
     found = Findings()
     text = data.decode("utf-8")
-    blocks = _BLOCK.findall(text)
+    blocks = svg_read.between(text, f"<!-- {mm.REUSE_START} -->\n", f"<!-- {mm.REUSE_END} -->")
     inside = sum(b.count("<metadata") for b in blocks)
     if text.count("<metadata") != inside:
         found.add("M011", "a <metadata> block outside the REUSE ignore markers")
@@ -183,8 +183,9 @@ def check_svg(
         found.add("M003", f"its SPDX comment says {m.group(1)}, REUSE {meta.spdx}")
     if meta.digital_source_type and mm.DST_BASE not in text[:20000]:
         found.add("M012", "no IPTC digital source type")
-    head = re.search(r"<title\b[^>]*>(.*?)</title>.*?<desc\b[^>]*>(.*?)</desc>", text, re.S)
-    values = list(blocks) + (list(head.groups()) if head else [])
+    title = svg_read.element_text(text, "title")
+    desc = svg_read.element_text(text, "desc", title[1]) if title else None
+    values = list(blocks) + ([title[0], desc[0]] if title and desc else [])
     deny(found, "its metadata", values, identity)
     if meta.language == "es" and any(
         ES_BANNED.search(v) or any(m.group(0) != "LILYGO" for m in VENDOR_ANY_CASE.finditer(v))
@@ -466,7 +467,11 @@ def main(argv: list[str] | None = None) -> int:
             "checking the generic classes only",
             file=sys.stderr,
         )
-    files = [Path(p).resolve().relative_to(ROOT).as_posix() for p in args.paths] or tracked()
+    try:
+        given = [inside(p, ROOT).relative_to(ROOT).as_posix() for p in args.paths]
+    except OutsideError as exc:
+        parser.error(str(exc))
+    files = given or tracked()
     results = []
     checked = 0
     try:

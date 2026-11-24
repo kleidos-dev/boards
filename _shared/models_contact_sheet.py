@@ -56,6 +56,7 @@ from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
 CAD = HERE.parent
 from paths import ROOT as REPO  # noqa: E402  (the repository root)
+from paths import OutsideError, in_tree, work_path  # noqa: E402  (beside this file)
 
 BOARDS = (
     "sticks3",
@@ -87,7 +88,7 @@ def board_entry(board: str) -> dict[str, Any]:
     return {
         "board": board,
         "name": meas.get("display_name", board),
-        "glb": REPO / spec["output"],
+        "glb": in_tree(spec["output"]),
         "triangles": record["triangles"],
         "gzip": record["model_gzip_bytes"],
     }
@@ -116,6 +117,10 @@ def main(argv: list[str] | None = None) -> int:
         help="draw into a temporary file and compare it with the committed sheet",
     )
     args = parser.parse_args(argv)
+    try:
+        out_path = work_path(args.out)
+    except OutsideError as exc:
+        parser.error(str(exc))
     if args.check:
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / SHEET
@@ -206,14 +211,14 @@ def main(argv: list[str] | None = None) -> int:
         fill=INK,
     )
 
-    args.out.parent.mkdir(parents=True, exist_ok=True)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     buffer = io.BytesIO()
     sheet.quantize(colors=256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(
         buffer, format="PNG", optimize=True
     )
     data = media_meta.png_with_metadata(buffer.getvalue(), media_meta.record(SHEET))
-    args.out.write_bytes(data)
-    if args.out.resolve() == (CAD / SHEET).resolve():
+    out_path.write_bytes(data)
+    if out_path == (CAD / SHEET).resolve():
         (CAD / RECORD).write_text(
             json.dumps(sheet_record(data, entries, ppm), indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",

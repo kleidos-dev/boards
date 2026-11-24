@@ -72,7 +72,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import media_meta
 import model_raster
-from paths import BOARDS, ROOT
+from paths import BOARDS, ROOT, in_tree
 
 #: Bumped when the same GLB would give other bytes (1.2.0: the header and the
 #: MTL comment in US spelling, "millimeters", "meters", "color").
@@ -283,7 +283,7 @@ def write(glb_path: str | Path, board: str) -> dict[str, Any]:
 def master(board: str) -> Path:
     """A board's master GLB, as its ``source.json`` names it."""
     rec = json.loads((ROOT / board / "model" / "source.json").read_text(encoding="utf-8"))
-    return ROOT / str(rec["model"])
+    return in_tree(str(rec["model"]))
 
 
 def problems(board: str) -> list[str]:

@@ -25,7 +25,6 @@ Host-only: no build, no hardware, no network.
 from __future__ import annotations
 
 import re
-import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -35,7 +34,6 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 CAD = ROOT
 SHARED = CAD / "_shared"
-WRITER = SHARED / "emit_back_svg.py"
 sys.path.insert(0, str(SHARED))
 import emit_back_svg  # noqa: E402  after the sys.path set-up above
 
@@ -283,13 +281,6 @@ def test_the_writer_writes_what_is_committed() -> None:
             for name, face in emit_back_svg.FACE_PRINTS
         }
     )
-    result = subprocess.run(
-        [sys.executable, str(WRITER)],
-        cwd=WRITER.parent,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    assert result.returncode == 0, result.stderr
+    assert emit_back_svg.main([]) == 0
     for (name, face), data in before.items():
         assert (CAD / name / "svg" / f"{face}.svg").read_bytes() == data, (name, face)

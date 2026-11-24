@@ -73,7 +73,7 @@ from kicad_schematic import (
     parse,
     zone,
 )
-from paths import ROOT
+from paths import ROOT, OutsideError, board_id, work_path
 
 PT = 72 / 25.4
 SLACK = 0.6  # mm a link's box may miss its text's anchor by
@@ -770,8 +770,14 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--pdf", type=Path)
     ap.add_argument("--list", action="store_true", help="print every link and where it lands")
     args = ap.parse_args(argv)
-    pdf = args.pdf or ROOT / args.board / "schematic" / f"{args.board}.pdf"
-    errors, lines = check(args.board, pdf)
+    try:
+        board = board_id(args.board)
+        pdf = (
+            ROOT / board / "schematic" / f"{board}.pdf" if args.pdf is None else work_path(args.pdf)
+        )
+    except OutsideError as exc:
+        ap.error(str(exc))
+    errors, lines = check(board, pdf)
     if args.list:
         print("\n".join(lines))
     per_page: dict[str, int] = {}
@@ -789,8 +795,7 @@ def main(argv: list[str]) -> int:
         print(f"FAIL ... and {len(errors) - 200} more")
     if not errors:
         print(
-            f"ok   {args.board}: every link of {pdf.name} lands where it should, and it holds no "
-            "script"
+            f"ok   {board}: every link of {pdf.name} lands where it should, and it holds no script"
         )
     return 1 if errors else 0
 

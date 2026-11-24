@@ -47,6 +47,7 @@ GROUPS = [
 #: How tall the front drawing is shown at the top of a page, in CSS pixels: tall
 #: enough that its legends read on GitHub, its width following its viewBox.
 FRONT_HEIGHT_PX = 320
+_VIEW_BOX = re.compile(r'<svg\b[^<>]*\bviewBox="([^"]+)"')
 
 KINDS = {
     "vendor_docs": "vendor docs",
@@ -193,7 +194,7 @@ class Page:
         out = f'<img src="icon.svg" width="96" height="96" alt="{name} icon">'
         front = ROOT / self.board / "svg" / "front.svg"
         if front.is_file():
-            box = re.search(r'<svg\b[^>]*\bviewBox="([^"]+)"', front.read_text(encoding="utf-8"))
+            box = _VIEW_BOX.search(front.read_text(encoding="utf-8"))
             if box is None:
                 raise SystemExit(f"{front}: no viewBox on its <svg>")
             _x, _y, w, h = (float(v) for v in box.group(1).split())
@@ -400,8 +401,12 @@ def main(argv: list[str]) -> int:
     ap.add_argument("boards", nargs="*")
     ap.add_argument("--check", action="store_true", help="write nothing; exit 1 if a page differs")
     args = ap.parse_args(argv)
+    known = boards()
+    unknown = [board for board in args.boards if board not in known]
+    if unknown:
+        ap.error(f"no board of this repository: {', '.join(unknown)}")
     stale = []
-    for board in args.boards or boards():
+    for board in args.boards or known:
         page, text = ROOT / board / "README.md", render(board)
         if page.exists() and page.read_text(encoding="utf-8") == text:
             continue

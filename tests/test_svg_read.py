@@ -1,0 +1,256 @@
+# SPDX-FileCopyrightText: 2026 José M. Requena Plens
+# SPDX-License-Identifier: MIT
+"""A drawing's text is read as SVG writes it, and in time that grows with its length.
+
+``_shared/svg_read.py`` reads the numbers, the start tags and the attributes
+that the generators and the model's checks take from a drawing. What it must
+give is pinned here, and that a text holding a long run which never becomes
+what is looked for is read once, not once from each of its characters. The
+same is held of every other pattern a script reads a file's text with.
+
+Host-only: no build, no hardware, no network.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import random
+import re
+import sys
+import time
+from collections.abc import Callable
+from pathlib import Path
+
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "_shared"))
+import check_board_model  # noqa: E402  after the sys.path set-up above
+import check_metadata  # noqa: E402  after the sys.path set-up above
+import check_public_tree  # noqa: E402  after the sys.path set-up above
+import emit_back_svg  # noqa: E402  after the sys.path set-up above
+import emit_board_readme  # noqa: E402  after the sys.path set-up above
+import emit_front_svg  # noqa: E402  after the sys.path set-up above
+import kicad_schematic  # noqa: E402  after the sys.path set-up above
+import legend_mesh  # noqa: E402  after the sys.path set-up above
+import legend_placement  # noqa: E402  after the sys.path set-up above
+import media_meta  # noqa: E402  after the sys.path set-up above
+import svg_read  # noqa: E402  after the sys.path set-up above
+
+#: How long a hostile text is, and the seconds that reading it may take:
+#: linear code needs milliseconds, a pattern tried again from each character
+#: (from each mark, in the longer text) several times the bound, and less than
+#: a minute.
+LONG = 50_000
+LONGER = 400_000
+SECONDS = 2.0
+
+
+@pytest.mark.parametrize(
+    ("text", "found"),
+    [
+        ("1 2", [1.0, 2.0]),
+        ("-1.5+2.25", [-1.5, 2.25]),
+        ("1.5.5", [1.5, 0.5]),
+        ("12. 3", [12.0, 3.0]),
+        (".5-.25", [0.5, -0.25]),
+        ("1e3,1E-2", [1000.0, 0.01]),
+        ("1e", [1.0]),
+        ("e3 - .", [3.0]),
+        ("", []),
+    ],
+)
+def test_numbers_are_read_as_svg_writes_them(text: str, found: list[float]) -> None:
+    assert svg_read.numbers(text) == found
+
+
+def test_tags_are_the_start_tags_of_the_elements_named() -> None:
+    text = '<g><rect x="1"/><path d="M0 0\n1 1"/></g><rectangle/><text>a</text>'
+    assert list(svg_read.tags(text, "rect", "path")) == ['<rect x="1"/>', '<path d="M0 0\n1 1"/>']
+    assert list(svg_read.tags(text, "circle")) == []
+
+
+def test_attributes_are_read_whole_or_refused() -> None:
+    assert svg_read.attributes("<rect>") == {}
+    assert svg_read.attributes('<rect x="1" data-key="a=b" xlink:href="#q"/>') == {
+        "x": "1",
+        "data-key": "a=b",
+        "xlink:href": "#q",
+    }
+    assert svg_read.attributes('<rect\n  x = "1"\n  y=""/>') == {"x": "1", "y": ""}
+    for tag in ('<rect x="1>', '<rect "1">', '<rect x "1">', "<rect x='1' \"2\">"):
+        with pytest.raises(ValueError, match="a tag"):
+            svg_read.attributes(tag)
+
+
+def test_an_element_is_read_to_its_own_end() -> None:
+    text = '<title id="t">A</title><g/><desc>B</desc><title>C</title>'
+    title = svg_read.element_text(text, "title")
+    assert title is not None and title[0] == "A"
+    desc = svg_read.element_text(text, "desc", title[1])
+    assert desc is not None and desc[0] == "B"
+    later = svg_read.element_text(text, "title", desc[1])
+    assert later is not None and later[0] == "C"
+    assert svg_read.element_text(text, "metadata") is None
+    assert svg_read.element_text("<title>never closed", "title") is None
+    assert svg_read.element_text(text, "title", later[1]) is None
+
+
+def _outline(body: str, tmp_path: Path) -> tuple[tuple[float, ...], object]:
+    path = tmp_path / "front.svg"
+    path.write_text(f"<svg><defs><rect width='1'/></defs>{body}</svg>", encoding="utf-8")
+    polygon, screen = check_board_model.svg_outline(path)
+    return tuple(round(v, 6) for v in (*polygon.bounds, polygon.area)), screen
+
+
+def test_a_fronts_outline_and_screen_are_read_from_its_shapes(tmp_path: Path) -> None:
+    """The first shape outside ``<defs>``, and the rect that says it is the active screen."""
+    case = '<rect x="0" y="0" width="10" height="20"/>'
+    screen = '<rect x="1" id="screen-active" y="2" width="3" height="4"/>'
+    other = '<rect id="screen-other" x="9" y="9" width="1" height="1"/>'
+    assert _outline(case + other + screen, tmp_path) == (
+        (0.0, 0.0, 10.0, 20.0, 200.0),
+        (1.0, 2.0, 4.0, 6.0),
+    )
+    rounded, none = _outline('<rect width="10" height="20" rx="2"/>', tmp_path)
+    assert none is None and rounded[:4] == (0.0, 0.0, 10.0, 20.0) and 196 < rounded[4] < 200
+    assert _outline('<polygon points="0,0 4,0 4,2"/>', tmp_path)[0] == (0.0, 0.0, 4.0, 2.0, 4.0)
+    ringed = '<path d="M0 0H10V10H0Z M2 2h2v2h-2z"/>'
+    assert _outline(ringed, tmp_path)[0] == (0.0, 0.0, 10.0, 10.0, 96.0)
+    with pytest.raises(ValueError, match="no case outline"):
+        _outline("<g/>", tmp_path)
+
+
+def test_a_path_is_read_command_by_command() -> None:
+    """Lines, arcs and curves, absolute and relative, with their repeats."""
+    rings = check_board_model.path_rings("M 0 0 10 0 l 0 10 -10 0 z m 1 1 H 3 v 2 h -2 z")
+    assert rings == [
+        [(0.0, 0.0), (10.0, 0.0), (10.0, 10.0), (0.0, 10.0)],
+        [(1.0, 1.0), (3.0, 1.0), (3.0, 3.0), (1.0, 3.0)],
+    ]
+    (arc,) = check_board_model.path_rings("M 0 0 A 5 5 0 0 1 10 0 Z")
+    assert arc[-1] == pytest.approx((10.0, 0.0), abs=1e-9)
+    assert max(abs((x - 5) ** 2 + y**2 - 25) for x, y in arc) < 1e-6
+    (relative,) = check_board_model.path_rings("M 2 3 a 5 5 0 0 1 10 0 z")
+    assert relative[-1] == pytest.approx((12.0, 3.0), abs=1e-9)
+    (curve,) = check_board_model.path_rings("M 0 0 C 0 1 1 1 1 0 q 1 -1 2 0")
+    assert curve[-1] == pytest.approx((3.0, 0.0))
+    (flat,) = check_board_model.path_rings("M 0 0 A 0 5 0 0 1 4 4")
+    assert flat == [(0.0, 0.0), (4.0, 4.0)]
+    with pytest.raises(ValueError, match="unsupported path command"):
+        check_board_model.path_rings("M 0 0 S 1 1 2 2")
+
+
+def test_the_parts_a_rail_names_are_found() -> None:
+    assert kicad_schematic.part_references("U1, Q3 and SW102") == {"U1", "Q3", "SW102"}
+    assert kicad_schematic.part_references("U1Q3, the cell") == {"U1", "Q3"}
+    assert kicad_schematic.part_references("battery, 12 V") == set()
+
+
+def test_what_lies_between_two_marks_is_read_and_left_out() -> None:
+    text = "a<defs>1</defs>b<defs>2<defs>3</defs>c</defs>d<defs>4"
+    assert svg_read.between(text, "<defs>", "</defs>") == ["1", "2<defs>3"]
+    assert svg_read.without(text, "<defs>", "</defs>") == "abc</defs>d<defs>4"
+    assert svg_read.between("", "<defs>", "</defs>") == []
+    assert svg_read.without("no mark", "<defs>", "</defs>") == "no mark"
+
+
+def test_a_legends_transform_is_read_whole_or_refused() -> None:
+    turned = legend_mesh._matrix("translate(1 2) , rotate(90)\n scale(2)")
+    assert turned.round(9).tolist() == [[0, -2, 1], [2, 0, 2], [0, 0, 1]]
+    for text in ("skewX(10)", "translate(rotate(4))", "translate(1 2", "none"):
+        with pytest.raises(legend_mesh.LegendError, match="does not draw"):
+            legend_mesh._matrix(text)
+
+
+def test_a_schematics_date_is_its_title_blocks() -> None:
+    sheet = '(kicad_sch (date "2020-01-01") (title_block (title "A") {}) (text "x"))'
+    assert media_meta.title_date(sheet.format('(date "2026-11-17")')) == "2026-11-17"
+    assert media_meta.title_date(sheet.format('(date "today")')) is None
+    assert media_meta.title_date('(date "2020-01-01")') is None
+
+
+def test_the_addresses_of_a_line_are_the_ones_one_pattern_finds() -> None:
+    """Read back from each ``@``, and the same as by the pattern that says what an address is."""
+    whole = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)*\.[A-Za-z]{2,}\b")
+    draw = random.Random(21)  # noqa: S311  (the same lines on every run, nothing secret)
+    # written without their "@", since nothing in this tree holds another's address
+    written = ("a%b.org-c%d.org", "%a.org%b.org", "a%b.org%c.org", "a%b%c.org.")
+    lines = [line.replace("%", "@") for line in written]
+    lines += ["".join(draw.choices("ab@@..-_+ 1", k=draw.randrange(1, 24))) for _ in range(20_000)]
+    for line in lines:
+        assert check_public_tree.addresses(line) == whole.findall(line), line
+
+
+def test_a_back_mirrors_each_shape_a_front_may_be_outlined_with() -> None:
+    svg = '<svg><defs><rect x="9"/></defs><polygon points="0,0 4,0 4,2"/><rect/></svg>'
+    assert emit_back_svg.front_outline(svg) == '<polygon points="0,0 4,0 4,2"/>'
+    with pytest.raises(ValueError, match="no case outline"):
+        emit_back_svg.front_outline("<svg><g/></svg>")
+    back = emit_back_svg.back_outline('<polygon points="0,0 4,0 4,2" stroke="#111"/>', 10, "#fff")
+    assert back == '<polygon id="case-outline" points="10,0 6,0 6,2" fill="#fff"/>\n'
+    rect = emit_back_svg.back_outline(
+        '<rect x="1" y="2" width="3" height="4" rx="1" stroke="#111" stroke-width="0.2"/>',
+        10,
+        "#fff",
+    )
+    assert rect == (
+        '<rect id="case-outline" x="6" y="2" width="3" height="4" rx="1" fill="#fff" '
+        'stroke="#111" stroke-width="0.2"/>\n'
+    )
+    with pytest.raises(ValueError, match="not an element"):
+        emit_back_svg.back_outline("rect", 10, "#fff")
+
+
+_TAG = "SPDX-" + "License-Identifier:"
+HOSTILE: dict[str, Callable[[], object]] = {
+    "numbers, digits": lambda: svg_read.numbers("1" * LONG + "e"),
+    "a path, digits": lambda: check_board_model._TOKEN.findall("1" * LONG + "!"),
+    "a legend's path, digits": lambda: legend_mesh._PATH_TOKEN.findall("1" * LONG + "x"),
+    "a mirrored path, digits": lambda: emit_back_svg._PATH_TOKEN.findall("1" * LONG + "!"),
+    "tags, never closed": lambda: list(svg_read.tags("<rect " * LONG, "rect")),
+    "attributes, one long name": lambda: svg_read.attributes("<rect " + "a" * LONG + '="1">'),
+    "attributes, a long value": lambda: svg_read.attributes('<rect a="' + "b" * LONG + '">'),
+    "an element, never closed": lambda: svg_read.element_text("<title>" * (LONG // 7), "title"),
+    "part references, capitals": lambda: kicad_schematic.part_references("A" * LONG),
+    "an address, spaces": lambda: media_meta._without_email("A" + " " * LONG + "B"),
+    "an address, brackets": lambda: media_meta._without_email("A" + "<" * LONG),
+    # shorter: what the pattern it replaced took grew with the cube of the length
+    "a tag of a file, spaces": lambda: media_meta._tag_of(f"{_TAG} A{' ' * 1_500}B"),
+    "an e-mail address, letters": lambda: media_meta.deny_hits("a" * LONG),
+    "a line's addresses, letters": lambda: check_public_tree.addresses("a" * LONG),
+    "a front's defs, never closed": lambda: emit_back_svg.front_outline("<defs>" * (LONG // 3)),
+    "a transform, never closed": lambda: legend_mesh._TRANSFORM.findall("translate(" * (LONG // 5)),
+    "a title block, no date": lambda: media_meta.title_date("(title_block" * (LONG // 6)),
+    "metadata marks, never closed": lambda: check_metadata.check_svg(
+        "a.svg",
+        f"<!-- {media_meta.REUSE_START} -->\n".encode() * (LONG // 7),
+        media_meta.record("sticks3/svg/front.svg"),
+        None,
+    ),
+    "a root, never closed": lambda: media_meta.unstamp_svg("<svg " * (LONGER // 5)),
+    "a tile's title, never closed": lambda: emit_front_svg.contact_sheet_tile(
+        "sticks3", "<title " * (LONGER // 7), 0, 0
+    ),
+    "references, never closed": lambda: emit_front_svg.namespace_ids("url(#" * (LONG // 5), "p-"),
+    "a viewBox, never reached": lambda: emit_board_readme._VIEW_BOX.search("<svg " * (LONG // 5)),
+    "an overlined name, never closed": lambda: kicad_schematic.text_w("~{" * (LONG // 2)),
+    "a cap, never filled": lambda: legend_placement._CAP_FILL.search("<rect " * (LONGER // 6)),
+}
+
+
+@pytest.mark.parametrize("name", HOSTILE)
+def test_a_long_run_that_never_matches_is_read_once(name: str) -> None:
+    start = time.perf_counter()
+    with contextlib.suppress(ValueError):  # a text that holds nothing to read may be refused
+        HOSTILE[name]()
+    assert time.perf_counter() - start < SECONDS
+
+
+def test_a_front_whose_defs_never_close_is_read_once(tmp_path: Path) -> None:
+    path = tmp_path / "front.svg"
+    path.write_text("<defs>" * (LONG // 3), encoding="utf-8")
+    start = time.perf_counter()
+    with pytest.raises(ValueError, match="no case outline"):
+        check_board_model.svg_outline(path)
+    assert time.perf_counter() - start < SECONDS
