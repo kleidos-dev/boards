@@ -14,11 +14,9 @@ extend = ".github/quality/ruff.toml"
 target-version = "py315"
 
 [tool.mypy]
-# >>> kleidos-quality mypy (synced from kleidos-dev/.github quality/mypy/block.toml; do not edit)
 strict = true
 # An ignore names the error it silences, so it cannot hide a second one.
 enable_error_code = ["ignore-without-code"]
-# <<< kleidos-quality mypy
 python_version = "3.15"
 files = ["_shared", "sticks3", "tests", ".claude/skills", "typings"]
 # The scripts import each other from beside them (each puts its own folder on

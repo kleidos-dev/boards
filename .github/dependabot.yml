@@ -1,12 +1,15 @@
 # SPDX-FileCopyrightText: 2026 José M. Requena Plens
 # SPDX-License-Identifier: MIT
 #
-# Keeps the GitHub Actions this repository pins by commit and the Python
-# stack pinned in requirements.txt current: at most one grouped pull request
-# a week for each. Dependabot authors its own commit messages, so the
-# commit-message gate skips its pull requests. The quality kit's workflow
-# references and tool versions are not Dependabot's here: they move with the
-# kit's sync (kleidos-dev/.github docs/quality.md, "Versions").
+# Keeps current, in at most one grouped pull request a week for each: the
+# GitHub Actions this repository pins by commit, the Python stack pinned in
+# requirements.txt and the hook revisions of .pre-commit-config.yaml, the
+# quality kit's included (its minor and patch releases without the
+# cooldown; its next major is taken by hand). The kit's workflow references
+# are not Dependabot's: they name the branch @v3, which each kit release
+# moves, and the github-actions update ignores them (kleidos-dev/.github
+# docs/quality.md, "Versions"). Dependabot authors its own commit messages,
+# so the commit-message gate skips its pull requests.
 #
 # requirements.txt holds every dependency with its hashes and no .in file,
 # so each line is a direct pin here: Dependabot bumps every one of them,
@@ -36,4 +39,23 @@ updates:
       default-days: 7
     groups:
       python:
+        patterns: ["*"]
+  # The hook revisions of .pre-commit-config.yaml, the kit's and third parties'.
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+      exclude:
+        - "https://github.com/kleidos-dev/.github"
+    ignore:
+      # The kit's next major is taken by hand, with the fixes it asks for.
+      - dependency-name: "https://github.com/kleidos-dev/.github"
+        update-types: ["version-update:semver-major"]
+      # crate-ci/typos also tags its sub-crates, which read as typos 5.x.
+      - dependency-name: "https://github.com/crate-ci/typos"
+        versions: [">= 2"]
+    groups:
+      hooks:
         patterns: ["*"]

@@ -6,7 +6,7 @@
 # reads this file after .markdownlint-cli2.jsonc, so it starts from the
 # quality kit's base too: only the rules that catch a broken table are on
 # (kleidos-dev/.github docs/quality.md). Markdown prose is never hard-wrapped
-# (AGENTS.md); md_nowrap.py holds that rule, not MD013.
+# (AGENTS.md); the kit's kleidos-kit hook holds that rule, not MD013.
 extends: .github/quality/markdownlint.jsonc
 
 # Added here: a heading may recur under different parents (each board's

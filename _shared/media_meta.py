@@ -217,7 +217,12 @@ _COMMENT_ENDS = ("-->", "*/")
 
 
 def _tag_of(line: str) -> tuple[str, str] | None:
-    """(the SPDX tag a line states, its value without the mark that closes its comment)."""
+    """(the SPDX tag a line states, its value without the mark that closes its comment).
+
+    A tag with nothing after it is stated all the same, with an empty value:
+    REUSE reads it as the file's own (``reuse lint`` refuses the empty
+    expression) and so never falls back to ``REUSE.toml`` for it.
+    """
     found = _TAG.search(line)
     if found is None:
         return None
@@ -226,7 +231,7 @@ def _tag_of(line: str) -> tuple[str, str] | None:
         if value.endswith(mark):
             value = value.removesuffix(mark).rstrip()
             break
-    return (found.group(1), value) if value else None
+    return found.group(1), value
 
 
 def in_file_tags(path: Path) -> tuple[list[str], list[str]]:
@@ -282,6 +287,15 @@ def reuse_truth(path: str | Path) -> tuple[str, tuple[str, ...]]:
         toml_licenses = [lic] if isinstance(lic, str) else list(lic or [])
         cop = found.get("SPDX-FileCopyrightText")
         toml_holders = [cop] if isinstance(cop, str) else list(cop or [])
+    # An override annotation's file is never read for its own tags, by REUSE
+    # or here. Elsewhere an empty license is an invalid expression REUSE
+    # refuses, and an empty holder, which REUSE takes as stated, is refused
+    # here too: neither is replaced by the annotation's values.
+    if precedence != "override":
+        if "" in file_licenses:
+            raise MetaError(f"{rel}: states an empty SPDX tag (license), which REUSE refuses")
+        if "" in file_holders:
+            raise MetaError(f"{rel}: states an empty SPDX tag (copyright holder)")
     if precedence == "override":
         licenses, holders = toml_licenses, toml_holders
     elif precedence == "closest" and (file_licenses or file_holders):
